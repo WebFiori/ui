@@ -23,7 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+/**
+ * A class that represents a stack data structure.
+ *
+ * @author Ibrahim <ibinshikh@hotmail.com>
+ * @version 1.0
+ */
 class Stack{
     /**
      * The bottom node of the stack.
@@ -84,7 +89,7 @@ class Stack{
      * @param mixed $el The element that will be added. If it is <b>NULL</b>, the 
      * function will not add it.
      * @return boolean The function will return <b>TRUE</b> if the element is added. 
-     * The function will return <b>FALSE</b> only in two cases, If the stack maximum 
+     * The function will return <b>FALSE</b> only in two cases, If the maximum 
      * number of elements is reached and trying to add new one or the given element 
      * is <b>NULL</b>.
      * @since 1.0
@@ -164,7 +169,7 @@ class Stack{
     }
     /**
      * Checks if the stack can hold more elements or not.
-     * @return boolean <b>TRUE</b> if the element can hold more elements.
+     * @return boolean <b>TRUE</b> if the stack can hold more elements.
      * @since 1.0
      */
     private function validateSize(){
