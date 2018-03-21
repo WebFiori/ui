@@ -206,7 +206,7 @@ class HTMLDoc {
                 $this->addTab();
                 for($x = 0 ; $x < $chCount ; $x++){
                     $nodeAtx = $node->childNodes()->get($x);
-                    echo $nodeAtx.'<br/>';
+                    //echo $nodeAtx.'<br/>';
                     $this->pushNode($nodeAtx);
                 }
                 $this->reduceTab();
