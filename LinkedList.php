@@ -28,7 +28,7 @@
  * A class that represents a linked list.
  *
  * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.0
+ * @version 1.1
  */
 class LinkedList {
     /**
@@ -107,7 +107,74 @@ class LinkedList {
             return FALSE;
         }
     }
-
+    /**
+     * Returns the first element that was added to the list.
+     * @return mixed The first element that was added to the list. If the list 
+     * is empty, The function will return <b>NULL</b>.
+     * @since 1.1
+     */
+    public function getFirst(){
+        if($this->size() >= 1){
+            return $this->head->data();
+        }
+        return NULL;
+    }
+    /**
+     * Returns the last element that was added to the list.
+     * @return mixed The last element that was added to the list. If the list 
+     * is empty, The function will return <b>NULL</b>.
+     * @since 1.1
+     */
+    public function getLast(){
+        if($this->size() == 1){
+            return $this->getFirst();
+        }
+        else if($this->size() > 1){
+            return $this->tail->data();
+        }
+        return NULL;
+    }
+    /**
+     * Removes all of the elements from the list.
+     * @since 1.1
+     */
+    public function clear(){
+        $this->head = NULL;
+        $this->tail = NULL;
+        $this->size = 0;
+    }
+    /**
+     * Returns the element at the specified index.
+     * @return mixed The element at the specified index. If the list 
+     * is empty or the given index is not in the list, The function will 
+     * return <b>NULL</b>.
+     * @since 1.1
+     */
+    public function get($index){
+        if(gettype($index) == 'integer'){
+            if($index < $this->size() && $index > -1){
+                if($index == 0){
+                    return $this->getFirst();
+                }
+                else if($index == $this->size() - 1){
+                    return $this->getLast();
+                }
+                else{
+                    $nextNode = $this->head->next();
+                    $node = $this->head;
+                    for($i = 1 ; ; $i++){
+                        if($i == $index){
+                            $data = $nextNode->data();
+                            return $data;
+                        }
+                        $node = $nextNode;
+                        $nextNode = $nextNode->next();
+                    }
+                }
+            }
+        }
+        return NULL;
+    }
     /**
      * Removes an element given its index.
      * @param int $index The index of the element.
