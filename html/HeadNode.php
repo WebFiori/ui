@@ -268,6 +268,10 @@ class HeadNode extends HTMLNode{
         for($x = 0 ; $x < $jsNodes->size(); $x++){
             $chls->add($jsNodes->get($x));
         }
+        $parentCh = parent::childNodes();
+        for($x = 0 ; $x < $parentCh->size() ; $x++){
+            $chls->add($parentCh->get($x));
+        }
         return $chls;
     }
 }
