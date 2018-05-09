@@ -25,46 +25,41 @@
  */
 
 /**
- * Description of UnorderedList
+ * A class that represents Unordered List HTML element (ul)
  *
  * @author Ibrahim
  * @version 1.0
  */
 class UnorderedList extends HTMLNode{
-    /**
-     *
-     * @var type 
-     */
-    private $listItems;
     public function __construct() {
         parent::__construct('ul', TRUE);
-        $this->listItems = new LinkedList();
     }
     /**
-     * 
-     * @param TextListItem $listItem
+     * Adds new list item.
+     * @param ListItem $listItem The list item that will be added.
      * @since 1.0
      */
     public function addListItem($listItem) {
         $this->addChild($listItem);
     }
     /**
-     * 
-     * @param UnorderedList $ul
+     * Adds a sublist to the main list.
+     * @param UnorderedList $ul An object of type <b>UnorderedList</b>
      * @since 1.0
      */
     public function addSubList($ul){
-        if($ul instanceof UnorderedList){
-            parent::addChild($ul);
-        }
+        $this->addChild($ul);
     }
     /**
-     * 
-     * @param TextListItem $node
+     * Adds new list item or a sub-list.
+     * @param ListItem|UnorderedList $node The node that will be added.
      * @since 1.0
      */
     public function addChild($node) {
-        if($node instanceof TextListItem){
+        if($node instanceof ListItem){
+            parent::addChild($node);
+        }
+        else if($node instanceof UnorderedList){
             parent::addChild($node);
         }
     }
