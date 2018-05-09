@@ -28,7 +28,7 @@
  * A class that represents the head tag of a HTML document.
  *
  * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.0
+ * @version 1.1
  */
 class HeadNode extends HTMLNode{
     /**
@@ -217,6 +217,21 @@ class HeadNode extends HTMLNode{
             }
         }
     }
+    /**
+     * Adds new 'link' node.
+     * @param string $rel The value of the attribute 'rel'.
+     * @param string $href The value of the attribute 'href'.
+     * @since 1.1
+     */
+    public function addLink($rel,$href){
+        if(strlen($rel) != 0 && strlen($href) != 0){
+            $node = new HTMLNode('link', FALSE, FALSE);
+            $node->setAttribute('rel',$rel);
+            $node->setAttribute('href', $href);
+            $this->addChild($node);
+        }
+    }
+
     /**
      * Returns a linked list of all alternate nodes that was added to the header.
      * @return LinkedList
