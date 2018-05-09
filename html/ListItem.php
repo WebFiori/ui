@@ -25,33 +25,13 @@
  */
 
 /**
- * Description of ListItem
+ * A class that represents List Item node.
  *
  * @author Ibrahim
  * @version 1.0
  */
-class TextListItem extends HTMLNode{
-    /**
-     * 
-     * @param type $text
-     * @since 1.0
-     */
-    public function __construct($text='') {
+class ListItem extends HTMLNode{
+    public function __construct() {
         parent::__construct('li', TRUE);
-        $tNode = new HTMLNode('', FALSE, TRUE);
-        $tNode->setText($text);
-        parent::addChild($tNode);
-    }
-    /**
-     * 
-     * @param type $text
-     * @since 1.0
-     */
-    public function setText($text){
-        $this->childNodes()->getFirst()->setText($text);
-    }
-
-    private function addChild($node) {
-        
     }
 }
