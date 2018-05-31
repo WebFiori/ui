@@ -508,35 +508,30 @@ class HTMLNode {
         }
         else{
             $this->nl = HTMLDoc::NL;
-            $spacesCount=4;
+            $spacesCount = 4;
             if($initTab > -1){
                 $this->tabCount = $initTab;
             }
             else{
                 $this->tabCount = 0;
             }
-            $this->tapSpace = '';
+            $this->tabSpace = '';
             if($spacesCount > 0 && $spacesCount < 9){
                 for($x = 0 ; $x < $spacesCount ; $x++){
-                    $this->tapSpace .= ' ';
+                    $this->tabSpace .= ' ';
                 }
             }
             else{
                 for($x = 0 ; $x < 4 ; $x++){
-                    $this->tapSpace .= ' ';
+                    $this->tabSpace .= ' ';
                 }
             }
+            
         }
-        $this->htmlString = $this->getTab().$this->asHTML();
-        if($this->childNodes()->size() != 0){
-            $this->addTab();
-            $this->nodesStack = new Stack();
-            $this->pushNode($this,$formatted);
-            $this->reduceTab();
-        }
-        if(!$this->isTextNode() && $this->mustClose()){
-            $this->htmlString .= $this->getTab().'</'.$this->getName().'>';
-        }
+        
+        $this->htmlString = '';
+        $this->nodesStack = new Stack();
+        $this->pushNode($this,$formatted);
         return $this->htmlString;
     }
     /**
