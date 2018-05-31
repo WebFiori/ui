@@ -31,21 +31,72 @@
  * @version 1.0
  */
 class PNode extends HTMLNode{
-    const ALLOWED_CHILDS = array('b','br','abbr','dfn','i','em','span','img',
+    const ALLOWED_CHILDS = array('a','b','br','abbr','dfn','i','em','span','img',
         'big','small','kbd','samp','code','script');
+    /**
+     * Creates new paragraph node.
+     * @since 1.0
+     */
     public function __construct() {
         parent::__construct('p', TRUE);
     }
     /**
      * Appends new text to the body of the paragraph.
      * @param string $text The text that will be added.
+     * @param array $options An array that contains a key value pairs 
+     * of text options. The supported options are:
+     * <ul>
+     * <li><b>bold:</b> Makes the text bold.</li>
+     * <li><b>italic:</b> Makes the text italic. ignored if option 'em' is set to true.</li>
+     * <li><b>em:</b> Insert the text withen 'em' element.</li>
+     * <li><b>underline:</b> Adds a line underneath the text.</li>
+     * <li><b>overline:</b> Adds a line on the top of the text.</li>
+     * <li><b>strikethrough:</b> Adds a line throgh the text.</li>
+     * <li><b>color:</b> Sets the color of the text.</li>
+     * <li><b>href:</b>Make the text as a link. The value of this key must be a link.</li>
+     * <li><b>is-abbr:</b> NOT USED.</li>
+     * <li><b>abbr-title:</b> NOT USED.</li>
+     * <li><b>abbr-def:</b> NOT USED.</li>
+     * <li><b>new-line:</b> Insert line break after the text.</li>
+     * </ul>
      * @since 1.0
      */
-    public function addText($text) {
+    public function addText($text,$options = array(
+        'bold'=>false,
+        'italic'=>false,
+        'em'=>false,
+        'underline'=>false,
+        'overline'=>false,
+        'strikethrough'=>false,
+        'color'=>null,
+        'href'=>null,
+        'is-abbr'=>false,
+        'abbr-title'=>'',
+        'abbr-def'=>'',
+        'new-line'=>false
+    )) {
         if(strlen($text) != 0){
             $textNode = new HTMLNode('', FALSE, TRUE);
             $textNode->setText($text);
-            $this->addChild($textNode);
+            $css = '';
+            if(isset($options['bold']) && $options['bold'] == TRUE){
+                $css .= 'font-weight:bold;';
+            }
+            if(isset($options['overline']) && $options['overline'] == TRUE){
+                $css .= 'text-decoration: overline;';
+            }
+            if(isset($options['underline']) && $options['underline'] == TRUE){
+                $css .= 'text-decoration: underline;';
+            }
+            if(isset($options['strikethrough']) && $options['strikethrough'] == TRUE){
+                $css .= 'text-decoration: line-through;';
+            }
+            if(gettype($options) == 'array'){
+                if(isset($options['em']) && $options['em'] == TRUE){
+                    $em = new HTMLNode('em');
+                    
+                }
+            }
         }
     }
     /**
