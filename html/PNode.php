@@ -47,7 +47,7 @@ class PNode extends HTMLNode{
      * of text options. The supported options are:
      * <ul>
      * <li><b>bold:</b> Makes the text bold.</li>
-     * <li><b>italic:</b> Makes the text italic. ignored if option 'em' is set to true.</li>
+     * <li><b>italic:</b> Makes the text italic.</li>
      * <li><b>em:</b> Insert the text withen 'em' element.</li>
      * <li><b>underline:</b> Adds a line underneath the text.</li>
      * <li><b>overline:</b> Adds a line on the top of the text.</li>
@@ -78,23 +78,52 @@ class PNode extends HTMLNode{
         if(strlen($text) != 0){
             $textNode = new HTMLNode('', FALSE, TRUE);
             $textNode->setText($text);
-            $css = '';
-            if(isset($options['bold']) && $options['bold'] == TRUE){
-                $css .= 'font-weight:bold;';
-            }
-            if(isset($options['overline']) && $options['overline'] == TRUE){
-                $css .= 'text-decoration: overline;';
-            }
-            if(isset($options['underline']) && $options['underline'] == TRUE){
-                $css .= 'text-decoration: underline;';
-            }
-            if(isset($options['strikethrough']) && $options['strikethrough'] == TRUE){
-                $css .= 'text-decoration: line-through;';
-            }
             if(gettype($options) == 'array'){
+                $css = '';
+                $emNode = NULL;
+                $linkNode = NULL;
+                if(isset($options['color']) && gettype($options['color']) == 'string'){
+                    $css .= 'color:'.$options['color'].';';
+                }
+                if(isset($options['bold']) && $options['bold'] == TRUE){
+                    $css .= 'font-weight:bold;';
+                }
+                if(isset($options['italic']) && $options['italic'] == TRUE){
+                    $css .= 'font-style:italic;';
+                }
+                if(isset($options['href']) && gettype('href') == 'string'){
+                    $linkNode = new LinkNode($options['href'], $textNode->getText(), '_blank');
+                }
                 if(isset($options['em']) && $options['em'] == TRUE){
-                    $em = new HTMLNode('em');
-                    
+                    $emNode = new HTMLNode('em');
+                    if($linkNode != NULL){
+                        $emNode->addChild($linkNode);
+                    }
+                    else{
+                        $emNode->addChild($textNode);
+                    }
+                }
+                if($emNode != NULL){
+                    $emNode->setAttribute('style', $css);
+                    $this->addChild($emNode);
+                }
+                else if($linkNode != NULL){
+                    $linkNode->setAttribute('style', $css);
+                    $this->addChild($linkNode);
+                }
+                else{
+                    if($css != ''){
+                        $span = new HTMLNode('span');
+                        $span->setAttribute('style', $css);
+                        $span->addChild($textNode);
+                        $this->addChild($span);
+                    }
+                    else{
+                        $this->addChild($textNode);
+                    }
+                }
+                if(isset($options['new-line']) && $options['new-line'] == TRUE){
+                    $this->addLineBreak();
                 }
             }
         }
