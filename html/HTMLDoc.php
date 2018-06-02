@@ -96,11 +96,26 @@ class HTMLDoc {
      */
     public function getChildrenByTag($val) {
         $list = new LinkedList();
-        $hNodes = $this->headNode->getChildrenByTag($val);
-        for($x = 0 ; $x < $hNodes->size() ; $x++){
-            $list->add($hNodes->get($x));
-        }
+        $this->_getChildrenByTag($val, $list, $this->htmlNode);
         return $list;
+    }
+    /**
+     * 
+     * @param sring $val
+     * @param LinkedList $list
+     * @param HTMLNode $child
+     */
+    private function _getChildrenByTag($val,$list,$child){
+        if($child->getName() == $val){
+            $list->add($child);
+        }
+        if(!$child->isTextNode()){
+            $children = $child->childNodes();
+            $chCount = $children->size();
+            for($x = 0 ; $x < $chCount ; $x++){
+                $this->_getChildrenByTag($val, $list, $children->get($x));
+            }
+        }
     }
     /**
      * Returns a child node given its ID.
@@ -145,7 +160,7 @@ class HTMLDoc {
         return '';
     }
     /**
-     * Sets the value of the head node.
+     * Updates the head node that is used by the document.
      * @param HeadNode $node The node to set.
      * @since 1.0
      */
@@ -155,14 +170,18 @@ class HTMLDoc {
             $this->headNode = $node;
         }
     }
+    /**
+     * Returns a string of HTML code that represents the document.
+     * @return string A string of HTML code that represents the document.
+     */
     public function __toString() {
-        return $this->toHTML();
+        return $this->toHTML(FALSE);
     }
     /**
-     * Returns a string that represents the document.
-     * @param boolean $formatted If set to true, The generated document will be 
-     * well formatted.
-     * @return string A string that represents the document.
+     * Returns HTML string that represents the document.
+     * @param boolean $formatted [Optional] If set to <b>TRUE</b>, The generated HTML code will be 
+     * well formatted. Default is <b>TRUE</b>.
+     * @return string HTML string that represents the document.
      * @since 1.0
      */
     public function toHTML($formatted=true){
