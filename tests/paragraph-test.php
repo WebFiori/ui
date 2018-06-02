@@ -33,6 +33,7 @@ require '../Stack.php';
 require '../html/HTMLNode.php';
 require '../html/HTMLDoc.php';
 require '../html/HeadNode.php';
+require '../html/LinkNode.php';
 require '../html/PNode.php';
 require '../html/Br.php';
 $node = new HTMLNode('html');
@@ -44,11 +45,8 @@ $paragraph->addText('Hello Mr. Ibrahim.');
 $paragraph->addText(' This is a nicely formatted paragraph.');
 $paragraph->addLineBreak();
 $paragraph->addText('Nice work!!');
-$em = new HTMLNode('em');
-$t = new HTMLNode('', '', TRUE);
-$t->setText('Hello');
-$em->addChild($t);
-$paragraph->addChild($em);
-
+$paragraph->addText('A Link', array('new-line'=>TRUE,'href'=>'http://www.programmingacademia.com'));
+$paragraph->addText('Bold', array('bold'=>TRUE,'new-line'=>TRUE));
+$paragraph->addText('Italic', array('italic'=>TRUE,'new-line'=>TRUE));
 echo $node;
 
