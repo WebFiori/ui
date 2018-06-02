@@ -315,9 +315,10 @@ class HTMLNode {
     /**
      * Sets a value for an attribute.
      * @param string $name The name of the attribute. If the attribute does not 
-     * exist, it will be created. Note that if the node type is text node, 
+     * exist, it will be created. If already exists, its value will be updated. 
+     * Note that if the node type is text node, 
      * the attribute will never be created.
-     * @param string $val The value of the attribute.
+     * @param string $val [Optional] The value of the attribute. Default is empty string.
      * @since 1.0
      */
     public function setAttribute($name,$val=''){
@@ -499,7 +500,7 @@ class HTMLNode {
      * HTML document. Default is <b>FALSE</b>.
      * @param int $initTab [Optional] Initial tab count. Used in case of the document is 
      * well formatted.
-     * @return type
+     * @return string HTML string that represents the node.
      */
     public function toHTML($formatted=false,$initTab=0) {
         if(!$formatted){
@@ -602,7 +603,7 @@ class HTMLNode {
         }
     }
     /**
-     * Returns a node based on its attribute value (Direct childs).
+     * Returns a node based on its attribute value (Direct child).
      * @param string $attrName The name of the attribute.
      * @param string $attrVal The value of the attribute.
      * @return HTMLNode|NULL The function will return an object of type <b>HTMLNode</b> 
@@ -646,7 +647,10 @@ class HTMLNode {
         }
         return FALSE;
     }
-    
+    /**
+     * Returns HTML string that represents the node as a whole.
+     * @return string HTML string that represents the node as a whole.
+     */
     public function __toString() {
         return $this->toHTML(FALSE);
     }
