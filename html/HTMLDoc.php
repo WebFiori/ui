@@ -25,10 +25,15 @@
  */
 
 /**
- * A class that represents HTML document.
+ * A class that represents HTML document. The created document is HTML 5 compatible (
+ * DOCTYPE html). Also, the document will have the following features by default: 
+ * <ul>
+ * <li>A Head node with meta charset = 'utf-8' and view port = 'width=device-width, initial-scale=1.0'.</li>
+ * <li>A body node.</li>
+ * </ul>
  *
  * @author Ibrahim
- * @version 1.3
+ * @version 1.4
  */
 class HTMLDoc {
     /**
@@ -196,6 +201,35 @@ class HTMLDoc {
         return $this->document;
     }
     /**
+     * Returns the document as readable HTML code wrapped inside 'pre' element.
+     * @param boolean $formatted [Optional] Set to <b>TRUE</b> to return a well formatted 
+     * HTML document. Default is <b>TRUE</b>.
+     * @return string The document as readable HTML code wrapped inside 'pre' element.
+     * @since 1.4
+     */
+    public function asCode($formatted=true) {
+        $ashtml = $this->toHTML($formatted);
+        $greaterRep = str_replace('>', '&gt;', $ashtml);
+        $retVal = str_replace('<', '&lt;', $greaterRep);
+        return '<pre>'.$retVal.'</pre>';
+    }
+    /**
+     * Removes a child node from the document.
+     * @param HTMLNode $node The node that will be removed. If the given 
+     * node name is 'body' or 'head', The node will never be removed.
+     * @return HTMLNode|NULL The function will return the node if removed. 
+     * If not removed, the function will return <b>NULL</b>.
+     * @since 1.4
+     */
+    public function removeChild($node) {
+        if($node instanceof HTMLNode){
+            if($node->getName() != 'body' && $node->getName() != 'head'){
+                return $this->htmlNode->removeNode($node);
+            }
+        }
+        return NULL;
+    }
+    /**
      * Returns the node that represents the 'head' node.
      * @return HeadNode The node that represents the 'head' node.
      * @since 1.2
@@ -213,12 +247,16 @@ class HTMLDoc {
     }
     /**
      * Appends new node to the body of the document.
-     * @param HTMLNode $node The node that will be added.
+     * @param HTMLNode $node The node that will be added. It will be added 
+     * only if the name of the node is not 'html', 'head' or body.
      * @since 1.0
      */
     public function addNode($node){
         if($node instanceof HTMLNode){
-            $this->body->addChild($node);
+            $name = $node->getName();
+            if($name != 'body' && $name != 'head' && $name != 'html'){
+                $this->body->addChild($node);
+            }
         }
     }
 }
