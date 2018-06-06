@@ -28,7 +28,7 @@
  * A class that represents HTML or XML tag.
  *
  * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.3
+ * @version 1.4
  */
 class HTMLNode {
     /**
@@ -433,11 +433,12 @@ class HTMLNode {
     public function removeNode($node) {
         if(!$this->isTextNode()){
             if($node instanceof HTMLNode){
-                $count = $this->childNodes()->size();
+                $children = $this->childNodes();
+                $count = $children->size();
                 for($x = 0 ; $x < $count ; $x++){
-                    $child = $this->childNodes()->get($x);
+                    $child = $children->get($x);
                     if($child == $node){
-                        $this->childrenList->remove($x));
+                        $children->remove($x);
                         $child->setParentNode(NULL);
                         return $child;
                     }
@@ -588,6 +589,30 @@ class HTMLNode {
         if($this->tabCount > 0){
             $this->tabCount -= 1;
         }
+    }
+    /**
+     * Returns the node as readable HTML code wrapped inside 'pre' element.
+     * @param boolean $formatted [Optional] Set to <b>TRUE</b> to return a well formatted 
+     * HTML document. Default is <b>TRUE</b>.
+     * @return string The node as readable HTML code wrapped inside 'pre' element.
+     * @since 1.4
+     */
+    public function asCode($formatted=true) {
+        $ashtml = $this->toHTML($formatted);
+        $greaterRep = str_replace('>', '&gt;', $ashtml);
+        $retVal = str_replace('<', '&lt;', $greaterRep);
+        return '<pre>'.$retVal.'</pre>';
+    }
+    /**
+     * Returns the number of child nodes attached to the node.
+     * @return int The number of child nodes attached to the node.
+     * @since 1.4
+     */
+    public function childrenCount() {
+        if(!$this->isTextNode()){
+            return $this->childNodes()->size();
+        }
+        return 0;
     }
     /**
      * Returns the currently used tag space. 
