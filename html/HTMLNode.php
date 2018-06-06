@@ -85,7 +85,7 @@ class HTMLNode {
      * @var LinkedList
      * @since 1.0 
      */
-    private $childNodes;
+    private $childrenList;
     /**
      * A boolean value. If set to true, The node must be closed while building 
      * the document.
@@ -126,7 +126,7 @@ class HTMLNode {
         else{
             $this->requireClose = $reqClose === TRUE ? TRUE : FALSE;
             $this->isText = FALSE;
-            $this->childNodes = new LinkedList();
+            $this->childrenList = new LinkedList();
             $this->attributes = array();
         }
     }
@@ -154,7 +154,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function childNodes(){
-        return $this->childNodes;
+        return $this->childrenList;
     }
     /**
      * Checks if the node is a text node or not.
@@ -211,9 +211,11 @@ class HTMLNode {
         $chCount = $chList->size();
         for($x = 0 ; $x < $chCount ; $x++){
             $child = $chList->get($x);
-            $tmpList = $child->_getChildrenByTag($val,$child->childNodes(),new LinkedList());
-            for($y = 0 ; $y < $tmpList->size() ; $y++){
-                $list->add($tmpList->get($y));
+            if(!$child->isTextNode()){
+                $tmpList = $child->_getChildrenByTag($val,$child->childNodes(),new LinkedList());
+                for($y = 0 ; $y < $tmpList->size() ; $y++){
+                    $list->add($tmpList->get($y));
+                }
             }
         }
         for($x = 0 ; $x < $chCount ; $x++){
@@ -250,9 +252,11 @@ class HTMLNode {
         $chCount = $chNodes->size();
         for($x = 0 ; $x < $chCount ; $x++){
             $child = $chNodes->get($x);
-            $tmpCh = $child->_getChildByID($val,$child->childNodes());
-            if($tmpCh instanceof HTMLNode){
-                return $tmpCh;
+            if(!$child->isTextNode()){
+                $tmpCh = $child->_getChildByID($val,$child->childNodes());
+                if($tmpCh instanceof HTMLNode){
+                    return $tmpCh;
+                }
             }
         }
         for($x = 0 ; $x < $chCount ; $x++){
@@ -416,7 +420,7 @@ class HTMLNode {
      */
     public function removeAllChildNodes() {
         if(!$this->isTextNode()){
-            $this->childNodes->clear();
+            $this->childrenList->clear();
         }
     }
     /**
@@ -432,8 +436,8 @@ class HTMLNode {
                 $count = $this->childNodes()->size();
                 for($x = 0 ; $x < $count ; $x++){
                     $child = $this->childNodes()->get($x);
-                    if($child === $node){
-                        $this->childNodes()->remove($x);
+                    if($child == $node){
+                        $this->childrenList->remove($x));
                         $child->setParentNode(NULL);
                         return $child;
                     }
@@ -452,8 +456,8 @@ class HTMLNode {
     public function addChild($node) {
         if(!$this->isTextNode() && $this->mustClose()){
             if($node instanceof HTMLNode){
-                $this->childNodes->add($node);
                 $node->setParentNode($this);
+                $this->childrenList->add($node);
             }
         }
     }
