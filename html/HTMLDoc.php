@@ -115,7 +115,7 @@ class HTMLDoc {
             $list->add($child);
         }
         if(!$child->isTextNode()){
-            $children = $child->childNodes();
+            $children = $child->children();
             $chCount = $children->size();
             for($x = 0 ; $x < $chCount ; $x++){
                 $this->_getChildrenByTag($val, $list, $children->get($x));
@@ -171,7 +171,7 @@ class HTMLDoc {
      */
     public function setHeadNode($node){
         if($node instanceof HeadNode){
-            $this->htmlNode->replaceNode($this->headNode, $node);
+            $this->htmlNode->replaceChild($this->headNode, $node);
             $this->headNode = $node;
         }
     }
@@ -224,7 +224,7 @@ class HTMLDoc {
     public function removeChild($node) {
         if($node instanceof HTMLNode){
             if($node->getName() != 'body' && $node->getName() != 'head'){
-                return $this->htmlNode->removeNode($node);
+                return $this->htmlNode->removeChild($node);
             }
         }
         return NULL;
@@ -251,7 +251,7 @@ class HTMLDoc {
      * only if the name of the node is not 'html', 'head' or body.
      * @since 1.0
      */
-    public function addNode($node){
+    public function addChild($node){
         if($node instanceof HTMLNode){
             $name = $node->getName();
             if($name != 'body' && $name != 'head' && $name != 'html'){

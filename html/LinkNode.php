@@ -78,6 +78,6 @@ class LinkNode extends HTMLNode{
      * @since 1.0
      */
     public function setText($text){
-        $this->childNodes()->get(0)->setText($text);
+        $this->children()->get(0)->setText($text);
     }
 }

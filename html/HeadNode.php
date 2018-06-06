@@ -82,7 +82,7 @@ class HeadNode extends HTMLNode{
             if($this->baseNode == NULL){
                 $this->baseNode = new HTMLNode('base', FALSE, FALSE);
             }
-            if(!$this->hasNode($this->baseNode)){
+            if(!$this->hasChild($this->baseNode)){
                 $this->addChild($this->baseNode);
             }
             $this->baseNode->setAttribute('href',$url);
@@ -109,10 +109,10 @@ class HeadNode extends HTMLNode{
                 $this->titleNode = new HTMLNode('title');
                 $this->titleNode->addChild(new HTMLNode('', '', TRUE));
             }
-            if(!$this->hasNode($this->titleNode)){
+            if(!$this->hasChild($this->titleNode)){
                 $this->addChild($this->titleNode);
             }
-            $this->titleNode->childNodes()->get(0)->setText($title);
+            $this->titleNode->children()->get(0)->setText($title);
         }
     }
     /**
@@ -122,7 +122,7 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getCSSNodes(){
-        $children = $this->childNodes();
+        $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
         for($x = 0 ; $x < $chCount ; $x++){
@@ -143,7 +143,7 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getJSNodes(){
-        $children = $this->childNodes();
+        $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
         for($x = 0 ; $x < $chCount ; $x++){
@@ -164,7 +164,7 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getMetaNodes(){
-        $children = $this->childNodes();
+        $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
         for($x = 0 ; $x < $chCount ; $x++){
@@ -229,7 +229,7 @@ class HeadNode extends HTMLNode{
                 $this->canonical = new HTMLNode('link');
                 $this->canonical->setAttribute('rel', 'canonical');
             }
-            if(!$this->hasNode($this->canonical)){
+            if(!$this->hasChild($this->canonical)){
                 $this->addChild($this->canonical);
             }
             $this->canonical->setAttribute('href', $link);
@@ -287,7 +287,7 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getAlternates() {
-        $children = $this->childNodes();
+        $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
         for($x = 0 ; $x < $chCount ; $x++){

@@ -36,14 +36,14 @@ require '../html/PNode.php';
 require '../html/Br.php';
 
 $doc = new HTMLDoc();
-$doc->addNode(new HTMLNode('div'));
+$doc->addChild(new HTMLNode('div'));
 $container = new HTMLNode();
 $container->setClassName('container');
 $container->setID('my-container');
 $text = new HTMLNode('', '', TRUE);
 $text->setText('This is my super container');
 $container->addChild($text);
-$doc->addNode($container);
+$doc->addChild($container);
 $p = new PNode();
 $p->addText('This is a text.');
 $p->addText(' Bold Text', $options=array('bold'=>TRUE,'new-line'=>TRUE));
