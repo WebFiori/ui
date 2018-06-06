@@ -26,9 +26,9 @@
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
-require '../Node.php';
-require '../LinkedList.php';
-require '../Stack.php';
+require '../structs/Node.php';
+require '../structs/LinkedList.php';
+require '../structs/Stack.php';
 require '../html/HTMLNode.php';
 require '../html/HTMLDoc.php';
 require '../html/HeadNode.php';
@@ -55,4 +55,4 @@ $doc->addNode($helloNode);
 $doc->addNode($div);
 $doc->setLanguage('en');
 echo $doc->toHTML();
-$doc->saveToFile('test-not-formatted',FALSE);
+$doc->saveToFile('test');
