@@ -23,154 +23,111 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
-error_reporting(-1);
-require '../Node.php';
-require '../LinkedList.php';
-runAddTests();
-runRemoveTests();
-runRemoveELTests();
-runCountTests();
-function runCountTests(){
-    countTest();
-    countTest(array(NULL,NULL,1,2,3,NULL,NULL), NULL, 4);
-    countTest(array(NULL,NULL,1,2,3,"2",NULL,NULL), 2, 1);
-    countTest(array(NULL,NULL,1,2,3,NULL,700), 700, 1);
-    countTest(array(NULL,NULL,1,2,3,NULL,NULL), 6, 0);
-    countTest(array('NULL',NULL,1,'2',3,'NULL',NULL), 'NULL', 2);
+require 'test.php';
+require '../structs/Node.php';
+require '../structs/LinkedList.php';
+class TestClass{
+    private $var1;
+    private $var2;
+    private $var3;
+    
+    public function __construct($v1,$v2,$v3) {
+        $this->var1 = $v1;
+        $this->var2 = $v2;
+        $this->var3 = $v3;
+    }
+    
+    public function __toString() {
+        return 'Object';
+    }
 }
-function runRemoveTests(){
-    removeTest();
-    removeTest(array(1,2,3,4,5), 4);
-    removeTest(array(1,2,3,4,5,'44'), 44);
-    removeTest(array(1,2,NULL,4,5,'44'),  1);
-    removeTest(array('464'), 1);
-    removeTest(array(464,6565,'vv'=>'77','xx'=>'876',77,99,6600), 6);
-}
-function runRemoveELTests(){
-    removeElTest();
-    removeElTest(array(1,2,3,4,4,5), 4, TRUE);
-    removeElTest(array(1,2,3,4,5,'44'), 44, FALSE);
-    removeElTest(array(1,2,NULL,4,4,5,'44'), NULL, TRUE);
-    removeElTest(array('464'), 464, FALSE);
-    removeElTest(array(464), 464, TRUE);
-}
-function runAddTests(){
-    addTest();
-    addTest(array('hello'),1);
-    addTest(array('hello',1,2,7),4);
-    addTest(array(0,1,2,3,"43x"=>4,54,'nice'=>'c'),7);
-}
-function removeTest($els=array(),$index=0){
+$obj = new TestClass('x', 'y', 'z');
+$obj2 = new TestClass('a','b','c');
+$obj3 = new TestClass('1','2','3');
+$obj4 = new TestClass('x', 'y', 'z');
+$obj5 = new TestClass('a','b','c');
+$obj6 = new TestClass('1','2','3');
+addElTest();
+addElTest(array(NULL,NULL,NULL,NULL,NULL));
+addElTest(array(1,'',6,'hello','',67,88,'nice','','nice'));
+addElTest(array(1,new TestClass('a', 'b', 'c'),6,'hello','',new TestClass('a', 'b', 'c'),88,'nice','','nice'));
+removeElTest();
+removeElTest(array(1,2,3,4,4,5,6),array(9),7);
+removeElTest(array('1','','3','','xxx',5,'nice','hello',1.6,1.6),array('',1,'1.6','xxx'),10 - 2);
+removeElTest(array(new TestClass('', '', '')), array(new TestClass('', '', '')), 1);
+removeElTest(array(new TestClass('', '', ''),$obj,$obj2,'1','5',1,6), array(new TestClass('', '', ''),$obj,1), 5);
+removeElTest(array(new TestClass('', '', ''),$obj,$obj,$obj2,$obj2,'1','5',1,6), array(new TestClass('', '', ''),$obj,1), 7);
+indexOfTest(array(1,1,2,2,3,3), 2, 2);
+indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2), $obj2, 8);
+indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2), '77', -1);
+indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2,$obj3,$obj4), new TestClass('x','y','z'), -1);
+indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2), '', 4);
+printTestResults();
+
+function indexOfTest($arr=array(),$el=0,$expIndex=0){
+    echo '<b>--------------------indexOfTest--------------------</b><br/>';
+    echo 'creating new instance of linked list<br/>';
     $list = new LinkedList();
-    echo '<b style="background-color:gray">--Testing the function "LinkedList::remove($index)--</b>"<br/>';
-    if(count($els) > $index && $index > -1){
-        echo 'Expected List Size After Removing: '.(count($els) - 1).'<br/>';
+    echo 'printing elements will be added.<br/>';
+    print_readable($arr);
+    foreach ($arr as  $value) {
+        $list->add($value);
+    }
+    $elIndex = $list->indexOf($el);
+    echo 'Index of element = '.$elIndex.'<br/>';
+    echo 'Expected index = '.$expIndex.'<br/>';
+    if($elIndex == $expIndex){
+        incPassedTests();
     }
     else{
-        echo 'Expected List Size After Removing: '.(count($els)).'<br/>';
-    }
-    foreach ($els as $val){
-        echo 'Adding: '.$val.' ';
-        if($list->add($val)){
-            echo '(TRUE)<br/>';
-        }
-        else{
-            echo '(FALSE)<br/>';
-        }
-    }
-    echo $list.'<br/>';
-    echo 'List size after adding: '.$list->size().'<br/>';
-    echo 'Removing element at "'.$index.'"<br/>';
-    $el = $list->remove($index);
-    echo $list.'<br/>';
-    echo 'List size after removing: '.$list->size().'<br/>';
-    echo 'Test result: ';
-    if(!$list->contains($el)){
-        echo '<b style="color:green">PASS</b><br/>';
-    }
-    else{
-        echo '<b style="color:red">FAIL</b><br/>';
+        incFailedTests();
     }
 }
-function removeElTest($els=array(),$elToremove=null,$expResult=false){
+function removeElTest($toAdd=array(),$toRemove=array(),$expsize=0){
+    echo '<b>--------------------removeElTest--------------------</b><br/>';
+    echo 'creating new instance of linked list<br/>';
     $list = new LinkedList();
-    echo '<b style="background-color:gray">--Testing the function "LinkedList::removeElement($el)--</b>"<br/>';
-    if($expResult == TRUE){
-        echo 'Expected List Size After Removing: '.(count($els) - 1).'<br/>';
+    echo 'printing elements will be added.<br/>';
+    print_readable($toAdd);
+    echo 'printing elements will be removed.<br/>';
+    print_readable($toRemove);
+    foreach ($toAdd as  $value) {
+        $list->add($value);
     }
-    else{
-        echo 'Expected List Size After Removing: '.(count($els)).'<br/>';
+    echo 'Expected size after removal: '.$expsize.'<br/>';
+    $size = $list->size();
+    echo 'List size after ading: '.$size.'<br/>';
+    foreach ($toRemove as  $value) {
+        echo 'Removing '.$value.'<br/>';
+        echo $list->removeElement($value) === TRUE ? 'Removed<br/>' : 'Not Removed<br/>';
     }
-    foreach ($els as $val){
-        echo 'Adding: '.$val.' ';
-        if($list->add($val)){
-            echo '(TRUE)<br/>';
-        }
-        else{
-            echo '(FALSE)<br/>';
-        }
+    $sizeRe = $list->size();
+    echo 'List size after removal: '.$sizeRe.'<br/>';
+    echo $list;
+    if($expsize == $sizeRe){
+        incPassedTests();
     }
-    echo $list.'<br/>';
-    echo 'List size after adding: '.$list->size().'<br/>';
-    echo 'Removing "'.$elToremove.' ('. gettype($elToremove).')"<br/>';
-    $result = $list->removeElement($elToremove);
-    echo $list.'<br/>';
-    echo 'List size after removing: '.$list->size().'<br/>';
-    echo 'Test result: ';
-    if($result == $expResult){
-        echo '<b style="color:green">PASS</b><br/>';
-    }
-    else{
-        echo '<b style="color:red">FAIL</b><br/>';
+    else {
+        incFailedTests();
     }
 }
-function addTest($els=array(),$expSize=0) {
+function addElTest($els=array()) {
+    echo '<b>--------------------addElTest--------------------</b><br/>';
+    echo 'creating new instance of linked list<br/>';
     $list = new LinkedList();
-    echo '<b style="background-color:gray">--Testing the function "LinkedList::add($el)--</b>"<br/>';
-    echo 'Expected List Size After Adding: '.$expSize.'<br/>';
-    foreach ($els as $val){
-        echo 'Adding: '.$val.' ';
-        if($list->add($val)){
-            echo '(TRUE)<br/>';
-        }
-        else{
-            echo '(FALSE)<br/>';
-        }
+    echo 'printing elements will be added.<br/>';
+    print_readable($els);
+    foreach ($els as  $value) {
+        $list->add($value);
     }
-    echo $list.'<br/>';
-    echo 'List size after adding: '.$list->size().'<br/>';
-    echo 'Test result: ';
-    if($list->size() == $expSize){
-        echo '<b style="color:green">PASS</b><br/>';
+    $count = count($els);
+    echo 'Expected size: '.$count.'<br/>';
+    $size = $list->size();
+    echo 'List size after adding: '.$size.'<br/>';
+    if($size == $count){
+        incPassedTests();
     }
-    else{
-        echo '<b style="color:red">FAIL</b><br/>';
-    }
-}
-function countTest($els=array(),$elToCount=NULL,$expResult=0){
-    $list = new LinkedList();
-    echo '<b style="background-color:gray">--Testing the function "LinkedList::count($el)--</b>"<br/>';
-    echo 'Expected result: '.$expResult.'<br/>';
-    echo 'Element to count: "'.$elToCount.'" ('. gettype($elToCount).')<br/>';
-    foreach ($els as $val){
-        echo 'Adding: '.$val.' ';
-        if($list->add($val)){
-            echo '(TRUE)<br/>';
-        }
-        else{
-            echo '(FALSE)<br/>';
-        }
-    }
-    echo $list.'<br/>';
-    $count = $list->count($elToCount);
-    echo 'Count = '.$count.'<br/>';
-    echo 'Test result: ';
-    if($count == $expResult){
-        echo '<b style="color:green">PASS</b><br/>';
-    }
-    else{
-        echo '<b style="color:red">FAIL</b><br/>';
+    else {
+        incFailedTests();
     }
 }
