@@ -176,6 +176,28 @@ class LinkedList {
         return NULL;
     }
     /**
+     * Returns an array that represents the list.
+     * @return array An array that represents the list.
+     * @since 1.3
+     */
+    public function toArray() {
+        $array = array();
+        if($this->size() == 1){
+            array_push($array, $this->head->data());
+        }
+        else if($this->size() == 0){
+            
+        }
+        else{
+            $node = $this->head;
+            while ($node->next() != NULL){
+                array_push($array, $node->data());
+            }
+            array_push($array, $node->data());
+        }
+        return $array;
+    }
+    /**
      * Removes an element given its index.
      * @param int $index The index of the element.
      * @return mixed If the given index is in the range <b>[0, LinkedList::size() - 1]</b>, 
