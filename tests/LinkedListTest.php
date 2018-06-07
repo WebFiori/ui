@@ -26,7 +26,8 @@
 require 'test.php';
 require '../structs/Node.php';
 require '../structs/LinkedList.php';
-class TestClass{
+require '../structs/Comparable.php';
+class TestClass implements Comparable{
     private $var1;
     private $var2;
     private $var3;
@@ -40,6 +41,11 @@ class TestClass{
     public function __toString() {
         return 'Object';
     }
+
+    public function compare($other) {
+        return -1;
+    }
+
 }
 $obj = new TestClass('x', 'y', 'z');
 $obj2 = new TestClass('a','b','c');
@@ -64,6 +70,13 @@ indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2,$obj3,$obj4), new TestClass('x
 indexOfTest(array($obj,4,8,99,'','',77,$obj,$obj2), '', 4);
 printTestResults();
 
+$array = array('A','Z','Ibrahim',new TestClass('', '', ''),'Ib','Imam','Haas','Huss','Zepra');
+$list = new LinkedList();
+foreach ($array as $value) {
+    $list->add($value);
+}
+$list->insertionSort(FALSE);
+echo $list;
 function indexOfTest($arr=array(),$el=0,$expIndex=0){
     echo '<b>--------------------indexOfTest--------------------</b><br/>';
     echo 'creating new instance of linked list<br/>';
