@@ -32,6 +32,26 @@
  */
 class HTMLNode {
     /**
+     * Default formatting for the code.
+     * @var array
+     * @since 1.5
+     */
+    const DEFAULT_CODE_FORMAT = array(
+        'tab-spaces'=>4,
+        'initial-tab'=>0,
+        'with-colors'=>true,
+        'colors'=>array(
+            'bg-color'=>'rgb(21, 18, 33)',
+            'text-color'=>'white',
+            'attribute-color'=>'rgb(0,124,0)',
+            'attribute-value-color'=>'rgb(170,85,137)',
+            'node-name-color'=>'rgb(204,225,70)',
+            'lt-gt-color'=>'rgb(204,225,70)',
+            'comment-color'=>'rgb(0,189,36)',
+            'operator-color'=>'white'
+        )
+    );
+    /**
      * A string that represents a tab. Usually 4 spaces.
      * @var string 
      * @since 1.3
@@ -61,6 +81,11 @@ class HTMLNode {
      * @since 1.3 
      */
     private $htmlString;
+    /**
+     * The Node as viewable HTML code.
+     * @since 1.5
+     */
+    private $codeString;
     /**
      * The parent node of the instance.
      * @var HTMLNode
@@ -117,7 +142,7 @@ class HTMLNode {
             $this->name = $nameUpper;
         }
         else{
-            $this->name = $name;
+            $this->name = strtolower($name);
         }
         if($this->isTextNode() === TRUE || $this->isComment()){
             $this->requireClose = FALSE;
@@ -151,7 +176,7 @@ class HTMLNode {
      * @param HTMLNode $node
      * @since 1.2
      */
-    private function setParent($node){
+    private function _setParent($node){
         $this->parentNode = $node;
     }
     /**
@@ -162,6 +187,30 @@ class HTMLNode {
      */
     public function children(){
         return $this->childrenList;
+    }
+    /**
+     * Creates new text node.
+     * @param string $nodeText The text that will be inserted in the body 
+     * of the node.
+     * @return HTMLNode An object of type HTMLNode.
+     * @since 1.5
+     */
+    public static function createTextNode($nodeText){
+        $text = new HTMLNode('#TEXT');
+        $text->setText($nodeText);
+        return $text;
+    }
+    /**
+     * Creates new comment node.
+     * @param string $text The text that will be inserted in the body 
+     * of the comment.
+     * @return HTMLNode An object of type HTMLNode.
+     * @since 1.5
+     */
+    public static function createComment($text) {
+        $comment = new HTMLNode('#COMMENT');
+        $comment->setText($text);
+        return $comment;
     }
     /**
      * Checks if the node is a text node or not.
@@ -439,7 +488,7 @@ class HTMLNode {
             if($node instanceof HTMLNode){
                 $child = $this->children()->removeElement($node);
                 if($child instanceof HTMLNode){
-                    $child->setParent(NULL);
+                    $child->_setParent(NULL);
                     return $child;
                 }
             }
@@ -456,7 +505,7 @@ class HTMLNode {
     public function addChild($node) {
         if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             if($node instanceof HTMLNode){
-                $node->setParent($this);
+                $node->_setParent($this);
                 $this->childrenList->add($node);
             }
         }
@@ -474,21 +523,33 @@ class HTMLNode {
         }
     }
     /**
-     * Returns the value of the property <b>$text</b>.
-     * @return string The value of the property <b>$text</b>. If the node is 
-     * not a text node or a comment node, the function will return empty string.
+     * Returns the value of the text that this node represents.
+     * @return string If the node is a text node or a comment node, 
+     * the function will return the text in the body of the node.
      * @since 1.0
      */
     public function getText() {
         return $this->text;
     }
     /**
-     * Returns a string that represents the opening part of the tag.
-     * @return string A string that represents the opening part of the tag. 
+     * Returns the node as HTML comment.
+     * @return string The node as HTML comment. if the node is not a comment, 
+     * the function will return empty string.
+     * @since 1.5
+     */
+    public function getComment() {
+        if($this->isComment()){
+            return '<!--'.$this->getText().'-->';
+        }
+        return '';
+    }
+    /**
+     * Returns a string that represents the opening part of the node.
+     * @return string A string that represents the opening part of the node. 
      * if the node is a text node or a comment node, the returned value will be an empty string.
      * @since 1.0
      */
-    public function asHTML() {
+    public function open() {
         $retVal = '';
         if(!$this->isTextNode() && !$this->isComment()){
             $retVal .= '<'.$this->getName().'';
@@ -498,6 +559,18 @@ class HTMLNode {
             $retVal .= '>';
         }
         return $retVal;
+    }
+    /**
+     * Returns a string that represents the closing part of the node.
+     * @return string A string that represents the closing part of the node. 
+     * if the node is a text node or a comment node, the returned value will be an empty string.
+     * @since 1.0
+     */
+    public function close() {
+        if(!$this->isTextNode() && !$this->isComment()){
+            return '</'.$this->getName().'>';
+        }
+        return '';
     }
     /**
      * Returns HTML string that represents the node as a whole.
@@ -537,46 +610,49 @@ class HTMLNode {
         
         $this->htmlString = '';
         $this->nodesStack = new Stack();
-        $this->pushNode($this,$formatted);
-        return $this->htmlString;
+        $this->_pushNode($this,$formatted);
+        return $this->htmlString.'</pre>';
     }
     /**
      * 
      * @param HTMLNode $node
      */
-    private function pushNode($node) {
+    private function _pushNode($node) {
         if($node->isTextNode()){
-            $this->htmlString .= $this->getTab().$node->getText().$this->nl;
+            $this->htmlString .= $this->_getTab().$node->getText().$this->nl;
+        }
+        else if($node->isComment()){
+            $this->htmlString .= $this->_getTab().$node->getComment().$this->nl;
         }
         else{
             if($node->mustClose()){
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
-                $this->htmlString .= $this->getTab().$node->asHTML().$this->nl;
-                $this->addTab();
+                $this->htmlString .= $this->_getTab().$node->open().$this->nl;
+                $this->_addTab();
                 for($x = 0 ; $x < $chCount ; $x++){
                     $nodeAtx = $node->children()->get($x);
-                    $this->pushNode($nodeAtx);
+                    $this->_pushNode($nodeAtx);
                 }
-                $this->reduceTab();
-                $this->popNode();
+                $this->_reduceTab();
+                $this->_popNode();
             }
             else{
-                $this->htmlString .= $this->getTab().$node->asHTML().$this->nl;
+                $this->htmlString .= $this->_getTab().$node->open().$this->nl;
             }
         }
     }
-    private function popNode(){
+    private function _popNode(){
         $node = $this->nodesStack->pop();
         if($node != NULL){
-            $this->htmlString .= $this->getTab().'</'.$node->getName().'>'.$this->nl;
+            $this->htmlString .= $this->_getTab().'</'.$node->getName().'>'.$this->nl;
         }
     }
     /**
      * Increase tab size by 1.
      * @since 1.0
      */
-    private function addTab(){
+    private function _addTab(){
         $this->tabCount += 1;
     }
     
@@ -585,23 +661,209 @@ class HTMLNode {
      * If the tab size is 0, it will not reduce it more.
      * @since 1.0
      */
-    private function reduceTab(){
+    private function _reduceTab(){
         if($this->tabCount > 0){
             $this->tabCount -= 1;
         }
     }
     /**
      * Returns the node as readable HTML code wrapped inside 'pre' element.
-     * @param boolean $formatted [Optional] Set to <b>TRUE</b> to return a well formatted 
-     * HTML document. Default is <b>TRUE</b>.
+     * @param array $formattingOptions [Optional] An associative array which contains 
+     * an options for formatting the code. The available options are:
+     * <ul>
+     * <li><b>tab-spaces</b>: The number of spaces in a tab. Usually 4.</li>
+     * <li><b>with-colors</b>: A boolean value. If set to TRUE, the code will 
+     * be highlighted with colors.</li>
+     * <li><b>initial-tab</b>: Number of initial tabs</li>
+     * <li><b>colors</b>: An associative array of highlight colors.</li>
+     * </ul>
+     * The array 'colors' has the following options:
+     * <ul>
+     * <li><b>bg-color</b>: The 'pre' block background color.</li>
+     * <li><b>attribute-color</b>: HTML attribute name color.</li>
+     * <li><b>attribute-value-color</b>: HTML attribute value color.</li>
+     * <li><b>text-color</b>: Normal text color.</li>
+     * <li><b>comment-color</b>: Comment color.</li>
+     * <li><b>operator-color</b>: Assignment operator color.</li>
+     * <li><b>lt-gt-color</b>: Less than and greater than color.</li>
+     * <li><b>node-name-color</b>: Node name color.</li>
+     * </ul>
      * @return string The node as readable HTML code wrapped inside 'pre' element.
      * @since 1.4
      */
-    public function asCode($formatted=true) {
-        $ashtml = $this->toHTML($formatted);
-        $greaterRep = str_replace('>', '&gt;', $ashtml);
-        $retVal = str_replace('<', '&lt;', $greaterRep);
-        return '<pre>'.$retVal.'</pre>';
+    public function asCode($formattingOptions=HTMLNode::DEFAULT_CODE_FORMAT) {
+        $formattingOptionsV = $this->_validateFormatAttributes($formattingOptions);
+        $this->nl = HTMLDoc::NL;
+        //number of spaces in a tab
+        $spacesCount = $formattingOptionsV['tab-spaces'];
+        $this->tabCount = $formattingOptionsV['initial-tab'];
+        $this->tabSpace = '';
+        for($x = 0 ; $x < $spacesCount ; $x++){
+            $this->tabSpace .= ' ';
+        }
+        if($formattingOptionsV['with-colors'] === TRUE){
+            $this->codeString = '<pre style="background-color:'.$formattingOptionsV['colors']['bg-color'].'; color:'.$formattingOptionsV['colors']['text-color'].'">'.$this->nl;
+        }
+        else{
+            $this->codeString = '<pre>'.$this->nl;
+        }
+        if($this->getName() == 'html'){
+            if($formattingOptionsV['with-colors']){
+                $this->codeString .= $this->_getTab().'<span style="color:'.$formattingOptionsV['colors']['lt-gt-color'].'">&lt;</span>'
+                        . '<span style="color:'.$formattingOptionsV['colors']['node-name-color'].'">!DOCTYPE html</span>'
+                        . '<span style="color:'.$formattingOptionsV['colors']['lt-gt-color'].'">&gt;</span>'.$this->nl;
+            }
+            else{
+                $this->codeString .= $this->_getTab().'&lt;!DOCTYPE html&gt;'.$this->nl;
+            }
+        }
+        $this->nodesStack = new Stack();
+        $this->_pushNodeAsCode($this,$formattingOptionsV);
+        return $this->codeString.'</pre>';
+    }
+    /**
+     * 
+     * @param array $FO Formatting options.
+     * @return string
+     * @since 1.5
+     */
+    private function _openAsCode($FO){
+        $retVal = '';
+        if($FO['with-colors'] === TRUE){
+            if(!$this->isTextNode() && !$this->isComment()){
+                $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;</span>'
+                        . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getName().'</span>';
+                foreach ($this->getAttributes() as $attr => $val){
+                    $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
+                            . '<span style="color:'.$FO['colors']['operator-color'].'">=</span> '
+                            . '<span style="color:'.$FO['colors']['attribute-value-color'].'">"'.$val.'"</span>';
+                }
+                $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
+            }
+        }
+        else{
+            if(!$this->isTextNode() && !$this->isComment()){
+                $retVal .= '&lt;'.$this->getName();
+                foreach ($this->getAttributes() as $attr => $val){
+                    $retVal .= ' '.$attr.' = "'.$val.'"';
+                }
+                $retVal .= '&gt;';
+            }
+        }
+        return $retVal;
+    }
+    /**
+     * 
+     * @param array $FO Formatting options.
+     * @return string
+     * @since 1.5
+     */
+    private function _closeAsCode($FO){
+        if($FO['with-colors'] === TRUE){
+            if(!$this->isTextNode() && !$this->isComment()){
+                return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
+                . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getName().'</span>'
+                        . '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
+            }
+        }
+        else{
+            if(!$this->isTextNode() && !$this->isComment()){
+                return '&lt;/'.$this->getName().'&gt;';
+            }
+        }
+        return '';
+    }
+    /**
+     * @param HTMLNode $node 
+     * @param array $FO Formatting options.
+     * @since 1.5
+     */
+    private function _pushNodeAsCode($node,$FO) {
+        if($node->isTextNode()){
+            $this->codeString .= $this->_getTab().$node->getText().$this->nl;
+        }
+        else if($node->isComment()){
+            if($FO['with-colors'] === TRUE){
+                $this->codeString .= $this->_getTab().'<span style="color:'.$FO['colors']['comment-color'].'">&lt!--'.$node->getText().'--&gt;</span>'.$this->nl;
+            }
+            else{
+                $this->codeString .= $this->_getTab().'&lt!--'.$node->getText().'--&gt;'.$this->nl;
+            }
+        }
+        else{
+            if($node->mustClose()){
+                $chCount = $node->children()->size();
+                $this->nodesStack->push($node);
+                $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
+                $this->_addTab();
+                for($x = 0 ; $x < $chCount ; $x++){
+                    $nodeAtx = $node->children()->get($x);
+                    $this->_pushNodeAsCode($nodeAtx,$FO);
+                }
+                $this->_reduceTab();
+                $this->_popNodeAsCode($FO);
+            }
+            else{
+                $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
+            }
+        }
+    }
+    /**
+     * 
+     * @param array $FO Formatting options.
+     * @since 1.5
+     */
+    private function _popNodeAsCode($FO){
+        $node = $this->nodesStack->pop();
+        if($node != NULL){
+            $this->codeString .= $this->_getTab().$node->_closeAsCode($FO).$this->nl;
+        }
+    }
+    /**
+     * Validate formatting options.
+     * @param array $FO An array of formatting options
+     * @return array An array of formatting options
+     * @since 1.5
+     */
+    private function _validateFormatAttributes($FO){
+        $defaultFormat = self::DEFAULT_CODE_FORMAT;
+        if(gettype($FO) == 'array'){
+            foreach ($defaultFormat as $key => $value) {
+                if(!isset($FO[$key])){
+                    $FO[$key] = $value;
+                }
+            }
+            foreach ($defaultFormat['colors'] as $key => $value) {
+                if(!isset($FO['colors'][$key])){
+                    $FO['colors'][$key] = $value;
+                }
+            }
+        }
+        else{
+            return $defaultFormat;
+        }
+        //tab spaces count validation
+        if(gettype($FO['tab-spaces']) == 'integer'){
+            if($FO['tab-spaces'] < 0){
+                $FO['tab-spaces'] = 0;
+            }
+            else if($FO['tab-spaces'] > 8){
+                $FO['tab-spaces'] = 8;
+            }
+        }
+        else{
+            $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
+        }
+        //initial tab validation
+        if(gettype($FO['initial-tab']) == 'integer'){
+            if($FO['initial-tab'] < 0){
+                $FO['initial-tab'] = 0;
+            }
+        }
+        else{
+            $FO['initial-tab'] = self::DEFAULT_CODE_FORMAT['initial-tab'];
+        }
+        return $FO;
     }
     /**
      * Returns the number of child nodes attached to the node.
@@ -619,7 +881,7 @@ class HTMLNode {
      * @return string
      * @since 1.0
      */
-    private function getTab(){
+    private function _getTab(){
         if($this->tabCount == 0){
             return '';
         }
