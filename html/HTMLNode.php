@@ -28,7 +28,7 @@
  * A class that represents HTML or XML tag.
  *
  * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.4
+ * @version 1.5
  */
 class HTMLNode {
     /**
@@ -94,12 +94,6 @@ class HTMLNode {
      */
     private $requireClose;
     /**
-     * An attribute that is set to true if the node only contains text. 
-     * @var boolean
-     * @since 1.0 
-     */
-    private $isText;
-    /**
      * The text that is located in the node body (applies only if the node is a 
      * text node). 
      * @var string
@@ -108,27 +102,40 @@ class HTMLNode {
     private $text;
     /**
      * Constructs a new instance of the class.
-     * @param string $name [Optional] The name of the node (such as 'div'). Default value 
+     * @param string $name [Optional] The name of the node (such as 'div').  If 
+     * we want to create a comment node, the name should be '#comment'. If 
+     * we want to create a text node, the name should be '#text'.Default value 
      * is 'div'.
      * @param boolean $reqClose [Optional] If set to <b>TRUE</b>, this means that the node 
-     * must end with closing tag. If <b>$isTextNode</b> is set to <b>TRUE</b>, 
+     * must end with closing tag. If $name is set to '#text' or '#comment', 
      * this argument is ignored. Default is <b>TRUE</b>.
-     * @param boolean $isTextNode If set to <b>TRUE</b>, this means the node is 
-     * a text node. Default is <b>FALSE</b>.
      * 
      */
-    public function __construct($name='div',$reqClose=true,$isTextNode=false) {
-        $this->name = $name;
-        if($isTextNode === TRUE){
+    public function __construct($name='div',$reqClose=true) {
+        $nameUpper = strtoupper($name);
+        if($name == '#TEXT' || $nameUpper == '#COMMENT'){
+            $this->name = $nameUpper;
+        }
+        else{
+            $this->name = $name;
+        }
+        if($this->isTextNode() === TRUE || $this->isComment()){
             $this->requireClose = FALSE;
-            $this->isText = TRUE;
         }
         else{
             $this->requireClose = $reqClose === TRUE ? TRUE : FALSE;
-            $this->isText = FALSE;
             $this->childrenList = new LinkedList();
             $this->attributes = array();
         }
+    }
+    /**
+     * Checks if the given node represents a comment or not.
+     * @return boolean The function will return TRUE if the given 
+     * node is a comment.
+     * @since 1.5
+     */
+    public function isComment() {
+        return $this->getName() == '#COMMENT';
     }
     /**
      * Returns the parent node.
@@ -162,7 +169,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function isTextNode() {
-        return $this->isText;
+        return $this->getName() == '#TEXT';
     }
     /**
      * Checks if a given node is a child of the instance.
@@ -173,7 +180,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function hasChild($node) {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             if($node instanceof HTMLNode){
                 return $this->children()->indexOf($node) != -1;
             }
@@ -188,7 +195,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function replaceChild($oldNode,$replacement) {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             if($oldNode instanceof HTMLNode){
                 if($this->hasChild($oldNode)){
                     if($replacement instanceof HTMLNode){
@@ -277,7 +284,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function getChildByID($val){
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             $val = $val.'';
             if(strlen($val) != 0){
                 return $this->_getChildByID($val, $this->children());
@@ -296,13 +303,11 @@ class HTMLNode {
     /**
      * Returns the name of the node.
      * @return string The name of the node. If the node is a text node, the 
-     * function will return the value '#text'.
+     * function will return the value '#TEXT'. If the node is a comment node, the 
+     * function will return the value '#TEXT'.
      * @since 1.0
      */
     public function getName(){
-        if($this->isTextNode()){
-            return '#text';
-        }
         return $this->name;
     }
     /**
@@ -325,7 +330,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function setAttribute($name,$val=''){
-        if(!$this->isTextNode() && gettype($name) == 'string' && strlen($name) != 0){
+        if(!$this->isTextNode() && !$this->isComment() && gettype($name) == 'string' && strlen($name) != 0){
             $lower = strtolower($name);
             if($name == 'dir'){
                 $lowerVal = strtolower($val);
@@ -407,7 +412,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function removeAttribute($name){
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             if(isset($this->attributes[$name])){
                 unset($this->attributes[$name]);
             }
@@ -418,7 +423,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function removeAllChildNodes() {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             $this->childrenList->clear();
         }
     }
@@ -430,7 +435,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function removeChild($node) {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             if($node instanceof HTMLNode){
                 $child = $this->children()->removeElement($node);
                 if($child instanceof HTMLNode){
@@ -449,7 +454,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function addChild($node) {
-        if(!$this->isTextNode() && $this->mustClose()){
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             if($node instanceof HTMLNode){
                 $node->setParent($this);
                 $this->childrenList->add($node);
@@ -458,19 +463,20 @@ class HTMLNode {
     }
     /**
      * Sets the value of the property <b>$text</b>.
-     * @param string $text The text to set. If the node is not a text node, 
+     * @param string $text The text to set. If the node is not a text node or 
+     * a comment node, 
      * the value will never be set.
      * @since 1.0
      */
     public function setText($text) {
-        if($this->isTextNode()){
+        if($this->isTextNode() || $this->isComment()){
             $this->text = $text;
         }
     }
     /**
      * Returns the value of the property <b>$text</b>.
      * @return string The value of the property <b>$text</b>. If the node is 
-     * not a text node, the function will return empty string.
+     * not a text node or a comment node, the function will return empty string.
      * @since 1.0
      */
     public function getText() {
@@ -479,12 +485,12 @@ class HTMLNode {
     /**
      * Returns a string that represents the opening part of the tag.
      * @return string A string that represents the opening part of the tag. 
-     * if the node is a text node, the returned value will be an empty string.
+     * if the node is a text node or a comment node, the returned value will be an empty string.
      * @since 1.0
      */
     public function asHTML() {
         $retVal = '';
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             $retVal .= '<'.$this->getName().'';
             foreach ($this->getAttributes() as $attr => $val){
                 $retVal .= ' '.$attr.'="'.$val.'"';
@@ -603,7 +609,7 @@ class HTMLNode {
      * @since 1.4
      */
     public function childrenCount() {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             return $this->children()->size();
         }
         return 0;
@@ -633,7 +639,7 @@ class HTMLNode {
      * if a node is found. Other than that, the function will return <b>NULL</b>.
      */
     public function getChildByAttributeValue($attrName,$attrVal) {
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             for($x = 0 ; $x < $this->children()->size() ; $x++){
                 $ch = $this->children()->get($x);
                 if($ch->hasAttribute($attrName)){
@@ -665,7 +671,7 @@ class HTMLNode {
      * @since 1.1
      */
     public function hasAttribute($attrName){
-        if(!$this->isTextNode()){
+        if(!$this->isTextNode() && !$this->isComment()){
             return isset($this->attributes[$attrName]);
         }
         return FALSE;
