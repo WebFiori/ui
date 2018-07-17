@@ -107,7 +107,7 @@ class HeadNode extends HTMLNode{
         if(gettype($title) == 'string'){
             if($this->titleNode == NULL){
                 $this->titleNode = new HTMLNode('title');
-                $this->titleNode->addChild(new HTMLNode('', '', TRUE));
+                $this->titleNode->addChild(self::createTextNode($title));
             }
             if(!$this->hasChild($this->titleNode)){
                 $this->addChild($this->titleNode);
