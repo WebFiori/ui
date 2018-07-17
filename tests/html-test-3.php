@@ -40,12 +40,16 @@ $doc->addChild(new HTMLNode('div'));
 $container = new HTMLNode();
 $container->setClassName('container');
 $container->setID('my-container');
-$text = new HTMLNode('', '', TRUE);
-$text->setText('This is my super container');
-$container->addChild($text);
+$container->addChild(HTMLNode::createTextNode('This is a text'));
 $doc->addChild($container);
 $p = new PNode();
 $p->addText('This is a text.');
 $p->addText(' Bold Text', $options=array('bold'=>TRUE,'new-line'=>TRUE));
 $container->addChild($p);
-echo $doc->asCode();
+$container->addChild($container::createComment('This is a comment'));
+$doc->addChild(HTMLNode::createTextNode($doc->asCode(array(
+    'colors'=>array(
+        'lt-gt-color'=>'red'
+    )
+))));
+echo $doc;
