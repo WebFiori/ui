@@ -35,6 +35,7 @@ require '../html/HeadNode.php';
 
 
 $doc = new HTMLDoc();
-$titleNode = $doc->getChildrenByTag('title')->get(0);
-$doc->getHeadNode()->removeChild($titleNode);
-echo $doc->getChildrenByTag('html')->get(0)->asCode(TRUE);
+$titleNode = $doc->getChildrenByTag('title')->get(0)->children()->get(0);
+echo $doc->asCode();
+$doc->removeChild($titleNode);
+echo $doc->asCode();

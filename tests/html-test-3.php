@@ -36,7 +36,8 @@ require '../html/PNode.php';
 require '../html/Br.php';
 
 $doc = new HTMLDoc();
-$doc->addChild(new HTMLNode('div'));
+$div = new HTMLNode('div');
+$doc->addChild($div);
 $container = new HTMLNode();
 $container->setClassName('container');
 $container->setID('my-container');
