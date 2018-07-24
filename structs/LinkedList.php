@@ -121,7 +121,8 @@ class LinkedList {
      */
     public function &getFirst(){
         if($this->size() >= 1){
-            return $this->head->data();
+            $data = &$this->head->data();
+            return $data;
         }
         return $this->null;
     }
@@ -133,12 +134,15 @@ class LinkedList {
      */
     public function &getLast(){
         if($this->size() == 1){
-            return $this->getFirst();
+            $data = &$this->getFirst();
         }
         else if($this->size() > 1){
-            return $this->tail->data();
+            $data = &$this->tail->data();
         }
-        return $this->null;
+        else{
+            $data = $this->null;
+        }
+        return $data;
     }
     /**
      * Removes all of the elements from the list.
@@ -160,17 +164,19 @@ class LinkedList {
         if(gettype($index) == 'integer'){
             if($index < $this->size() && $index > -1){
                 if($index == 0){
-                    return $this->getFirst();
+                    $first = &$this->getFirst();
+                    return $first;
                 }
                 else if($index == $this->size() - 1){
-                    return $this->getLast();
+                    $last = &$this->getLast();
+                    return $last;
                 }
                 else{
                     $nextNode = $this->head->next();
                     $node = $this->head;
                     for($i = 1 ; ; $i++){
                         if($i == $index){
-                            $data = $nextNode->data();
+                            $data = &$nextNode->data();
                             return $data;
                         }
                         $node = $nextNode;
