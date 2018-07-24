@@ -27,7 +27,7 @@
  * A class that represents a stack data structure.
  *
  * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.0
+ * @version 1.1
  */
 class Stack{
     /**
