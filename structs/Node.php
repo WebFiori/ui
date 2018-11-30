@@ -1,4 +1,5 @@
 <?php
+namespace phpStructs;
 /**
  * The base node class that can be used to construct different data structures.
  * @author Ibrahim <ibinshikh@hotmail.com>

@@ -1,5 +1,5 @@
 <?php
-
+namespace phpStructs\html;
 /**
  * A class that represents the table HTML element (Under implementation).
  *
