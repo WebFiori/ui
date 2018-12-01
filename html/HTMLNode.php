@@ -24,6 +24,8 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\LinkedList;
+use phpStructs\Stack;
 /**
  * A class that represents HTML element.
  *

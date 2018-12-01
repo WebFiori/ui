@@ -44,10 +44,10 @@ class TabelCell extends HTMLNode{
         parent::__construct();
         $cType = strtolower($cellType);
         if($cType == 'td' || $cType == 'th'){
-            $this->setName($cType);
+            $this->setNodeName($cType);
         }
         else{
-            $this->setName('td');
+            $this->setNodeName('td');
         }
     }
     /**
