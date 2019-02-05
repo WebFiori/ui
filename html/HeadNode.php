@@ -24,7 +24,7 @@
  */
 namespace phpStructs\html;
 /**
- * A class that represents the head tag of a HTML document.
+ * A class that represents the tag &lt;head&lt; of a HTML document.
  *
  * @author Ibrahim
  * @version 1.1.1
@@ -193,7 +193,9 @@ class HeadNode extends HTMLNode{
     }
     /**
      * Adds new CSS source file.
-     * @param string $href The link to the file.
+     * For every CSS file added, a string in the form '?cv=xxxxxxxxxx' will 
+     * be appended to the 'href' attribute value. It is used to prevent caching.
+     * @param string $href The link to the file. 'cv' = CSS Version.
      * @param $otherAttrs An array that can contain additional 
      * attributes to set for the link tag.
      * @since 1.0
@@ -214,6 +216,9 @@ class HeadNode extends HTMLNode{
     }
     /**
      * Adds new JavsScript source file.
+     * For every CSS file added, a string in the form '?jv=xxxxxxxxxx' will 
+     * be appended to the 'href' attribute value. It is used to prevent caching. 
+     * 'jv' = JavaScript Version.
      * @param string $loc The location of the file.
      * @param $otherAttrs An array that can contain additional 
      * attributes to set for the script tag (such as 'async').
