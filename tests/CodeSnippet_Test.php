@@ -31,10 +31,12 @@ require '../Node.php';
 require '../LinkedList.php';
 require '../Stack.php';
 require '../html/HTMLNode.php';
+require '../html/HeadNode.php';
 require '../html/PNode.php';
 require '../html/HTMLDoc.php';
 require '../html/CodeSnippet.php';
-
+//require '../html/HTMLDoc.php';
 $node = new CodeSnippet();
-$node->setCode($node->asCode(array('use-pre'=>FALSE)));
+$doc = new HTMLDoc();
+$node->setCode($doc->asCode(array('use-pre'=>FALSE)));
 echo $node;
