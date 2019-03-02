@@ -127,7 +127,7 @@ class Input extends HTMLNode{
      */
     public function setPlaceholder($text) {
         $iType = $this->getType();
-        if($iType == 'password' || $iType == 'text' || $iType == 'number'){
+        if($iType == 'password' || $iType == 'text' || $iType == 'number' || $this->getNodeName() == 'textarea'){
             $this->setAttribute('placeholder', $text);
         }
     }
@@ -225,29 +225,68 @@ class Input extends HTMLNode{
     }
     /**
      * Adds an option to the input element which has the type 'select'.
-     * @param string $value The value of the attribute 'value'.
+     * @param array $options An associative array that contains select options. 
+     * The array must have at least the following indices:
+     * <ul>
+     * <li>label: A label that will be displayed to the user.</li>
+     * <li>value: The value that will be set for the attribute 'value'.</li>
+     * </ul>
+     * In addition to the two indices, the array can have additional index. 
+     * The index name is 'attributes'. This index can have an associative array 
+     * of attributes which will be set for the option. The key will act as the 
+     * attribute name and the value of the key will act as the value of the 
+     * attribute.
      * @param string $label The label that will be displayed by the option.
      * @since 1.0.1
      */
-    public function addOption($value,$label) {
+    public function addOption($options=array()) {
         if($this->getNodeName() == 'select'){
-            $option = new HTMLNode('option');
-            $option->setAttribute('value', $value);
-            $option->addTextNode($label);
-            $this->addChild($option);
+            if(gettype($options) == 'array' && isset($options['value']) && isset($options['label'])){
+                $option = new HTMLNode('option');
+                $option->setAttribute('value', $options['value']);
+                $option->addTextNode($options['label']);
+                if(isset($options['attributes'])){
+                    foreach ($options['attributes'] as $attr => $value) {
+                        $option->setAttribute($attr, $value);
+                    }
+                }
+                $this->addChild($option);
+            }
         }
     }
     /**
      * Adds multiple options at once to an input element of type 'select'.
      * @param array $arrayOfOpt An associative array of options. 
      * The key will act as the 'value' attribute and 
-     * the value of the key will act as the label for the option.
+     * the value of the key will act as the label for the option. Also, 
+     * it is possible that the value of the key is a sub-associative array that 
+     * contains only two indices: 
+     * <ul>
+     * <li>label: A label for the option.</li>
+     * <li>attributes: An optional associative array of attributes. 
+     * The key will act as the 
+     * attribute name and the value of the key will act as the value of the 
+     * attribute.</li>
+     * </ul>
      * @since 1.0.1
      */
     public function addOptions($arrayOfOpt) {
         if(gettype($arrayOfOpt) == 'array'){
-            foreach ($arrayOfOpt as $value => $lbl){
-                $this->addOption($value, $lbl);
+            foreach ($arrayOfOpt as $value => $lblOrOptions){
+                if(gettype($lblOrOptions) == 'array'){
+                    $attrs = isset($lblOrOptions['attributes']) ? $lblOrOptions['attributes'] : array();
+                    $this->addOption(array(
+                        'value'=>$value,
+                        'label'=>$lblOrOptions['label'],
+                        'attributes'=>$attrs
+                    ));
+                }
+                else{
+                    $this->addOption(array(
+                        'value'=>$value,
+                        'label'=>$lblOrOptions
+                    ));
+                }
             }
         }
     }
@@ -259,7 +298,15 @@ class Input extends HTMLNode{
      * <li>label: The label of the group.</li>
      * <li>options: A sub associative array that contains group 
      * options. The key will act as the 'value' attribute and 
-     * the value of the key will act as the label for the option.</li>
+     * the value of the key will act as the label for the option. Also, 
+     * it is possible that the value of the key is a sub-associative array that 
+     * contains only two indices: 
+     * <ul>
+     * <li>label: A label for the option.</li>
+     * <li>attributes: An optional associative array of attributes. 
+     * The key will act as the 
+     * attribute name and the value of the key will act as the value of the 
+     * attribute.</li></li>
      * </ul>
      * @since 1.0.1
      */
@@ -269,11 +316,26 @@ class Input extends HTMLNode{
                 if(isset($optionsGroupArr['label']) && isset($optionsGroupArr['options'])){
                     $optGroup = new HTMLNode('optgroup');
                     $optGroup->setAttribute('label', $optionsGroupArr['label']);
-                    foreach ($optionsGroupArr['options'] as $value => $label){
-                        $o = new HTMLNode('option');
-                        $o->setAttribute('value', $value);
-                        $o->addTextNode($label);
-                        $optGroup->addChild($o);
+                    foreach ($optionsGroupArr['options'] as $value => $labelOrOptions){
+                        if(gettype($labelOrOptions) == 'array'){
+                            if(isset($labelOrOptions['label'])){
+                                $o = new HTMLNode('option');
+                                $o->setAttribute('value', $value);
+                                $o->addTextNode($labelOrOptions['label']);
+                                if(isset($labelOrOptions['attributes'])){
+                                    foreach ($labelOrOptions['attributes'] as $attr => $v){
+                                        $o->setAttribute($attr, $v);
+                                    }
+                                }
+                                $optGroup->addChild($o);
+                            }
+                        }
+                        else{
+                            $o = new HTMLNode('option');
+                            $o->setAttribute('value', $value);
+                            $o->addTextNode($labelOrOptions);
+                            $optGroup->addChild($o);
+                        }
                     }
                     $this->addChild($optGroup);
                 }
