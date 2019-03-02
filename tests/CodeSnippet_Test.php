@@ -39,4 +39,6 @@ require '../html/CodeSnippet.php';
 $node = new CodeSnippet();
 $doc = new HTMLDoc();
 $node->setCode($doc->asCode(array('use-pre'=>FALSE)));
+$node->addCodeLine('A test line');
+$node->addCodeLine("Another test line\n\n\n");
 echo $node;

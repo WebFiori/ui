@@ -35,13 +35,9 @@ require '../html/HeadNode.php';
 require '../html/PNode.php';
 require '../html/Br.php';
 require '../html/Input.php';
-$input = new phpStructs\html\Input('select');
-$input->addOption('01', 'Option 01');
-$input->addOptionsGroup(array(
-    'label'=>'Test Group',
-    'options'=>array(
-        '02'=>'O2',
-        '03'=>'O3',
-    )
-));
-echo $input;
+$div = new phpStructs\html\HTMLNode();
+$input = new phpStructs\html\Input('textarea');
+$input->setPlaceholder('Test Placeholder.');
+$div->addChild($input);
+echo $div;
+echo $div->asCode();

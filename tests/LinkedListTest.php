@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 require 'test.php';
-require '../structs/Node.php';
-require '../structs/LinkedList.php';
-require '../structs/Comparable.php';
+require '../Node.php';
+require '../LinkedList.php';
+require '../Comparable.php';
 class TestClass implements Comparable{
     private $var1;
     private $var2;

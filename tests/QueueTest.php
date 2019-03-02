@@ -26,8 +26,8 @@
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
-require '../structs/Node.php';
-require '../structs/Queue.php';
+require '../Node.php';
+require '../Queue.php';
 class StackTest{
     private $queue;
     public function __construct($max=0) {
