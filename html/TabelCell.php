@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-
+use phpStructs\html\HTMLNode;
 /**
  * A class that represents a cell in HTML table.
  * The cell can be of type &lt;th&gt; or &lt;td&gt;.

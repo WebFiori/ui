@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\HTMLNode;
 /**
  * A node that represents in line JavaScript code that can be inserted on a 
  * head node.

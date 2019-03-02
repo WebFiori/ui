@@ -24,6 +24,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\HTMLNode;
 /**
  * A class that represents HTML document. The created document is HTML 5 compatible (
  * DOCTYPE html). Also, the document will have the following features by default: 

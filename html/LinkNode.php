@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\HTMLNode;
 /**
  * A class that represents &lt;a&gt; tag with text only.
  * @author Ibrahim

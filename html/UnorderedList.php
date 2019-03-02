@@ -24,6 +24,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\HTMLNode;
 /**
  * A class that represents Unordered List HTML element (ul)
  *
