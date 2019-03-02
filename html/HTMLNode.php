@@ -29,7 +29,7 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.2
+ * @version 1.7.3
  */
 class HTMLNode {
     private $isFormated;
@@ -691,8 +691,8 @@ class HTMLNode {
     /**
      * Returns HTML string that represents the node as a whole.
      * @param boolean $formatted Set to TRUE to return a well formatted 
-     * HTML document. Default is FALSE.
-     * @param int $initTab Initial tab count. Used in case of the document is 
+     * HTML document (has new lines and indentations). Default is FALSE.
+     * @param int $initTab Initial tab count (indentation). Used in case of the document is 
      * well formatted. This number represents the size of code indentation.
      * @return string HTML string that represents the node.
      * @since 1.0
@@ -725,9 +725,7 @@ class HTMLNode {
                     $this->tabSpace .= ' ';
                 }
             }
-            
         }
-        
         $this->htmlString = '';
         $this->nodesStack = new Stack();
         $this->_pushNode($this,$formatted);
@@ -765,7 +763,13 @@ class HTMLNode {
                 $this->htmlString .= $node->getText();
             }
             else{
-                $this->htmlString .= $this->_getTab().$node->getText().$this->nl;
+                $parentName = $node->getParent()->getNodeName();
+                if($parentName == 'code' || $parentName == 'pre' || $parentName == 'textarea'){
+                    $this->htmlString .= $node->getText();
+                }
+                else{
+                    $this->htmlString .= $this->_getTab().$node->getText().$this->nl;
+                }
             }
         }
         else if($node->isComment()){
@@ -784,7 +788,13 @@ class HTMLNode {
                     $this->htmlString .= $node->open();
                 }
                 else{
-                    $this->htmlString .= $this->_getTab().$node->open().$this->nl;
+                    $nodeType = $node->getNodeName();
+                    if($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code'){
+                        $this->htmlString .= $this->_getTab().$node->open();
+                    }
+                    else{
+                        $this->htmlString .= $this->_getTab().$node->open().$this->nl;
+                    }
                 }
                 $this->_addTab();
                 for($x = 0 ; $x < $chCount ; $x++){
@@ -806,7 +816,13 @@ class HTMLNode {
                 $this->htmlString .= '</'.$node->getNodeName().'>';
             }
             else{
-                $this->htmlString .= $this->_getTab().'</'.$node->getNodeName().'>'.$this->nl;
+                $nodeType = $node->getNodeName();
+                if($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code'){
+                    $this->htmlString .= '</'.$node->getNodeName().'>'.$this->nl;
+                }
+                else{
+                    $this->htmlString .= $this->_getTab().'</'.$node->getNodeName().'>'.$this->nl;
+                }
             }
         }
     }
@@ -961,7 +977,13 @@ class HTMLNode {
             if($node->mustClose()){
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
-                $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
+                $name = $node->getNodeName();
+                if($name  == 'pre' || $name == 'textarea' || $name == 'code'){
+                    $this->codeString .= $this->_getTab().$node->_openAsCode($FO);
+                }
+                else{
+                    $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
+                }
                 $this->_addTab();
                 for($x = 0 ; $x < $chCount ; $x++){
                     $nodeAtx = &$node->children()->get($x);
@@ -983,7 +1005,13 @@ class HTMLNode {
     private function _popNodeAsCode($FO){
         $node = &$this->nodesStack->pop();
         if($node != NULL){
-            $this->codeString .= $this->_getTab().$node->_closeAsCode($FO).$this->nl;
+            $name = $node->getNodeName();
+            if($name == 'pre' || $name == 'textarea' || $name == 'code'){
+                $this->codeString .= $node->_closeAsCode($FO).$this->nl;
+            }
+            else{
+                $this->codeString .= $this->_getTab().$node->_closeAsCode($FO).$this->nl;
+            }
         }
     }
     /**
@@ -1067,7 +1095,7 @@ class HTMLNode {
      * @return HTMLNode|NULL The method will return an object of type HTMLNode 
      * if a node is found. Other than that, the method will return NULL. Note 
      * that if there are multiple children with the same attribute and value, 
-     * the first occurence is returned.
+     * the first occurrence is returned.
      * @since 1.2
      */
     public function &getChildByAttributeValue($attrName,$attrVal) {
