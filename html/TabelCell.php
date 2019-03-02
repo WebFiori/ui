@@ -36,7 +36,8 @@ class TabelCell extends HTMLNode{
      * Creates new instance of the class.
      * @param string $cellType The type of the cell. This attribute 
      * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
-     * in the body of the table and 'th' if the cell is in the header.
+     * in the body of the table and 'th' if the cell is in the header. If 
+     * none of the two is given, 'td' will be used by default.
      * @since 1.0
      */
     public function __construct($cellType='td') {

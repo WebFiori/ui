@@ -174,7 +174,7 @@ class HTMLNode {
      * @since 1.5
      */
     public function isComment() {
-        return $this->getName() == '#COMMENT';
+        return $this->getNodeName() == '#COMMENT';
     }
     /**
      * Returns the parent node.
@@ -232,7 +232,7 @@ class HTMLNode {
      * @since 1.0
      */
     public function isTextNode() {
-        return $this->getName() == '#TEXT';
+        return $this->getNodeName() == '#TEXT';
     }
     /**
      * Checks if a given node is a direct child of the instance.
@@ -289,7 +289,7 @@ class HTMLNode {
         }
         for($x = 0 ; $x < $chCount ; $x++){
             $child = $chList->get($x);
-            if($child->getName() == $val){
+            if($child->getNodeName() == $val){
                 $list->add($child);
             }
         }
@@ -389,7 +389,7 @@ class HTMLNode {
             }
         }
         else{
-            $lName = strtoupper($name);
+            $lName = strtolower($name);
             if(strlen($lName) != 0){
                 if($this->mustClose() && $reqClose !== TRUE){
                     if($this->childrenCount() == 0){
@@ -414,7 +414,7 @@ class HTMLNode {
      * method will return the value '#COMMENT'.
      * @since 1.0
      */
-    public function getName(){
+    public function getNodeName(){
         return $this->name;
     }
     /**
@@ -668,7 +668,7 @@ class HTMLNode {
     public function open() {
         $retVal = '';
         if(!$this->isTextNode() && !$this->isComment()){
-            $retVal .= '<'.$this->getName().'';
+            $retVal .= '<'.$this->getNodeName().'';
             foreach ($this->getAttributes() as $attr => $val){
                 $retVal .= ' '.$attr.'="'.$val.'"';
             }
@@ -684,7 +684,7 @@ class HTMLNode {
      */
     public function close() {
         if(!$this->isTextNode() && !$this->isComment()){
-            return '</'.$this->getName().'>';
+            return '</'.$this->getNodeName().'>';
         }
         return '';
     }
@@ -803,10 +803,10 @@ class HTMLNode {
         $node = &$this->nodesStack->pop();
         if($node != NULL){
             if($node->isFormatted() !== NULL && $node->isFormatted() === FALSE){
-                $this->htmlString .= '</'.$node->getName().'>';
+                $this->htmlString .= '</'.$node->getNodeName().'>';
             }
             else{
-                $this->htmlString .= $this->_getTab().'</'.$node->getName().'>'.$this->nl;
+                $this->htmlString .= $this->_getTab().'</'.$node->getNodeName().'>'.$this->nl;
             }
         }
     }
@@ -871,7 +871,7 @@ class HTMLNode {
                 $this->codeString = '<pre style="margin:0">'.$this->nl;
             }
         }
-        if($this->getName() == 'html'){
+        if($this->getNodeName() == 'html'){
             if($formattingOptionsV['with-colors']){
                 $this->codeString .= $this->_getTab().'<span style="color:'.$formattingOptionsV['colors']['lt-gt-color'].'">&lt;</span>'
                         . '<span style="color:'.$formattingOptionsV['colors']['node-name-color'].'">!DOCTYPE html</span>'
@@ -899,7 +899,7 @@ class HTMLNode {
         if($FO['with-colors'] === TRUE){
             if(!$this->isTextNode() && !$this->isComment()){
                 $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;</span>'
-                        . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getName().'</span>';
+                        . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>';
                 foreach ($this->getAttributes() as $attr => $val){
                     $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
                             . '<span style="color:'.$FO['colors']['operator-color'].'">=</span> '
@@ -910,7 +910,7 @@ class HTMLNode {
         }
         else{
             if(!$this->isTextNode() && !$this->isComment()){
-                $retVal .= '&lt;'.$this->getName();
+                $retVal .= '&lt;'.$this->getNodeName();
                 foreach ($this->getAttributes() as $attr => $val){
                     $retVal .= ' '.$attr.' = "'.$val.'"';
                 }
@@ -929,13 +929,13 @@ class HTMLNode {
         if($FO['with-colors'] === TRUE){
             if(!$this->isTextNode() && !$this->isComment()){
                 return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
-                . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getName().'</span>'
+                . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>'
                         . '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
             }
         }
         else{
             if(!$this->isTextNode() && !$this->isComment()){
-                return '&lt;/'.$this->getName().'&gt;';
+                return '&lt;/'.$this->getNodeName().'&gt;';
             }
         }
         return '';

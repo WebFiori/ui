@@ -111,7 +111,7 @@ class HTMLDoc {
      * @param HTMLNode $child
      */
     private function _getChildrenByTag($val,$list,&$child){
-        if($child->getName() == $val){
+        if($child->getNodeName() == $val){
             $list->add($child);
         }
         if(!$child->isTextNode() && !$child->isComment()){
@@ -286,7 +286,7 @@ class HTMLDoc {
      */
     public function addChild(&$node){
         if($node instanceof HTMLNode){
-            $name = $node->getName();
+            $name = $node->getNodeName();
             if($name != 'body' && $name != 'head' && $name != 'html'){
                 $this->body->addChild($node);
             }

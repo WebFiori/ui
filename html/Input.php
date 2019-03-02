@@ -23,25 +23,77 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\HTMLNode;
 /**
- * A class that represents &lt;input&gt; tag;
+ * A class that represents any input element;
  *
  * @author Ibrahim
- * @version 1.0
+ * @version 1.0.1
  */
 class Input extends HTMLNode{
     /**
      * An array of supported input types.
+     * This array has the following values:
+     * <ul>
+     * <li>text</li>
+     * <li>date</li>
+     * <li>password</li>
+     * <li>submit</li>
+     * <li>checkbox</li>
+     * <li>email</li>
+     * <li>url</li>
+     * <li>tel</li>
+     * <li>color</li>
+     * <li>file</li>
+     * <li>range</li>
+     * <li>month</li>
+     * <li>number</li>
+     * <li>date-local</li>
+     * <li>hidden</li>
+     * <li>time</li>
+     * <li>week</li>
+     * <li>search</li>
+     * <li>select</li>
+     * <li>textarea</li>
+     * </ul>
+     * @since 1.0
      */
     const INPUT_TYPES = array('text','date','password','submit','checkbox','email','url','tel',
-        'color','file','range','month','number','date-local','hidden','time','week','search');
+        'color','file','range','month','number','date-local','hidden','time','week','search', 
+        'select','textarea');
     /**
      * An array of supported input modes.
+     * The array contains the following values:
+     * <ul>
+     * <li>none</li>
+     * <li>text</li>
+     * <li>decimal</li>
+     * <li>numeric</li>
+     * <li>tel</li>
+     * <li>search</li>
+     * <li>email</li>
+     * <li>url</li>
+     * </ul>
+     * @since 1.0
      */
     const INPUT_MODES = array('none','text','decimal','numeric','tel','search','email','url');
+    /**
+     * Creates new instance of the class.
+     * @param type $type The type of the input element. If the 
+     * given type is not in the array Input::INPUT_TYPES, 'text' 
+     * will be used by default.
+     * @since 1.0
+     */
     public function __construct($type='text') {
-        parent::__construct('input', FALSE);
-        $this->setType($type);
+        parent::__construct();
+        $lType = strtolower($type);
+        if($lType == 'select' || $lType == 'textarea'){
+            $this->setNodeName($lType, TRUE);
+        }
+        else{
+            $this->setNodeName('input', FALSE);
+            $this->setType($lType);
+        }
     }
     /**
      * Returns the value of the attribute 'type'.
@@ -53,7 +105,9 @@ class Input extends HTMLNode{
     }
     /**
      * Sets the value of the attribute 'type'.
-     * @param string $type The type of the input element.
+     * @param string $type The type of the input element. If the 
+     * given type is not in the array Input::INPUT_TYPES, 'text' 
+     * will be used by default.
      * It can be only a value from the array Input::INPUT_TYPES.
      * @since 1.0
      */
@@ -61,6 +115,9 @@ class Input extends HTMLNode{
         $l = strtolower($type);
         if(in_array($l, Input::INPUT_TYPES)){
             $this->setAttribute('type', $l);
+        }
+        else{
+            $this->setAttribute('type', 'text');
         }
     }
     /**
@@ -148,6 +205,79 @@ class Input extends HTMLNode{
         $lMode = strtolower($mode);
         if(in_array($lMode, Input::INPUT_MODES)){
             $this->setAttribute('inputmode', $lMode);
+        }
+    }
+    /**
+     * Adds new child node.
+     * The node will be added only if the type of the node is 
+     * &lt;select&gt; and the given node is of type &lt;option&gt; or 
+     * &lt;optgroup&gt;.
+     * @param HTMLNode $node The node that will be added.
+     * @since 1.0.1
+     */
+    public function addChild($node) {
+        if($node instanceof HTMLNode){
+            if($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
+                    $node->getNodeName() == 'optgroup')){
+                parent::addChild($node);
+            }
+        }
+    }
+    /**
+     * Adds an option to the input element which has the type 'select'.
+     * @param string $value The value of the attribute 'value'.
+     * @param string $label The label that will be displayed by the option.
+     * @since 1.0.1
+     */
+    public function addOption($value,$label) {
+        if($this->getNodeName() == 'select'){
+            $option = new HTMLNode('option');
+            $option->setAttribute('value', $value);
+            $option->addTextNode($label);
+            $this->addChild($option);
+        }
+    }
+    /**
+     * Adds multiple options at once to an input element of type 'select'.
+     * @param array $arrayOfOpt An associative array of options. 
+     * The key will act as the 'value' attribute and 
+     * the value of the key will act as the label for the option.
+     * @since 1.0.1
+     */
+    public function addOptions($arrayOfOpt) {
+        if(gettype($arrayOfOpt) == 'array'){
+            foreach ($arrayOfOpt as $value => $lbl){
+                $this->addOption($value, $lbl);
+            }
+        }
+    }
+    /**
+     * Adds an 'optgroup' child element.
+     * @param array $optionsGroupArr An associative array that contains 
+     * group info. The array must have the following indices:
+     * <ul>
+     * <li>label: The label of the group.</li>
+     * <li>options: A sub associative array that contains group 
+     * options. The key will act as the 'value' attribute and 
+     * the value of the key will act as the label for the option.</li>
+     * </ul>
+     * @since 1.0.1
+     */
+    public function addOptionsGroup($optionsGroupArr) {
+        if($this->getNodeName() == 'select'){
+            if(gettype($optionsGroupArr) == 'array'){
+                if(isset($optionsGroupArr['label']) && isset($optionsGroupArr['options'])){
+                    $optGroup = new HTMLNode('optgroup');
+                    $optGroup->setAttribute('label', $optionsGroupArr['label']);
+                    foreach ($optionsGroupArr['options'] as $value => $label){
+                        $o = new HTMLNode('option');
+                        $o->setAttribute('value', $value);
+                        $o->addTextNode($label);
+                        $optGroup->addChild($o);
+                    }
+                    $this->addChild($optGroup);
+                }
+            }
         }
     }
 }
