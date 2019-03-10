@@ -206,12 +206,16 @@ class HTMLNode {
      * Creates new text node.
      * @param string $nodeText The text that will be inserted in the body 
      * of the node.
+     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text.
      * @return HTMLNode An object of type HTMLNode.
      * @since 1.5
      */
-    public static function &createTextNode($nodeText){
+    public static function &createTextNode($nodeText,$escHtmlEntities=true){
         $text = new HTMLNode('#TEXT');
-        $text->setText($nodeText);
+        $text->setText($nodeText,$escHtmlEntities);
         return $text;
     }
     /**
@@ -606,11 +610,15 @@ class HTMLNode {
     /**
      * Adds a text node as a child.
      * @param string $text The text that will be in the node.
+     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is TRUE.
      * @since 1.6
      */
-    public function addTextNode($text) {
+    public function addTextNode($text,$escHtmlEntities=true) {
         if($this->mustClose()){
-            $this->addChild(self::createTextNode($text));
+            $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
     }
     /**
@@ -627,10 +635,24 @@ class HTMLNode {
      * Sets the value of the property $text.
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
+     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is TRUE.
      * @since 1.0
      */
-    public function setText($text) {
+    public function setText($text,$escHtmlEntities=true) {
         if($this->isTextNode() || $this->isComment()){
+            if($escHtmlEntities === TRUE){
+                $charsToReplace = array(
+                    '&'=>'&amp;',
+                    '<'=>'&lt;',
+                    '>'=>'&gt;'
+                );
+                foreach ($charsToReplace as $ch => $rep){
+                    $text = str_replace($ch, $rep, $text);
+                }
+            }
             $this->text = $text;
         }
     }
@@ -879,7 +901,8 @@ class HTMLNode {
         for($x = 0 ; $x < $spacesCount ; $x++){
             $this->tabSpace .= ' ';
         }
-        if($formattingOptions['use-pre'] === TRUE){
+        $usePre = isset($formattingOptions['use-pre']) ? $formattingOptions['use-pre'] === TRUE : FALSE;
+        if($usePre){
             if($formattingOptionsV['with-colors'] === TRUE){
                 $this->codeString = '<pre style="margin:0;background-color:'.$formattingOptionsV['colors']['bg-color'].'; color:'.$formattingOptionsV['colors']['text-color'].'">'.$this->nl;
             }
@@ -899,7 +922,7 @@ class HTMLNode {
         }
         $this->nodesStack = new Stack();
         $this->_pushNodeAsCode($this,$formattingOptionsV);
-        if($formattingOptions['use-pre'] === TRUE){
+        if($usePre){
             return $this->codeString.'</pre>';
         }
         return $this->codeString;
@@ -1127,7 +1150,7 @@ class HTMLNode {
     /**
      * Checks if the node has a given attribute or not.
      * @param type $attrName The name of the attribute.
-     * @return boolean <b>TRUE</b> if the attribute is set.
+     * @return boolean TRUE if the attribute is set.
      * @since 1.1
      */
     public function hasAttribute($attrName){
@@ -1137,7 +1160,7 @@ class HTMLNode {
         return FALSE;
     }
     /**
-     * Returns non-foratted HTML string that represents the node as a whole.
+     * Returns non-formatted HTML string that represents the node as a whole.
      * @return string HTML string that represents the node as a whole.
      */
     public function __toString() {
