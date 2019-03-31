@@ -80,7 +80,7 @@ class HeadNode extends HTMLNode{
     public function setBase($url){
         if(gettype($url) == 'string' && strlen($url) != 0){
             if($this->baseNode == NULL){
-                $this->baseNode = new HTMLNode('base', FALSE, FALSE);
+                $this->baseNode = new HTMLNode('base');
             }
             if(!$this->hasChild($this->baseNode)){
                 $this->addChild($this->baseNode);
@@ -193,7 +193,7 @@ class HeadNode extends HTMLNode{
                     $meta->setAttribute('content', $content);
                 }
                 else if($meta === NULL){
-                    $meta = new HTMLNode('meta', FALSE, FALSE);
+                    $meta = new HTMLNode('meta');
                     $meta->setAttribute('name', $name);
                     $meta->setAttribute('content', $content);
                     $this->addChild($meta);
@@ -270,7 +270,7 @@ class HeadNode extends HTMLNode{
      */
     public function addCSS($href, $otherAttrs=array()){
         if(strlen($href) != 0){
-            $tag = new HTMLNode('link', FALSE, FALSE);
+            $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
             foreach ($otherAttrs as $attr => $attrVal){
                 $tag->setAttribute($attr, $attrVal);
@@ -294,7 +294,7 @@ class HeadNode extends HTMLNode{
      */
     public function addJs($loc, $otherAttrs=array()){
         if(strlen($loc) != 0){
-            $tag = new HTMLNode('script', TRUE, FALSE);
+            $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
             foreach ($otherAttrs as $attr => $attrVal){
                 $tag->setAttribute($attr, $attrVal);
@@ -314,7 +314,7 @@ class HeadNode extends HTMLNode{
     public function setCanonical($link){
         if(strlen($link) != 0){
             if($this->canonical == NULL){
-                $this->canonical = new HTMLNode('link',FALSE);
+                $this->canonical = new HTMLNode('link');
                 $this->canonical->setAttribute('rel', 'canonical');
             }
             if(!$this->hasChild($this->canonical)){
@@ -340,7 +340,7 @@ class HeadNode extends HTMLNode{
      */
     public function addAlternate($url,$lang){
         if(strlen($url) != 0 && strlen($lang) != 0){
-            $node = new HTMLNode('link', FALSE, FALSE);
+            $node = new HTMLNode('link');
             $node->setAttribute('rel','alternate');
             $node->setAttribute('hreflang', $lang);
             $node->setAttribute('href', $url);
@@ -358,7 +358,7 @@ class HeadNode extends HTMLNode{
      */
     public function addLink($rel,$href,$otherAttrs=array()){
         if(strlen($rel) != 0 && strlen($href) != 0){
-            $node = new HTMLNode('link', FALSE, FALSE);
+            $node = new HTMLNode('link');
             $node->setAttribute('rel',$rel);
             $node->setAttribute('href', $href);
             foreach ($otherAttrs as $key => $value) {
