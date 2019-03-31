@@ -29,9 +29,36 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.3
+ * @version 1.7.4
  */
 class HTMLNode {
+    /**
+     * An array that contains all unpaired (or void) HTML tags.
+     * An unpaired tag is a tag that does tot require closing tag. Its 
+     * body is empty and does not contain any thing.
+     * This array has the following values:
+     * <ul>
+     * <li>br</li>
+     * <li>hr</li>
+     * <li>meta</li>
+     * <li>img</li>
+     * <li>input</li>
+     * <li>wbr</li>
+     * <li>embed</li>
+     * <li>base</li>
+     * <li>col</li>
+     * <li>link</li>
+     * <li>param</li>
+     * <li>source</li>
+     * <li>track</li>
+     * <li>area</li>
+     * </ul>
+     * @since 1.7.4
+     */
+    const VOID_TAGS = array(
+        'br','hr','meta','img','input','wbr','embed',
+        'base','col','link','param','source','track','area'
+    );
     private $isFormated;
     /**
      * A null guard for the methods that return null reference.
@@ -139,12 +166,9 @@ class HTMLNode {
      * we want to create a comment node, the name should be '#comment'. If 
      * we want to create a text node, the name should be '#text'. If empty string is 
      * given, default value will be used. The Default value is 'div'.
-     * @param boolean $reqClose If set to TRUE, this means that the node 
-     * must end with closing tag. If $name is set to '#text' or '#comment', 
-     * this argument is ignored. Default is TRUE.
      * 
      */
-    public function __construct($name='div',$reqClose=true) {
+    public function __construct($name='div') {
         $this->null = NULL;
         $nameUpper = strtoupper($name);
         if($name == '#TEXT' || $nameUpper == '#COMMENT'){
@@ -162,10 +186,24 @@ class HTMLNode {
             $this->requireClose = FALSE;
         }
         else{
-            $this->requireClose = $reqClose === TRUE ? TRUE : FALSE;
-            $this->childrenList = new LinkedList();
+            if(in_array($this->name, self::VOID_TAGS)){
+                $this->requireClose = false;
+            }
+            else{
+                $this->requireClose = true;
+                $this->childrenList = new LinkedList();
+            }
             $this->attributes = array();
         }
+    }
+    /**
+     * Creates HTMLNode object given a string of HTML code.
+     * Note that this method is still under implementation.
+     * @param string $text A string that represents HTML code.
+     * @since 1.7.4
+     */
+    public static function fromHTMLText($text) {
+        
     }
     /**
      * Checks if the given node represents a comment or not.
