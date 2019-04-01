@@ -23,8 +23,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-require '../Node.php';
-require '../LinkedList.php';
-require '../Stack.php';
-require '../Queue.php';
-require '../Comparable.php';
+$root = trim(__DIR__,DIRECTORY_SEPARATOR.'tests');
+echo 'Include Path: \''. get_include_path().'\''."\n";
+if(explode(DIRECTORY_SEPARATOR, $root)[0] == 'home'){
+    //linux 
+    $root = DIRECTORY_SEPARATOR.trim($root,'/\\').DIRECTORY_SEPARATOR;
+}
+else{
+    $root = trim($root,'/\\').DIRECTORY_SEPARATOR;
+}
+echo 'Root Directory: \''.$root.'\'.'."\n";
+require $root.'Node.php';
+require $root.'LinkedList.php';
+require $root.'Stack.php';
+require $root.'Queue.php';
+require $root.'Comparable.php';
