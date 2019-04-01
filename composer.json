@@ -1,6 +1,6 @@
 {
     "name": "webfiori/php-structs",
-    "description": "WebFiori framework.",
+    "description": "A library for constructing MySQL queries in PHP language.",
     "require": {
         "php": ">=5.6"
     },
