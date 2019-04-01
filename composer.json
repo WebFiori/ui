@@ -1,5 +1,5 @@
 {
-    "name": "webfiori/phpStructs",
+    "name": "webfiori/php-structs",
     "description": "WebFiori framework.",
     "require": {
         "php": ">=5.6"
