@@ -6,5 +6,8 @@
         <testsuite name="Data Structures Tests">
             <directory>./data-structures</directory>
         </testsuite>
+        <testsuite name="HTML Elements Tests">
+            <directory>./html</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
