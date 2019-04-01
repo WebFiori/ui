@@ -1,6 +1,6 @@
 {
     "name": "webfiori/php-structs",
-    "description": "A library for constructing MySQL queries in PHP language.",
+    "description": "A library that provide basic data structures for PHP in addition to creating well-formatted HTML documents.",
     "require": {
         "php": ">=5.6"
     },
