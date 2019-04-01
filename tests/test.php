@@ -23,18 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-$root = trim(__DIR__,DIRECTORY_SEPARATOR.'tests');
+$testsDirName = 'tests';
+$rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
+$DS = DIRECTORY_SEPARATOR;
 echo 'Include Path: \''. get_include_path().'\''."\n";
-if(explode(DIRECTORY_SEPARATOR, $root)[0] == 'home'){
-    //linux 
-    $root = DIRECTORY_SEPARATOR.trim($root,'/\\').DIRECTORY_SEPARATOR;
+if(explode($DS, $rootDir)[0] == 'home'){
+    //linux. Adding 'ts' since it was trimmed
+    $rootDir = $DS.trim($rootDir,'/\\').$DS;
 }
 else{
-    $root = trim($root,'/\\').DIRECTORY_SEPARATOR;
+    //Adding 'ts' since it was trimmed
+    $rootDir = trim($rootDir,'/\\').$DS;
 }
-echo 'Root Directory: \''.$root.'\'.'."\n";
-require_once $root.'Node.php';
-require_once $root.'LinkedList.php';
-require_once $root.'Stack.php';
-require_once $root.'Queue.php';
-require_once $root.'Comparable.php';
+echo 'Root Directory: \''.$rootDir.'\'.'."\n";
+require_once $rootDir.'Node.php';
+require_once $rootDir.'LinkedList.php';
+require_once $rootDir.'Stack.php';
+require_once $rootDir.'Queue.php';
+require_once $rootDir.'Comparable.php';
+//HTML classes
+require_once $rootDir.'html'.$DS.'HTMLNode.php';
+require_once $rootDir.'html'.$DS.'Br.php';
+require_once $rootDir.'html'.$DS.'HeadNode.php';
+require_once $rootDir.'html'.$DS.'PNode.php';
+require_once $rootDir.'html'.$DS.'HTMLDoc.php';
+require_once $rootDir.'html'.$DS.'CodeSnippet.php';
+require_once $rootDir.'html'.$DS.'Input.php';
+require_once $rootDir.'html'.$DS.'JsCode.php';
+require_once $rootDir.'html'.$DS.'Label.php';
+require_once $rootDir.'html'.$DS.'LinkNode.php';
+require_once $rootDir.'html'.$DS.'UnorderedList.php';
+require_once $rootDir.'html'.$DS.'ListItem.php';
+require_once $rootDir.'html'.$DS.'TabelCell.php';
+require_once $rootDir.'html'.$DS.'TableRow.php';
