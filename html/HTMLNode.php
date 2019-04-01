@@ -203,6 +203,134 @@ class HTMLNode {
      * @since 1.7.4
      */
     public static function fromHTMLText($text) {
+        $trimmed = trim($text);
+        if(strlen($trimmed) != 0){
+            $array = explode('<', $trimmed);
+            $nodesNames = array();
+            $nodesNamesIndex = 0;
+            for($x = 0 ; $x < count($array) ; $x++){
+                $node = $array[$x];
+                if(strlen(trim($node)) != 0){
+                    $nodesNames[$nodesNamesIndex] = explode('>', $node);
+                    $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][1]);
+                    if(strlen($nodesNames[$nodesNamesIndex]['body-text']) == 0){
+                        unset($nodesNames[$nodesNamesIndex]['body-text']);
+                    }
+                    unset($nodesNames[$nodesNamesIndex][1]);
+                    $nodeName = '';
+                    $count = strlen($nodesNames[$nodesNamesIndex][0]);
+                    for($y = 0 ; $y < $count ; $y++){
+                        $char = $nodesNames[$nodesNamesIndex][0][$y];
+                        if($char == ' '){
+                            break;
+                        }
+                        else{
+                            $nodeName .= $char;
+                        }
+                    }
+                    if((isset($nodeName[0]) && $nodeName[0] == '!') && (
+                            isset($nodeName[1]) && $nodeName[1] == '-') && 
+                            ( isset($nodeName[2]) && $nodeName[2] == '-')){
+                        $nodesNames[$nodesNamesIndex]['node-name'] = '!--';
+                        $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"\n !--");
+                    }
+                    else{
+                        $nodesNames[$nodesNamesIndex]['node-name'] = trim($nodeName);
+                        $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
+                        $len = strlen($nodesNames[$nodesNamesIndex][0]);
+                        $isParsingValue = false;
+                        $isQuoted = false;
+                        $attributeVal = '';
+                        $attributeName = '';
+                        if($len != 0){
+                            echo 'Parsing Attributes<br/>';
+                            $nodesNames[$nodesNamesIndex]['attributes'] = array();
+                            for($charIndex = 0 ; $charIndex < $len ; $charIndex++){
+                                $char = $nodesNames[$nodesNamesIndex][0][$charIndex];
+                                echo '$char = \''.$char.'\'<br/>';
+                                if($char == ' '){
+                                    echo 'Space Found<br/>';
+                                    //if space:
+                                    //1- Can be empty attribute
+                                    //2- Space between an attribute and its value
+                                    //3- Space in Quoted attribute value
+                                    if($isParsingValue && $isQuoted){
+                                        echo 'Qouted and parsing value. Append Space.<br/>';
+                                        $attributeVal .= $char;
+                                    }
+                                    else if(strlen($attributeName) != 0){
+                                        echo 'Attribute name is not empty. Checking next chars<br/>';
+                                        $isCharFound = false;
+                                        for($charIndex2 = $charIndex; $charIndex2 < $len ; $charIndex2++){
+                                            $char = $nodesNames[$nodesNamesIndex][0][$charIndex];
+                                            echo '$char = \''.$char.'\'<br/>';
+                                            if($char != ' ' && $char != '=' && !$isCharFound){
+                                                echo 'A character other than space and equal is found.<br/>';
+                                                $isCharFound = true;
+                                            }
+                                            else if($char == ' ' && $isCharFound){
+                                                echo 'A space is found after a character which is not space and equal sign. Break<br/>';
+                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
+                                                $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = '';
+                                                $attributeName = '';
+                                                break;
+                                            }
+                                            else if($char == '=' && $isCharFound){
+                                                //empty attribute
+                                                echo 'Equal sign and non space character. Break<br/>';
+                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
+                                                $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = '';
+                                                $attributeName = '';
+                                                break;
+                                            }
+                                            else if($char == '=' && !$isCharFound){
+                                                echo 'Equal sign and space character. Break and parse value<br/>';
+                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
+                                                //space between an attribute and its value.
+                                                $isParsingValue = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                else if(($char == '"' || $char = "'") && !$isQuoted && $isParsingValue && strlen($attributeVal) == 0){
+                                    //if the character is ' or " and parsing value just 
+                                    //started, then the value of the attribute is Quoted.
+                                    $isQuoted = true;
+                                }
+                                else if($char == '=' && !$isParsingValue){
+                                    //if equal sign detected and not parsing attribute and
+                                    //value, then start parsing attribute value
+                                    $isParsingValue = true;
+                                }
+                                else if(($char == '"' || $char = "'") && $isParsingValue && $isQuoted){
+                                    //if the character is ' or " and text was qouted while 
+                                    //parsing its value, then we finished parsing the attribute alongside 
+                                    //its value.
+                                    $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = $attributeVal;
+                                    $attributeName = '';
+                                    $attributeVal = '';
+                                    $isQuoted = false;
+                                    $isParsingValue = false;
+                                }
+                                else{
+                                    if($isParsingValue){
+                                        $attributeVal .= $char;
+                                    }
+                                    else{
+                                        $attributeName .= $char;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $nodesNamesIndex++;
+                }
+                $array[$x] = str_replace('<', '&lt;', str_replace('>', '&gt;', $array[$x]));
+            }
+        }
+    }
+    private function _createNodeFromText($text) {
         
     }
     /**
