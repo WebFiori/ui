@@ -210,15 +210,19 @@ class HTMLNode {
             $nodesNamesIndex = 0;
             for($x = 0 ; $x < count($array) ; $x++){
                 $node = $array[$x];
+                echo '$node = \''.$node.'\'<br/>';
                 if(strlen(trim($node)) != 0){
+                    echo 'Splitting node <br/>';
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
                     $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][1]);
+                    echo 'Extracted body text = \''.$nodesNames[$nodesNamesIndex]['body-text'].'\'<br>';
                     if(strlen($nodesNames[$nodesNamesIndex]['body-text']) == 0){
                         unset($nodesNames[$nodesNamesIndex]['body-text']);
                     }
                     unset($nodesNames[$nodesNamesIndex][1]);
                     $nodeName = '';
                     $count = strlen($nodesNames[$nodesNamesIndex][0]);
+                    echo 'Extracting node name...<br/>';
                     for($y = 0 ; $y < $count ; $y++){
                         $char = $nodesNames[$nodesNamesIndex][0][$y];
                         if($char == ' '){
@@ -228,13 +232,16 @@ class HTMLNode {
                             $nodeName .= $char;
                         }
                     }
+                    echo 'Extracted name = \''.$nodeName.'\'<br/>';
                     if((isset($nodeName[0]) && $nodeName[0] == '!') && (
                             isset($nodeName[1]) && $nodeName[1] == '-') && 
                             ( isset($nodeName[2]) && $nodeName[2] == '-')){
+                        echo 'Comment node found<br/>';
                         $nodesNames[$nodesNamesIndex]['node-name'] = '!--';
                         $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"\n !--");
                     }
                     else{
+                        echo 'Another node<br/>';
                         $nodesNames[$nodesNamesIndex]['node-name'] = trim($nodeName);
                         $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
                         $len = strlen($nodesNames[$nodesNamesIndex][0]);
@@ -242,6 +249,7 @@ class HTMLNode {
                         $isQuoted = false;
                         $attributeVal = '';
                         $attributeName = '';
+                        echo 'Checking if has attributes...<br/>';
                         if($len != 0){
                             echo 'Parsing Attributes<br/>';
                             $nodesNames[$nodesNamesIndex]['attributes'] = array();
@@ -296,9 +304,12 @@ class HTMLNode {
                                 else if(($char == '"' || $char = "'") && !$isQuoted && $isParsingValue && strlen($attributeVal) == 0){
                                     //if the character is ' or " and parsing value just 
                                     //started, then the value of the attribute is Quoted.
+                                    echo 'Quted attr val<br/>';
                                     $isQuoted = true;
                                 }
                                 else if($char == '=' && !$isParsingValue){
+                                    echo 'Attribute name extracted.<br/>';
+                                    echo 'Name = \''.$attributeName.'\'<br/>';
                                     //if equal sign detected and not parsing attribute and
                                     //value, then start parsing attribute value
                                     $isParsingValue = true;
@@ -307,6 +318,8 @@ class HTMLNode {
                                     //if the character is ' or " and text was qouted while 
                                     //parsing its value, then we finished parsing the attribute alongside 
                                     //its value.
+                                    echo 'Attribute value extracted<br/>';
+                                    echo 'Attr val = \''.$attributeVal.'\'<br/>';
                                     $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = $attributeVal;
                                     $attributeName = '';
                                     $attributeVal = '';
@@ -315,10 +328,12 @@ class HTMLNode {
                                 }
                                 else{
                                     if($isParsingValue){
+                                        echo 'Append char to attribute value<br/>';
                                         $attributeVal .= $char;
                                     }
                                     else{
                                         $attributeName .= $char;
+                                        echo 'Append char to attribute name<br/>';
                                     }
                                 }
                             }
