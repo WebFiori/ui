@@ -26,13 +26,14 @@
 $testsDirName = 'tests';
 $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
+$rootDirTrimmed = trim($rootDir,'/\\');
 echo 'Include Path: \''. get_include_path().'\''."\n";
-if(explode($DS, $rootDir)[0] == 'home'){
+if(explode($DS, $rootDirTrimmed)[0] == 'home'){
     //linux.
-    $rootDir = $DS.trim($rootDir,'/\\').$DS;
+    $rootDir = $DS.$rootDirTrimmed.$DS;
 }
 else{
-    $rootDir = trim($rootDir,'/\\').$DS;
+    $rootDir = $rootDirTrimmed.$DS;
 }
 echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'Node.php';
