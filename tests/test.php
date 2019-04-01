@@ -28,11 +28,10 @@ $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
 echo 'Include Path: \''. get_include_path().'\''."\n";
 if(explode($DS, $rootDir)[0] == 'home'){
-    //linux. Adding 'ts' since it was trimmed
+    //linux.
     $rootDir = $DS.trim($rootDir,'/\\').$DS;
 }
 else{
-    //Adding 'ts' since it was trimmed
     $rootDir = trim($rootDir,'/\\').$DS;
 }
 echo 'Root Directory: \''.$rootDir.'\'.'."\n";
