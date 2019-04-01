@@ -33,7 +33,7 @@ else{
     $root = trim($root,'/\\').DIRECTORY_SEPARATOR;
 }
 echo 'Root Directory: \''.$root.'\'.'."\n";
-require_once ''; $root.'Node.php';
+require_once $root.'Node.php';
 require_once $root.'LinkedList.php';
 require_once $root.'Stack.php';
 require_once $root.'Queue.php';
