@@ -56,3 +56,5 @@ require_once $rootDir.'html'.$DS.'UnorderedList.php';
 require_once $rootDir.'html'.$DS.'ListItem.php';
 require_once $rootDir.'html'.$DS.'TabelCell.php';
 require_once $rootDir.'html'.$DS.'TableRow.php';
+
+require_once $rootDir.'tests'.$DS.'AnyObject.php';
