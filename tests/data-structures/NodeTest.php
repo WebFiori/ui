@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace phpStructs\tests;
+namespace phpStructs\tests\dataStructures;
 use PHPUnit\Framework\TestCase;
 use phpStructs\Node;
 use phpStructs\tests\AnyObject;
