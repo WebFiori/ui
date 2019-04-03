@@ -24,6 +24,7 @@
  */
 namespace phpStructs\tests\html;
 use PHPUnit\Framework\TestCase;
+use phpStructs\html\HTMLNode;
 /**
  * Description of HTMLNodeTest
  *
@@ -32,5 +33,205 @@ use PHPUnit\Framework\TestCase;
 class HTMLNodeTest extends TestCase{
     public function testFromHTML_00() {
         
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_00() {
+        $htmlTxt = '<!doctype html>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
+        $this->assertEquals(count($array),1);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_01() {
+        $htmlTxt = '<!doctype html><html></html>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),2);
+        $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
+        $this->assertEquals($array[1]['tag-name'],'html');
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_02() {
+        $htmlTxt = '<!doctype html><HTML><head></head></html>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),2);
+        $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
+        $this->assertEquals($array[1]['tag-name'],'html');
+        $this->assertEquals(count($array[1]['children']),1);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_03() {
+        $htmlTxt = '<!doctype html><HTML><head><title>Testing if it works</title></head></HtMl>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),2);
+        $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
+        $this->assertEquals($array[1]['tag-name'],'html');
+        $this->assertEquals(count($array[1]['children']),1);
+        $this->assertEquals($array[1]['children'][0]['tag-name'],'head');
+        $this->assertEquals($array[1]['children'][0]['children'][0]['body-text'],'Testing if it works');
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_04() {
+        $htmlTxt = '<!doctype html><html><head>'
+                . '<title>   Testing  </title>'
+                . '<meta charset="utf-8"><meta name="view-port" content=""></head></html>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),2);
+        $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
+        $this->assertEquals($array[1]['tag-name'],'html');
+        $this->assertEquals(count($array[1]['children']),1);
+        $this->assertEquals($array[1]['children'][0]['children'][0]['body-text'],'   Testing  ');
+        $this->assertEquals(count($array[1]['children'][0]['children']),3);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_05() {
+        $htmlTxt = '<div></div><div><input></div><div><img><img><input><pre></pre></div>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),3);
+        $this->assertEquals(count($array[0]['children']),0);
+        $this->assertEquals(count($array[1]['children']),1);
+        $this->assertEquals(count($array[2]['children']),4);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_06() {
+        $htmlTxt = '<div></div><div><!--       A Comment.       --><input></div><div><img><img><input><pre></pre></div>';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        print_r($array);
+        $this->assertEquals(count($array),3);
+        $this->assertEquals(count($array[0]['children']),0);
+        $this->assertEquals(count($array[1]['children']),2);
+        $this->assertEquals(count($array[2]['children']),4);
+        $this->assertEquals($array[1]['children'][0]['tag-name'],'!--');
+        $this->assertEquals($array[1]['children'][0]['body-text'],'       A Comment.       ');
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_07() {
+        $htmlText = '<input   data=   myDataEl     type="text"   '
+                . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
+        $array = HTMLNode::htmlAsArray($htmlText);
+        print_r($array);
+        $this->assertEquals(6,count($array[0]['attributes']));
+        $this->assertEquals('text',$array[0]['attributes']['type']);
+        $this->assertEquals('  Something to test  ?  ',$array[0]['attributes']['placeholder']);
+        $this->assertEquals('',$array[0]['attributes']['disabled']);
+        $this->assertEquals('my-input-el',$array[0]['attributes']['class']);
+        $this->assertEquals('myDataEl',$array[0]['attributes']['data']);
+        $this->assertEquals('',$array[0]['attributes']['checked']);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_08() {
+        $htmlText = '<html lang="AR"><head><meta charset = "utf-8">'
+                . '<title>An HTMLDoc</title></head>'
+                . '<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
+                . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked></div></body></html>';
+        $array = HTMLNode::htmlAsArray($htmlText);
+        print_r($array);
+        $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
+        $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
+        $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
+        $this->assertEquals('',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['disabled']);
+        $this->assertEquals('my-input-el',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['class']);
+        $this->assertEquals('myDataEl',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['data']);
+        $this->assertEquals('',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['checked']);
+        
+        $this->assertEquals('AR',$array[0]['attributes']['lang']);
+        $this->assertEquals('utf-8',$array[0]['children'][0]['children'][0]['attributes']['charset']);
+        $this->assertEquals('',$array[0]['children'][1]['attributes']['itemscope']);
+        $this->assertEquals('http://schema.org/WebPage',$array[0]['children'][1]['attributes']['itemtype']);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_09() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_10() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_11() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_12() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_13() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_14() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_15() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_16() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_17() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_18() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_19() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_20() {
+        $this->assertTrue(true);
     }
 }
