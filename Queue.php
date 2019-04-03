@@ -93,7 +93,7 @@ class Queue{
      */
     public function enqueue(&$el){
         if($this->validateSize()){
-            if($el != NULL){
+            if($el !== NULL){
                 if($this->size() == 0){
                     $this->head = new Node($el);
                     $this->size++;
@@ -107,7 +107,7 @@ class Queue{
                 }
                 else{
                     $node = $this->head;
-                    while ($node->next() != NULL){
+                    while ($node->next() !== NULL){
                         $node = $node->next();
                     }
                     $this->tail = new Node($el);
@@ -201,15 +201,15 @@ class Queue{
      * formatted and viewable in the web browser.
      */
     public function __toString() {
-        $retVal = 'Queue[';
+        $retVal = 'Queue['."\n";
         $node = $this->head;
-        while ($node != NULL){
+        while ($node !== NULL){
             $data = $node->data();
-            if($node->next() == NULL){
-                $retVal .= $data.'('. gettype($data).')';
+            if($node->next() === NULL){
+                $retVal .= '    '.$data.'('. gettype($data).')'."\n";
             }
             else{
-                $retVal .= $data.'('. gettype($data).'), ';
+                $retVal .= '    '.$data.'('. gettype($data).'), '."\n";
             }
             $node = $node->next();
         }
