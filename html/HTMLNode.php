@@ -197,12 +197,12 @@ class HTMLNode {
         }
     }
     /**
-     * Creates HTMLNode object given a string of HTML code.
-     * Note that this method is still under implementation.
-     * @param string $text A string that represents HTML code.
+     * 
+     * @param type $text
+     * @return type
      * @since 1.7.4
      */
-    public static function fromHTMLText($text) {
+    public static function htmlAsArray($text) {
         $trimmed = trim($text);
         if(strlen($trimmed) != 0){
             $array = explode('<', $trimmed);
@@ -301,7 +301,7 @@ class HTMLNode {
                                         }
                                     }
                                 }
-                                else if(($char == '"' || $char = "'") && !$isQuoted && $isParsingValue && strlen($attributeVal) == 0){
+                                else if(($char == '"' || $char == "'") && !$isQuoted && $isParsingValue && strlen($attributeVal) == 0){
                                     //if the character is ' or " and parsing value just 
                                     //started, then the value of the attribute is Quoted.
                                     echo 'Quted attr val<br/>';
@@ -314,7 +314,7 @@ class HTMLNode {
                                     //value, then start parsing attribute value
                                     $isParsingValue = true;
                                 }
-                                else if(($char == '"' || $char = "'") && $isParsingValue && $isQuoted){
+                                else if(($char == '"' || $char == "'") && $isParsingValue && $isQuoted){
                                     //if the character is ' or " and text was qouted while 
                                     //parsing its value, then we finished parsing the attribute alongside 
                                     //its value.
@@ -343,7 +343,18 @@ class HTMLNode {
                 }
                 $array[$x] = str_replace('<', '&lt;', str_replace('>', '&gt;', $array[$x]));
             }
+            return $nodesNames;
         }
+        return array();
+    }
+    /**
+     * Creates HTMLNode object given a string of HTML code.
+     * Note that this method is still under implementation.
+     * @param string $text A string that represents HTML code.
+     * @since 1.7.4
+     */
+    public static function fromHTMLText($text) {
+        
     }
     private function _createNodeFromText($text) {
         
