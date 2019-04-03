@@ -25,6 +25,7 @@
 namespace phpStructs\html;
 use phpStructs\LinkedList;
 use phpStructs\Stack;
+use phpStructs\Queue;
 /**
  * A class that represents HTML element.
  *
@@ -210,19 +211,15 @@ class HTMLNode {
             $nodesNamesIndex = 0;
             for($x = 0 ; $x < count($array) ; $x++){
                 $node = $array[$x];
-                echo '$node = \''.$node.'\'<br/>';
                 if(strlen(trim($node)) != 0){
-                    echo 'Splitting node <br/>';
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
-                    $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][1]);
-                    echo 'Extracted body text = \''.$nodesNames[$nodesNamesIndex]['body-text'].'\'<br>';
+                    $nodesNames[$nodesNamesIndex]['body-text'] = $nodesNames[$nodesNamesIndex][1];
                     if(strlen($nodesNames[$nodesNamesIndex]['body-text']) == 0){
                         unset($nodesNames[$nodesNamesIndex]['body-text']);
                     }
                     unset($nodesNames[$nodesNamesIndex][1]);
                     $nodeName = '';
                     $count = strlen($nodesNames[$nodesNamesIndex][0]);
-                    echo 'Extracting node name...<br/>';
                     for($y = 0 ; $y < $count ; $y++){
                         $char = $nodesNames[$nodesNamesIndex][0][$y];
                         if($char == ' '){
@@ -232,120 +229,175 @@ class HTMLNode {
                             $nodeName .= $char;
                         }
                     }
-                    echo 'Extracted name = \''.$nodeName.'\'<br/>';
                     if((isset($nodeName[0]) && $nodeName[0] == '!') && (
                             isset($nodeName[1]) && $nodeName[1] == '-') && 
                             ( isset($nodeName[2]) && $nodeName[2] == '-')){
-                        echo 'Comment node found<br/>';
-                        $nodesNames[$nodesNamesIndex]['node-name'] = '!--';
-                        $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"\n !--");
+                        $nodesNames[$nodesNamesIndex]['tag-name'] = '!--';
+                        $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"!--");
                     }
                     else{
-                        echo 'Another node<br/>';
-                        $nodesNames[$nodesNamesIndex]['node-name'] = trim($nodeName);
+                        $nodeName = strtolower($nodeName);
+                        $nodesNames[$nodesNamesIndex]['tag-name'] = $nodeName;
                         $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
-                        $len = strlen($nodesNames[$nodesNamesIndex][0]);
-                        $isParsingValue = false;
-                        $isQuoted = false;
-                        $attributeVal = '';
-                        $attributeName = '';
-                        echo 'Checking if has attributes...<br/>';
-                        if($len != 0){
-                            echo 'Parsing Attributes<br/>';
-                            $nodesNames[$nodesNamesIndex]['attributes'] = array();
-                            for($charIndex = 0 ; $charIndex < $len ; $charIndex++){
-                                $char = $nodesNames[$nodesNamesIndex][0][$charIndex];
-                                echo '$char = \''.$char.'\'<br/>';
-                                if($char == ' '){
-                                    echo 'Space Found<br/>';
-                                    //if space:
-                                    //1- Can be empty attribute
-                                    //2- Space between an attribute and its value
-                                    //3- Space in Quoted attribute value
-                                    if($isParsingValue && $isQuoted){
-                                        echo 'Qouted and parsing value. Append Space.<br/>';
-                                        $attributeVal .= $char;
-                                    }
-                                    else if(strlen($attributeName) != 0){
-                                        echo 'Attribute name is not empty. Checking next chars<br/>';
-                                        $isCharFound = false;
-                                        for($charIndex2 = $charIndex; $charIndex2 < $len ; $charIndex2++){
-                                            $char = $nodesNames[$nodesNamesIndex][0][$charIndex];
-                                            echo '$char = \''.$char.'\'<br/>';
-                                            if($char != ' ' && $char != '=' && !$isCharFound){
-                                                echo 'A character other than space and equal is found.<br/>';
-                                                $isCharFound = true;
-                                            }
-                                            else if($char == ' ' && $isCharFound){
-                                                echo 'A space is found after a character which is not space and equal sign. Break<br/>';
-                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
-                                                $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = '';
-                                                $attributeName = '';
-                                                break;
-                                            }
-                                            else if($char == '=' && $isCharFound){
-                                                //empty attribute
-                                                echo 'Equal sign and non space character. Break<br/>';
-                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
-                                                $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = '';
-                                                $attributeName = '';
-                                                break;
-                                            }
-                                            else if($char == '=' && !$isCharFound){
-                                                echo 'Equal sign and space character. Break and parse value<br/>';
-                                                echo 'Attr Name = \''.$attributeName.'\'<br/>';
-                                                //space between an attribute and its value.
-                                                $isParsingValue = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                else if(($char == '"' || $char == "'") && !$isQuoted && $isParsingValue && strlen($attributeVal) == 0){
-                                    //if the character is ' or " and parsing value just 
-                                    //started, then the value of the attribute is Quoted.
-                                    echo 'Quted attr val<br/>';
-                                    $isQuoted = true;
-                                }
-                                else if($char == '=' && !$isParsingValue){
-                                    echo 'Attribute name extracted.<br/>';
-                                    echo 'Name = \''.$attributeName.'\'<br/>';
-                                    //if equal sign detected and not parsing attribute and
-                                    //value, then start parsing attribute value
-                                    $isParsingValue = true;
-                                }
-                                else if(($char == '"' || $char == "'") && $isParsingValue && $isQuoted){
-                                    //if the character is ' or " and text was qouted while 
-                                    //parsing its value, then we finished parsing the attribute alongside 
-                                    //its value.
-                                    echo 'Attribute value extracted<br/>';
-                                    echo 'Attr val = \''.$attributeVal.'\'<br/>';
-                                    $nodesNames[$nodesNamesIndex]['attributes'][$attributeName] = $attributeVal;
-                                    $attributeName = '';
-                                    $attributeVal = '';
-                                    $isQuoted = false;
-                                    $isParsingValue = false;
-                                }
-                                else{
-                                    if($isParsingValue){
-                                        echo 'Append char to attribute value<br/>';
-                                        $attributeVal .= $char;
-                                    }
-                                    else{
-                                        $attributeName .= $char;
-                                        echo 'Append char to attribute name<br/>';
-                                    }
-                                }
+                        if($nodeName[0] == '/'){
+                            $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
+                        }
+                        else{
+                            $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
+                            if(in_array($nodeName, self::VOID_TAGS)){
+                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                            }
+                            else if($nodeName == '!doctype'){
+                                $nodesNames[$nodesNamesIndex]['tag-name'] = '!DOCTYPE';
+                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                            }
+                            else{
+                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
                             }
                         }
+                        $len = strlen($nodesNames[$nodesNamesIndex][0]);
+                        if($len != 0){
+                            $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0]);
+                        }
+                        else{
+                            $nodesNames[$nodesNamesIndex]['attributes'] = array();
+                        }
                     }
+                    unset($nodesNames[$nodesNamesIndex][0]);
                     $nodesNamesIndex++;
                 }
-                $array[$x] = str_replace('<', '&lt;', str_replace('>', '&gt;', $array[$x]));
             }
-            return $nodesNames;
+            $x = 0;
+            return self::_buildArrayTree($nodesNames,$x,count($nodesNames),null);
         }
         return array();
+    }
+    private static function _parseAttributesHelper(&$queue,$isEqualFound,&$val){
+        if($isEqualFound){
+            $equalSign = '=';
+            $queue->enqueue($equalSign);
+            $queue->enqueue($val);
+        }
+        else{
+            $queue->enqueue($val);
+        }
+        $val = '';
+    }
+
+    public static function _parseAttributes($attrsStr) {
+        $inQouted = false;
+        $isEqualFound = false;
+        $queue = new Queue();
+        $str = '';
+        for($x = 0 ; $x < strlen($attrsStr) ; $x++){
+            $char = $attrsStr[$x];
+            if($char == '=' && !$inQouted){
+                $str = trim($str);
+                if(strlen($str) != 0 ){
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                }
+                $isEqualFound = true;
+            }
+            else if($char == ' ' && strlen(trim($str)) != 0 && !$inQouted){
+                $str = trim($str);
+                if(strlen($str) != 0){
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                }
+                $isEqualFound = false;
+            }
+            else if(($char == '"' || $char == "'") && $inQouted){
+                self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                $isEqualFound = false;
+                $inQouted = false;
+            }
+            else if(($char == '"' || $char == "'") && !$inQouted){
+                $str = trim($str);
+                if(strlen($str) != 0){
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                }
+                $inQouted = true;
+            }
+            else{
+                $str.= $char;
+            }
+        }
+        $retVal = array();
+        while ($queue->peek()){
+            $current = $queue->dequeue();
+            $next = $queue->peek();
+            if($next == '='){
+                $queue->dequeue();
+                $retVal[$current] = $queue->dequeue();
+            }
+            else{
+                $retVal[$current] = '';
+            }
+        }
+        return $retVal;
+    }
+    private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
+        $retVal = array();
+        for(; $x < $nodesCount ; $x++){
+            $node = $parsedNodesArr[$x];
+            $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
+            $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
+            if($node['tag-name'] == '!--'){
+                unset($node['is-closing-tag']);
+                $retVal[] = $node;
+            }
+            else if($isVoid){
+                unset($node['is-closing-tag']);
+                unset($node['body-text']);
+                $retVal[] = $node;
+            }
+            else if($isClosingTag){
+                return $retVal;
+            }
+            else{
+                $x++;
+                $node['children'] = self::_buildArrayTree($parsedNodesArr, $x, $nodesCount);
+                unset($node['is-closing-tag']);
+                $retVal[] = $node;
+            }
+        }
+        return $retVal;
+    }
+    private static function _buildArrayTree_H1($nodesArr,&$parentNodeArr,&$nodeIndex,$nodesCount) {
+        $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
+        $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
+        if($parentNodeArr['tag-name'] == '!--'){
+            return $parentNodeArr;
+        }
+        else if($isClosingTag){
+            return array();
+        }
+        else if($isVoid){
+            return $parentNodeArr;
+        }
+        else{
+            $parentNodeArr['children'] = [];
+            $nodeIndex++;
+            for(;$nodeIndex < $nodesCount;$nodeIndex++){
+                $node = $nodesArr[$nodeIndex];
+                $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
+                $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
+                if($node['tag-name'] == '!--'){
+                    $parentNodeArr['children'][] = $node;
+                }
+                else if($isVoid){
+                    $parentNodeArr['children'][] = $node;
+                }
+                else if($isClosingTag){
+                    
+                        break;
+                    
+                }
+                else{
+                    $parentNodeArr['children'][] = self::_buildArrayTree_H1($nodesArr, $node, $nodeIndex, $nodesCount);
+                }
+            }
+            return $parentNodeArr;
+        }
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
