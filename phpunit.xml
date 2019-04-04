@@ -4,7 +4,7 @@
     </php>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./html</directory>
+            <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
     <logging>
@@ -12,10 +12,10 @@
     </logging>
     <testsuites>
         <testsuite name="Data Structures Tests">
-            <directory>./data-structures</directory>
+            <directory>.tests/data-structures</directory>
         </testsuite>
         <testsuite name="HTML Elements Tests">
-            <directory>./html</directory>
+            <directory>.tests/html</directory>
         </testsuite>
     </testsuites>
 </phpunit>
