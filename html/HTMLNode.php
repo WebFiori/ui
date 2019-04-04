@@ -198,9 +198,52 @@ class HTMLNode {
         }
     }
     /**
-     * 
-     * @param type $text
-     * @return type
+     * Converts a string of HTML code to an array that looks like a tree of 
+     * HTML elements.
+     * @param string $text HTML code.
+     * @return array An indexed array. Each index will contain parsed element 
+     * information. For example, if the given code is as follows:<br/>
+     * <pre>
+     &lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;
+     * </pre>
+     * Then the output will be as follows:
+     <pre>Array
+&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;[0] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[tag-name] =&gt; html
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[is-void-tag] =&gt; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[attributes] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[children] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[tag-name] =&gt; head
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[is-void-tag] =&gt; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[attributes] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[children] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;[1] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[tag-name] =&gt; body
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[is-void-tag] =&gt; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[attributes] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[children] =&gt; Array
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;&nbsp;&nbsp;)
+&nbsp;&nbsp;)
+)
+</pre>
      * @since 1.7.4
      */
     public static function htmlAsArray($text) {
@@ -272,6 +315,13 @@ class HTMLNode {
         }
         return array();
     }
+    /**
+     * A helper method for parsing attributes string.
+     * @param Queue $queue
+     * @param boolean $isEqualFound
+     * @param string $val
+     * @since 1.7.4
+     */
     private static function _parseAttributesHelper(&$queue,$isEqualFound,&$val){
         if($isEqualFound){
             $equalSign = '=';
@@ -283,8 +333,16 @@ class HTMLNode {
         }
         $val = '';
     }
-
-    public static function _parseAttributes($attrsStr) {
+    /**
+     * A helper method to parse a string of HTML element attributes.
+     * @param string $attrsStr A string that represents the attributes 
+     * of the element (such as 'type=text disabled placeholder="something" class=MyInput')
+     * @return array An associative array that contains all the parsed attributes. 
+     * The keys are the attributes and the values of the keys are the values 
+     * of the attributes.
+     * @since 1.7.4
+     */
+    private static function _parseAttributes($attrsStr) {
         $inQouted = false;
         $isEqualFound = false;
         $queue = new Queue();
@@ -321,6 +379,10 @@ class HTMLNode {
                 $str.= $char;
             }
         }
+        $trimmed = trim($str);
+        if(strlen($trimmed) != 0){
+            $queue->enqueue($trimmed);
+        }
         $retVal = array();
         while ($queue->peek()){
             $current = $queue->dequeue();
@@ -335,6 +397,15 @@ class HTMLNode {
         }
         return $retVal;
     }
+    /**
+     * Build an associative array that represents parsed HTML string.
+     * @param array $parsedNodesArr An array that contains the parsed HTML 
+     * elements.
+     * @param int $x The current element index.
+     * @param int $nodesCount Number of parsed nodes.
+     * @return array
+     * @since 1.7.4
+     */
     private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
         $retVal = array();
         for(; $x < $nodesCount ; $x++){
@@ -362,6 +433,15 @@ class HTMLNode {
         }
         return $retVal;
     }
+    /**
+     * 
+     * @param type $nodesArr
+     * @param type $parentNodeArr
+     * @param type $nodeIndex
+     * @param type $nodesCount
+     * @return type
+     * @since 1.7.4
+     */
     private static function _buildArrayTree_H1($nodesArr,&$parentNodeArr,&$nodeIndex,$nodesCount) {
         $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
         $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
@@ -406,10 +486,53 @@ class HTMLNode {
      * @since 1.7.4
      */
     public static function fromHTMLText($text) {
-        
+        $nodesArr = self::htmlAsArray($text);
+        if(count($nodesArr) >= 1){
+//            if($nodesArr[0]['tag-name'] == 'html' || $nodesArr[0]['tag-name'] == '!DOCTYPE'){
+//            $retVal = new HTMLDoc();
+//                for($x = 0 ; $x < count($nodesArr) ; $x++){
+//                    if($nodesArr[$x]['tag-name'] != 'html' && $nodesArr[$x]['tag-name'] != '!DOCTYPE'){
+//                        $retVal->addChild($this->_fromHTMLTextHelper_00($nodesArr[$x]));
+//                    }
+//                }
+//            }
+//            else 
+            if(count($nodesArr) != 1){
+                $retVal = array();
+                foreach ($nodesArr as $node){
+                    if($node['tag-name'] !== '!DOCTYPE'){
+                        $retVal[] = self::_fromHTMLTextHelper_00($node);
+                    }
+                }
+            }
+            else if(count($nodesArr) == 1){
+                return self::_fromHTMLTextHelper_00($nodesArr[0]);
+            }
+            return $retVal;
+        }
+        return null;
     }
-    private function _createNodeFromText($text) {
-        
+    private static function _fromHTMLTextHelper_00($nodeArr) {
+        if($nodeArr['tag-name'] == '!--'){
+            return self::createComment($nodeArr['body-text']);
+        }
+        else{
+            $htmlNode = new HTMLNode($nodeArr['tag-name']);
+            if(isset($nodeArr['attributes'])){
+                foreach ($nodeArr['attributes'] as $key => $value) {
+                    $htmlNode->setAttribute($key, $value);
+                }
+            }
+            if(isset($nodeArr['children'])){
+                foreach ($nodeArr['children'] as $child){
+                    $htmlNode->addChild(self::_fromHTMLTextHelper_00($child));
+                }
+            }
+            if(isset($nodeArr['body-text'])){
+                $htmlNode->addTextNode($nodeArr['body-text']);
+            }
+            return $htmlNode;
+        }
     }
     /**
      * Checks if the given node represents a comment or not.
