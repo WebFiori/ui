@@ -40,25 +40,25 @@ else{
 }
 define('ROOT', $rootDir);
 //echo 'Root Directory: \''.$rootDir.'\'.'."\n";
-require_once $rootDir.'Node.php';
-require_once $rootDir.'LinkedList.php';
-require_once $rootDir.'Stack.php';
-require_once $rootDir.'Queue.php';
-require_once $rootDir.'Comparable.php';
+require_once $rootDir.'src'.$DS.'Node.php';
+require_once $rootDir.'src'.$DS.'LinkedList.php';
+require_once $rootDir.'src'.$DS.'Stack.php';
+require_once $rootDir.'src'.$DS.'Queue.php';
+require_once $rootDir.'src'.$DS.'Comparable.php';
 //HTML classes
-require_once $rootDir.'html'.$DS.'HTMLNode.php';
-require_once $rootDir.'html'.$DS.'Br.php';
-require_once $rootDir.'html'.$DS.'HeadNode.php';
-require_once $rootDir.'html'.$DS.'PNode.php';
-require_once $rootDir.'html'.$DS.'HTMLDoc.php';
-require_once $rootDir.'html'.$DS.'CodeSnippet.php';
-require_once $rootDir.'html'.$DS.'Input.php';
-require_once $rootDir.'html'.$DS.'JsCode.php';
-require_once $rootDir.'html'.$DS.'Label.php';
-require_once $rootDir.'html'.$DS.'LinkNode.php';
-require_once $rootDir.'html'.$DS.'UnorderedList.php';
-require_once $rootDir.'html'.$DS.'ListItem.php';
-require_once $rootDir.'html'.$DS.'TabelCell.php';
-require_once $rootDir.'html'.$DS.'TableRow.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLNode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'Br.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'HeadNode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'PNode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLDoc.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'CodeSnippet.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'Input.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'JsCode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'Label.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'LinkNode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'UnorderedList.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'TabelCell.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
 
 require_once $rootDir.'tests'.$DS.'AnyObject.php';
