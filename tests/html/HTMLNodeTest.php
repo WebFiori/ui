@@ -101,7 +101,7 @@ class HTMLNodeTest extends TestCase{
         $htmlTxt = '<html><head><title>This is a test document. ';
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('This is a test document. ',$val->getHeadNode()->getTitle());
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
     }
     /**
      * @test
@@ -118,14 +118,14 @@ class HTMLNodeTest extends TestCase{
      */
     public function testFromHTML_09() {
         $htmlTxt = '<html><head><meta charset="utf-8"><title>This is a test document.</title></head><body>'
-                . '<input type = text ID="input-el-1>"';
+                . '<input type = text ID="input-el-1">';
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
         $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
         $el = $val->getChildByID('input-el-1');
         $this->assertTrue($el instanceof HTMLNode);
-        $this->assertTrue('text',$el->getAttributeValue('type'));
+        $this->assertEquals('text',$el->getAttributeValue('type'));
     }
     /**
      * @test
