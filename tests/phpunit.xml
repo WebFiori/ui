@@ -2,6 +2,11 @@
 <phpunit colors="true" bootstrap="test.php">
     <php>
     </php>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./</directory>
+        </whitelist>
+    </filter>
     <logging>
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
