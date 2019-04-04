@@ -505,14 +505,14 @@ class HTMLNode {
                 for($x = 0 ; $x < count($nodesArr) ; $x++){
                     if($nodesArr[$x]['tag-name'] == 'html'){
                         $htmlNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
-                        for($x = 0 ; $x < $htmlNode->childrenCount() ; $x++){
-                            $child = $htmlNode->children()->get($x);
+                        for($y = 0 ; $y < $htmlNode->childrenCount() ; $y++){
+                            $child = $htmlNode->children()->get($y);
                             if($child->getNodeName() == 'head'){
                                 $retVal->setHeadNode($child);
                             }
                             else if($child->getNodeName() == 'body'){
-                                for($y = 0 ; $y < $child->childrenCount() ; $y++){
-                                    $node = $child->children()->get($y);
+                                for($z = 0 ; $z < $child->childrenCount() ; $z++){
+                                    $node = $child->children()->get($z);
                                     $retVal->addChild($node);
                                 }
                             }
@@ -560,6 +560,53 @@ class HTMLNode {
             if($nodeArr['tag-name'] == 'head'){
                 $htmlNode = new HeadNode();
                 $htmlNode->removeAllChildNodes();
+                for($x = 0 ; $x < count($nodeArr['children']) ; $x++){
+                    $chNode = $nodeArr['children'][$x];
+                    if($chNode['tag-name'] == 'title'){
+                        $htmlNode->setTitle($chNode['body-text']);
+                        foreach ($chNode['attributes'] as $attr => $val){
+                            $htmlNode->getTitleNode()->setAttribute($attr, $val);
+                        }
+                    }
+                    else if($chNode['tag-name'] == 'base'){
+                        $isBaseSet = false;
+                        foreach ($chNode['attributes'] as $attr => $val){
+                            if($attr == 'base'){
+                                $isBaseSet = $htmlNode->setBase($val);
+                                break;
+                            }
+                        }
+                        if($isBaseSet){
+                            foreach ($chNode['attributes'] as $attr => $val){
+                                $htmlNode->getBase()->setAttribute($attr, $val);
+                            }
+                        }
+                    }
+                    else if($chNode['tag-name'] == 'link'){
+                        $isCanonical = false;
+                        $tmpNode = new HTMLNode('link');
+                        foreach ($chNode['attributes'] as $attr=>$val){
+                            $tmpNode->setAttribute($attr, $val);
+                            if($attr == 'rel' && $val == 'canonical'){
+                                $isCanonical = true;
+                            }
+                        }
+                        if($isCanonical){
+                            $isCanonicalSet = $htmlNode->setCanonical($tmpNode->getAttributeValue('href'));
+                            if($isCanonicalSet){
+                                foreach ($tmpNode->getAttributes() as $attr => $val){
+                                    $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
+                                }
+                            }
+                        }
+                        else{
+                            $htmlNode->addChild($tmpNode);
+                        }
+                    }
+                    else {
+                        $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
+                    }
+                }
             }
             else if($nodeArr['tag-name'] == '!DOCTYPE'){
                 return self::createTextNode('<!DOCTYPE html>',false);
@@ -738,7 +785,7 @@ class HTMLNode {
      * @return NULL|HTMLNode Description
      */
     private function &_getChildByID($val,&$chNodes){
-        $chCount = $chNodes->size();
+        $chCount = $chNodes !== null ? $chNodes->size() : 0;
         for($x = 0 ; $x < $chCount ; $x++){
             $child = &$chNodes->get($x);
             if(!$child->isTextNode()){
