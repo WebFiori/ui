@@ -2,6 +2,9 @@
 <phpunit colors="true" bootstrap="test.php">
     <php>
     </php>
+    <logging>
+        <log type="coverage-clover" target="clover.xml"/>
+    </logging>
     <testsuites>
         <testsuite name="Data Structures Tests">
             <directory>./data-structures</directory>
