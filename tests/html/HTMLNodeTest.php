@@ -25,14 +25,107 @@
 namespace phpStructs\tests\html;
 use PHPUnit\Framework\TestCase;
 use phpStructs\html\HTMLNode;
+use phpStructs\html\HTMLDoc;
 /**
  * Description of HTMLNodeTest
  *
  * @author Eng.Ibrahim
  */
 class HTMLNodeTest extends TestCase{
+    /**
+     * @test
+     */
     public function testFromHTML_00() {
-        $this->assertTrue(true);
+        $htmlTxt = '<!doctype html>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_01() {
+        $htmlTxt = '';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertNull($val);
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_02() {
+        $htmlTxt = '<!doctype html>';
+        $val = HTMLNode::fromHTMLText($htmlTxt,false);
+        $this->assertTrue($val instanceof HTMLNode);
+        $this->assertEquals('<!DOCTYPE html>',$val->getText());
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_03() {
+        $htmlTxt = '<!docType htMl><html></html><div></div><body></body>';
+        $val = HTMLNode::fromHTMLText($htmlTxt,false);
+        $this->assertEquals('array',gettype($val));
+        $this->assertEquals(4,count($val));
+        $this->assertEquals('<!DOCTYPE html>',$val[0]->getText());
+        $this->assertEquals('html',$val[1]->getNodeName());
+        $this->assertEquals('div',$val[2]->getNodeName());
+        $this->assertEquals('body',$val[3]->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_04() {
+        $htmlTxt = '<!docType htMl><html></html><div></div><body></body>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_05() {
+        $htmlTxt = '<html></html>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_06() {
+        $htmlTxt = '<html>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_07() {
+        $htmlTxt = '<html><head><title>This is a test document. ';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+        $this->assertEquals('This is a test document. ',$val->getHeadNode()->getTitle());
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_08() {
+        $htmlTxt = '<html><HEAD><meta CHARSET="utf-8"><title>This is a test document.</title>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_09() {
+        $htmlTxt = '<html><head><meta charset="utf-8"><title>This is a test document.</title></head><body>'
+                . '<input type = text ID="input-el-1>"';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
+        $el = $val->getChildByID('input-el-1');
+        $this->assertTrue($el instanceof HTMLNode);
+        $this->assertTrue('text',$el->getAttributeValue('type'));
     }
     /**
      * @test
@@ -120,7 +213,7 @@ class HTMLNodeTest extends TestCase{
         $this->assertEquals(count($array[0]['children']),0);
         $this->assertEquals(count($array[1]['children']),2);
         $this->assertEquals(count($array[2]['children']),4);
-        $this->assertEquals($array[1]['children'][0]['tag-name'],'!--');
+        $this->assertEquals($array[1]['children'][0]['tag-name'],'#COMMENT');
         $this->assertEquals($array[1]['children'][0]['body-text'],'       A Comment.       ');
     }
     /**
@@ -189,66 +282,8 @@ class HTMLNodeTest extends TestCase{
      * @test
      */
     public function testHTMLAsArray_10() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_11() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_12() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_13() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_14() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_15() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_16() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_17() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_18() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_19() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
-    public function testHTMLAsArray_20() {
-        $this->assertTrue(true);
+        $htmlTxt = '';
+        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $this->assertEquals(count($array),0);
     }
 }
