@@ -32,7 +32,7 @@ use phpStructs\html\HTMLNode;
  */
 class HTMLNodeTest extends TestCase{
     public function testFromHTML_00() {
-        
+        $this->assertTrue(true);
     }
     /**
      * @test
@@ -166,7 +166,24 @@ class HTMLNodeTest extends TestCase{
      * @test
      */
     public function testHTMLAsArray_09() {
-        $this->assertTrue(true);
+        $htmlText = '<html lang="AR"><head><meta charset = "utf-8">'
+                . '<title>An HTMLDoc</title></head>'
+                . '<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
+                . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
+        $array = HTMLNode::htmlAsArray($htmlText);
+        print_r($array);
+        $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
+        $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
+        $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
+        $this->assertEquals('',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['disabled']);
+        $this->assertEquals('my-input-el',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['class']);
+        $this->assertEquals('myDataEl',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['data']);
+        $this->assertEquals('',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['checked']);
+        
+        $this->assertEquals('AR',$array[0]['attributes']['lang']);
+        $this->assertEquals('utf-8',$array[0]['children'][0]['children'][0]['attributes']['charset']);
+        $this->assertEquals('',$array[0]['children'][1]['attributes']['itemscope']);
+        $this->assertEquals('http://schema.org/WebPage',$array[0]['children'][1]['attributes']['itemtype']);
     }
     /**
      * @test
