@@ -28,7 +28,7 @@ use phpStructs\html\HTMLNode;
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *
  * @author Ibrahim
- * @version 1.1.2
+ * @version 1.1.3
  */
 class HeadNode extends HTMLNode{
     /**
@@ -113,6 +113,20 @@ class HeadNode extends HTMLNode{
                 $this->addChild($this->titleNode);
             }
             $this->titleNode->children()->get(0)->setText($title);
+        }
+    }
+    /**
+     * Returns the text that was set for the note 'title'.
+     * @return string The text that was set for the note 'title'. If it was not 
+     * set, the method will return empty string.
+     * @since 1.1.3
+     */
+    public function getTitle() {
+        if($this->titleNode !== null){
+            return $this->titleNode->children()->get(0)->getText();
+        }
+        else{
+            return '';
         }
     }
     /**
@@ -223,17 +237,32 @@ class HeadNode extends HTMLNode{
     /**
      * Returns HTML node that represents a meta tag.
      * @param string $name The value of the attribute 'name' of the meta 
-     * tag.
+     * tag. Note that if the meta node that you would like to get is 
+     * the tag which has the attribute 'charset', then the passed attribute 
+     * must have the value 'charset'.
      * @return HTMLNode|NULL If a meta tag which has the given name was found, 
      * It will be returned. If no meta node was found, NULL is returned.
      * @since 1.1.2
      */
     public function &getMeta($name) {
-        for($x = 0 ; $x < $this->childrenCount() ; $x++){
-            $node = $this->children()->get($x);
-            if($node->getNodeName() == 'meta'){
-                if($node->getAttributeValue('name') == $name){
-                    return $node;
+        $lName = strtolower($name);
+        if($lName == 'charset'){
+            for($x = 0 ; $x < $this->childrenCount() ; $x++){
+                $node = $this->children()->get($x);
+                if($node->getNodeName() == 'meta'){
+                    if($node->hasAttribute('charset')){
+                        return $node;
+                    }
+                }
+            }
+        }
+        else{
+            for($x = 0 ; $x < $this->childrenCount() ; $x++){
+                $node = $this->children()->get($x);
+                if($node->getNodeName() == 'meta'){
+                    if($node->getAttributeValue('name') == $name){
+                        return $node;
+                    }
                 }
             }
         }
