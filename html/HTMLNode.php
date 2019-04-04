@@ -275,7 +275,7 @@ class HTMLNode {
                     if((isset($nodeName[0]) && $nodeName[0] == '!') && (
                             isset($nodeName[1]) && $nodeName[1] == '-') && 
                             ( isset($nodeName[2]) && $nodeName[2] == '-')){
-                        $nodesNames[$nodesNamesIndex]['tag-name'] = '!--';
+                        $nodesNames[$nodesNamesIndex]['tag-name'] = '#COMMENT';
                         $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"!--");
                     }
                     else{
@@ -412,7 +412,7 @@ class HTMLNode {
             $node = $parsedNodesArr[$x];
             $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
             $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
-            if($node['tag-name'] == '!--'){
+            if($node['tag-name'] == '#COMMENT'){
                 unset($node['is-closing-tag']);
                 $retVal[] = $node;
             }
@@ -445,7 +445,7 @@ class HTMLNode {
     private static function _buildArrayTree_H1($nodesArr,&$parentNodeArr,&$nodeIndex,$nodesCount) {
         $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
         $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
-        if($parentNodeArr['tag-name'] == '!--'){
+        if($parentNodeArr['tag-name'] == '#COMMENT'){
             return $parentNodeArr;
         }
         else if($isClosingTag){
@@ -461,7 +461,7 @@ class HTMLNode {
                 $node = $nodesArr[$nodeIndex];
                 $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
                 $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
-                if($node['tag-name'] == '!--'){
+                if($node['tag-name'] == '#COMMENT'){
                     $parentNodeArr['children'][] = $node;
                 }
                 else if($isVoid){
@@ -483,26 +483,52 @@ class HTMLNode {
      * Creates HTMLNode object given a string of HTML code.
      * Note that this method is still under implementation.
      * @param string $text A string that represents HTML code.
+     * @param boolean $asHTMLDocObj If set to 'true' and given HTML represents a 
+     * structured HTML document, the method will convert the code to an object 
+     * of type 'HTMLDoc'. Default is 'true'.
+     * @return array|HTMLDoc|HTMLNode If the given code represents HTML document 
+     * and the parameter <b>$asHTMLDocObj</b> is set to 'true', an object of type 
+     * 'HTMLDoc' is returned. If the given code has multiple top level nodes 
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
+     * an array that contains an objects of type 'HTMLNode' is returned. If the 
+     * given code has one top level node, an object of type 'HTMLNode' is returned. 
+     * Note that it is possible that the method will return an instance which 
+     * is a sub-class of the class 'HTMLNode'.
      * @since 1.7.4
      */
-    public static function fromHTMLText($text) {
+    public static function fromHTMLText($text,$asHTMLDocObj=true) {
         $nodesArr = self::htmlAsArray($text);
         if(count($nodesArr) >= 1){
-//            if($nodesArr[0]['tag-name'] == 'html' || $nodesArr[0]['tag-name'] == '!DOCTYPE'){
-//            $retVal = new HTMLDoc();
-//                for($x = 0 ; $x < count($nodesArr) ; $x++){
-//                    if($nodesArr[$x]['tag-name'] != 'html' && $nodesArr[$x]['tag-name'] != '!DOCTYPE'){
-//                        $retVal->addChild($this->_fromHTMLTextHelper_00($nodesArr[$x]));
-//                    }
-//                }
-//            }
-//            else 
-            if(count($nodesArr) != 1){
+            if($asHTMLDocObj && ($nodesArr[0]['tag-name'] == 'html' || $nodesArr[0]['tag-name'] == '!DOCTYPE')){
+                $retVal = new HTMLDoc();
+                $retVal->getHeadNode()->removeAllChildNodes();
+                for($x = 0 ; $x < count($nodesArr) ; $x++){
+                    if($nodesArr[$x]['tag-name'] == 'html'){
+                        $htmlNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
+                        for($x = 0 ; $x < $htmlNode->childrenCount() ; $x++){
+                            $child = $htmlNode->children()->get($x);
+                            if($child->getNodeName() == 'head'){
+                                $retVal->setHeadNode($child);
+                            }
+                            else if($child->getNodeName() == 'body'){
+                                for($y = 0 ; $y < $child->childrenCount() ; $y++){
+                                    $node = $child->children()->get($y);
+                                    $retVal->addChild($node);
+                                }
+                            }
+                        }
+                    }
+                    else if($nodesArr[$x]['tag-name'] != 'head'){
+                        $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
+                        $retVal->setHeadNode($headNode);
+                    }
+                }
+            }
+            else if(count($nodesArr) != 1){
                 $retVal = array();
                 foreach ($nodesArr as $node){
-                    if($node['tag-name'] !== '!DOCTYPE'){
-                        $retVal[] = self::_fromHTMLTextHelper_00($node);
-                    }
+                    $asHtmlNode = self::_fromHTMLTextHelper_00($node);
+                    $retVal[] = $asHtmlNode;
                 }
             }
             else if(count($nodesArr) == 1){
@@ -512,12 +538,35 @@ class HTMLNode {
         }
         return null;
     }
+    /**
+     * Creates an object of type HTMLNode given its properties as an associative 
+     * array.
+     * @param array $nodeArr An associative array that contains node properties. 
+     * This array can have the following indices:
+     * <ul>
+     * <li>tag-name: An index that contains tag name.</li>
+     * <li>attributes: An associative array that contains node attributes. Ignored 
+     * if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
+     * <li>children: A sub array that contains the info of all node children. 
+     * Ignored if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
+     * </ul>
+     * @return HTMLNode
+     */
     private static function _fromHTMLTextHelper_00($nodeArr) {
-        if($nodeArr['tag-name'] == '!--'){
+        if($nodeArr['tag-name'] == '#COMMENT'){
             return self::createComment($nodeArr['body-text']);
         }
         else{
-            $htmlNode = new HTMLNode($nodeArr['tag-name']);
+            if($nodeArr['tag-name'] == 'head'){
+                $htmlNode = new HeadNode();
+                $htmlNode->removeAllChildNodes();
+            }
+            else if($nodeArr['tag-name'] == '!DOCTYPE'){
+                return self::createTextNode('<!DOCTYPE html>',false);
+            }
+            else{
+                $htmlNode = new HTMLNode($nodeArr['tag-name']);
+            }
             if(isset($nodeArr['attributes'])){
                 foreach ($nodeArr['attributes'] as $key => $value) {
                     $htmlNode->setAttribute($key, $value);
@@ -1152,9 +1201,15 @@ class HTMLNode {
                 $this->htmlString .= $node->getText();
             }
             else{
-                $parentName = $node->getParent()->getNodeName();
-                if($parentName == 'code' || $parentName == 'pre' || $parentName == 'textarea'){
-                    $this->htmlString .= $node->getText();
+                $parent = $node->getParent();
+                if($parent !== null){
+                    $parentName = $node->getParent()->getNodeName();
+                    if($parentName == 'code' || $parentName == 'pre' || $parentName == 'textarea'){
+                        $this->htmlString .= $node->getText();
+                    }
+                    else{
+                        $this->htmlString .= $this->_getTab().$node->getText().$this->nl;
+                    }
                 }
                 else{
                     $this->htmlString .= $this->_getTab().$node->getText().$this->nl;
