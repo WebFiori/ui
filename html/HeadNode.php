@@ -74,19 +74,25 @@ class HeadNode extends HTMLNode{
     
     /**
      * Sets the value of the attribute 'href' for the 'base' tag.
-     * @param string $url The value to set.
+     * @param string $url The value to set. The base URL will be updated 
+     * only if the given parameter is a string and it is not empty.
+     * @return boolean The method will return true if the base URL has been updated. 
+     * False if not.
      * @since 1.0
      */
     public function setBase($url){
-        if(gettype($url) == 'string' && strlen($url) != 0){
+        $trimmedUrl = trim($url.'');
+        if(strlen($trimmedUrl) != 0){
             if($this->baseNode == NULL){
                 $this->baseNode = new HTMLNode('base');
             }
             if(!$this->hasChild($this->baseNode)){
                 $this->addChild($this->baseNode);
             }
-            $this->baseNode->setAttribute('href',$url);
+            $this->baseNode->setAttribute('href',$trimmedUrl);
+            return true;
         }
+        return false;
     }
     /**
      * Returns a node that represents the tag 'base'.
@@ -94,26 +100,59 @@ class HeadNode extends HTMLNode{
      * base URL is not set, The method will return NULL.
      * @since 1.0
      */
-    public function getBase(){
+    public function &getBase(){
         return $this->baseNode;
     }
-
+    /**
+     * Returns the value of the attribute 'href' of the node 'base'.
+     * @return string|null The value of the attribute 'href' of the node 'base'. 
+     * if the value of the base URL is not set, the method will return null.
+     * @since 1.1.3
+     */
+    public function getBaseURL() {
+        if($this->baseNode !== null){
+            return $this->baseNode->getAttributeValue('href');
+        }
+        return null;
+    }
     /**
      * Sets the text value of the node 'title'.
-     * @param string $title The title to set.
+     * @param string $title The title to set. It must be non-empty string in 
+     * order to set.
      * @since 1.0
      */
     public function setTitle($title){
-        if(strlen($title) != 0){
+        $trimmedTitle = trim($title);
+        if(strlen($trimmedTitle) != 0){
             if($this->titleNode == NULL){
                 $this->titleNode = new HTMLNode('title');
-                $this->titleNode->addChild(self::createTextNode($title));
+                $this->titleNode->addChild(self::createTextNode($trimmedTitle));
             }
             if(!$this->hasChild($this->titleNode)){
                 $this->addChild($this->titleNode);
             }
-            $this->titleNode->children()->get(0)->setText($title);
+            $this->titleNode->children()->get(0)->setText($trimmedTitle);
         }
+    }
+    /**
+     * Returns an object of type HTMLNode that represents the title node.
+     * @return HTMLNode|null If the title is set, the method will return 
+     * an object of type HTMLNode. If it is not set, the method 
+     * will return null.
+     * @since 1.1.3
+     */
+    public function &getTitleNode() {
+        return $this->titleNode;
+    }
+    /**
+     * Removes all child nodes.
+     * @since 1.1.3
+     */
+    public function removeAllChildNodes() {
+        parent::removeAllChildNodes();
+        $this->titleNode = null;
+        $this->canonical = null;
+        $this->canonical = null;
     }
     /**
      * Returns the text that was set for the note 'title'.
@@ -192,28 +231,33 @@ class HeadNode extends HTMLNode{
     }
     /**
      * Adds new meta tag.
-     * @param string $name The value of the property 'name'.
+     * @param string $name The value of the property 'name'. Must be non empty 
+     * string.
      * @param string $content The value of the property 'content'.
      * @param boolean $override A boolean attribute. If a meta node was found 
      * which has the given name and this attribute is set to TRUE, 
-     * the content of the meta will be overriden by the passed value. 
+     * the content of the meta will be overridden by the passed value. 
+     * @return boolean If the meta tag is added or updated, the method will return 
+     * true. Other than that, the method will return false.
      * @since 1.0
      */
     public function addMeta($name,$content,$override=false){
-        if(gettype($name) == 'string' && gettype($content) == 'string'){
-            if(strlen($name) != 0 && strlen($content) != 0){
-                $meta = &$this->getMeta($name);
-                if($meta !== NULL && $override === TRUE){
-                    $meta->setAttribute('content', $content);
-                }
-                else if($meta === NULL){
-                    $meta = new HTMLNode('meta');
-                    $meta->setAttribute('name', $name);
-                    $meta->setAttribute('content', $content);
-                    $this->addChild($meta);
-                }
+        $trimmedName = trim(strtolower($name.''));
+        if(strlen($trimmedName) != 0){
+            $meta = &$this->getMeta($trimmedName);
+            if($meta !== NULL && $override === TRUE){
+                $meta->setAttribute('content', $content);
+                return true;
+            }
+            else if($meta === NULL){
+                $meta = new HTMLNode('meta');
+                $meta->setAttribute('name', $trimmedName);
+                $meta->setAttribute('content', $content);
+                $this->addChild($meta);
+                return true;
             }
         }
+        return false;
     }
     /**
      * Adds new child node.
@@ -245,7 +289,7 @@ class HeadNode extends HTMLNode{
      * @since 1.1.2
      */
     public function &getMeta($name) {
-        $lName = strtolower($name);
+        $lName = strtolower(trim($name));
         if($lName == 'charset'){
             for($x = 0 ; $x < $this->childrenCount() ; $x++){
                 $node = $this->children()->get($x);
@@ -291,57 +335,81 @@ class HeadNode extends HTMLNode{
     /**
      * Adds new CSS source file.
      * For every CSS file added, a string in the form '?cv=xxxxxxxxxx' will 
-     * be appended to the 'href' attribute value. It is used to prevent caching.
-     * @param string $href The link to the file. 'cv' = CSS Version.
+     * be appended to the 'href' attribute value. It is used to prevent caching. 
+     * 'cv' = CSS Version.
+     * @param string $href The link to the file. Must be non empty string.
      * @param $otherAttrs An array that can contain additional 
      * attributes to set for the link tag.
+     * @return boolean If a link tag which has the given CSS file is added, the 
+     * method will return true. If no node is added, the method will return 
+     * false.
      * @since 1.0
      */
     public function addCSS($href, $otherAttrs=array()){
-        if(strlen($href) != 0){
+        $trimmedHref = trim($href);
+        if(strlen($trimmedHref) != 0){
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
-            foreach ($otherAttrs as $attr => $attrVal){
-                $tag->setAttribute($attr, $attrVal);
+            foreach ($otherAttrs as $attr=>$val){
+                $trimmedAttr = trim(strtolower($attr));
+                if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
+                    $tag->setAttribute($trimmedAttr, $val);
+                }
             }
             //used to prevent caching 
             $version = substr(hash('sha256', time()+rand(0, 10000)), rand(0,10),10);
             
-            $tag->setAttribute('href', $href.'?cv='.$version);
+            $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
             $this->addChild($tag);
+            return true;
         }
+        return false;
     }
     /**
      * Adds new JavsScript source file.
      * For every CSS file added, a string in the form '?jv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to prevent caching. 
      * 'jv' = JavaScript Version.
-     * @param string $loc The location of the file.
+     * @param string $loc The location of the file. Must be non-empty string.
      * @param $otherAttrs An array that can contain additional 
      * attributes to set for the script tag (such as 'async').
+     * @return boolean If a script node which has the given JS file is added, the 
+     * method will return true. If no node is added, the method will return 
+     * false.
      * @since 1.0
      */
     public function addJs($loc, $otherAttrs=array()){
-        if(strlen($loc) != 0){
+        $trimmedLoc = trim($loc);
+        if(strlen($trimmedLoc) != 0){
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            foreach ($otherAttrs as $attr => $attrVal){
-                $tag->setAttribute($attr, $attrVal);
+            foreach ($otherAttrs as $attr=>$val){
+                $trimmedAttr = trim(strtolower($attr));
+                if($trimmedAttr != 'type' && $trimmedAttr != 'src'){
+                    $tag->setAttribute($trimmedAttr, $val);
+                }
             }
             //used to prevent caching 
             $version = substr(hash('sha256', time()+rand(0, 10000)), rand(0,10),10);
             
-            $tag->setAttribute('src', $loc.'?jv='.$version);
+            $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
             $this->addChild($tag);
+            return true;
         }
+        return false;
     }
     /**
      * Sets the canonical URL.
+     * Note that the canonical URL will be set only if the given string is not 
+     * empty.
      * @param string $link The URL to set.
+     * @return boolean If the canonical is set, the method will return true. False 
+     * if not set.
      * @since 1.0
      */
     public function setCanonical($link){
-        if(strlen($link) != 0){
+        $trimmedLink = trim($link.'');
+        if(strlen($trimmedLink) != 0){
             if($this->canonical == NULL){
                 $this->canonical = new HTMLNode('link');
                 $this->canonical->setAttribute('rel', 'canonical');
@@ -349,8 +417,19 @@ class HeadNode extends HTMLNode{
             if(!$this->hasChild($this->canonical)){
                 $this->addChild($this->canonical);
             }
-            $this->canonical->setAttribute('href', $link);
+            $this->canonical->setAttribute('href', $trimmedLink);
+            return true;
         }
+        return false;
+    }
+    /**
+     * Returns an object of type HTMLNode that represents the canonical URL.
+     * @return HTMLNode|null If the canonical URL is set, the method will return 
+     * an object of type HTMLNode. If not set, the method will return null.
+     * @since 1.1.3
+     */
+    public function &getCanonicalNode() {
+        return $this->canonical;
     }
     /**
      * Returns the canonical URL if set.
@@ -359,22 +438,40 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getCanonical(){
-        return $this->canonical;
+        if($this->canonical !== null){
+            return $this->canonical->getAttributeValue('href');
+        }
+        return null;
     }
     /**
      * Adds new alternate tag to the header.
-     * @param string $url The link to the alternate page.
-     * @param string $lang The language of the page.
+     * @param string $url The link to the alternate page. Must be non-empty string.
+     * @param string $lang The language of the page. Must be non-empty string.
+     * @param array $otherAttrs An associative array of additional attributes 
+     * to set for the node. The indices are the names of attributes and the value 
+     * of each index is the value of the attribute. Default is empty array.
+     * @return boolean If a link element is created and added, the method will 
+     * return true. If not added, the method will return false.
      * @since 1.0
      */
-    public function addAlternate($url,$lang){
-        if(strlen($url) != 0 && strlen($lang) != 0){
+    public function addAlternate($url,$lang,$otherAttrs=array()){
+        $trimmedUrl = trim($url);
+        $trimmedLang = trim($lang);
+        if(strlen($trimmedUrl) != 0 && strlen($trimmedLang) != 0){
             $node = new HTMLNode('link');
             $node->setAttribute('rel','alternate');
-            $node->setAttribute('hreflang', $lang);
-            $node->setAttribute('href', $url);
+            $node->setAttribute('hreflang', $trimmedLang);
+            $node->setAttribute('href', $trimmedUrl);
+            foreach ($otherAttrs as $attr=>$val){
+                $trimmedAttr = trim(strtolower($attr));
+                if($trimmedAttr != 'rel' && $trimmedAttr != 'hreflang' && $trimmedAttr != 'href'){
+                    $node->setAttribute($trimmedAttr, $val);
+                }
+            }
             $this->addChild($node);
+            return true;
         }
+        return false;
     }
     /**
      * Adds new 'link' node.
@@ -390,8 +487,11 @@ class HeadNode extends HTMLNode{
             $node = new HTMLNode('link');
             $node->setAttribute('rel',$rel);
             $node->setAttribute('href', $href);
-            foreach ($otherAttrs as $key => $value) {
-                $node->setAttribute($key, $value);
+            foreach ($otherAttrs as $attr=>$val){
+                $trimmedAttr = trim(strtolower($attr));
+                if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
+                    $node->setAttribute($trimmedAttr, $val);
+                }
             }
             $this->addChild($node);
         }
