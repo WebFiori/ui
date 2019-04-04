@@ -23,11 +23,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
+        error_reporting(-1);
 $testsDirName = 'tests';
 $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
 $rootDirTrimmed = trim($rootDir,'/\\');
-echo 'Include Path: \''. get_include_path().'\''."\n";
+//echo 'Include Path: \''. get_include_path().'\''."\n";
 if(explode($DS, $rootDirTrimmed)[0] == 'home'){
     //linux.
     $rootDir = $DS.$rootDirTrimmed.$DS;
@@ -35,7 +38,8 @@ if(explode($DS, $rootDirTrimmed)[0] == 'home'){
 else{
     $rootDir = $rootDirTrimmed.$DS;
 }
-echo 'Root Directory: \''.$rootDir.'\'.'."\n";
+define('ROOT', $rootDir);
+//echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'Node.php';
 require_once $rootDir.'LinkedList.php';
 require_once $rootDir.'Stack.php';
