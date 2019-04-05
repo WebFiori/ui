@@ -36,6 +36,12 @@ class AnyObject implements Comparable{
         $this->objNum = $objNum;
         $this->objName = $objName;
     }
+    public function getObjNum() {
+        return $this->objNum;
+    }
+    public function getObjName() {
+        return $this->objName;
+    }
     public function compare($other) {
         if($other instanceof AnyObject){
             if($this->objNum > $other->objNum){
@@ -49,5 +55,7 @@ class AnyObject implements Comparable{
             }
         }
     }
-    
+    public function __toString() {
+        return 'Name: \''.$this->objName.'\', Number: \''.$this->objNum.'\'.';
+    }
 }
