@@ -104,7 +104,7 @@ class Stack{
      * @since 1.0
      */
     public function push($el) {
-        if($el != NULL){
+        if($el !== NULL){
             if($this->validateSize()){
                 if($this->size() == 0){
                     $this->head = new Node($el);
@@ -130,6 +130,7 @@ class Stack{
     }
     /**
      * Returns the element that exist on the top of the stack.
+     * This method will return the last element that was added to the stack.
      * @return mixed The element at the top. If the stack is empty, the method 
      * will return NULL.
      * @since 1.0
@@ -147,6 +148,7 @@ class Stack{
     }
     /**
      * Removes an element from the top of the stack.
+     * The method will remove the last element that was added to the stack.
      * @return mixed The element after removal from the stack. If the stack is 
      * empty, the method will return NULL.
      * @since 1.0
@@ -165,7 +167,7 @@ class Stack{
         else{
             $node = $this->head;
             $nextNode = $this->head->next();
-            while ($nextNode->next() != NULL){
+            while ($nextNode->next() !== NULL){
                 $node = $nextNode;
                 $nextNode = $nextNode->next();
             }
@@ -203,20 +205,18 @@ class Stack{
     }
     /**
      * Returns a string that represents the stack and its element.
-     * @return string A string that represents the stack and its element. The 
-     * string will be wrapped inside a 'pre' html element to make it well 
-     * formatted and viewable in the web browser.
+     * @return string A string that represents the stack and its element.
      */
     public function __toString() {
-        $retVal = 'Stack[';
+        $retVal = "Stack[\n";
         $node = $this->head;
-        while ($node != NULL){
+        while ($node !== NULL){
             $data = $node->data();
-            if($node->next() == NULL){
-                $retVal .= $data.'('. gettype($data).')';
+            if($node->next() === NULL){
+                $retVal .= '    '.$data.'('. gettype($data).")\n";
             }
             else{
-                $retVal .= $data.'('. gettype($data).'), ';
+                $retVal .= '    '.$data.'('. gettype($data)."), \n";
             }
             $node = $node->next();
         }
