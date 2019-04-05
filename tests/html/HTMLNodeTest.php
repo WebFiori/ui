@@ -133,7 +133,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_00() {
         $htmlTxt = '<!doctype html>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals(count($array),1);
     }
@@ -143,7 +142,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_01() {
         $htmlTxt = '<!doctype html><html></html>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -154,7 +152,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_02() {
         $htmlTxt = '<!doctype html><HTML><head></head></html>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -166,7 +163,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_03() {
         $htmlTxt = '<!doctype html><HTML><head><title>Testing if it works</title></head></HtMl>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -182,7 +178,6 @@ class HTMLNodeTest extends TestCase{
                 . '<title>   Testing  </title>'
                 . '<meta charset="utf-8"><meta name="view-port" content=""></head></html>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -196,7 +191,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_05() {
         $htmlTxt = '<div></div><div><input></div><div><img><img><input><pre></pre></div>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),3);
         $this->assertEquals(count($array[0]['children']),0);
         $this->assertEquals(count($array[1]['children']),1);
@@ -208,7 +202,6 @@ class HTMLNodeTest extends TestCase{
     public function testHTMLAsArray_06() {
         $htmlTxt = '<div></div><div><!--       A Comment.       --><input></div><div><img><img><input><pre></pre></div>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        print_r($array);
         $this->assertEquals(count($array),3);
         $this->assertEquals(count($array[0]['children']),0);
         $this->assertEquals(count($array[1]['children']),2);
@@ -223,7 +216,6 @@ class HTMLNodeTest extends TestCase{
         $htmlText = '<input   data=   myDataEl     type="text"   '
                 . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
         $array = HTMLNode::htmlAsArray($htmlText);
-        print_r($array);
         $this->assertEquals(6,count($array[0]['attributes']));
         $this->assertEquals('text',$array[0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['attributes']['placeholder']);
@@ -241,7 +233,6 @@ class HTMLNodeTest extends TestCase{
                 . '<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
                 . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked></div></body></html>';
         $array = HTMLNode::htmlAsArray($htmlText);
-        print_r($array);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
         $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
@@ -264,7 +255,6 @@ class HTMLNodeTest extends TestCase{
                 . '<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
                 . 'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
         $array = HTMLNode::htmlAsArray($htmlText);
-        print_r($array);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
         $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
