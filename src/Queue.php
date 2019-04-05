@@ -26,7 +26,8 @@
 namespace phpStructs;
 /**
  * A class that represents a queue data structure.
- *
+ * The queue is implemented in a way that the first element that comes in will 
+ * be the first element to come out (FIFO queue).
  * @author Ibrahim
  * @version 1.1
  */
@@ -91,7 +92,7 @@ class Queue{
      * is NULL.
      * @since 1.0
      */
-    public function enqueue(&$el){
+    public function enqueue($el){
         if($this->validateSize()){
             if($el !== NULL){
                 if($this->size() == 0){
@@ -135,7 +136,8 @@ class Queue{
     }
     /**
      * Returns the element that exist on the top of the queue.
-     * @return mixed The element at the top. If the stack is empty, the method 
+     * This method will return the first element that was added to the queue.
+     * @return mixed The element at the top. If the queue is empty, the method 
      * will return NULL.
      * @since 1.0
      */
@@ -148,7 +150,7 @@ class Queue{
         }
     }
     /**
-     * Removes the top element from the stack.
+     * Removes the top element from the queue.
      * @return mixed The element after removal from the queue. If the queue is 
      * empty, the method will return NULL.
      * @since 1.0
@@ -196,9 +198,7 @@ class Queue{
     }
     /**
      * Returns a string that represents the queue and its element.
-     * @return string A string that represents the queue and its element. The 
-     * string will be wrapped inside a 'pre' html element to make it well 
-     * formatted and viewable in the web browser.
+     * @return string A string that represents the queue and its element.
      */
     public function __toString() {
         $retVal = 'Queue['."\n";
