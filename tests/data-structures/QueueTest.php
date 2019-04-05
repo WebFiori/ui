@@ -177,4 +177,22 @@ class QueueTest extends TestCase{
         $this->assertEquals(0,$queue->size());
         $this->assertEquals(1,$queue->max());
     }
+    /**
+     * @test
+     */
+    public function test10() {
+        $queue = new Queue('Random Str');
+        $this->assertEquals(0,$queue->size());
+        $this->assertEquals(-1,$queue->max());
+        $this->assertNull($queue->peek());
+    }
+    /**
+     * @test
+     */
+    public function test11() {
+        $queue = new Queue('11');
+        $this->assertEquals(0,$queue->size());
+        $this->assertEquals(-1,$queue->max());
+        $this->assertNull($queue->peek());
+    }
 }
