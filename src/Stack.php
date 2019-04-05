@@ -103,7 +103,7 @@ class Stack{
      * is NULL.
      * @since 1.0
      */
-    public function push(&$el) {
+    public function push($el) {
         if($el != NULL){
             if($this->validateSize()){
                 if($this->size() == 0){
