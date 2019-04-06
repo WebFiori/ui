@@ -256,4 +256,218 @@ class LinkedListTest extends TestCase{
         $this->assertEquals($el05,$list->removeFirst());
         $this->assertNull($list->removeFirst());
     }
+    /**
+     * @test
+     */
+    public function testRemoveLast() {
+        $list = new LinkedList();
+        $this->assertNull($list->removeLast());
+        $el01 = 'Element #0';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $el04 = 'Element #4';
+        $el05 = 'Element #5';
+        $list->add($el01);
+        $this->assertEquals($el01,$list->removeLast());
+        $this->assertNull($list->removeLast());
+        
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals($el02,$list->removeLast());
+        $this->assertEquals($el01,$list->removeLast());
+        $this->assertNull($list->removeLast());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el04,$list->removeLast());
+        $this->assertEquals($el03,$list->removeLast());
+        $this->assertEquals($el02,$list->removeLast());
+        $this->assertEquals($el01,$list->removeLast());
+        $this->assertNull($list->removeLast());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $list->remove(2);
+        $this->assertEquals($el05,$list->removeLast());
+        $this->assertEquals($el04,$list->removeLast());
+        $this->assertEquals($el02,$list->removeLast());
+        $this->assertEquals($el01,$list->removeLast());
+        $this->assertNull($list->removeLast());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $list->removeElement($el04);
+        $this->assertEquals($el05,$list->removeLast());
+        $this->assertEquals($el03,$list->removeLast());
+        $this->assertEquals($el02,$list->removeLast());
+        $this->assertEquals($el01,$list->removeLast());
+        $this->assertNull($list->removeLast());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveByIndex00() {
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertNull($list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertEquals($el01,$list->remove(0));
+        $this->assertNull($list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertEquals($el01,$list->remove(0));
+        $this->assertEquals($el02,$list->remove(0));
+        $this->assertNull($list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertEquals($el01,$list->remove(0));
+        $this->assertEquals($el02,$list->remove(0));
+        $this->assertEquals($el03,$list->remove(0));
+        $this->assertNull($list->remove(0));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveByIndex01() {
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertEquals($el02,$list->remove(1));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertEquals($el02,$list->remove(1));
+        $this->assertEquals($el03,$list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertNull($list->remove(0));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveByIndex02() {
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $this->assertNull($list->remove(2));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertNull($list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $this->assertNull($list->remove(2));
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertNull($list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals($el02,$list->remove(2));
+        $this->assertNull($list->remove(2));
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $this->assertEquals($el02,$list->remove(2));
+        $this->assertEquals($el03,$list->remove(2));
+        $this->assertNull($list->remove(2));
+        $this->assertEquals($el01,$list->remove(1));
+        $this->assertNull($list->remove(1));
+        $this->assertEquals($el00,$list->remove(0));
+        $this->assertNull($list->remove(0));
+    }
+    /**
+     * @test
+     */
+    public function testCount00() {
+        $list = new LinkedList();
+        for($x = 0 ; $x < 10 ; $x++){
+            $el = 'Element #'.$x;
+            $list->add($el);
+        }
+        for($x = 0 ; $x < 10 ; $x++){
+            $el = 'Element #'.$x;
+            $this->assertEquals(1,$list->count($el));
+        }
+        $new = 'Element #9';
+        $list->add($new);
+        $this->assertEquals(2,$list->count($new));
+        $doesNotExist = 'Not in list';
+        $this->assertEquals(0,$list->count($doesNotExist));
+        $list->removeElement($new);
+        $this->assertEquals(1,$list->count($new));
+        $list->removeElement($new);
+        $this->assertEquals(0,$list->count($new));
+        
+        $el = $list->get(3);
+        $this->assertEquals(1,$list->count($el));
+        $list->add($el);
+        $this->assertEquals(2,$list->count($el));
+        $list->clear();
+        $this->assertEquals(0,$list->count($el));
+    }
+    /**
+     * @test
+     */
+    public function testCount01() {
+        $list = new LinkedList();
+        for($x = 0 ; $x < 10 ; $x++){
+            $el = new AnyObject($x, 'Element #'.$x);
+            $list->add($el);
+        }
+        for($x = 0 ; $x < 10 ; $x++){
+            $el = new AnyObject($x, 'Element #'.$x);
+            $this->assertEquals(0,$list->count($el));
+        }
+        $new = new AnyObject(5, 'Element #5');
+        $list->add($new);
+        $this->assertEquals(1,$list->count($new));
+        $el = $list->get(3);
+        $this->assertEquals(1,$list->count($el));
+        $list->add($el);
+        $this->assertEquals(2,$list->count($el));
+        $list->clear();
+        $this->assertEquals(0,$list->count($el));
+    }
 }
