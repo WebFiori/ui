@@ -140,6 +140,20 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testSize02() {
+        $list = new LinkedList();
+        $list->removeFirst();
+        $this->assertEquals(0,$list->size());
+        $list->removeLast();
+        $this->assertEquals(0,$list->size());
+        $list->remove(0);
+        $this->assertEquals(0,$list->size());
+        $list->removeElement($list);
+        $this->assertEquals(0,$list->size());
+    }
+    /**
+     * @test
+     */
     public function testAdd00() {
         $list = new LinkedList(1);
         $el = 'An element.';
@@ -189,5 +203,57 @@ class LinkedListTest extends TestCase{
         $list->removeFirst();
         $this->assertTrue($list->add($el2));
         $this->assertFalse($list->add($el));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveFirst() {
+        $list = new LinkedList();
+        $this->assertNull($list->removeFirst());
+        $el01 = 'Element #0';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $el04 = 'Element #4';
+        $el05 = 'Element #5';
+        $list->add($el01);
+        $this->assertEquals($el01,$list->removeFirst());
+        $this->assertNull($list->removeFirst());
+        
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals($el01,$list->removeFirst());
+        $this->assertEquals($el02,$list->removeFirst());
+        $this->assertNull($list->removeFirst());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el01,$list->removeFirst());
+        $this->assertEquals($el02,$list->removeFirst());
+        $this->assertEquals($el03,$list->removeFirst());
+        $this->assertEquals($el04,$list->removeFirst());
+        $this->assertNull($list->removeFirst());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $list->remove(2);
+        $this->assertEquals($el01,$list->removeFirst());
+        $this->assertEquals($el02,$list->removeFirst());
+        $this->assertEquals($el04,$list->removeFirst());
+        $this->assertEquals($el05,$list->removeFirst());
+        $this->assertNull($list->removeFirst());
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $list->removeElement($el04);
+        $this->assertEquals($el01,$list->removeFirst());
+        $this->assertEquals($el02,$list->removeFirst());
+        $this->assertEquals($el03,$list->removeFirst());
+        $this->assertEquals($el05,$list->removeFirst());
+        $this->assertNull($list->removeFirst());
     }
 }
