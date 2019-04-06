@@ -109,7 +109,8 @@ class LinkedList {
     /**
      * Returns the number of times a given element has appeared on the list.
      * @param mixed $el The element that will be counted.
-     * @return int The number of times the element has appeared on the list.
+     * @return int The number of times the element has appeared on the list. If 
+     * the element does not exist, 0 is returned.
      * @since 1.0
      */
     public function count(&$el){
