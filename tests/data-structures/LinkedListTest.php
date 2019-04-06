@@ -345,6 +345,30 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testRemoveByEl00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testReplace00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testInsertionSort00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
     public function testRemoveByIndex01() {
         $list = new LinkedList();
         $el00 = 'Element #0';
@@ -467,6 +491,25 @@ class LinkedListTest extends TestCase{
         $this->assertEquals(1,$list->count($el));
         $list->add($el);
         $this->assertEquals(2,$list->count($el));
+        $list->clear();
+        $this->assertEquals(0,$list->count($el));
+    }
+    /**
+     * @test
+     */
+    public function testCount03() {
+        $list = new LinkedList();
+        $el = new AnyObject(1, 'Element #1');
+        for($x = 0 ; $x < 10 ; $x++){
+            $list->add($el);
+        }
+        $new = new AnyObject(5, 'Element #5');
+        $list->add($new);
+        $this->assertEquals(10,$list->count($el));
+        $elx = $list->get(3);
+        $this->assertEquals(10,$list->count($elx));
+        $list->add($el);
+        $this->assertEquals(11,$list->count($el));
         $list->clear();
         $this->assertEquals(0,$list->count($el));
     }
