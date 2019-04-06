@@ -27,9 +27,15 @@ namespace phpStructs;
  * A class that represents a linked list.
  *
  * @author Ibrahim 
- * @version 1.4
+ * @version 1.4.1
  */
 class LinkedList {
+    /**
+     * The maximum number of elements the list can have.
+     * @var int 
+     * @since 1.4.1
+     */
+    private $maxEls;
     /**
      * A null guard for the methods that return null reference.
      * @since 1.4
@@ -55,12 +61,50 @@ class LinkedList {
     private $size;
     /**
      * Creates new instance of the class.
+     * @param int $max The maximum number of elements that the list can hold. 
+     * If 0 or a negative number is given, the list will be able to hold 
+     * unlimited number of elements.
      */
-    public function __construct() {
+    public function __construct($max=0) {
         $this->null = NULL;
         $this->head = NULL;
         $this->tail = NULL;
         $this->size = 0;
+        if(gettype($max) == 'integer'){
+            $this->maxEls = $max;
+        }
+        else{
+            $this->maxEls = -1;
+        }
+    }
+    /**
+     * Returns the number of maximum elements the list can hold.
+     * @return int If the maximum number of elements was set to 0 or a 
+     * negative number, the method will return -1 which indicates 
+     * that the list can have any number of elements. Other than that, 
+     * the method will return the maximum number of elements.
+     * @since 1.4.1
+     */
+    public function max(){
+        if($this->maxEls <= 0){
+            return -1;
+        }
+        return $this->maxEls;
+    }
+    /**
+     * Checks if the list can hold more elements or not.
+     * @return boolean TRUE if the list can hold more elements.
+     * @since 1.4.1
+     */
+    private function validateSize(){
+        $max = $this->max();
+        if($max == -1){
+            return TRUE;
+        }
+        if($max > $this->size()){
+            return TRUE;
+        }
+        return FALSE;
     }
     /**
      * Returns the number of times a given element has appeared on the list.
@@ -342,6 +386,7 @@ class LinkedList {
             $data = &$nextNode->data();
             $null = NULL;
             $node->setNext($null);
+            $this->_reduceSize();
             return $data;
         }
         return $this->null;
@@ -406,7 +451,7 @@ class LinkedList {
      * the element, the method will return -1.
      * @since 1.2
      */
-    public function indexOf(&$el){
+    public function indexOf($el){
         if($this->size() == 1){
             return $this->head->data() === $el ? 0 : -1;
         }
@@ -468,31 +513,36 @@ class LinkedList {
     /**
      * Adds new element to the list.
      * @param mixed $el The element that will be added. It can be of any type.
-     * @return boolean TRUE if the element is added.
+     * @return boolean TRUE if the element is added. The method will return 
+     * false only if the list accepts a limited number of elements and that 
+     * number has been reached.
      * @since 1.0
      */
     public function add(&$el){
-        if($this->head == NULL){
-            $this->head = new Node($el);
-            $this->size = 1;
-            return TRUE;
-        }
-        else if($this->size() == 1){
-            $this->tail = new Node($el);
-            $this->head->setNext($this->tail);
-            $this->size++;
-            return TRUE;
-        }
-        else{
-            $node = $this->head;
-            while ($node->next() != NULL){
-                $node = $node->next();
+        if($this->validateSize()){
+            if($this->head == NULL){
+                $this->head = new Node($el);
+                $this->size = 1;
+                return TRUE;
             }
-            $this->tail = new Node($el);
-            $node->setNext($this->tail);
-            $this->size++;
-            return TRUE;
+            else if($this->size() == 1){
+                $this->tail = new Node($el);
+                $this->head->setNext($this->tail);
+                $this->size++;
+                return TRUE;
+            }
+            else{
+                $node = $this->head;
+                while ($node->next() != NULL){
+                    $node = $node->next();
+                }
+                $this->tail = new Node($el);
+                $node->setNext($this->tail);
+                $this->size++;
+                return TRUE;
+            }
         }
+        return false;
     }
     /**
      * Returns the number of elements in the list.
@@ -504,12 +554,10 @@ class LinkedList {
     }
     /**
      * Returns a string that represents the list and its element.
-     * @return string A string that represents the list and its element. The 
-     * string will be wrapped inside a 'pre' html element to make it well 
-     * formatted and viewable in the web browser.
+     * @return string A string that represents the list and its element.
      */
     public function __toString() {
-        $retVal = '<pre>List['."\n";
+        $retVal = "List[\n";
         $node = $this->head;
         $index = 0;
         while ($node != NULL){
@@ -523,7 +571,7 @@ class LinkedList {
             $index++;
             $node = $node->next();
         }
-        $retVal .= ']</pre>';
+        $retVal .= ']';
         return $retVal;
     }
 }
