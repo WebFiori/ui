@@ -35,10 +35,286 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testConstructor00() {
+        $node = new HTMLNode();
+        $this->assertEquals('div',$node->getNodeName());
+        $this->assertTrue($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function testConstructor01() {
+        $node = new HTMLNode('p');
+        $this->assertEquals('p',$node->getNodeName());
+        $this->assertTrue($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function testConstructor02() {
+        $node = new HTMLNode('img');
+        $this->assertEquals('img',$node->getNodeName());
+        $this->assertFalse($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function testConstructor03() {
+        $node = new HTMLNode('DiV');
+        $this->assertEquals('div',$node->getNodeName());
+        $this->assertTrue($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function testConstructor04() {
+        $this->expectException('Exception');
+        $nodeName = 'not valid';
+        $this->expectExceptionMessage('Invalid node name: \''.$nodeName.'\'.');
+        $node = new HTMLNode($nodeName);
+    }
+    /**
+     * @test
+     */
+    public function testConstructor05() {
+        $nodeName = 'valid-WITH-dash';
+        $node = new HTMLNode($nodeName);
+        $this->assertEquals('valid-with-dash',$node->getNodeName());
+        $this->assertTrue($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function isTextNode00() {
+        $node = new HTMLNode('#text');
+        $this->assertEquals('#TEXT',$node->getNodeName());
+        $this->assertFalse($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function isTextNode01() {
+        $node = new HTMLNode('#teXt');
+        $this->assertEquals('#TEXT',$node->getNodeName());
+        $this->assertFalse($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function isCommentNode00() {
+        $node = new HTMLNode('#comment');
+        $this->assertEquals('#COMMENT',$node->getNodeName());
+        $this->assertFalse($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function isCommentNode01() {
+        $node = new HTMLNode('#ComMeNt');
+        $this->assertEquals('#COMMENT',$node->getNodeName());
+        $this->assertFalse($node->mustClose());
+    }
+    /**
+     * @test
+     */
+    public function testGetText00() {
+        $node = new HTMLNode();
+        $this->assertEquals('',$node->getText());
+        $node->setText('Hello World!');
+        $this->assertEquals('',$node->getText());
+    }
+    /**
+     * @test
+     */
+    public function testGetText01() {
+        $node = new HTMLNode('#text');
+        $this->assertEquals('',$node->getText());
+        $node->setText('Hello World!');
+        $this->assertEquals('Hello World!',$node->getText());
+        $node->setText('X < 6 and Y > 100');
+        $this->assertEquals('X &lt; 6 and Y &gt; 100',$node->getText());
+        $node->setText('X < 6 and Y > 100',false);
+        $this->assertEquals('X < 6 and Y > 100',$node->getText());
+    }
+    /**
+     * @test
+     */
+    public function testGetComment00() {
+        $node = new HTMLNode();
+        $this->assertEquals('',$node->getComment());
+        $node->setText('Hello World!');
+        $this->assertEquals('',$node->getComment());
+    }
+    /**
+     * @test
+     */
+    public function testGetComment01() {
+        $node = new HTMLNode('#comment');
+        $this->assertEquals('<!---->',$node->getComment());
+        $node->setText('Hello World!');
+        $this->assertEquals('Hello World!',$node->getText());
+        $this->assertEquals('<!--Hello World!-->',$node->getComment());
+    }
+    /**
+     * @test
+     */
+    public function testGetComment02() {
+        $node = new HTMLNode('#comment');
+        $this->assertEquals('<!---->',$node->getComment());
+        $node->setText('A Comment <div> with </div> html.');
+        $this->assertEquals('A Comment <div> with </div> html.',$node->getText());
+        $node->setText('<!--A Comment');
+        $this->assertEquals(' --A Comment',$node->getText());
+        $this->assertEquals('<!-- --A Comment-->',$node->getComment());
+        $node->setText('<!--A Comment X -->');
+        $this->assertEquals(' --A Comment X -- ',$node->getText());
+        $this->assertEquals('<!-- --A Comment X -- -->',$node->getComment());
+        $node->setText('<A Comment X>');
+        $this->assertEquals('<!--<A Comment X>-->',$node->getComment());
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_00() {
         $htmlTxt = '<!doctype html>';
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
+    }
+    /**
+     * @test
+     */
+    public function testAddTextNode00() {
+        $node = new HTMLNode();
+        $node->addTextNode('Hello World!');
+        $this->assertEquals(1,$node->childrenCount());
+        $this->assertEquals('Hello World!',$node->children()->get(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function testAddTextNode01() {
+        $node = new HTMLNode('img');
+        $node->addTextNode('Hello World!');
+        $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testCommentNode00() {
+        $node = new HTMLNode();
+        $node->addCommentNode('Hello World!');
+        $this->assertEquals(1,$node->childrenCount());
+        $this->assertEquals('Hello World!',$node->children()->get(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function testAddComment01() {
+        $node = new HTMLNode('img');
+        $node->addCommentNode('Hello World!');
+        $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute00() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->setAttribute(''));
+        $this->assertFalse($node->setAttribute('     '));
+        $this->assertFalse($node->setAttribute('dir'));
+        $bool = $node->setAttribute('   dir');
+        $this->assertFalse($bool);
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute01() {
+        $node = new HTMLNode();
+        $this->assertTrue($node->setAttribute('hello'));
+        $node->setAttribute(' hello ', 'world!');
+        $node->setAttribute('   BIG ONE', 'Random Val  ');
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute02() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->setAttribute('dir'));
+        $this->assertFalse($node->setAttribute(' dir ', 'XXXX!'));
+        $this->assertTrue($node->setAttribute(' dir ', 'LTR'));
+        $this->assertTrue($node->setAttribute(' dir ', 'rTl'));
+    }
+    /**
+     * @test
+     */
+    public function testHasAttribute00() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->hasAttribute('x-attr'));
+        $node->setAttribute('x-attr', 'x');
+        $this->assertTrue($node->hasAttribute('x-attr'));
+        $node->removeAttribute('x-attr');
+        $this->assertFalse($node->hasAttribute('x-attr'));
+        $node->setID('66x');
+        $this->assertTrue($node->hasAttribute('id'));
+        $this->assertTrue($node->hasAttribute(' id '));
+        $this->assertTrue($node->hasAttribute('ID '));
+        $node->setClassName('class-name');
+        $this->assertTrue($node->hasAttribute('class'));
+        $node->removeAttribute('class');
+        $this->assertFalse($node->hasAttribute('class'));
+        
+        $this->assertFalse($node->hasAttribute('name'));
+        $node->setName('ce');
+        $this->assertTrue($node->hasAttribute('name'));
+        $node->removeAttribute('name');
+        $this->assertFalse($node->hasAttribute('name'));
+        
+        $this->assertFalse($node->hasAttribute('title'));
+        $node->setTitle('hello');
+        $this->assertTrue($node->hasAttribute(' TITLE'));
+        $node->removeAttribute('TItle ');
+        $this->assertFalse($node->hasAttribute('title '));
+        
+        $this->assertFalse($node->hasAttribute('tabindex'));
+        $node->setTabIndex(5);
+        $this->assertTrue($node->hasAttribute('TabIndex '));
+        $node->removeAttribute(' tabIndex    ');
+        $this->assertFalse($node->hasAttribute('  TABIndex     '));
+        
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setStyle(array(
+            'border'=>'1px solid',
+            'color'=>'red'
+        ));
+        $this->assertTrue($node->hasAttribute('style'));
+        $node->removeAttribute('Style');
+        $this->assertFalse($node->hasAttribute('style'));
+    }
+    /**
+     * @test
+     */
+    public function testToHTML00() {
+        $node = new HTMLNode();
+        $this->assertEquals('<div></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testToHTML01() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $this->assertEquals('<div id="container"></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testToHTML02() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $node->addTextNode('Hello World!.');
+        $this->assertEquals('<div id="container">Hello World!.</div>',$node->toHTML());
+        $node->addTextNode('Another Text node.');
+        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node->toHTML());
     }
     /**
      * @test
