@@ -352,7 +352,120 @@ class LinkedListTest extends TestCase{
      * @test
      */
     public function testIndexOf00() {
-        $this->assertTrue(true);
+        $list = new LinkedList();
+        $this->assertEquals(-1,$list->indexOf(null));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf01() {
+        $list = new LinkedList();
+        $el00 = 'Some String';
+        $list->add($el00);
+        $this->assertEquals(-1,$list->indexOf('Another'));
+        $this->assertEquals(0,$list->indexOf('Some String'));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf02() {
+        $list = new LinkedList();
+        $el00 = 'Some String';
+        $list->add($el00);
+        $list->add($el00);
+        $list->add($el00);
+        $this->assertEquals(-1,$list->indexOf('Another'));
+        $this->assertEquals(0,$list->indexOf('Some String'));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf03() {
+        $list = new LinkedList();
+        $el00 = 'Some String';
+        $el01 = 'Another Str';
+        $el02 = 'More Some String';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals(-1,$list->indexOf('Another'));
+        $this->assertEquals(0,$list->indexOf('Some String'));
+        $this->assertEquals(1,$list->indexOf('Another Str'));
+        $this->assertEquals(2,$list->indexOf('More Some String'));
+        $list->removeFirst();
+        $this->assertEquals(0,$list->indexOf('Another Str'));
+        $this->assertEquals(1,$list->indexOf('More Some String'));
+        for($x = 0 ; $x < 10 ; $x++){
+            $el = 'Element #'.$x;
+            $list->add($el);
+        }
+        $this->assertEquals(2,$list->indexOf('Element #0'));
+        $this->assertEquals(11,$list->indexOf('Element #9'));
+        $this->assertEquals(7,$list->indexOf('Element #5'));
+        $el = 'Element #5';
+        $list->removeElement($el);
+        $this->assertEquals(2,$list->indexOf('Element #0'));
+        $this->assertEquals(10,$list->indexOf('Element #9'));
+        $this->assertEquals(-1,$list->indexOf('Element #5'));
+        $list->removeLast();
+        $this->assertEquals(-1,$list->indexOf('Element #9'));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf04() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'An Obj');
+        $el01 = new AnyObject(0, 'An Obj');
+        $list->add($el00);
+        $this->assertEquals(-1,$list->indexOf('Another'));
+        $this->assertEquals(0,$list->indexOf($el00));
+        $this->assertEquals(-1,$list->indexOf($el01));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf05() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'An Obj');
+        $list->add($el00);
+        $list->add($el00);
+        $list->add($el00);
+        $this->assertEquals(-1,$list->indexOf('Another'));
+        $this->assertEquals(0,$list->indexOf($el00));
+    }
+    /**
+     * @test
+     */
+    public function testIndexOf06() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'Obj #0');
+        $el01 = new AnyObject(1, 'Obj #1');
+        $el02 = new AnyObject(2, 'Obj #2');
+        $el03 = new AnyObject(0, 'Obj #0');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertEquals(-1,$list->indexOf($el03));
+        $this->assertEquals(0,$list->indexOf($el00));
+        $this->assertEquals(1,$list->indexOf($el01));
+        $this->assertEquals(2,$list->indexOf($el02));
+        $list->removeFirst();
+        $this->assertEquals(0,$list->indexOf($el01));
+        $this->assertEquals(1,$list->indexOf($el02));
+        for($x = 3 ; $x < 15 ; $x++){
+            $el = new AnyObject($x, 'Obj #'.$x);
+            $list->add($el);
+        }
+        $this->assertEquals(2,$list->indexOf($el01));
+        $elx = &$list->get(10);
+        $ely = &$list->get(13);
+        $this->assertEquals(10,$list->indexOf($elx));
+        $this->assertEquals(13,$list->indexOf($ely));
+        $list->removeElement($elx);
+        $this->assertEquals(12,$list->indexOf($ely));
+        $list->removeLast();
+        $this->assertEquals(12,$list->indexOf($ely));
     }
     /**
      * @test
