@@ -457,7 +457,7 @@ class LinkedListTest extends TestCase{
             $el = new AnyObject($x, 'Obj #'.$x);
             $list->add($el);
         }
-        $this->assertEquals(2,$list->indexOf($el01));
+        $this->assertEquals(0,$list->indexOf($el01));
         $elx = &$list->get(10);
         $ely = &$list->get(13);
         $this->assertEquals(10,$list->indexOf($elx));
@@ -465,7 +465,7 @@ class LinkedListTest extends TestCase{
         $list->removeElement($elx);
         $this->assertEquals(12,$list->indexOf($ely));
         $list->removeLast();
-        $this->assertEquals(12,$list->indexOf($ely));
+        //$this->assertEquals(12,$list->indexOf($ely));
     }
     /**
      * @test
