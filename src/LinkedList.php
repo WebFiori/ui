@@ -446,10 +446,12 @@ class LinkedList {
     }
     /**
      * Returns the index of an element.
-     * Note that the method is using strict comparison operator to search (===).
+     * Note that the method is using strict comparison operator to search (===). 
+     * The method will return the index of the first match it found if the list 
+     * contain the same element more than once.
      * @param mixed $el The element to search for.
      * @return int The index of the element if found. If the list does not contain 
-     * the element, the method will return -1.
+     * the element or is empty, the method will return -1.
      * @since 1.2
      */
     public function indexOf($el){
