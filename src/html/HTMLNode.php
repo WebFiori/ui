@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use Exception;
 use phpStructs\LinkedList;
 use phpStructs\Stack;
 use phpStructs\Queue;
@@ -170,21 +171,20 @@ class HTMLNode {
      * 
      */
     public function __construct($name='div') {
-        $this->null = NULL;
+        $this->null = null;
         $nameUpper = strtoupper($name);
-        if($name == '#TEXT' || $nameUpper == '#COMMENT'){
+        if($nameUpper == '#TEXT' || $nameUpper == '#COMMENT'){
             $this->name = $nameUpper;
+            $this->requireClose = false;
         }
         else{
-            if($name == ''){
-                $this->name = 'div';
-            }
-            else{
-                $this->name = strtolower($name);
+            $this->name = strtolower($name);
+            if(!$this->_validateNodeName($this->getNodeName())){
+                throw new Exception('Invalid node name: \''.$name.'\'.');
             }
         }
-        if($this->isTextNode() === TRUE || $this->isComment()){
-            $this->requireClose = FALSE;
+        if($this->isTextNode() === true || $this->isComment()){
+            $this->requireClose = false;
         }
         else{
             if(in_array($this->name, self::VOID_TAGS)){
@@ -197,6 +197,30 @@ class HTMLNode {
             $this->attributes = array();
         }
     }
+    /**
+     * Validates the name of the node.
+     * @param string $name The name of the node in lower case.
+     * @return boolean If the name is valid, the method will return true. If 
+     * it is not valid, it will return false.
+     * @since 1.7.4
+     */
+    private function _validateNodeName($name){
+        $len = strlen($name);
+        if($len > 0){
+            for($x = 0 ; $x < $len ; $x++){
+                $char = $name[$x];
+                if(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') || $char=='-'){
+                    
+                }
+                else{
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Converts a string of HTML code to an array that looks like a tree of 
      * HTML elements.
@@ -632,7 +656,7 @@ class HTMLNode {
     }
     /**
      * Checks if the given node represents a comment or not.
-     * @return boolean The method will return TRUE if the given 
+     * @return boolean The method will return true if the given 
      * node is a comment.
      * @since 1.5
      */
@@ -641,8 +665,8 @@ class HTMLNode {
     }
     /**
      * Returns the parent node.
-     * @return HTMLNode|NULL An object of type HTMLNode if the node 
-     * has a parent. If the node has no parent, the method will return NULL.
+     * @return HTMLNode|null An object of type HTMLNode if the node 
+     * has a parent. If the node has no parent, the method will return null.
      * @since 1.2
      */
     public function &getParent() {
@@ -658,8 +682,8 @@ class HTMLNode {
     }
     /**
      * Returns a linked list of all child nodes.
-     * @return LinkedList|NULL A linked list of all child nodes. if the 
-     * given node is a text node, the method will return NULL.
+     * @return LinkedList|null A linked list of all child nodes. if the 
+     * given node is a text node, the method will return null.
      * @since 1.0
      */
     public function &children(){
@@ -669,7 +693,7 @@ class HTMLNode {
      * Creates new text node.
      * @param string $nodeText The text that will be inserted in the body 
      * of the node.
-     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text.
@@ -695,7 +719,7 @@ class HTMLNode {
     }
     /**
      * Checks if the node is a text node or not.
-     * @return boolean TRUE if the node is a text node. FALSE otherwise.
+     * @return boolean true if the node is a text node. false otherwise.
      * @since 1.0
      */
     public function isTextNode() {
@@ -704,9 +728,9 @@ class HTMLNode {
     /**
      * Checks if a given node is a direct child of the instance.
      * @param HTMLNode $node The node that will be checked.
-     * @return boolean TRUE is returned if the node is a child 
-     * of the instance. FALSE if not. Also if the current instance is a 
-     * text node or a comment node, the function will always return FALSE.
+     * @return boolean true is returned if the node is a child 
+     * of the instance. false if not. Also if the current instance is a 
+     * text node or a comment node, the function will always return false.
      * @since 1.2
      */
     public function hasChild(&$node) {
@@ -715,13 +739,13 @@ class HTMLNode {
                 return $this->children()->indexOf($node) != -1;
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Replace a direct child node with a new one.
      * @param HTMLNode $oldNode The old node. It must be a child of the instance.
      * @param HTMLNode $replacement The replacement node.
-     * @return boolean TRUE is returned if the node replaced. FALSE</b> if not.
+     * @return boolean true is returned if the node replaced. false if not.
      * @since 1.2
      */
     public function replaceChild(&$oldNode,&$replacement) {
@@ -734,7 +758,7 @@ class HTMLNode {
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * 
@@ -782,7 +806,7 @@ class HTMLNode {
      * 
      * @param type $val
      * @param LinkedList $chNodes
-     * @return NULL|HTMLNode Description
+     * @return null|HTMLNode Description
      */
     private function &_getChildByID($val,&$chNodes){
         $chCount = $chNodes !== null ? $chNodes->size() : 0;
@@ -809,8 +833,8 @@ class HTMLNode {
     /**
      * Returns a child node given its ID.
      * @param string $val The ID of the child.
-     * @return NULL|HTMLNode The method returns an object of type HTMLNode 
-     * if found. If no node has the given ID, the method will return NULL.
+     * @return null|HTMLNode The method returns an object of type HTMLNode 
+     * if found. If no node has the given ID, the method will return null.
      * @since 1.2
      */
     public function &getChildByID($val){
@@ -825,7 +849,9 @@ class HTMLNode {
     }
     /**
      * Checks if the node require ending tag or not.
-     * @return boolean TRUE if the node does require ending tag.
+     * If the node is a comment or its a text node, the method will 
+     * always return false.
+     * @return boolean true if the node does require ending tag.
      * @since 1.0
      */
     public function mustClose() {
@@ -833,46 +859,44 @@ class HTMLNode {
     }
     /**
      * Updates the name of the node.
-     * @param string $name The new name. If the node type is a text or a comment, 
-     * you can only switch between the two types. If the node type is of 
-     * another type and has child nodes, the type will change only if the 
-     * attribute $reqClose is set to TRUE. If has no children, it will switch 
-     * without problems. If the node is in-line, the type will switch without 
-     * problems.
-     * @param boolean $reqClose Set to TRUE if the node must have ending 
-     * tag.
-     * @return boolean The method will return TRUE if the type is updated.
+     * If the node type is a text or a comment, 
+     * developer can only switch between the two types. If the node type is of 
+     * another type and has child nodes, type will be changed only if the given 
+     * node name is not a void node. If the node is a void node and it has no 
+     * children, it will switch without problems.
+     * @param string $name The new name.
+     * @return boolean The method will return true if the type is updated.
      * @since 1.7
      */
-    public function setNodeName($name,$reqClose=true) {
+    public function setNodeName($name) {
         if($this->isTextNode() || $this->isComment()){
             $uName = strtoupper($name);
             if(($this->isTextNode() && $uName == '#COMMENT') || ($this->isComment() && $uName == '#TEXT')){
                 $this->name = $uName;
-                return TRUE;
+                return true;
             }
             else {
-                return FALSE;
+                return false;
             }
         }
         else{
             $lName = strtolower($name);
+            $reqClose = !in_array($lName, self::VOID_TAGS);
             if(strlen($lName) != 0){
-                if($this->mustClose() && $reqClose !== TRUE){
+                if($this->mustClose() && $reqClose !== true){
                     if($this->childrenCount() == 0){
                         $this->name = $lName;
-                        $this->requireClose = FALSE;
-                        return TRUE;
+                        $this->requireClose = false;
+                        return true;
                     }
                 }
                 else{
                     $this->name = $lName;
-                    $this->requireClose = $reqClose === TRUE ? TRuE : FALSE;
-                    return TRUE;
+                    return true;
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the name of the node.
@@ -886,9 +910,9 @@ class HTMLNode {
     }
     /**
      * Returns an array of all node attributes with the values
-     * @return array|NULL an associative array. The keys will act as the attribute 
+     * @return array|null an associative array. The keys will act as the attribute 
      * name and the value will act as the value of the attribute. If the node 
-     * is a text node, the method will return NULL.
+     * is a text node, the method will return null.
      * @since 1.0 
      */
     public function getAttributes() {
@@ -901,21 +925,28 @@ class HTMLNode {
      * Note that if the node type is text node, 
      * the attribute will never be created.
      * @param string $val The value of the attribute. Default is empty string.
+     * @return boolean If the attribute is set, the method will return true. The 
+     * method will return false only if the given name is empty string 
+     * or the name of the attribute is 'dir' and the value is not 'ltr' or 'rtl'.
      * @since 1.0
      */
     public function setAttribute($name,$val=''){
-        if(!$this->isTextNode() && !$this->isComment() && gettype($name) == 'string' && strlen($name) != 0){
-            $lower = strtolower($name);
-            if($name == 'dir'){
+        $trimmedName = trim($name);
+        if(!$this->isTextNode() && !$this->isComment() && strlen($trimmedName) != 0){
+            $lower = strtolower($trimmedName);
+            if($lower == 'dir'){
                 $lowerVal = strtolower($val);
-                if($val == 'ltr' || $val == 'rtl'){
+                if($lowerVal == 'ltr' || $lowerVal == 'rtl'){
                     $this->attributes[$lower] = $lowerVal;
+                    return true;
                 }
             }
             else{
                 $this->attributes[$lower] = $val;
+                return true;
             }
         }
+        return false;
     }
     /**
      * Sets the value of the attribute 'id' of the node.
@@ -1004,7 +1035,7 @@ class HTMLNode {
      */
     public function getStyle() {
         $styleStr = $this->getAttributeValue('style');
-        if($styleStr !== NULL){
+        if($styleStr !== null){
             $retVal = array();
             $arr1 = explode(';', trim($styleStr,';'));
             foreach ($arr1 as $val){
@@ -1022,8 +1053,9 @@ class HTMLNode {
      */
     public function removeAttribute($name){
         if(!$this->isTextNode() && !$this->isComment()){
-            if(isset($this->attributes[$name])){
-                unset($this->attributes[$name]);
+            $trimmed = strtolower(trim($name));
+            if(isset($this->attributes[$trimmed])){
+                unset($this->attributes[$trimmed]);
             }
         }
     }
@@ -1032,15 +1064,15 @@ class HTMLNode {
      * @since 1.0
      */
     public function removeAllChildNodes() {
-        if(!$this->isTextNode() && !$this->isComment()){
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             $this->childrenList->clear();
         }
     }
     /**
      * Removes a direct child node.
      * @param HTMLNode $node The node that will be removed.
-     * @return HTMLNode|NULL The method will return the node if removed. 
-     * If not removed, the method will return NULL.
+     * @return HTMLNode|null The method will return the node if removed. 
+     * If not removed, the method will return null.
      * @since 1.2
      */
     public function &removeChild(&$node) {
@@ -1072,11 +1104,13 @@ class HTMLNode {
     }
     /**
      * Adds a text node as a child.
+     * The text node will be added to the body of the node only 
+     * if it is not a void node.
      * @param string $text The text that will be in the node.
-     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is TRUE.
+     * in the given text. Default is true.
      * @since 1.6
      */
     public function addTextNode($text,$escHtmlEntities=true) {
@@ -1086,6 +1120,8 @@ class HTMLNode {
     }
     /**
      * Adds a comment node as a child.
+     * The comment node will be added to the body of the node only 
+     * if it is not a void node.
      * @param string $text The text that will be in the node.
      * @since 1.6
      */
@@ -1096,17 +1132,22 @@ class HTMLNode {
     }
     /**
      * Sets the value of the property $text.
+     * Note that if the type of the node is comment, the method will replace 
+     * '&lt;!--' and '--&gt;' with ' --' and '-- ' if it was found in the given text.
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
-     * @param boolean $escHtmlEntities If set to TRUE, the method will 
+     * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is TRUE.
+     * in the given text. Default is true. Ignored in case the node type is comment.
      * @since 1.0
      */
     public function setText($text,$escHtmlEntities=true) {
         if($this->isTextNode() || $this->isComment()){
-            if($escHtmlEntities === TRUE){
+            if($this->isComment()){
+                $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
+            }
+            else if($escHtmlEntities === true){
                 $charsToReplace = array(
                     '&'=>'&amp;',
                     '<'=>'&lt;',
@@ -1175,15 +1216,15 @@ class HTMLNode {
     }
     /**
      * Returns HTML string that represents the node as a whole.
-     * @param boolean $formatted Set to TRUE to return a well formatted 
-     * HTML document (has new lines and indentations). Default is FALSE.
+     * @param boolean $formatted Set to true to return a well formatted 
+     * HTML document (has new lines and indentations). Default is false.
      * @param int $initTab Initial tab count (indentation). Used in case of the document is 
      * well formatted. This number represents the size of code indentation.
      * @return string HTML string that represents the node.
      * @since 1.0
      */
     public function toHTML($formatted=false,$initTab=0) {
-        if($this->isFormatted() !== NULL){
+        if($this->isFormatted() !== null){
             $formatted = $this->isFormatted();
         }
         if(!$formatted){
@@ -1219,11 +1260,11 @@ class HTMLNode {
     /**
      * Returns the value of the property $isFormatted.
      * The property is used to control how the HTML code that will be generated 
-     * will look like. If set to TRUE, the code will be user-readable. If set to 
-     * FALSE, it will be compact and the load size will be come less since no 
+     * will look like. If set to true, the code will be user-readable. If set to 
+     * false, it will be compact and the load size will be come less since no 
      * new line characters or spaces will be added in the code.
-     * @return boolean|NULL If the property is set, the method will return 
-     * its value. If not set, the method will return NULL.
+     * @return boolean|null If the property is set, the method will return 
+     * its value. If not set, the method will return null.
      * @since 1.7.2
      */
     public function isFormatted() {
@@ -1231,12 +1272,12 @@ class HTMLNode {
     }
     /**
      * Sets the value of the property $isFormatted.
-     * @param boolean $bool TRUE to make the document that will be generated 
-     * from the node user-readable. FALSE to make it compact.
+     * @param boolean $bool true to make the document that will be generated 
+     * from the node user-readable. false to make it compact.
      * @since 1.7.2
      */
     public function setIsFormatted($bool) {
-        $this->isFormated = $bool === TRUE;
+        $this->isFormated = $bool === true;
     }
     /**
      * 
@@ -1244,7 +1285,7 @@ class HTMLNode {
      */
     private function _pushNode(&$node) {
         if($node->isTextNode()){
-            if($node->isFormatted() !== NULL && $node->isFormatted() === FALSE){
+            if($node->isFormatted() !== null && $node->isFormatted() === false){
                 $this->htmlString .= $node->getText();
             }
             else{
@@ -1264,7 +1305,7 @@ class HTMLNode {
             }
         }
         else if($node->isComment()){
-            if($node->isFormatted() !== NULL && $node->isFormatted() === FALSE){
+            if($node->isFormatted() !== null && $node->isFormatted() === false){
                 $this->htmlString .= $node->getComment();
             }
             else{
@@ -1275,7 +1316,7 @@ class HTMLNode {
             if($node->mustClose()){
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
-                if($node->isFormatted() !== NULL && $node->isFormatted() === FALSE){
+                if($node->isFormatted() !== null && $node->isFormatted() === false){
                     $this->htmlString .= $node->open();
                 }
                 else{
@@ -1302,8 +1343,8 @@ class HTMLNode {
     }
     private function _popNode(){
         $node = &$this->nodesStack->pop();
-        if($node != NULL){
-            if($node->isFormatted() !== NULL && $node->isFormatted() === FALSE){
+        if($node != null){
+            if($node->isFormatted() !== null && $node->isFormatted() === false){
                 $this->htmlString .= '</'.$node->getNodeName().'>';
             }
             else{
@@ -1341,7 +1382,7 @@ class HTMLNode {
      * an options for formatting the code. The available options are:
      * <ul>
      * <li><b>tab-spaces</b>: The number of spaces in a tab. Usually 4.</li>
-     * <li><b>with-colors</b>: A boolean value. If set to TRUE, the code will 
+     * <li><b>with-colors</b>: A boolean value. If set to true, the code will 
      * be highlighted with colors.</li>
      * <li><b>initial-tab</b>: Number of initial tabs</li>
      * <li><b>colors</b>: An associative array of highlight colors.</li>
@@ -1370,9 +1411,9 @@ class HTMLNode {
         for($x = 0 ; $x < $spacesCount ; $x++){
             $this->tabSpace .= ' ';
         }
-        $usePre = isset($formattingOptions['use-pre']) ? $formattingOptions['use-pre'] === TRUE : FALSE;
+        $usePre = isset($formattingOptions['use-pre']) ? $formattingOptions['use-pre'] === true : false;
         if($usePre){
-            if($formattingOptionsV['with-colors'] === TRUE){
+            if($formattingOptionsV['with-colors'] === true){
                 $this->codeString = '<pre style="margin:0;background-color:'.$formattingOptionsV['colors']['bg-color'].'; color:'.$formattingOptionsV['colors']['text-color'].'">'.$this->nl;
             }
             else{
@@ -1404,7 +1445,7 @@ class HTMLNode {
      */
     private function _openAsCode($FO){
         $retVal = '';
-        if($FO['with-colors'] === TRUE){
+        if($FO['with-colors'] === true){
             if(!$this->isTextNode() && !$this->isComment()){
                 $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;</span>'
                         . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>';
@@ -1434,7 +1475,7 @@ class HTMLNode {
      * @since 1.5
      */
     private function _closeAsCode($FO){
-        if($FO['with-colors'] === TRUE){
+        if($FO['with-colors'] === true){
             if(!$this->isTextNode() && !$this->isComment()){
                 return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
                 . '<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>'
@@ -1458,7 +1499,7 @@ class HTMLNode {
             $this->codeString .= $this->_getTab().$node->getText().$this->nl;
         }
         else if($node->isComment()){
-            if($FO['with-colors'] === TRUE){
+            if($FO['with-colors'] === true){
                 $this->codeString .= $this->_getTab().'<span style="color:'.$FO['colors']['comment-color'].'">&lt!--'.$node->getText().'--&gt;</span>'.$this->nl;
             }
             else{
@@ -1496,7 +1537,7 @@ class HTMLNode {
      */
     private function _popNodeAsCode($FO){
         $node = &$this->nodesStack->pop();
-        if($node != NULL){
+        if($node != null){
             $name = $node->getNodeName();
             if($name == 'pre' || $name == 'textarea' || $name == 'code'){
                 $this->codeString .= $node->_closeAsCode($FO).$this->nl;
@@ -1554,11 +1595,13 @@ class HTMLNode {
     }
     /**
      * Returns the number of child nodes attached to the node.
+     * If the node is a text node, a comment node or a void node, 
+     * the method will return 0.
      * @return int The number of child nodes attached to the node.
      * @since 1.4
      */
     public function childrenCount() {
-        if(!$this->isTextNode() && !$this->isComment()){
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             return $this->children()->size();
         }
         return 0;
@@ -1584,8 +1627,8 @@ class HTMLNode {
      * Returns a node based on its attribute value (Direct child).
      * @param string $attrName The name of the attribute.
      * @param string $attrVal The value of the attribute.
-     * @return HTMLNode|NULL The method will return an object of type HTMLNode 
-     * if a node is found. Other than that, the method will return NULL. Note 
+     * @return HTMLNode|null The method will return an object of type HTMLNode 
+     * if a node is found. Other than that, the method will return null. Note 
      * that if there are multiple children with the same attribute and value, 
      * the first occurrence is returned.
      * @since 1.2
@@ -1606,33 +1649,34 @@ class HTMLNode {
     /**
      * Returns the value of an attribute.
      * @param string $attrName The name of the attribute.
-     * @return string|NULL The method will return the value of the attribute 
-     * if found. If no such attribute, the method will return NULL.
+     * @return string|null The method will return the value of the attribute 
+     * if found. If no such attribute, the method will return null.
      * @since 1.1
      */
     public function getAttributeValue($attrName) {
         if($this->hasAttribute($attrName)){
             return $this->attributes[$attrName];
         }
-        return NULL;
+        return null;
     }
     /**
      * Checks if the node has a given attribute or not.
-     * @param type $attrName The name of the attribute.
-     * @return boolean TRUE if the attribute is set.
+     * @param string $attrName The name of the attribute.
+     * @return boolean true if the attribute is set.
      * @since 1.1
      */
     public function hasAttribute($attrName){
         if(!$this->isTextNode() && !$this->isComment()){
-            return isset($this->attributes[$attrName]);
+            $trimmed = strtolower(trim($attrName));
+            return isset($this->attributes[$trimmed]);
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
      * @return string HTML string that represents the node as a whole.
      */
     public function __toString() {
-        return $this->toHTML(FALSE);
+        return $this->toHTML(false);
     }
 }
