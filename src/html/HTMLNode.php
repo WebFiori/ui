@@ -838,7 +838,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function &getChildByID($val){
-        if(!$this->isTextNode() && !$this->isComment()){
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             $val = $val.'';
             if(strlen($val) != 0){
                 $ch = &$this->_getChildByID($val, $this->children());
@@ -1205,11 +1205,12 @@ class HTMLNode {
     /**
      * Returns a string that represents the closing part of the node.
      * @return string A string that represents the closing part of the node. 
-     * if the node is a text node or a comment node, the returned value will be an empty string.
+     * if the node is a text node, a comment node or a void node the returned
+     *  value will be an empty string.
      * @since 1.0
      */
     public function close() {
-        if(!$this->isTextNode() && !$this->isComment()){
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
             return '</'.$this->getNodeName().'>';
         }
         return '';
@@ -1233,7 +1234,6 @@ class HTMLNode {
         }
         else{
             $this->nl = HTMLDoc::NL;
-            $spacesCount = 4;
             if($initTab > -1){
                 $this->tabCount = $initTab;
             }
@@ -1241,15 +1241,8 @@ class HTMLNode {
                 $this->tabCount = 0;
             }
             $this->tabSpace = '';
-            if($spacesCount > 0 && $spacesCount < 9){
-                for($x = 0 ; $x < $spacesCount ; $x++){
-                    $this->tabSpace .= ' ';
-                }
-            }
-            else{
-                for($x = 0 ; $x < 4 ; $x++){
-                    $this->tabSpace .= ' ';
-                }
+            for($x = 0 ; $x < 4 ; $x++){
+                $this->tabSpace .= ' ';
             }
         }
         $this->htmlString = '';
@@ -1345,15 +1338,15 @@ class HTMLNode {
         $node = &$this->nodesStack->pop();
         if($node != null){
             if($node->isFormatted() !== null && $node->isFormatted() === false){
-                $this->htmlString .= '</'.$node->getNodeName().'>';
+                $this->htmlString .= $node->close();
             }
             else{
                 $nodeType = $node->getNodeName();
                 if($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code'){
-                    $this->htmlString .= '</'.$node->getNodeName().'>'.$this->nl;
+                    $this->htmlString .= $node->close().$this->nl;
                 }
                 else{
-                    $this->htmlString .= $this->_getTab().'</'.$node->getNodeName().'>'.$this->nl;
+                    $this->htmlString .= $this->_getTab().$node->close().$this->nl;
                 }
             }
         }
