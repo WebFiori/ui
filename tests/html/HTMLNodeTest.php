@@ -319,6 +319,26 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testToHTML03() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $node->addTextNode('Hello World!.');
+        $this->assertEquals('<div id="container">Hello World!.</div>',$node);
+        $node->addTextNode('Another Text node.');
+        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node);
+        $child = new HTMLNode('p');
+        $child->addTextNode('I\'m a paragraph.');
+        $node->addChild($child);
+        $this->assertEquals('<div id="container">Hello World!.Another Text node.<p>I\'m a paragraph.</p></div>',$node);
+        $anotherChild = new HTMLNode('img');
+        $anotherChild->setAttribute('alt', 'Alternate Text');
+        $child->addChild($anotherChild);
+        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+                . '<p>I\'m a paragraph.<img alt="Alternate Text"></p></div>',$node);
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_01() {
         $htmlTxt = '';
         $val = HTMLNode::fromHTMLText($htmlTxt);
