@@ -335,6 +335,140 @@ class HTMLNodeTest extends TestCase{
         $child->addChild($anotherChild);
         $this->assertEquals('<div id="container">Hello World!.Another Text node.'
                 . '<p>I\'m a paragraph.<img alt="Alternate Text"></p></div>',$node);
+        $node->addCommentNode('This is a simple comment.');
+        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+                . '<p>I\'m a paragraph.<img alt="Alternate Text"></p><!--This is '
+                . 'a simple comment.--></div>',$node);
+    }
+    /**
+     * @test
+     */
+    public function testToHTML04() {
+        $node = new HTMLNode();
+        $this->assertEquals("<div>\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testToHTML05() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $this->assertEquals("<div id=\"container\">\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testToHTML06() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $node->addTextNode('Hello World!.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $node->addTextNode('Another Text node.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testToHTML07() {
+        $node = new HTMLNode();
+        $node->setID('container');
+        $node->addTextNode('Hello World!.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $node->addTextNode('Another Text node.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+        $child = new HTMLNode('p');
+        $child->addTextNode('I\'m a paragraph.');
+        $node->addChild($child);
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n    <p>\n        "
+                . "I'm a paragraph.\n    </p>\n</div>\n",$node->toHTML(true));
+        $anotherChild = new HTMLNode('img');
+        $anotherChild->setAttribute('alt', 'Alternate Text');
+        $child->addChild($anotherChild);
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+                . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n</div>\n",$node->toHTML(true));
+        $node->addCommentNode('This is a simple comment.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+                . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("    <div id=\"container\">\n        Hello World!.\n        Another Text node.\n"
+                . "        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+                . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
+    }
+    /**
+     * @test
+     */
+    public function testToHTML08() {
+        $node = new HTMLNode();
+        $child = new HTMLNode();
+        $node->addChild($child);
+        $child00 = new HTMLNode('textarea');
+        $child->addChild($child00);
+        $child01 = new HTMLNode('code');
+        $child->addChild($child01);
+        $child02 = new HTMLNode('pre');
+        $node->addChild($child02);
+        $child03 = new HTMLNode('p');
+        $node->addChild($child03);
+        $child04 = new HTMLNode('img');
+        $node->addChild($child04);
+        $child05 = new HTMLNode('ul');
+        $node->addChild($child05);
+        $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
+        $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testGetElementByID00() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getChildByID('not-exist'));
+    }
+    /**
+     * @test
+     */
+    public function testGetElementByID01() {
+        $node = new HTMLNode('#text');
+        $this->assertNull($node->getChildByID('from-text-node'));
+    }
+    /**
+     * @test
+     */
+    public function testGetElementByID02() {
+        $node = new HTMLNode('#comment');
+        $this->assertNull($node->getChildByID('from-comment-node'));
+    }
+    /**
+     * @test
+     */
+    public function testGetElementByID03() {
+        $node = new HTMLNode('img');
+        $this->assertNull($node->getChildByID('from-void-node'));
+    }
+    /**
+     * @test
+     */
+    public function testGetElementByID04() {
+        $node = new HTMLNode();
+        $child = new HTMLNode();
+        $node->addChild($child);
+        $child00 = new HTMLNode('textarea');
+        $child->addChild($child00);
+        $child01 = new HTMLNode('code');
+        $child->addChild($child01);
+        $child02 = new HTMLNode('pre');
+        $node->addChild($child02);
+        $child03 = new HTMLNode('p');
+        $node->addChild($child03);
+        $child04 = new HTMLNode('img');
+        $node->addChild($child04);
+        $child05 = new HTMLNode('ul');
+        $node->addChild($child05);
+        $child02->setID('pre-element');
+        $this->assertNull($node->getChildByID('not-exist'));
+        $this->assertTrue($node->getChildByID('pre-element') === $child02);
+        $child01->setID('code-element');
+        $this->assertTrue($node->getChildByID('code-element') === $child01);
+        $this->assertTrue($child->getChildByID('code-element') === $child01);
     }
     /**
      * @test
