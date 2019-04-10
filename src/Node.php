@@ -22,9 +22,9 @@ class Node{
      * Constructs a new node with specific data and next node.
      * Note that the method will only accept references.
      * @param mixed $data The data that the node will hold.
-     * @param Node $next The next node. If NULL is given or the given 
+     * @param Node $next The next node. If null is given or the given 
      * value is not an instance of Node, the next node will be set to 
-     * NULL.
+     * null.
      * @since 1.0
      */
     public function __construct(&$data,&$next=null) {
@@ -41,7 +41,7 @@ class Node{
     }
     /**
      * Returns a reference to the next linked node. 
-     * @return null|Node If no linked node is set, NULL is returned. Else, 
+     * @return null|Node If no linked node is set, null is returned. Else, 
      * an instance of Node is returned.
      * @since 1.0
      */
@@ -60,8 +60,8 @@ class Node{
     /**
      * Sets the reference to the next linked node.
      * Note that the method can only accept a reference to the next node.
-     * @param Node $next The next node. If NULL is given, the next node 
-     * will be set to NULL. If the given value is not an instance of Node, 
+     * @param Node $next The next node. If null is given, the next node 
+     * will be set to null. If the given value is not an instance of Node, 
      * it will be not set.
      * @since 1.0
      */
@@ -69,8 +69,8 @@ class Node{
         if($next instanceof Node){
             $this->next = $next;
         }
-        else if($next == NULL){
-            $this->next = NULL;
+        else if($next == null){
+            $this->next = null;
         }
     }
 }
