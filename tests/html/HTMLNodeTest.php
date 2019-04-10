@@ -397,6 +397,7 @@ class HTMLNodeTest extends TestCase{
         $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
                 . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
     }
+   
     /**
      * @test
      */
@@ -418,6 +419,13 @@ class HTMLNodeTest extends TestCase{
         $node->addChild($child05);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
         $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testAsCode00() {
+        $node = new HTMLNode();
+        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
     }
     /**
      * @test
@@ -708,6 +716,21 @@ class HTMLNodeTest extends TestCase{
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
+        $el = $val->getChildByID('input-el-1');
+        $this->assertTrue($el instanceof HTMLNode);
+        $this->assertEquals('text',$el->getAttributeValue('type'));
+    }
+    /**
+     * @test
+     */
+    public function testFromHTML_10() {
+        $htmlTxt = '<html><head><base other="" href="https://example.com/"><meta charset="utf-8"><title>This is a test document.</title><link rel="text/css" href="https://example.com/"></head><body>'
+                . '<input type = text ID="input-el-1">';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLDoc);
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('https://example.com/',$val->getHeadNode()->getBaseURL());
         $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
         $el = $val->getChildByID('input-el-1');
         $this->assertTrue($el instanceof HTMLNode);
