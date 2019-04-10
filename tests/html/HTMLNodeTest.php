@@ -519,6 +519,43 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testGetchildrenByTag00() {
+        $node = new HTMLNode();
+        $list = $node->getChildrenByTag('');
+        $this->assertEquals(0,$list->size());
+        $list = $node->getChildrenByTag('p');
+        $this->assertEquals(0,$list->size());
+        $ch00 = new HTMLNode('p');
+        $node->addChild($ch00);
+        $list = $node->getChildrenByTag('p');
+        $this->assertEquals(1,$list->size());
+        $ch01 = new HTMLNode('p');
+        $node->addChild($ch01);
+        $list = $node->getChildrenByTag('p');
+        $this->assertEquals(2,$list->size());
+        $ch03 = new HTMLNode();
+        $ch03->addTextNode('A text node.');
+        $ch03->addCommentNode('A comment node.');
+        $node->addChild($ch03);
+        $list = $node->getChildrenByTag('#text');
+        $this->assertEquals(1,$list->size());
+        $list = $node->getChildrenByTag('#comment');
+        $this->assertEquals(1,$list->size());
+        $ch04 = new HTMLNode('section');
+        $ch03->addChild($ch04);
+        $list = $node->getChildrenByTag('section');
+        $this->assertEquals(1,$list->size());
+        $ch05 = new HTMLNode('p');
+        $ch04->addChild($ch05);
+        $list = $node->getChildrenByTag('p');
+        $this->assertEquals(3,$list->size());
+        $node->addTextNode('A new text node.');
+        $list = $node->getChildrenByTag('#text');
+        $this->assertEquals(2,$list->size());
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_01() {
         $htmlTxt = '';
         $val = HTMLNode::fromHTMLText($htmlTxt);
