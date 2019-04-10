@@ -1035,7 +1035,7 @@ class HTMLNode {
      * @since 1.2
      */
     public function &removeChild(&$node) {
-        if(!$this->isTextNode() && !$this->isComment()){
+        if($this->mustClose()){
             if($node instanceof HTMLNode){
                 $child = &$this->children()->removeElement($node);
                 if($child instanceof HTMLNode){
