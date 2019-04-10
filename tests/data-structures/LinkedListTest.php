@@ -470,6 +470,292 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testGetFirst00() {
+        $list = new LinkedList();
+        $this->assertNull($list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testGetFirst01() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $list->add($el00);
+        $this->assertEquals($el00, $list->getFirst());
+        $this->assertEquals($list->getFirst(),$list->getLast());
+        $this->assertEquals($list->get(0),$list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testGetFirst02() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $el01 = 'Element #01';
+        $el02 = 'Element #02';
+        $el03 = 'Element #03';
+        $el04 = 'Element #04';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el00, $list->getFirst());
+        $this->assertNotEquals($list->getFirst(),$list->getLast());
+        $this->assertEquals($list->get(0),$list->getFirst());
+        $list->removeFirst();
+        $this->assertNotEquals($el00, $list->getFirst());
+        $this->assertEquals($el01, $list->getFirst());
+        $this->assertNotEquals($list->getFirst(),$list->getLast());
+        $list->replace($el01, $el04);
+        $this->assertEquals($el04, $list->getFirst());
+        $this->assertEquals($list->getFirst(),$list->getLast());
+        $list->remove(1);
+        $this->assertEquals($el04, $list->getFirst());
+        $this->assertEquals($list->getFirst(),$list->getLast());
+        $list->removeFirst();
+        $this->assertEquals($el03, $list->getFirst());
+        $list->removeFirst();
+        $this->assertEquals($list->getFirst(),$list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testGetFirst03() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'El #00');
+        $el01 = new AnyObject(1, 'El #00');
+        $el02 = new AnyObject(2, 'El #00');
+        $el03 = new AnyObject(3, 'El #00');
+        $el04 = new AnyObject(4, 'El #00');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el00, $list->getFirst());
+        $this->assertNotEquals($list->getFirst(),$list->getLast());
+        $this->assertEquals($list->get(0),$list->getFirst());
+        $list->removeFirst();
+        $this->assertNotEquals($el00, $list->getFirst());
+        $this->assertEquals($el01, $list->getFirst());
+        $this->assertNotEquals($list->getFirst(),$list->getLast());
+        $list->replace($el01, $el04);
+        $this->assertEquals($el04, $list->getFirst());
+        $this->assertEquals($list->getFirst(),$list->getLast());
+        $list->remove(1);
+        $this->assertEquals($el04, $list->getFirst());
+        $this->assertEquals($list->getFirst(),$list->getLast());
+        $list->removeFirst();
+        $this->assertEquals($el03, $list->getFirst());
+        $list->removeFirst();
+        $this->assertEquals($list->getFirst(),$list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testGetLast00() {
+        $list = new LinkedList();
+        $this->assertNull($list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testGetLast01() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $list->add($el00);
+        $this->assertEquals($el00, $list->getLast());
+        $this->assertEquals($list->getLast(),$list->getFirst());
+        $this->assertEquals($list->get(0),$list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testGetLast02() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $el01 = 'Element #01';
+        $el02 = 'Element #02';
+        $el03 = 'Element #03';
+        $el04 = 'Element #04';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el04, $list->getLast());
+        $this->assertNotEquals($list->getLast(),$list->getFirst());
+        $this->assertEquals($list->get($list->size() - 1),$list->getLast());
+        $last = $list->removeLast();
+        $this->assertEquals($el04,$last);
+        $this->assertNotEquals($el04, $list->getLast());
+        $this->assertEquals($el03, $list->getLast());
+        $this->assertNotEquals($list->getLast(),$list->getFirst());
+        $list->replace($el03, $el04);
+        $this->assertEquals($el04, $list->getLast());
+        $list->remove(1);
+        $this->assertEquals($el04, $list->getLast());
+        $list->removeLast();
+        $this->assertEquals($el02, $list->getLast());
+        $list->removeFirst();
+        $this->assertEquals($list->getLast(),$list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testGetLast03() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'El #00');
+        $el01 = new AnyObject(1, 'El #00');
+        $el02 = new AnyObject(2, 'El #00');
+        $el03 = new AnyObject(3, 'El #00');
+        $el04 = new AnyObject(4, 'El #00');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $this->assertEquals($el04, $list->getLast());
+        $this->assertNotEquals($list->getLast(),$list->getFirst());
+        $this->assertEquals($list->get($list->size() - 1),$list->getLast());
+        $last = $list->removeLast();
+        $this->assertEquals($el04,$last);
+        $this->assertNotEquals($el04, $list->getLast());
+        $this->assertEquals($el03, $list->getLast());
+        $this->assertNotEquals($list->getLast(),$list->getFirst());
+        $list->replace($el03, $el04);
+        $this->assertEquals($el04, $list->getLast());
+        $list->remove(1);
+        $this->assertEquals($el04, $list->getLast());
+        $list->removeLast();
+        $this->assertEquals($el02, $list->getLast());
+        $list->removeFirst();
+        $this->assertEquals($list->getLast(),$list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testToArray00() {
+        $list = new LinkedList();
+        $this->assertEquals(0,count($list->toArray()));
+    }
+    /**
+     * @test
+     */
+    public function testToArray01() {
+        $list = new LinkedList();
+        $el00 = 'El #00';
+        $list->add($el00);
+        $asArray = $list->toArray();
+        $this->assertEquals(1,count($asArray));
+        $this->assertEquals($el00,$asArray[0]);
+        $list->removeLast();
+        $asArray = $list->toArray();
+        $this->assertEquals(0,count($asArray));
+    }
+    /**
+     * @test
+     */
+    public function testToArray02() {
+        $list = new LinkedList();
+        $el00 = 'El #00';
+        $el01 = 'El #00';
+        $el02 = 'El #00';
+        $el03 = 'El #00';
+        $el04 = 'El #00';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $asArray = $list->toArray();
+        $this->assertEquals(5,count($asArray));
+        $this->assertEquals($el00,$asArray[0]);
+        $this->assertEquals($el04,$asArray[4]);
+        $list->removeLast();
+        $asArray = $list->toArray();
+        $this->assertEquals(4,count($asArray));
+        $this->assertEquals($el03,$asArray[3]);
+        $list->removeFirst();
+        $asArray = $list->toArray();
+        $this->assertEquals(3,count($asArray));
+        $this->assertEquals($el01,$asArray[0]);
+        $list->remove(1);
+        $asArray = $list->toArray();
+        $this->assertEquals(2,count($asArray));
+        $this->assertEquals($el01,$asArray[0]);
+        $this->assertEquals($el03,$asArray[1]);
+    }
+    /**
+     * @test
+     */
+    public function testToArray03() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'EL #00');
+        $el01 = new AnyObject(1, 'EL #01');
+        $el02 = new AnyObject(2, 'EL #02');
+        $el03 = new AnyObject(3, 'EL #03');
+        $el04 = new AnyObject(4, 'EL #04');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $asArray = $list->toArray();
+        $this->assertEquals(5,count($asArray));
+        $this->assertEquals($el00,$asArray[0]);
+        $this->assertEquals($el04,$asArray[4]);
+        $list->removeLast();
+        $asArray = $list->toArray();
+        $this->assertEquals(4,count($asArray));
+        $this->assertEquals($el03,$asArray[3]);
+        $list->removeFirst();
+        $asArray = $list->toArray();
+        $this->assertEquals(3,count($asArray));
+        $this->assertEquals($el01,$asArray[0]);
+        $list->remove(1);
+        $asArray = $list->toArray();
+        $this->assertEquals(2,count($asArray));
+        $this->assertEquals($el01,$asArray[0]);
+        $this->assertEquals($el03,$asArray[1]);
+    }
+    /**
+     * @test
+     */
+    public function testToString00() {
+        $list = new LinkedList();
+        $this->assertEquals("List[\n]",$list.'');
+    }
+    /**
+     * @test
+     */
+    public function testToString01() {
+        $list = new LinkedList();
+        $el00 = 'EL #00';
+        $list->add($el00);
+        $this->assertEquals("List[\n    [0]=>EL #00(string)\n]",$list.'');
+        $el01 = 55;
+        $list->add($el01);
+        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer)\n]",$list.'');
+        $obj00 = new AnyObject(0, 'Obj 00');
+        $list->add($obj00);
+        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object)\n]",$list.'');
+        $list->add($obj00);
+        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object),\n    [3]=>(object)\n]",$list.'');
+        $arr00 = array();
+        $list->add($arr00);
+        $list->remove(1);
+        $list->removeFirst();
+        echo "\n".$list;
+        echo "\n"."List[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]";
+        //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]",$list.'');
+        $list->add($arr00);
+        //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n     [2]=>(array),\n    [3]=>(array)\n]",$list.'');
+    }
+    /**
+     * @test
+     */
     public function testReplace00() {
         $this->assertTrue(true);
     }
@@ -610,6 +896,28 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testCount02() {
+        $list = new LinkedList();
+        $el = new AnyObject(1, 'Element #1');
+        $list->add($el);
+        $this->assertEquals(1,$list->count($list->get(0)));
+        for($x = 0 ; $x < 10 ; $x++){
+            $list->add($el);
+        }
+        $new = new AnyObject(5, 'Element #5');
+        $list->add($new);
+        $this->assertEquals(11,$list->count($el));
+        $elx = $list->get(3);
+        $this->assertEquals(11,$list->count($elx));
+        $list->add($el);
+        $this->assertEquals(12,$list->count($el));
+        $el00 = $list->get(0);
+        $list->add($el00);
+        $this->assertEquals(13,$list->count($list->get(0)));
+    }
+    /**
+     * @test
+     */
     public function testCount03() {
         $list = new LinkedList();
         $el = new AnyObject(1, 'Element #1');
@@ -625,5 +933,87 @@ class LinkedListTest extends TestCase{
         $this->assertEquals(11,$list->count($el));
         $list->clear();
         $this->assertEquals(0,$list->count($el));
+    }
+    /**
+     * @test
+     */
+    public function testContains00() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $this->assertFalse($list->contains($el00));
+    }
+    /**
+     * @test
+     */
+    public function testContains01() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $el01 = 'Element #01';
+        $list->add($el00);
+        $this->assertTrue($list->contains($el00));
+        $this->assertFalse($list->contains($el01));
+    }
+    /**
+     * @test
+     */
+    public function testContains02() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'El #00');
+        $el01 = new AnyObject(0, 'El #00');
+        $list->add($el00);
+        $this->assertTrue($list->contains($el00));
+        $this->assertFalse($list->contains($el01));
+    }
+    /**
+     * @test
+     */
+    public function testContains03() {
+        $list = new LinkedList();
+        $el00 = 'Element #00';
+        $el01 = 'Element #01';
+        $el02 = 'Element #02';
+        $el03 = 'Element #03';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertTrue($list->contains($el00));
+        $this->assertTrue($list->contains($el01));
+        $this->assertTrue($list->contains($el02));
+        $this->assertFalse($list->contains($el03));
+        $list->removeFirst();
+        $this->assertFalse($list->contains($el00));
+        $list->add($el03);
+        $this->assertTrue($list->contains($el03));
+        $list->removeLast();
+        $this->assertFalse($list->contains($el03));
+        $list->replace($el01, $el00);
+        $this->assertTrue($list->contains($el00));
+        $this->assertFalse($list->contains($el01));
+    }
+    /**
+     * @test
+     */
+    public function testContains04() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(0, 'El #00');
+        $el01 = new AnyObject(0, 'El #00');
+        $el02 = new AnyObject(0, 'El #00');
+        $el03 = new AnyObject(0, 'El #00');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $this->assertTrue($list->contains($el00));
+        $this->assertTrue($list->contains($el01));
+        $this->assertTrue($list->contains($el02));
+        $this->assertFalse($list->contains($el03));
+        $list->removeFirst();
+        $this->assertFalse($list->contains($el00));
+        $list->add($el03);
+        $this->assertTrue($list->contains($el03));
+        $list->removeLast();
+        $this->assertFalse($list->contains($el03));
+        $list->replace($el01, $el00);
+        $this->assertTrue($list->contains($el00));
+        $this->assertFalse($list->contains($el01));
     }
 }
