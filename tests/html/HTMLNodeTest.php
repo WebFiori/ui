@@ -473,6 +473,52 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testSetNodeName00() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->setNodeName(''));
+        $this->assertTrue($node->setNodeName('head'));
+        $this->assertTrue($node->mustClose());
+        $this->assertTrue($node->setNodeName('img'));
+        $this->assertFalse($node->mustClose());
+        $this->assertFalse($node->setNodeName('invalid name'));
+        $this->assertFalse($node->setNodeName('#comment'));
+        $this->assertFalse($node->setNodeName('#text'));
+    }
+    /**
+     * @test
+     */
+    public function testSetNodeName01() {
+        $node = new HTMLNode('#text');
+        $this->assertFalse($node->setNodeName(''));
+        $this->assertFalse($node->setNodeName('head'));
+        $this->assertFalse($node->mustClose());
+        $this->assertFalse($node->setNodeName('img'));
+        $this->assertFalse($node->mustClose());
+        $this->assertFalse($node->setNodeName('invalid name'));
+        $this->assertTrue($node->setNodeName('#comment'));
+        $this->assertTrue($node->setNodeName('#text'));
+    }
+    /**
+     * @test
+     */
+    public function testSetNodeName02() {
+        $node = new HTMLNode();
+        $child00 = new HTMLNode('p');
+        $node->addChild($child00);
+        $this->assertFalse($node->setNodeName(''));
+        $this->assertTrue($node->setNodeName('head'));
+        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->setNodeName('img'));
+        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->setNodeName('invalid name'));
+        $this->assertFalse($node->setNodeName('#comment'));
+        $this->assertFalse($node->setNodeName('#text'));
+        $node->removeAllChildNodes();
+        $this->assertTrue($node->setNodeName('img'));
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_01() {
         $htmlTxt = '';
         $val = HTMLNode::fromHTMLText($htmlTxt);
