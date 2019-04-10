@@ -549,7 +549,7 @@ class HTMLNode {
                     else if($chNode['tag-name'] == 'base'){
                         $isBaseSet = false;
                         foreach ($chNode['attributes'] as $attr => $val){
-                            if($attr == 'base'){
+                            if($attr == 'href'){
                                 $isBaseSet = $htmlNode->setBase($val);
                                 break;
                             }
