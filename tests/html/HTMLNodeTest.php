@@ -393,6 +393,9 @@ class HTMLNodeTest extends TestCase{
                 . "        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
         $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
                 . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
+        $node->setIsFormatted(true);
+        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+                . "    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
     }
     /**
      * @test
@@ -415,6 +418,76 @@ class HTMLNodeTest extends TestCase{
         $node->addChild($child05);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
         $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function testGetStyle00() {
+        $node = new HTMLNode();
+        $styleArr = $node->getStyle();
+        $this->assertEquals(0,count($styleArr));
+    }
+    /**
+     * @test
+     */
+    public function testGetStyle01() {
+        $node = new HTMLNode();
+        $node->setStyle(array(
+            'color'=>'red',
+            'background-color'=>'blue',
+            'font-family'=>'Arial'
+        ));
+        $styleArr = $node->getStyle();
+        $this->assertEquals(3,count($styleArr));
+        $this->assertEquals('color:red;background-color:blue;font-family:Arial;',$node->getAttributeValue('style'));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild00() {
+        $node = new HTMLNode('#text');
+        $el00 = new HTMLNode('p');
+        $this->assertNull($node->removeChild($el00));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild01() {
+        $node = new HTMLNode('#comment');
+        $el00 = new HTMLNode('p');
+        $this->assertNull($node->removeChild($el00));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild02() {
+        $node = new HTMLNode('img');
+        $el00 = new HTMLNode('p');
+        $node->addChild($el00);
+        $this->assertNull($node->removeChild($el00));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild04() {
+        $node = new HTMLNode();
+        $el00 = new HTMLNode('p');
+        $node->addChild($el00);
+        $this->assertTrue($el00 === $node->removeChild($el00));
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild05() {
+        $node = new HTMLNode();
+        $el00 = new HTMLNode('p');
+        $el01 = new HTMLNode();
+        $el01->addChild($el00);
+        $node->addChild($el01);
+        $el02 = 'A str';
+        $this->assertNull($node->removeChild($el02));
+        $this->assertNull($node->removeChild($el00));
+        $this->assertTrue($el00 === $node->children()->get(0)->removeChild($el00));
     }
     /**
      * @test
