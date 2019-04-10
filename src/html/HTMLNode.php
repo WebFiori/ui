@@ -725,7 +725,7 @@ class HTMLNode {
         $chCount = $chList->size();
         for($x = 0 ; $x < $chCount ; $x++){
             $child = $chList->get($x);
-            if(!$child->isTextNode()){
+            if($child->mustClose()){
                 $tmpList = $child->_getChildrenByTag($val,$child->children(),new LinkedList());
                 for($y = 0 ; $y < $tmpList->size() ; $y++){
                     $list->add($tmpList->get($y));
@@ -743,16 +743,21 @@ class HTMLNode {
     /**
      * Returns a linked list that contains all child nodes which has the given 
      * tag name.
+     * If the given tag name is empty string or the node has no children which has 
+     * the given tag name, the returned list will be empty.
      * @param string $val The name of the tag (such as 'div' or 'a').
      * @return LinkedList A linked list that contains all child nodes which has the given 
      * tag name.
      * @since 1.2
      */
     public function getChildrenByTag($val){
-        $val = $val.'';
+        $valToSearch = strtoupper($val);
+        if(!($valToSearch == '#TEXT' || $valToSearch == '#COMMENT')){
+            $valToSearch = strtolower($val);
+        }
         $list = new LinkedList();
-        if(strlen($val) != 0){
-            return $this->_getChildrenByTag($val, $this->children(), $list);
+        if(strlen($valToSearch) != 0 && $this->mustClose()){
+            return $this->_getChildrenByTag($valToSearch, $this->children(), $list);
         }
         return $list;
     }
