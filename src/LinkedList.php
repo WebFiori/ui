@@ -150,10 +150,10 @@ class LinkedList {
         else{
             $node = $this->head;
             while($node != null){
-                $node = $node->next();
                 if($node != null && $node->data() === $el){
                     return true;
                 }
+                $node = $node->next();
             }
             return false;
         }
@@ -387,6 +387,7 @@ class LinkedList {
             $data = &$nextNode->data();
             $null = null;
             $node->setNext($null);
+            $this->tail = $node;
             $this->_reduceSize();
             return $data;
         }
@@ -565,11 +566,22 @@ class LinkedList {
         $index = 0;
         while ($node != null){
             $data = $node->data();
+            $dataType = gettype($data);
             if($node->next() == null){
-                $retVal .= '    '.$index.'=>'.$data.'('. gettype($data).")\n";
+                if($dataType == 'object' || $dataType == 'array'){
+                    $retVal .= '    ['.$index.']=>('.$dataType.")\n";
+                }
+                else{
+                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
+                }
             }
             else{
-                $retVal .= '    '.$index.'=>'.$data.'('. gettype($data)."),\n";
+                if($dataType == 'object' || $dataType == 'array'){
+                    $retVal .= '    ['.$index.']=>('.$dataType."),\n";
+                }
+                else{
+                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
+                }
             }
             $index++;
             $node = $node->next();
