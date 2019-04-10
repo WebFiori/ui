@@ -458,52 +458,6 @@ class HTMLNode {
         return $retVal;
     }
     /**
-     * 
-     * @param type $nodesArr
-     * @param type $parentNodeArr
-     * @param type $nodeIndex
-     * @param type $nodesCount
-     * @return type
-     * @since 1.7.4
-     */
-    private static function _buildArrayTree_H1($nodesArr,&$parentNodeArr,&$nodeIndex,$nodesCount) {
-        $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
-        $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
-        if($parentNodeArr['tag-name'] == '#COMMENT'){
-            return $parentNodeArr;
-        }
-        else if($isClosingTag){
-            return array();
-        }
-        else if($isVoid){
-            return $parentNodeArr;
-        }
-        else{
-            $parentNodeArr['children'] = [];
-            $nodeIndex++;
-            for(;$nodeIndex < $nodesCount;$nodeIndex++){
-                $node = $nodesArr[$nodeIndex];
-                $isVoid = isset($parentNodeArr['is-void-tag']) ? $parentNodeArr['is-void-tag'] : false;
-                $isClosingTag = isset($parentNodeArr['is-closing-tag']) ? $parentNodeArr['is-closing-tag'] : false;
-                if($node['tag-name'] == '#COMMENT'){
-                    $parentNodeArr['children'][] = $node;
-                }
-                else if($isVoid){
-                    $parentNodeArr['children'][] = $node;
-                }
-                else if($isClosingTag){
-                    
-                        break;
-                    
-                }
-                else{
-                    $parentNodeArr['children'][] = self::_buildArrayTree_H1($nodesArr, $node, $nodeIndex, $nodesCount);
-                }
-            }
-            return $parentNodeArr;
-        }
-    }
-    /**
      * Creates HTMLNode object given a string of HTML code.
      * Note that this method is still under implementation.
      * @param string $text A string that represents HTML code.
@@ -881,8 +835,8 @@ class HTMLNode {
         }
         else{
             $lName = strtolower($name);
-            $reqClose = !in_array($lName, self::VOID_TAGS);
-            if(strlen($lName) != 0){
+            if($this->_validateNodeName($lName)){
+                $reqClose = !in_array($lName, self::VOID_TAGS);
                 if($this->mustClose() && $reqClose !== true){
                     if($this->childrenCount() == 0){
                         $this->name = $lName;
