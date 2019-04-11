@@ -82,4 +82,54 @@ class HeadNodeTest extends TestCase{
         $this->assertEquals('https://example2.com/my-page',$head->getCanonical());
         $this->assertEquals('https://example2.com/',$head->getBaseURL());
     }
+    /**
+     * @test
+     */
+    public function test04() {
+        $node = new HeadNode('','','');
+        $this->assertEquals('',$node->getTitle());
+        $this->assertNull($node->getTitleNode());
+    }
+    /**
+     * @test
+     */
+    public function testGetJsNodes00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testGetCssNodes00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testAddMeta00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testAddJss00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testAddCss00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testAddAlternate00() {
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testAddLink00() {
+        $this->assertTrue(true);
+    }
 }
