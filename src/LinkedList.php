@@ -259,20 +259,23 @@ class LinkedList {
      * Sort the elements of the list using insertion sort algorithm.
      * @param boolean $ascending If set to true, list elements 
      * will be sorted in ascending order (From lower to higher). Else, 
-     * they will be sorted in descending order (From higher to lower).
+     * they will be sorted in descending order (From higher to lower). Default is 
+     * true.
      * @return boolean The method will return true if list 
-     * elements have been sorted. The only case that the method 
+     * elements have been sorted. The only cases that the method 
      * will return false is when the list has an object which does 
-     * not implement the interface Comparable.
+     * not implement the interface Comparable or it has a mix of objects and primitive types.
      * @since 1.3
      */
     public function insertionSort($ascending=true) {
         $array = $this->toArray();
         $count = count($array);
+        $hasObject = false;
         for($i = 0 ; $i < $count ; $i++){
             $val = $array[$i];
             $j = $i - 1;
             if(gettype($val) == 'object'){
+                $hasObject = true;
                 if($val instanceof Comparable){
                     while($j >= 0 && $val->compare($array[$j]) < 0){
                         $array[$j + 1] = $array[$j];
@@ -284,12 +287,15 @@ class LinkedList {
                     return false;
                 }
             }
-            else{
+            else if(!$hasObject){
                 while($j >= 0 && $array[$j] > $val){
                     $array[$j + 1] = $array[$j];
                     $j--;
                 }
                 $array[$j + 1] = $val;
+            }
+            else{
+                return false;
             }
 	}
         while ($this->size() != 0){
