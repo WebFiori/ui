@@ -470,6 +470,13 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testGetByIndex00() {
+        $list = new LinkedList();
+        $this->assertNull($list->get(99));
+    }
+    /**
+     * @test
+     */
     public function testGetFirst00() {
         $list = new LinkedList();
         $this->assertNull($list->getFirst());
@@ -723,6 +730,188 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function insertionSortTest00() {
+        $list = new LinkedList();
+        $el00 = 100;
+        $el01 = -9;
+        $el02 = 66;
+        $el03 = 676;
+        $el04 = -99;
+        $el05 = 54;
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array($el04,$el01,$el05,$el02,$el00,$el03);
+        $this->assertTrue($list->insertionSort());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function insertionSortTest01() {
+        $list = new LinkedList();
+        $el00 = 100;
+        $el01 = -9;
+        $el02 = 66;
+        $el03 = 676;
+        $el04 = -99;
+        $el05 = 54;
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array_reverse(array($el04,$el01,$el05,$el02,$el00,$el03));
+        $this->assertTrue($list->insertionSort(false));
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    
+    /**
+     * @test
+     */
+    public function insertionSortTest02() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 'Apple';
+        $el02 = 'Orange';
+        $el03 = 'Computer';
+        $el04 = 'Bad Boy';
+        $el05 = 'Nice Work';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array($el01,$el04,$el03,$el00,$el05,$el02);
+        $this->assertTrue($list->insertionSort());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function insertionSortTest03() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 'Apple';
+        $el02 = 'Orange';
+        $el03 = 'Computer';
+        $el04 = 'Bad Boy';
+        $el05 = 'Nice Work';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array_reverse(array($el01,$el04,$el03,$el00,$el05,$el02));
+        $this->assertTrue($list->insertionSort(false));
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    
+    /**
+     * @test
+     */
+    public function insertionSortTest04() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 66;
+        $el02 = -1.7;
+        $el03 = 100;
+        $el04 = 'Bad Boy';
+        $el05 = 'Nice Work';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array($el02,$el04,$el00,$el05,$el01,$el03);
+        $this->assertTrue($list->insertionSort());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function insertionSortTest05() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 66;
+        $el02 = -1.7;
+        $el03 = 100;
+        $el04 = 'Bad Boy';
+        $el05 = 'Nice Work';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array_reverse(array($el02,$el04,$el00,$el05,$el01,$el03));
+        $this->assertTrue($list->insertionSort(false));
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($expected[$x],$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function insertionSortTest06() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(100, 'El #100');
+        $el01 = new AnyObject(-88, 'El #-88');
+        $el02 = new AnyObject(66, 'El #66');
+        $el03 = new AnyObject(0, 'El #0');
+        $el04 = new AnyObject(56, 'El #100');
+        $el05 = new AnyObject(-1000, 'El #-1000');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $expected = array($el05,$el01,$el03,$el04,$el02,$el00);
+        $this->assertTrue($list->insertionSort());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertTrue($expected[$x] === $list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function insertionSortTest07() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(100, 'El #100');
+        $el01 = new AnyObject(-88, 'El #-88');
+        $el02 = new AnyObject(66, 'El #66');
+        $el03 = new AnyObject(0, 'El #0');
+        $el04 = 'Not An Object';
+        $el05 = new AnyObject(-1000, 'El #-1000');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $list->add($el04);
+        $list->add($el05);
+        $this->assertFalse($list->insertionSort());
+    }
+    /**
+     * @test
+     */
     public function testToString00() {
         $list = new LinkedList();
         $this->assertEquals("List[\n]",$list.'');
@@ -757,13 +946,86 @@ class LinkedListTest extends TestCase{
      * @test
      */
     public function testReplace00() {
-        $this->assertTrue(true);
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 'World!';
+        $this->assertFalse($list->replace($el01, $el00));
     }
     /**
      * @test
      */
-    public function testInsertionSort00() {
-        $this->assertTrue(true);
+    public function testReplace01() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 'World!';
+        $list->add($el00);
+        $this->assertTrue($list->replace($el00, $el01));
+        $this->assertEquals($el01,$list->getLast());
+        $this->assertNotEquals($el00,$list->getLast());
+        $this->assertEquals($el01,$list->getFirst());
+        $this->assertNotEquals($el00,$list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testReplace02() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $el01 = 'Mr.';
+        $el02 = 'Ibrahim';
+        $el03 = 'BinAlshikh';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $this->assertTrue($list->replace($el00, $el01));
+        $this->assertFalse($list->replace($el00, $el01));
+        $this->assertEquals($el01,$list->getFirst());
+        $this->assertTrue($list->replace($el03, $el00));
+        $this->assertEquals($el00,$list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testReplace03() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(7, 'Hello');
+        $el01 = new AnyObject(8, 'World');
+        $this->assertFalse($list->replace($el01, $el00));
+    }
+    /**
+     * @test
+     */
+    public function testReplace04() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(7, 'Hello');
+        $el01 = new AnyObject(8, 'World');
+        $list->add($el00);
+        $this->assertTrue($list->replace($el00, $el01));
+        $this->assertTrue($el01 === $list->getLast());
+        $this->assertFalse($el00 === $list->getLast());
+        $this->assertTrue($el01 === $list->getFirst());
+        $this->assertFalse($el00 === $list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testReplace05() {
+        $list = new LinkedList();
+        $el00 = new AnyObject(7, 'Hello');
+        $el01 = new AnyObject(8, 'World');
+        $el02 = new AnyObject(7, 'Hello');
+        $el03 = new AnyObject(8, 'World');
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $this->assertTrue($list->replace($el00, $el01));
+        $this->assertFalse($list->replace($el00, $el01));
+        $this->assertTrue($el01 === $list->getFirst());
+        $this->assertTrue($list->replace($el03, $el00));
+        $this->assertTrue($el00 === $list->getLast());
+        $this->assertFalse($el00 === $list->get(0));
     }
     /**
      * @test
