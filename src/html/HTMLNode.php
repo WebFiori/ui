@@ -581,6 +581,14 @@ class HTMLNode {
                             $htmlNode->addChild($tmpNode);
                         }
                     }
+                    else if($chNode['tag-name'] == 'meta'){
+                        if(isset($chNode['attributes']['charset'])){
+                            $htmlNode->setCharSet($chNode['attributes']['charset']);
+                        }
+                        else{
+                            $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
+                        }
+                    }
                     else {
                         $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
                     }
