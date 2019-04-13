@@ -24,6 +24,7 @@
  */
 namespace phpStructs\html;
 use phpStructs\html\HTMLNode;
+use phpStructs\LinkedList;
 /**
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *
@@ -165,9 +166,6 @@ class HeadNode extends HTMLNode{
         }
         $trimmedCharset = trim($charset);
         if(strlen($charset) > 0){
-            if($this->metaCharset == null){
-                $this->metaCharset = new HTMLNode('meta');
-            }
             if(!$this->hasChild($this->metaCharset)){
                 parent::addChild($this->metaCharset);
             }
@@ -254,7 +252,7 @@ class HeadNode extends HTMLNode{
             $child = &$children->get($x);
             $childName = $child->getNodeName();
             if($childName == 'link'){
-                if($child->hasAttribut('rel') && $child->getAttributeValue('rel') == 'stylesheet'){
+                if($child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'stylesheet'){
                     $list->add($child);
                 }
             }
@@ -275,7 +273,7 @@ class HeadNode extends HTMLNode{
             $child = &$children->get($x);
             $childName = $child->getNodeName();
             if($childName == 'script'){
-                if($child->hasAttribut('type') && $child->getAttributeValue('type') == 'text/javascript'){
+                if($child->hasAttribute('type') && $child->getAttributeValue('type') == 'text/javascript'){
                     $list->add($child);
                 }
             }
@@ -440,7 +438,7 @@ class HeadNode extends HTMLNode{
      * @param string $href The link to the file. Must be non empty string.
      * @param $otherAttrs An array that can contain additional 
      * attributes to set for the link tag.
-     * @return boolean If a link tag which has the given CSS file is added, the 
+     * @return boolean If a link tag which has the given CSS file is created, the 
      * method will return true. If no node is added, the method will return 
      * false.
      * @since 1.0
@@ -614,7 +612,7 @@ class HeadNode extends HTMLNode{
             $child = &$children->get($x);
             $childName = $child->getNodeName();
             if($childName == 'link'){
-                if($child->hasAttribut('rel') && $child->getAttributeValue('rel') == 'alternate'){
+                if($child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'alternate'){
                     $list->add($child);
                 }
             }
