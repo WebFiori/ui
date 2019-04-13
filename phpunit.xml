@@ -4,7 +4,14 @@
     </php>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
+            <file>./src/LinkedList.php</file>
+            <file>./src/Node.php</file>
+            <file>./src/Stack.php</file>
+            <file>./src/Queue.php</file>
+            <file>./src/html/HTMLNode.php</file>
+            <file>./src/html/HeadNode.php</file>
+            <file>./src/html/HTMLDoc.php</file>
+            <file>./src/html/Input.php</file>
         </whitelist>
     </filter>
     <logging>
