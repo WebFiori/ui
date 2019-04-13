@@ -9,6 +9,7 @@
 namespace phpStructs\tests\html;
 use PHPUnit\Framework\TestCase;
 use phpStructs\html\HeadNode;
+use phpStructs\html\HTMLNode;
 /**
  * Description of HeadNodeTest
  *
@@ -107,13 +108,57 @@ class HeadNodeTest extends TestCase{
      * @test
      */
     public function testAddJss00() {
-        $this->assertTrue(true);
+        $node = new HeadNode();
+        $this->assertEquals(0,$node->getJSNodes()->size());
+        $this->assertTrue($node->addJs('https://example.com/my-js.js'));
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $this->assertFalse($node->addJs(''));
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $jsNode = new HTMLNode('script');
+        $jsNode->setAttribute('type', 'text/javascript');
+        $jsNode->setAttribute('src', 'https://somelink.com/my-js.js');
+        $node->addChild($jsNode);
+        $this->assertEquals(2,$node->getJSNodes()->size());
+        $js = $node->getJSNodes()->get(0);
+        $node->removeChild($js);
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $node->addJs('https://example2.com/my-js.js', array(
+            'rel'=>'xyz',
+            'href'=>'hello world',
+            'async'=>'true'
+        ));
+        $list = $node->getJSNodes();
+        $js = $list->get($list->size() - 1);
+        $this->assertEquals('text/javascript',$js->getAttributeValue('type'));
+        $this->assertEquals('true',$js->getAttributeValue('async'));
     }
     /**
      * @test
      */
     public function testAddCss00() {
-        $this->assertTrue(true);
+        $node = new HeadNode();
+        $this->assertEquals(0,$node->getCSSNodes()->size());
+        $this->assertTrue($node->addCSS('https://example.com/my-css.css'));
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $this->assertFalse($node->addCSS(''));
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $cssNode = new HTMLNode('link');
+        $cssNode->setAttribute('rel', 'stylesheet');
+        $cssNode->setAttribute('href', 'https://somelink.com/my-css.css');
+        $node->addChild($cssNode);
+        $this->assertEquals(2,$node->getCSSNodes()->size());
+        $css = $node->getCSSNodes()->get(0);
+        $node->removeChild($css);
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $node->addCSS('https://example2.com/my-css.css', array(
+            'rel'=>'xyz',
+            'href'=>'hello world',
+            'async'=>''
+        ));
+        $list = $node->getCSSNodes();
+        $css = $list->get($list->size() - 1);
+        $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
+        $this->assertEquals('',$css->getAttributeValue('async'));
     }
     /**
      * @test
