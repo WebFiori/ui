@@ -346,35 +346,45 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function addChild($node) {
+        $retVal = false;
         if($node instanceof HTMLNode){
             $nodeName = $node->getNodeName();
             if(in_array($nodeName, self::ALLOWED_CHILDREN)){
-                if($node->getNodeName() == 'meta'){
+                if($nodeName == 'meta'){
+                    $nodeAttrs = $node->getAttributes();
+                    foreach ($nodeAttrs as $attr => $val){
+                        if(strtolower($attr) == 'charset'){
+                            return false;
+                        }
+                    }
                     if($this->hasMeta($node->getAttributeValue('name'))){
-                        return false;
+                        $retVal = false;
                     }
                     else{
                         parent::addChild($node);
+                        $retVal = true;
                     }
                 }
                 else if($nodeName == 'base' || $nodeName == 'title'){
-                    return false;
+                    $retVal = false;
                 }
                 else if($nodeName == 'link'){
                     $relVal = $node->getAttributeValue('rel');
                     if($relVal == 'canonical'){
-                        return false;
+                        $retVal = false;
                     }
                     else{
                         parent::addChild($node);
+                        $retVal = true;
                     }
                 }
                 else{
                     parent::addChild($node);
+                    $retVal = true;
                 }
             }
         }
-        return false;
+        return $retVal;
     }
     /**
      * Returns HTML node that represents a meta tag.
@@ -578,26 +588,35 @@ class HeadNode extends HTMLNode{
     }
     /**
      * Adds new 'link' node.
+     * Note that if the 'rel' attribute value is 'canonical', no node will be 
+     * created.
      * @param string $rel The value of the attribute 'rel'.
      * @param string $href The value of the attribute 'href'.
      * @param array $otherAttrs An associative array of keys and values. 
      * The keys will be used as an attribute and the key value will be used 
      * as attribute value.
+     * @return boolean The method will return true if the element is created. False 
+     * if not.
      * @since 1.1
      */
     public function addLink($rel,$href,$otherAttrs=array()){
-        if(strlen($rel) != 0 && strlen($href) != 0){
-            $node = new HTMLNode('link');
-            $node->setAttribute('rel',$rel);
-            $node->setAttribute('href', $href);
-            foreach ($otherAttrs as $attr=>$val){
-                $trimmedAttr = trim(strtolower($attr));
-                if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
-                    $node->setAttribute($trimmedAttr, $val);
+        $trimmedRel = trim(strtolower($rel));
+        $trimmedHref = trim($href);
+        if(strlen($trimmedRel) != 0 && strlen($trimmedHref) != 0){
+            if($trimmedRel != 'canonical'){
+                $node = new HTMLNode('link');
+                $node->setAttribute('rel',$trimmedRel);
+                $node->setAttribute('href', $trimmedHref);
+                foreach ($otherAttrs as $attr=>$val){
+                    $trimmedAttr = trim(strtolower($attr));
+                    if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
+                        $node->setAttribute($trimmedAttr, $val);
+                    }
                 }
+                return $this->addChild($node);
             }
-            $this->addChild($node);
         }
+        return false;
     }
     /**
      * Returns a linked list of all alternate nodes that was added to the header.
