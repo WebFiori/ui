@@ -413,10 +413,10 @@ class HTMLNode {
             $next = $queue->peek();
             if($next == '='){
                 $queue->dequeue();
-                $retVal[$current] = $queue->dequeue();
+                $retVal[strtolower($current)] = $queue->dequeue();
             }
             else{
-                $retVal[$current] = '';
+                $retVal[strtolower($current)] = '';
             }
         }
         return $retVal;
