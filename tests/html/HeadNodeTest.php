@@ -19,6 +19,128 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
+    public function addLinkTest00() {
+        $node = new HeadNode();
+        $this->assertFalse($node->addLink('', ''));
+    }
+    /**
+     * @test
+     */
+    public function addLinkTest01() {
+        $node = new HeadNode();
+        $this->assertFalse($node->addLink('stylesheet', ''));
+    }
+    /**
+     * @test
+     */
+    public function addLinkTest02() {
+        $node = new HeadNode();
+        $this->assertFalse($node->addLink('', 'https://myres.com/cee.css'));
+    }
+    /**
+     * @test
+     */
+    public function addLinkTest03() {
+        $node = new HeadNode();
+        $this->assertFalse($node->addLink('canonical', 'https://mypage.com/canonical'));
+    }
+    /**
+     * @test
+     */
+    public function addLinkTest04() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addLink('stylesheet', 'https://example.com/my-css.css'));
+    }
+    /**
+     * @test
+     */
+    public function addLinkTest05() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addLink(
+                '  stylesheet   ', 
+                '  https://example.com/my-css.css',
+                array(
+                    'rel'=>'Hello',
+                    'href'=>'NA',
+                    'async'=>'true'
+                )));
+        $css = $node->children()->get($node->childrenCount() - 1);
+        $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
+        $this->assertEquals('https://example.com/my-css.css',$css->getAttributeValue('href'));
+        $this->assertEquals('true',$css->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild00() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode();
+        $this->assertFalse($node->addChild($notAllowed));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild01() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode('meta');
+        $notAllowed->setAttribute('charset', 'utf-8');
+        $this->assertFalse($node->addChild($notAllowed));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild02() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode('title');
+        $this->assertFalse($node->addChild($notAllowed));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild03() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode('base');
+        $this->assertFalse($node->addChild($notAllowed));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild04() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode('link');
+        $notAllowed->setAttribute('rel', 'canonical');
+        $this->assertFalse($node->addChild($notAllowed));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild05() {
+        $node = new HeadNode();
+        $notAllowed = new HTMLNode('#text');
+        $this->assertFalse($node->addChild($notAllowed));
+        $node->addTextNode('Hello');
+        $this->assertEquals(2,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild06() {
+        $node = new HeadNode();
+        $allowed = new HTMLNode('meta');
+        $allowed->setAttribute('name', 'description');
+        $allowed->setAttribute('content', 'Page Description.');
+        $this->assertTrue($node->addChild($allowed));
+        $allowed2 = new HTMLNode('link');
+        $allowed2->setAttribute('rel', 'stylesheet');
+        $this->assertTrue($node->addChild($allowed2));
+        $allowed3 = new HTMLNode('script');
+        $this->assertTrue($node->addChild($allowed3));
+        $allowed4 = new HTMLNode('#comment');
+        $this->assertTrue($node->addChild($allowed4));
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $node = new HeadNode();
         $this->assertEquals(2,$node->childrenCount());
