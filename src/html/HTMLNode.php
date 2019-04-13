@@ -565,8 +565,13 @@ class HTMLNode {
                         $tmpNode = new HTMLNode('link');
                         foreach ($chNode['attributes'] as $attr=>$val){
                             $tmpNode->setAttribute($attr, $val);
-                            if($attr == 'rel' && $val == 'canonical'){
+                            $lower = strtolower($val);
+                            if($attr == 'rel' && $lower == 'canonical'){
                                 $isCanonical = true;
+                                $tmpNode->setAttribute($attr, $lower);
+                            }
+                            else if($attr == 'rel' && $lower == 'stylesheet'){
+                                $tmpNode->setAttribute($attr, $lower);
                             }
                         }
                         if($isCanonical){
@@ -581,6 +586,17 @@ class HTMLNode {
                             $htmlNode->addChild($tmpNode);
                         }
                     }
+                    else if($chNode['tag-name'] == 'script'){
+                        $tmpNode = self::_fromHTMLTextHelper_00($chNode);
+                        foreach ($tmpNode->getAttributes() as $attr=>$val){
+                            $tmpNode->setAttribute($attr, $val);
+                            $lower = strtolower($val);
+                            if($attr == 'type' && $lower == 'text/javascript'){
+                                $tmpNode->setAttribute($attr, $lower);
+                            }
+                        }
+                        $htmlNode->addChild($tmpNode);
+                    }
                     else if($chNode['tag-name'] == 'meta'){
                         if(isset($chNode['attributes']['charset'])){
                             $htmlNode->setCharSet($chNode['attributes']['charset']);
@@ -590,7 +606,8 @@ class HTMLNode {
                         }
                     }
                     else {
-                        $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
+                        $newCh = self::_fromHTMLTextHelper_00($chNode);
+                        $htmlNode->addChild($newCh);
                     }
                 }
             }
@@ -605,12 +622,12 @@ class HTMLNode {
                     $htmlNode->setAttribute($key, $value);
                 }
             }
-            if(isset($nodeArr['children'])){
+            if($nodeArr['tag-name'] != 'head' && isset($nodeArr['children'])){
                 foreach ($nodeArr['children'] as $child){
                     $htmlNode->addChild(self::_fromHTMLTextHelper_00($child));
                 }
             }
-            if(isset($nodeArr['body-text'])){
+            if(isset($nodeArr['body-text']) && strlen(trim($nodeArr['body-text'])) != 0){
                 $htmlNode->addTextNode($nodeArr['body-text']);
             }
             return $htmlNode;
