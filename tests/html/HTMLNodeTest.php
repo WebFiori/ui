@@ -788,6 +788,70 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testFromHTML_11() {
+        $html = '<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel ="canonical" href="https://example.com/pages/home">
+        <!--Comment-->
+        <base href="https://example.com">
+        <link rel="stylesheet" HREf="https://example.com/my-css-1.css">
+        <link rel="StyleSheet" hRef="https://example.com/my-css-2.css">
+        <link Rel="stylesheet" href="https://example.com/my-css-3.css">
+        <script Type="text/javaScript" src="https://example.com/my-js-1.js">
+            window.onload = function(){
+                
+            }
+        </script>
+        <Script type="text/javaScript" src="https://example.com/my-js-2.js"></script>
+        <LINK rel="alternate" hreflang="EN" href="https://example.com/pages/home?lang=en">
+    </head>
+    <body>
+        <Div>
+            TODO write content
+            <textarea placeholder="Type something..." id="textarea-input"></textarea>
+        </div>
+        <input type=text id="input-1">
+        <input type="text" id="input-2">
+        <input type= "text" id="input-3">
+        <input type= text id="input-4">
+        <input type ="text" id="input-5">
+        <input type =text id="input-6">
+        <input disabled type=checkbox id="input-7">
+        <input type="checkbox" disabled id="input-8">
+        <input type  = "checkbox"  id="input-9"   disabled>
+        <input type= checkbox id="input-10">
+        <input type =  "checkbox" disabled id="input-11">
+        <input disabled type =         checkbox  checked id=    "input-12">
+        <input disabled type =checkbox id=    "input-13" checked>
+        <input type =       checkbox disabled checked id     =    "input-14">
+        <input type = checkbox disabled checked id =    "input-15" data-bind=cccx>
+    </body>
+</html>
+';
+        $val = HTMLNode::fromHTMLText($html);
+        $this->assertTrue($val instanceof HTMLDoc);
+        $this->assertEquals('TODO supply a title',$val->getHeadNode()->getTitle());
+        $this->assertEquals(12,$val->getHeadNode()->childrenCount());
+        $this->assertEquals(2,$val->getHeadNode()->getJSNodes()->size());
+        $this->assertEquals(3,$val->getHeadNode()->getCSSNodes()->size());
+        $this->assertEquals(1,$val->getHeadNode()->getAlternates()->size());
+        $this->assertEquals(16,$val->getBody()->childrenCount());
+        $this->assertEquals('UTF-8',$val->getHeadNode()->getCharSet());
+        $el = $val->getChildByID('textarea-input');
+        $this->assertEquals('Type something...',$el->getAttributeValue('placeholder'));
+    }
+    /**
+     * @test
+     */
     public function testHTMLAsArray_00() {
         $htmlTxt = '<!doctype html>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
