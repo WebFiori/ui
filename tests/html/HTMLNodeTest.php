@@ -705,7 +705,7 @@ class HTMLNodeTest extends TestCase{
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
-        //$this->assertEquals('utf-8',$val->getHeadNode()->getCharSet());
+        $this->assertEquals('utf-8',$val->getHeadNode()->getCharSet());
     }
     /**
      * @test
