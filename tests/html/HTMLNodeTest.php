@@ -35,6 +35,39 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testGetChildByAttributeValue00() {
+        $node = new HTMLNode('#text');
+        $this->assertNull($node->getChildByAttributeValue('cool', 'nice'));
+        $node->setNodeName('#comment');
+        $this->assertNull($node->getChildByAttributeValue('cool', 'nice'));
+    }
+    /**
+     * @test
+     */
+    public function testGetChildByAttributeValue01() {
+        $node = new HTMLNode();
+        $child = new HTMLNode();
+        $child->setAttribute('id', 'test');
+        $node->addChild($child);
+        $this->assertTrue($node->getChildByAttributeValue('id', 'test') === $child);
+    }
+    /**
+     * @test
+     */
+    public function testGetChildByAttributeValue02() {
+        $node = new HTMLNode();
+        $child = new HTMLNode();
+        $child->setAttribute('data-new', 'test');
+        $node->addChild($child);
+        $child2 = new HTMLNode();
+        $child2->setAttribute('data-new', 'test');
+        $node->addChild($child2);
+        $this->assertTrue($node->getChildByAttributeValue('data-new', 'test') === $child);
+        $this->assertFalse($node->getChildByAttributeValue('data-new', 'test') === $child2);
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $node = new HTMLNode();
         $this->assertEquals('div',$node->getNodeName());
@@ -419,6 +452,8 @@ class HTMLNodeTest extends TestCase{
         $node->addChild($child05);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
         $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+        $node->setIsFormatted(false);
+        $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
     }
     /**
      * @test
@@ -426,6 +461,20 @@ class HTMLNodeTest extends TestCase{
     public function testAsCode00() {
         $node = new HTMLNode();
         $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+    }
+    /**
+     * @test
+     */
+    public function testAsCode01() {
+        $node = new HTMLNode();
+        $node->addCommentNode('This is a comment.');
+        $node->addTextNode('This is a simple text node.');
+        $child00 = new HTMLNode('input');
+        $child00->setID('child-00');
+        $child00->setWritingDir('ltr');
+        $node->addChild($child00);
+        $this->assertTrue(true);
+        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
     }
     /**
      * @test
