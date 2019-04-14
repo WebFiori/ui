@@ -796,7 +796,7 @@ class HTMLNode {
         $chCount = $chNodes !== null ? $chNodes->size() : 0;
         for($x = 0 ; $x < $chCount ; $x++){
             $child = &$chNodes->get($x);
-            if(!$child->isTextNode()){
+            if(!$child->isVoidNode()){
                 $tmpCh = &$child->_getChildByID($val,$child->children());
                 if($tmpCh instanceof HTMLNode){
                     return $tmpCh;
@@ -823,7 +823,6 @@ class HTMLNode {
      */
     public function &getChildByID($val){
         if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
-            $val = $val.'';
             if(strlen($val) != 0){
                 $ch = &$this->_getChildByID($val, $this->children());
                 return $ch;
@@ -832,14 +831,23 @@ class HTMLNode {
         return $this->null;
     }
     /**
-     * Checks if the node require ending tag or not.
+     * Checks if the node require ending tag or not (deprecated).
      * If the node is a comment or its a text node, the method will 
-     * always return false.
+     * always return false. This method is deprecated. Use HTMLNode::isVoidNode() instead.
      * @return boolean true if the node does require ending tag.
      * @since 1.0
+     * @deprecated since version 1.7.4
      */
     public function mustClose() {
         return $this->requireClose;
+    }
+    /**
+     * Checks if the given node is a void node.
+     * @return boolean If the node is a void node, the method will return true. 
+     * False if not.
+     */
+    public function isVoidNode() {
+        return !$this->mustClose();
     }
     /**
      * Updates the name of the node.
