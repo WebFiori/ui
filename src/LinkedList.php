@@ -23,13 +23,14 @@
  * THE SOFTWARE.
  */
 namespace phpStructs;
+use Countable;
 /**
  * A class that represents a linked list.
  *
  * @author Ibrahim 
- * @version 1.4.1
+ * @version 1.4.2
  */
-class LinkedList {
+class LinkedList implements Countable{
     /**
      * The maximum number of elements the list can have.
      * @var int 
@@ -92,6 +93,15 @@ class LinkedList {
         return $this->maxEls;
     }
     /**
+     * Returns the number of elements in the list.
+     * Calling this method is simply like calling the method LinkedList::size().
+     * @return int The number of elements in the list.
+     * @since 1.4.2
+     */
+    public function count() {
+        return $this->size();
+    }
+    /**
      * Checks if the list can hold more elements or not.
      * @return boolean true if the list can hold more elements.
      * @since 1.4.1
@@ -113,7 +123,7 @@ class LinkedList {
      * the element does not exist, 0 is returned.
      * @since 1.0
      */
-    public function count(&$el){
+    public function countElement(&$el){
         $count = 0;
         if($this->size() == 1){
             if($this->head->data() === $el){
