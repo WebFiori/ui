@@ -289,12 +289,6 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
-    public function testAddAlternate00() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
     public function testAddLink00() {
         $this->assertTrue(true);
     }
@@ -470,5 +464,21 @@ class HeadNodeTest extends TestCase{
         $this->assertEquals('viewport',$meta00->getAttributeValue('name'));
         $meta01 = $metas->get(1);
         $this->assertEquals('description',$meta01->getAttributeValue('name'));
+    }
+    /**
+     * @test
+     */
+    public function testAddAlternate00() {
+        $headNode = new HeadNode();
+        $this->assertFalse($headNode->addAlternate('    ', '    '));
+        $this->assertFalse($headNode->addAlternate('   https://example.com/my-page?lang=ar', '    '));
+        $this->assertFalse($headNode->addAlternate('  ', '  AR  '));
+        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR'));
+        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',array('id'=>'en-alternate')));
+        $node = &$headNode->getChildByID('en-alternate');
+        $this->assertTrue($node instanceof HTMLNode);
+        $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
+        $this->assertEquals('En',$node->getAttributeValue('hreflang'));
+        $this->assertEquals('alternate',$node->getAttributeValue('rel'));
     }
 }
