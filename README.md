@@ -14,7 +14,7 @@ A set of classes that provide basic data structures for php in addition to helpe
 </p>
 
 ## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visid the following link: https://programmingacademia.com/webfiori/docs/phpStructs .
+This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://programmingacademia.com/webfiori/docs/phpStructs .
 
 ## Features
 * Support for basic data structures including the following:
