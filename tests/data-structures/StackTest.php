@@ -105,7 +105,6 @@ class StackTest extends TestCase{
         for($x = 0 ; $x < $stack->max() ; $x++){
             $this->assertTrue($stack->push('Element #'.$x));
         }
-        echo $stack;
         $this->assertEquals(10,$stack->size());
         $this->assertEquals('Element #9',$stack->peek());
         $this->assertFalse($stack->push('Element #10'));
@@ -115,7 +114,6 @@ class StackTest extends TestCase{
         $this->assertTrue($stack->push('Element #10'));
         $this->assertEquals('Element #10',$stack->pop());
         $this->assertEquals(9,$stack->size());
-        echo $stack;
         $elNum = 8;
         while ($el = $stack->pop()){
             $this->assertEquals('Element #'.$elNum,$el);
@@ -136,14 +134,12 @@ class StackTest extends TestCase{
         for($x = 0 ; $x < $stack->max() ; $x++){
             $this->assertTrue($stack->push(new AnyObject($x, 'Object #'.$x)));
         }
-        echo $stack;
         $this->assertEquals(10,$stack->size());
         $this->assertEquals(9,$stack->peek()->getObjNum());
         $obj = $stack->pop();
         $this->assertEquals('Object #9',$obj->getObjName());
         $this->assertEquals('Object #8',$stack->peek()->getObjName());
         $this->assertEquals(9,$stack->size());
-        echo $stack;
         $elNum = 8;
         while ($el = $stack->pop()){
             $this->assertEquals('Object #'.$elNum,$el->getObjName());
