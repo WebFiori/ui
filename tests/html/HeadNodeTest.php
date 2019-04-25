@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace phpStructs\tests\html;
 use PHPUnit\Framework\TestCase;
 use phpStructs\html\HeadNode;
@@ -141,6 +134,16 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testAddChild07() {
+        $node = new HeadNode();
+        $allowed = new HTMLNode('meta');
+        $allowed->setAttribute('name', 'viewport');
+        $allowed->setAttribute('content', '....');
+        $this->assertFalse($node->addChild($allowed));
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $node = new HeadNode();
         $this->assertEquals(2,$node->childrenCount());
@@ -225,6 +228,7 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->addMeta('description', 'Hello',true));
         $meta = $node->getMeta('description');
         $this->assertEquals('Hello',$meta->getAttributeValue('content'));
+        return $node;
     }
     /**
      * @test
@@ -453,5 +457,18 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->setTitle(null));
         $this->assertEquals(1,$node->childrenCount());
         $this->assertEquals('',$node->getTitle());
+    }
+    /**
+     * @test
+     * @depends testAddMeta02
+     * @param HeadNode $headNode D
+     */
+    public function getMetaTest00($headNode) {
+        $metas = $headNode->getMetaNodes();
+        $this->assertEquals(2,count($metas));
+        $meta00 = $metas->get(0);
+        $this->assertEquals('viewport',$meta00->getAttributeValue('name'));
+        $meta01 = $metas->get(1);
+        $this->assertEquals('description',$meta01->getAttributeValue('name'));
     }
 }
