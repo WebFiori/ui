@@ -184,4 +184,78 @@ class StackTest extends TestCase{
         $this->assertEquals(-1,$stack->max());
         $this->assertNull($stack->peek());
     }
+    /**
+     * @test
+     */
+    public function testToString() {
+        $stack = new Stack(5);
+        $this->assertEquals("Stack[\n"
+                . "]"
+                . "",$stack.'');
+        $stack->push('Hello');
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->push(new \Exception());
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->push(array());
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object),\n"
+                . "    [2]=>(array)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->push(88.08);
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object),\n"
+                . "    [2]=>(array),\n"
+                . "    [3]=>88.08(double)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->push('Another String.');
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object),\n"
+                . "    [2]=>(array),\n"
+                . "    [3]=>88.08(double),\n"
+                . "    [4]=>Another String.(string)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->pop();
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object),\n"
+                . "    [2]=>(array),\n"
+                . "    [3]=>88.08(double)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->pop();
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object),\n"
+                . "    [2]=>(array)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->pop();
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string),\n"
+                . "    [1]=>(object)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->pop();
+        $this->assertEquals("Stack[\n"
+                . "    [0]=>Hello(string)\n"
+                . "]"
+                . "",$stack.'');
+        $stack->pop();
+        $this->assertEquals("Stack[\n"
+                . "]"
+                . "",$stack.'');
+    }
 }
