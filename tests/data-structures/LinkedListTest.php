@@ -37,13 +37,13 @@ class LinkedListTest extends TestCase{
         $list = new LinkedList();
         $null = null;
         $list->add($null);
-        $this->assertEquals(1,$list->size());
+        $this->assertEquals(1,$list->count());
         $s = 'Something';
         $list->add($s);
         $this->assertEquals(2,$list->size());
         $number = 44;
         $list->add($number);
-        $this->assertEquals(3,$list->size());
+        $this->assertEquals(3,$list->count());
         $list->removeFirst();
         $this->assertEquals(2,$list->size());
         $list->add($null);
@@ -53,7 +53,7 @@ class LinkedListTest extends TestCase{
         $this->assertEquals(4,$list->size());
         $more = 'More Things';
         $list->add($more);
-        $this->assertEquals(5,$list->size());
+        $this->assertEquals(5,$list->count());
         $obj = new AnyObject(5, 'Test');
         $list->add($obj);
         $this->assertEquals(6,$list->size());
@@ -62,7 +62,7 @@ class LinkedListTest extends TestCase{
         $list->remove(3);
         $this->assertEquals(4,$list->size());
         $list->remove(100);
-        $this->assertEquals(4,$list->size());
+        $this->assertEquals(4,$list->count());
         $something = 'Something';
         $list->removeElement($something);
         $this->assertEquals(3,$list->size());
@@ -936,8 +936,6 @@ class LinkedListTest extends TestCase{
         $list->add($arr00);
         $list->remove(1);
         $list->removeFirst();
-        echo "\n".$list;
-        echo "\n"."List[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]";
         //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]",$list.'');
         $list->add($arr00);
         //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n     [2]=>(array),\n    [3]=>(array)\n]",$list.'');
@@ -1113,24 +1111,24 @@ class LinkedListTest extends TestCase{
         }
         for($x = 0 ; $x < 10 ; $x++){
             $el = 'Element #'.$x;
-            $this->assertEquals(1,$list->count($el));
+            $this->assertEquals(1,$list->countElement($el));
         }
         $new = 'Element #9';
         $list->add($new);
-        $this->assertEquals(2,$list->count($new));
+        $this->assertEquals(2,$list->countElement($new));
         $doesNotExist = 'Not in list';
-        $this->assertEquals(0,$list->count($doesNotExist));
+        $this->assertEquals(0,$list->countElement($doesNotExist));
         $list->removeElement($new);
-        $this->assertEquals(1,$list->count($new));
+        $this->assertEquals(1,$list->countElement($new));
         $list->removeElement($new);
-        $this->assertEquals(0,$list->count($new));
+        $this->assertEquals(0,$list->countElement($new));
         
         $el = $list->get(3);
-        $this->assertEquals(1,$list->count($el));
+        $this->assertEquals(1,$list->countElement($el));
         $list->add($el);
-        $this->assertEquals(2,$list->count($el));
+        $this->assertEquals(2,$list->countElement($el));
         $list->clear();
-        $this->assertEquals(0,$list->count($el));
+        $this->assertEquals(0,$list->countElement($el));
     }
     /**
      * @test
@@ -1143,17 +1141,17 @@ class LinkedListTest extends TestCase{
         }
         for($x = 0 ; $x < 10 ; $x++){
             $el = new AnyObject($x, 'Element #'.$x);
-            $this->assertEquals(0,$list->count($el));
+            $this->assertEquals(0,$list->countElement($el));
         }
         $new = new AnyObject(5, 'Element #5');
         $list->add($new);
-        $this->assertEquals(1,$list->count($new));
+        $this->assertEquals(1,$list->countElement($new));
         $el = $list->get(3);
-        $this->assertEquals(1,$list->count($el));
+        $this->assertEquals(1,$list->countElement($el));
         $list->add($el);
-        $this->assertEquals(2,$list->count($el));
+        $this->assertEquals(2,$list->countElement($el));
         $list->clear();
-        $this->assertEquals(0,$list->count($el));
+        $this->assertEquals(0,$list->countElement($el));
     }
     /**
      * @test
@@ -1162,20 +1160,20 @@ class LinkedListTest extends TestCase{
         $list = new LinkedList();
         $el = new AnyObject(1, 'Element #1');
         $list->add($el);
-        $this->assertEquals(1,$list->count($list->get(0)));
+        $this->assertEquals(1,$list->countElement($list->get(0)));
         for($x = 0 ; $x < 10 ; $x++){
             $list->add($el);
         }
         $new = new AnyObject(5, 'Element #5');
         $list->add($new);
-        $this->assertEquals(11,$list->count($el));
+        $this->assertEquals(11,$list->countElement($el));
         $elx = $list->get(3);
-        $this->assertEquals(11,$list->count($elx));
+        $this->assertEquals(11,$list->countElement($elx));
         $list->add($el);
-        $this->assertEquals(12,$list->count($el));
+        $this->assertEquals(12,$list->countElement($el));
         $el00 = $list->get(0);
         $list->add($el00);
-        $this->assertEquals(13,$list->count($list->get(0)));
+        $this->assertEquals(13,$list->countElement($list->get(0)));
     }
     /**
      * @test
@@ -1188,13 +1186,13 @@ class LinkedListTest extends TestCase{
         }
         $new = new AnyObject(5, 'Element #5');
         $list->add($new);
-        $this->assertEquals(10,$list->count($el));
+        $this->assertEquals(10,$list->countElement($el));
         $elx = $list->get(3);
-        $this->assertEquals(10,$list->count($elx));
+        $this->assertEquals(10,$list->countElement($elx));
         $list->add($el);
-        $this->assertEquals(11,$list->count($el));
+        $this->assertEquals(11,$list->countElement($el));
         $list->clear();
-        $this->assertEquals(0,$list->count($el));
+        $this->assertEquals(0,$list->countElement($el));
     }
     /**
      * @test
