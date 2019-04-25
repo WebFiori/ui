@@ -105,7 +105,6 @@ class QueueTest extends TestCase{
         for($x = 0 ; $x < $queue->max() ; $x++){
             $this->assertTrue($queue->enqueue('Element #'.$x));
         }
-        echo $queue;
         $this->assertEquals(10,$queue->size());
         $this->assertEquals('Element #0',$queue->peek());
         $this->assertFalse($queue->enqueue('Element #10'));
@@ -114,7 +113,6 @@ class QueueTest extends TestCase{
         $this->assertEquals(9,$queue->size());
         $this->assertTrue($queue->enqueue('Element #10'));
         $this->assertEquals(10,$queue->size());
-        echo $queue;
         $elNum = 1;
         while ($el = $queue->dequeue()){
             $this->assertEquals('Element #'.$elNum,$el);
@@ -135,7 +133,6 @@ class QueueTest extends TestCase{
         for($x = 0 ; $x < $queue->max() ; $x++){
             $this->assertTrue($queue->enqueue(new AnyObject($x, 'Object #'.$x)));
         }
-        echo $queue;
         $this->assertEquals(10,$queue->size());
         $this->assertEquals(0,$queue->peek()->getObjNum());
         $this->assertFalse($queue->enqueue('Element #10'));
@@ -145,7 +142,6 @@ class QueueTest extends TestCase{
         $this->assertEquals(9,$queue->size());
         $this->assertTrue($queue->enqueue('Element #10'));
         $this->assertEquals(10,$queue->size());
-        echo $queue;
         $elNum = 1;
         while ($el = $queue->dequeue()){
             if(gettype($el) == 'string'){
