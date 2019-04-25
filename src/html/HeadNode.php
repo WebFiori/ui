@@ -458,10 +458,12 @@ class HeadNode extends HTMLNode{
         if(strlen($trimmedHref) != 0){
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
-            foreach ($otherAttrs as $attr=>$val){
-                $trimmedAttr = trim(strtolower($attr));
-                if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
-                    $tag->setAttribute($trimmedAttr, $val);
+            if(gettype($otherAttrs) == 'array'){
+                foreach ($otherAttrs as $attr=>$val){
+                    $trimmedAttr = trim(strtolower($attr));
+                    if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
+                        $tag->setAttribute($trimmedAttr, $val);
+                    }
                 }
             }
             //used to prevent caching 
@@ -490,10 +492,12 @@ class HeadNode extends HTMLNode{
         if(strlen($trimmedLoc) != 0){
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            foreach ($otherAttrs as $attr=>$val){
-                $trimmedAttr = trim(strtolower($attr));
-                if($trimmedAttr != 'type' && $trimmedAttr != 'src'){
-                    $tag->setAttribute($trimmedAttr, $val);
+            if(gettype($otherAttrs) == 'array'){
+                foreach ($otherAttrs as $attr=>$val){
+                    $trimmedAttr = trim(strtolower($attr));
+                    if($trimmedAttr != 'type' && $trimmedAttr != 'src'){
+                        $tag->setAttribute($trimmedAttr, $val);
+                    }
                 }
             }
             //used to prevent caching 
@@ -551,10 +555,7 @@ class HeadNode extends HTMLNode{
      * @since 1.0
      */
     public function getCanonical(){
-        if($this->canonical !== null){
-            return $this->canonical->getAttributeValue('href');
-        }
-        return null;
+        return $this->canonical->getAttributeValue('href');
     }
     /**
      * Adds new alternate tag to the header.
@@ -575,10 +576,12 @@ class HeadNode extends HTMLNode{
             $node->setAttribute('rel','alternate');
             $node->setAttribute('hreflang', $trimmedLang);
             $node->setAttribute('href', $trimmedUrl);
-            foreach ($otherAttrs as $attr=>$val){
-                $trimmedAttr = trim(strtolower($attr));
-                if($trimmedAttr != 'rel' && $trimmedAttr != 'hreflang' && $trimmedAttr != 'href'){
-                    $node->setAttribute($trimmedAttr, $val);
+            if(gettype($otherAttrs) == 'array'){
+                foreach ($otherAttrs as $attr=>$val){
+                    $trimmedAttr = trim(strtolower($attr));
+                    if($trimmedAttr != 'rel' && $trimmedAttr != 'hreflang' && $trimmedAttr != 'href'){
+                        $node->setAttribute($trimmedAttr, $val);
+                    }
                 }
             }
             $this->addChild($node);
@@ -607,10 +610,12 @@ class HeadNode extends HTMLNode{
                 $node = new HTMLNode('link');
                 $node->setAttribute('rel',$trimmedRel);
                 $node->setAttribute('href', $trimmedHref);
-                foreach ($otherAttrs as $attr=>$val){
-                    $trimmedAttr = trim(strtolower($attr));
-                    if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
-                        $node->setAttribute($trimmedAttr, $val);
+                if(gettype($otherAttrs) == 'array'){
+                    foreach ($otherAttrs as $attr=>$val){
+                        $trimmedAttr = trim(strtolower($attr));
+                        if($trimmedAttr != 'rel' && $trimmedAttr != 'href'){
+                            $node->setAttribute($trimmedAttr, $val);
+                        }
                     }
                 }
                 return $this->addChild($node);
