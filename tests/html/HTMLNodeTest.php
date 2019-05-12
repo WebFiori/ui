@@ -998,4 +998,16 @@ and open the template in the editor.
         $array = HTMLNode::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
     }
+    /**
+     * 
+     * @test
+     */
+    public function testSetText00() {
+        $node = HTMLNode::createTextNode('Hello & Welcome. Do you know that 1 is < 3 and 7 > 6?'
+                . 'Also, 0>-100 && 0<8.', true);
+        $this->assertEquals('Hello &amp; Welcome. Do you know that 1 is &lt; 3 and 7 &gt; 6?'
+                . 'Also, 0&gt;-100 &amp;&amp; 0&lt;8.',$node->getText());
+        $this->assertEquals('Hello & Welcome. Do you know that 1 is < 3 and 7 > 6?'
+                . 'Also, 0>-100 && 0<8.',$node->getTextUnescaped());
+    }
 }
