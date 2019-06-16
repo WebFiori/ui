@@ -72,6 +72,7 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode();
         $this->assertEquals('div',$node->getNodeName());
         $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isUseOriginalText());
     }
     /**
      * @test
@@ -80,6 +81,7 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode('p');
         $this->assertEquals('p',$node->getNodeName());
         $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isUseOriginalText());
     }
     /**
      * @test
@@ -88,6 +90,7 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode('img');
         $this->assertEquals('img',$node->getNodeName());
         $this->assertFalse($node->mustClose());
+        $this->assertFalse($node->isUseOriginalText());
     }
     /**
      * @test
@@ -96,6 +99,7 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode('DiV');
         $this->assertEquals('div',$node->getNodeName());
         $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isUseOriginalText());
     }
     /**
      * @test
@@ -164,10 +168,13 @@ class HTMLNodeTest extends TestCase{
         $this->assertEquals('',$node->getText());
         $node->setText('Hello World!');
         $this->assertEquals('Hello World!',$node->getText());
+        $this->assertEquals('Hello World!',$node->getOriginalText());
         $node->setText('X < 6 and Y > 100');
         $this->assertEquals('X &lt; 6 and Y &gt; 100',$node->getText());
+        $this->assertEquals('X < 6 and Y > 100',$node->getOriginalText());
         $node->setText('X < 6 and Y > 100',false);
         $this->assertEquals('X < 6 and Y > 100',$node->getText());
+        $this->assertEquals('X < 6 and Y > 100',$node->getOriginalText());
     }
     /**
      * @test
@@ -187,6 +194,7 @@ class HTMLNodeTest extends TestCase{
         $node->setText('Hello World!');
         $this->assertEquals('Hello World!',$node->getText());
         $this->assertEquals('<!--Hello World!-->',$node->getComment());
+        $this->assertEquals('Hello World!',$node->getOriginalText());
     }
     /**
      * @test
@@ -196,8 +204,10 @@ class HTMLNodeTest extends TestCase{
         $this->assertEquals('<!---->',$node->getComment());
         $node->setText('A Comment <div> with </div> html.');
         $this->assertEquals('A Comment <div> with </div> html.',$node->getText());
+        $this->assertEquals('A Comment <div> with </div> html.',$node->getOriginalText());
         $node->setText('<!--A Comment');
         $this->assertEquals(' --A Comment',$node->getText());
+        $this->assertEquals('<!--A Comment',$node->getOriginalText());
         $this->assertEquals('<!-- --A Comment-->',$node->getComment());
         $node->setText('<!--A Comment X -->');
         $this->assertEquals(' --A Comment X -- ',$node->getText());
@@ -454,6 +464,25 @@ class HTMLNodeTest extends TestCase{
         $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
         $node->setIsFormatted(false);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testToHTML09() {
+        $txtNode = HTMLNode::createTextNode('<a>Link</a>');
+        $html = new HTMLNode();
+        $html->addChild($txtNode);
+        $this->assertEquals('<div>&lt;a&gt;Link&lt;/a&gt;</div>',$html.'');
+    }
+    /**
+     * @test
+     */
+    public function testToHTML10() {
+        $txtNode = HTMLNode::createTextNode('<a>Link</a>');
+        $txtNode->setUseOriginal(true);
+        $html = new HTMLNode();
+        $html->addChild($txtNode);
+        $this->assertEquals('<div>&lt;a&gt;Link&lt;/a&gt;</div>',$html.'');
     }
     /**
      * @test
