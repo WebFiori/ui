@@ -3,6 +3,7 @@ namespace phpStructs\tests\dataStructures;
 use PHPUnit\Framework\TestCase;
 use phpStructs\tests\AnyObject;
 use phpStructs\LinkedList;
+use phpStructs\Node;
 /**
  * Description of LinkedListTest
  *
@@ -1275,5 +1276,56 @@ class LinkedListTest extends TestCase{
         $list->replace($el01, $el00);
         $this->assertTrue($list->contains($el00));
         $this->assertFalse($list->contains($el01));
+    }
+    /**
+     * @test
+     */
+    public function testIterator00() {
+        $list = new LinkedList();
+        foreach ($list as $el){
+            
+        }
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testIterator01() {
+        $list = new LinkedList();
+        $x = 4;
+        $list->add($x);
+        foreach ($list as $el){
+            $this->assertEquals(4,$el);
+        }
+        foreach ($list as $el){
+            $this->assertEquals(4,$el);
+        }
+        $this->assertTrue(true);
+    }
+    /**
+     * @test
+     */
+    public function testIterator02() {
+        $list = new LinkedList();
+        $v00 = 0;
+        $list->add($v00);
+        $v01 = 1;
+        $list->add($v01);
+        $v02 = 2;
+        $list->add($v02);
+        $v03 = 3;
+        $list->add($v03);
+        $index = 0;
+        foreach ($list as $el){
+            $this->assertEquals($index,$el);
+            $index++;
+        }
+        $index = 0;
+        foreach ($list as $node => $el){
+            $this->assertTrue($node instanceof Node);
+            $this->assertEquals($index,$el);
+            $index++;
+        }
+        $this->assertTrue(true);
     }
 }
