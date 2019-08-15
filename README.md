@@ -17,9 +17,12 @@ A set of classes that provide basic data structures for php in addition to helpe
 This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://programmingacademia.com/webfiori/docs/phpStructs .
 
 ## Features
-*Support for basic data structures including Linked List, Stack and Queue
-*The ability to create well formatted HTML or any tags related document (such as XML).
-*The ability to create and modify HTML DOM using PHP.
+- Support for basic data structures including the following: 
+  - Linked List
+  - Stack
+  - Queue
+- The ability to create well formatted HTML or any tags related document (such as XML).
+- The ability to create and modify HTML DOM using PHP.
 
 ## Supported PHP Versions
 The library support all versions starting from version 5.6 up to version 7.3.
