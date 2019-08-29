@@ -31,7 +31,7 @@ use phpStructs\Queue;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.6
+ * @version 1.7.7
  */
 class HTMLNode {
     /**
@@ -1718,6 +1718,20 @@ class HTMLNode {
             }
         }
         return $this->null;
+    }
+    /**
+     * Returns the value of an attribute.
+     * Calling this method is similar to calling HTMLNode::getAttributeValue().
+     * @param string $attrName The name of the attribute.
+     * @return string|null The method will return the value of the attribute 
+     * if found. If no such attribute, the method will return null.
+     * @since 1.7.7
+     */
+    public function getAttribute($attrName) {
+        if($this->hasAttribute($attrName)){
+            return $this->attributes[$attrName];
+        }
+        return null;
     }
     /**
      * Returns the value of an attribute.
