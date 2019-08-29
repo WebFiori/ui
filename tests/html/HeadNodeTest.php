@@ -233,7 +233,7 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
-    public function testAddJss00() {
+    public function testAddJs00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getJSNodes()->size());
         $this->assertTrue($node->addJs('https://example.com/my-js.js'));
@@ -257,6 +257,31 @@ class HeadNodeTest extends TestCase{
         $js = $list->get($list->size() - 1);
         $this->assertEquals('text/javascript',$js->getAttributeValue('type'));
         $this->assertEquals('true',$js->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     * @depends testAddJs00
+     */
+    public function testAddJs01() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], true));
+        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], true));
+        $this->assertFalse($node->addJs('?hello=true', [], true));
+        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], true));
+        $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
+        return $node;
+    }
+    /**
+     * @test
+     * @depends testAddJs01
+     */
+    public function testHasJs00($node) {
+        $this->assertTrue($node->hasJs('https://example.com/js1'));
+        $this->assertTrue($node->hasJs('https://example.com/js1?something=x'));
+        $this->assertTrue($node->hasJs('https://example.com/js2'));
+        $this->assertTrue($node->hasJs('  https://example.com/js2  '));
+        $this->assertTrue($node->hasJs('https://example.com/js3'));
+        $this->assertFalse($node->hasJs('https://example.com/js4'));
     }
     /**
      * @test
@@ -285,6 +310,31 @@ class HeadNodeTest extends TestCase{
         $css = $list->get($list->size() - 1);
         $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
         $this->assertEquals('',$css->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     * @depends testAddCss00
+     */
+    public function testAddCss01() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], true));
+        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], true));
+        $this->assertFalse($node->addCSS('?hello=true', [], true));
+        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], true));
+        $this->assertTrue($node->addCSS('https://example.com/css3?', [], true));
+        return $node;
+    }
+    /**
+     * @test
+     * @depends testAddCss01
+     */
+    public function testHasCss00($node) {
+        $this->assertTrue($node->hasCss('https://example.com/css1'));
+        $this->assertTrue($node->hasCss('https://example.com/css1?something=x'));
+        $this->assertTrue($node->hasCss('https://example.com/css2'));
+        $this->assertTrue($node->hasCss('  https://example.com/css2  '));
+        $this->assertTrue($node->hasCss('https://example.com/css3'));
+        $this->assertFalse($node->hasCss('https://example.com/css4'));
     }
     /**
      * @test
