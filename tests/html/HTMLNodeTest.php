@@ -122,6 +122,24 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testConstructor06() {
+        $this->expectException('Exception');
+        $nodeName = '0-not-valid';
+        $this->expectExceptionMessage('Invalid node name: \''.$nodeName.'\'.');
+        $node = new HTMLNode($nodeName);
+    }
+    /**
+     * @test
+     */
+    public function testConstructor07() {
+        $this->expectException('Exception');
+        $nodeName = '-not-valid';
+        $this->expectExceptionMessage('Invalid node name: \''.$nodeName.'\'.');
+        $node = new HTMLNode($nodeName);
+    }
+    /**
+     * @test
+     */
     public function isTextNode00() {
         $node = new HTMLNode('#text');
         $this->assertEquals('#TEXT',$node->getNodeName());
@@ -286,6 +304,49 @@ class HTMLNodeTest extends TestCase{
         $this->assertFalse($node->setAttribute(' dir ', 'XXXX!'));
         $this->assertTrue($node->setAttribute(' dir ', 'LTR'));
         $this->assertTrue($node->setAttribute(' dir ', 'rTl'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute03() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->setAttribute('style',''));
+        $this->assertFalse($node->setAttribute('style','color:'));
+        $this->assertFalse($node->setAttribute('style','color:;background:;'));
+        $this->assertFalse($node->setAttribute('style',':;:;:;'));
+        $this->assertEquals([],$node->getStyle());
+        $this->assertNull($node->getAttribute('style'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute04() {
+        $node = new HTMLNode();
+        $this->assertTrue($node->setAttribute('style','color:red'));
+        $this->assertEquals([
+            'color'=>'red'
+        ],$node->getStyle());
+        $this->assertEquals('color:red;',$node->getAttribute('style'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute05() {
+        $node = new HTMLNode();
+        $this->assertTrue($node->setAttribute('style','color  :red; : ; hello: ; border: 1px solid'));
+        $this->assertEquals([
+            'color'=>'red',
+            'border'=>'1px solid'
+        ],$node->getStyle());
+        $this->assertEquals('color:red;border:1px solid;',$node->getAttribute('style'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute06() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->setAttribute('0-data','550'));
+        $this->assertFalse($node->setAttribute('-data','550'));
     }
     /**
      * @test
