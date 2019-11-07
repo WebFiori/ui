@@ -18,6 +18,7 @@ class InputTest extends TestCase{
         $inputEl = new Input();
         $this->assertEquals('input',$inputEl->getNodeName());
         $this->assertEquals('text',$inputEl->getType());
+        $this->assertFalse($inputEl->setNodeName(''));
         return $inputEl;
     }
     /**
@@ -38,6 +39,16 @@ class InputTest extends TestCase{
         $inputEl = new Input('select');
         $this->assertEquals('select',$inputEl->getNodeName());
         $this->assertNull($inputEl->getType());
+        return $inputEl;
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testConstructor03() {
+        $inputEl = new Input('ghfhfhg');
+        $this->assertEquals('input',$inputEl->getNodeName());
+        $this->assertEquals('text',$inputEl->getType());
         return $inputEl;
     }
     /**
@@ -169,6 +180,7 @@ class InputTest extends TestCase{
         $input = new Input('textarea');
         $this->assertTrue($input->setPlaceholder('Enter your suggestions here.'));
         $this->assertEquals('<textarea placeholder="Enter your suggestions here."></textarea>',$input->toHTML());
+        return $input;
     }
     /**
      * @test
@@ -177,5 +189,13 @@ class InputTest extends TestCase{
         $input = new Input('date');
         $this->assertFalse($input->setPlaceholder('Enter your suggestions here.',$input->toHTML()));
         $this->assertEquals('<input type="date">',$input->toHTML());
+    }
+    /**
+     * @test
+     * @depends testSetPlaceHolder02
+     * @param Input $input Description
+     */
+    public function testSetPlaceHolder04($input) {
+        $this->assertTrue($input->setPlaceholder(null));
     }
 }
