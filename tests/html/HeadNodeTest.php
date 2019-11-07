@@ -271,6 +271,21 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
         return $node;
     }
+    public function testAddJs02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], false));
+        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], false));
+        $this->assertFalse($node->addJs('?hello=true', [], true));
+        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], false));
+        $this->assertTrue($node->addJs('https://example.com/js3?', ['async'=>''], false));
+        $this->assertEquals('<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<script type="text/javascript" src="https://example.com/js1?hello=true"></script>'
+                . '<script type="text/javascript" src="https://example.com/js2?hello=true"></script>'
+                . '<script type="text/javascript" src="https://example.com/js3" async=""></script>'
+                . '</head>',$node->toHTML());
+    }
     /**
      * @test
      * @depends testAddJs01
@@ -323,6 +338,25 @@ class HeadNodeTest extends TestCase{
         $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], true));
         $this->assertTrue($node->addCSS('https://example.com/css3?', [], true));
         return $node;
+    }
+    /**
+     * @test
+     */
+    public function testAddCcc02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], false));
+        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], false));
+        $this->assertFalse($node->addCSS('?hello=true', [], false));
+        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], false));
+        $this->assertTrue($node->addCSS('https://example.com/css3?', ['async'=>''], false));
+        $this->assertEquals(''
+                . '<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<link rel="stylesheet" href="https://example.com/css1?hello=true">'
+                . '<link rel="stylesheet" href="https://example.com/css2?hello=true">'
+                . '<link rel="stylesheet" href="https://example.com/css3" async="">'
+                . '</head>',$node->toHTML());
     }
     /**
      * @test

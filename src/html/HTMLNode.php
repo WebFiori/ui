@@ -57,10 +57,10 @@ class HTMLNode {
      * </ul>
      * @since 1.7.4
      */
-    const VOID_TAGS = array(
+    const VOID_TAGS = [
         'br','hr','meta','img','input','wbr','embed',
         'base','col','link','param','source','track','area'
-    );
+    ];
     private $isFormated;
     /**
      * A null guard for the methods that return null reference.
@@ -100,12 +100,12 @@ class HTMLNode {
      * @var array
      * @since 1.5
      */
-    const DEFAULT_CODE_FORMAT = array(
+    const DEFAULT_CODE_FORMAT = [
         'tab-spaces'=>4,
         'initial-tab'=>0,
         'with-colors'=>true,
         'use-pre'=>true,
-        'colors'=>array(
+        'colors'=>[
             'bg-color'=>'rgb(21, 18, 33)',
             'text-color'=>'gray',
             'attribute-color'=>'rgb(0,124,0)',
@@ -114,8 +114,8 @@ class HTMLNode {
             'lt-gt-color'=>'rgb(204,225,70)',
             'comment-color'=>'rgb(0,189,36)',
             'operator-color'=>'gray'
-        )
-    );
+        ]
+    ];
     /**
      * A string that represents a tab. Usually 4 spaces.
      * @var string 
@@ -215,7 +215,7 @@ class HTMLNode {
      * <li>Must not start with a number.</li>
      * <li>Must not start with '-'.</li>
      * <li>Can only have the following characters in its name: [A-Z], [a-z], 
-     * [0-9] and '='.</li>
+     * [0-9] and '-'.</li>
      * <ul>
      * @throws Exception The method will throw an exception if given node 
      * name is not valid.
@@ -244,7 +244,7 @@ class HTMLNode {
                 $this->requireClose = true;
                 $this->childrenList = new LinkedList();
             }
-            $this->attributes = array();
+            $this->attributes = [];
         }
         $this->useOriginalTxt = false;
     }
@@ -338,7 +338,7 @@ class HTMLNode {
         $trimmed = trim($text);
         if(strlen($trimmed) != 0){
             $array = explode('<', $trimmed);
-            $nodesNames = array();
+            $nodesNames = [];
             $nodesNamesIndex = 0;
             for($x = 0 ; $x < count($array) ; $x++){
                 $node = $array[$x];
@@ -391,7 +391,7 @@ class HTMLNode {
                             $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0]);
                         }
                         else{
-                            $nodesNames[$nodesNamesIndex]['attributes'] = array();
+                            $nodesNames[$nodesNamesIndex]['attributes'] = [];
                         }
                     }
                     unset($nodesNames[$nodesNamesIndex][0]);
@@ -401,7 +401,7 @@ class HTMLNode {
             $x = 0;
             return self::_buildArrayTree($nodesNames,$x,count($nodesNames),null);
         }
-        return array();
+        return [];
     }
     /**
      * A helper method for parsing attributes string.
@@ -471,7 +471,7 @@ class HTMLNode {
         if(strlen($trimmed) != 0){
             $queue->enqueue($trimmed);
         }
-        $retVal = array();
+        $retVal = [];
         while ($queue->peek()){
             $current = $queue->dequeue();
             $next = $queue->peek();
@@ -495,7 +495,7 @@ class HTMLNode {
      * @since 1.7.4
      */
     private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
-        $retVal = array();
+        $retVal = [];
         for(; $x < $nodesCount ; $x++){
             $node = $parsedNodesArr[$x];
             $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
@@ -567,7 +567,7 @@ class HTMLNode {
                 }
             }
             else if(count($nodesArr) != 1){
-                $retVal = array();
+                $retVal = [];
                 foreach ($nodesArr as $node){
                     $asHtmlNode = self::_fromHTMLTextHelper_00($node);
                     $retVal[] = $asHtmlNode;
@@ -1106,13 +1106,15 @@ class HTMLNode {
      * true. If not, it will return false.
      * @since 1.7.1
      */
-    public function setStyle($cssStyles=array()) {
+    public function setStyle($cssStyles) {
         $styleStr = '';
-        foreach ($cssStyles as $key => $val){
-            $trimmedKey = trim($key);
-            $trimmedVal = trim($val);
-            if($this->_validateName($trimmedKey) && strlen($trimmedVal) != 0){
-                $styleStr .= $trimmedKey.':'.$trimmedVal.';';
+        if(gettype($cssStyles) == 'array'){
+            foreach ($cssStyles as $key => $val){
+                $trimmedKey = trim($key);
+                $trimmedVal = trim($val);
+                if($this->_validateName($trimmedKey) && strlen($trimmedVal) != 0){
+                    $styleStr .= $trimmedKey.':'.$trimmedVal.';';
+                }
             }
         }
         if(strlen($styleStr) != 0){
@@ -1245,11 +1247,11 @@ class HTMLNode {
                 $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
             }
             else if($escHtmlEntities === true){
-                $charsToReplace = array(
+                $charsToReplace = [
                     '&'=>'&amp;',
                     '<'=>'&lt;',
                     '>'=>'&gt;'
-                );
+                ];
                 foreach ($charsToReplace as $ch => $rep){
                     $text = str_replace($ch, $rep, $text);
                 }
@@ -1289,11 +1291,11 @@ class HTMLNode {
         if($this->isTextNode()){
             $txt = $this->getText();
             if(strlen($txt) > 0){
-                $charsToReplace = array(
+                $charsToReplace = [
                     '&'=>'&amp;',
                     '<'=>'&lt;',
                     '>'=>'&gt;'
-                );
+                ];
                 foreach ($charsToReplace as $ch => $replace){
                     $txt = str_replace($replace, $ch, $txt);
                 }

@@ -329,17 +329,17 @@ class Input extends HTMLNode{
             foreach ($arrayOfOpt as $value => $lblOrOptions){
                 if(gettype($lblOrOptions) == 'array'){
                     $attrs = isset($lblOrOptions['attributes']) ? $lblOrOptions['attributes'] : array();
-                    $this->addOption(array(
+                    $this->addOption([
                         'value'=>$value,
                         'label'=>$lblOrOptions['label'],
                         'attributes'=>$attrs
-                    ));
+                    ]);
                 }
                 else{
-                    $this->addOption(array(
+                    $this->addOption([
                         'value'=>$value,
                         'label'=>$lblOrOptions
-                    ));
+                    ]);
                 }
             }
         }
