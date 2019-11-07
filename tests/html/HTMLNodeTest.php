@@ -71,7 +71,7 @@ class HTMLNodeTest extends TestCase{
     public function testConstructor00() {
         $node = new HTMLNode();
         $this->assertEquals('div',$node->getNodeName());
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->isUseOriginalText());
     }
     /**
@@ -80,7 +80,7 @@ class HTMLNodeTest extends TestCase{
     public function testConstructor01() {
         $node = new HTMLNode('p');
         $this->assertEquals('p',$node->getNodeName());
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->isUseOriginalText());
     }
     /**
@@ -89,7 +89,7 @@ class HTMLNodeTest extends TestCase{
     public function testConstructor02() {
         $node = new HTMLNode('img');
         $this->assertEquals('img',$node->getNodeName());
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
         $this->assertFalse($node->isUseOriginalText());
     }
     /**
@@ -98,7 +98,7 @@ class HTMLNodeTest extends TestCase{
     public function testConstructor03() {
         $node = new HTMLNode('DiV');
         $this->assertEquals('div',$node->getNodeName());
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->isUseOriginalText());
     }
     /**
@@ -117,7 +117,7 @@ class HTMLNodeTest extends TestCase{
         $nodeName = 'valid-WITH-dash';
         $node = new HTMLNode($nodeName);
         $this->assertEquals('valid-with-dash',$node->getNodeName());
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
     }
     /**
      * @test
@@ -143,7 +143,7 @@ class HTMLNodeTest extends TestCase{
     public function isTextNode00() {
         $node = new HTMLNode('#text');
         $this->assertEquals('#TEXT',$node->getNodeName());
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
     }
     /**
      * @test
@@ -151,7 +151,7 @@ class HTMLNodeTest extends TestCase{
     public function isTextNode01() {
         $node = new HTMLNode('#teXt');
         $this->assertEquals('#TEXT',$node->getNodeName());
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
     }
     /**
      * @test
@@ -159,7 +159,7 @@ class HTMLNodeTest extends TestCase{
     public function isCommentNode00() {
         $node = new HTMLNode('#comment');
         $this->assertEquals('#COMMENT',$node->getNodeName());
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
     }
     /**
      * @test
@@ -167,7 +167,7 @@ class HTMLNodeTest extends TestCase{
     public function isCommentNode01() {
         $node = new HTMLNode('#ComMeNt');
         $this->assertEquals('#COMMENT',$node->getNodeName());
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
     }
     /**
      * @test
@@ -697,9 +697,9 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode();
         $this->assertFalse($node->setNodeName(''));
         $this->assertTrue($node->setNodeName('head'));
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
         $this->assertTrue($node->setNodeName('img'));
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
         $this->assertFalse($node->setNodeName('invalid name'));
         $this->assertFalse($node->setNodeName('#comment'));
         $this->assertFalse($node->setNodeName('#text'));
@@ -711,9 +711,9 @@ class HTMLNodeTest extends TestCase{
         $node = new HTMLNode('#text');
         $this->assertFalse($node->setNodeName(''));
         $this->assertFalse($node->setNodeName('head'));
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
         $this->assertFalse($node->setNodeName('img'));
-        $this->assertFalse($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
         $this->assertFalse($node->setNodeName('invalid name'));
         $this->assertTrue($node->setNodeName('#comment'));
         $this->assertTrue($node->setNodeName('#text'));
@@ -727,9 +727,9 @@ class HTMLNodeTest extends TestCase{
         $node->addChild($child00);
         $this->assertFalse($node->setNodeName(''));
         $this->assertTrue($node->setNodeName('head'));
-        $this->assertTrue($node->mustClose());
+        $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->setNodeName('img'));
-        $this->assertTrue($node->mustClose());
+        $this->assertTrue($node->isVoidNode());
         $this->assertFalse($node->setNodeName('invalid name'));
         $this->assertFalse($node->setNodeName('#comment'));
         $this->assertFalse($node->setNodeName('#text'));
