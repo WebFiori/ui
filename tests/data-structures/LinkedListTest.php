@@ -1326,6 +1326,7 @@ class LinkedListTest extends TestCase{
             $this->assertEquals($index,$el);
             $index++;
         }
+        $this->assertNull($list->current());
         $this->assertTrue(true);
     }
 }
