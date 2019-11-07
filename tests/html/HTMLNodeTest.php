@@ -729,7 +729,7 @@ class HTMLNodeTest extends TestCase{
         $this->assertTrue($node->setNodeName('head'));
         $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->setNodeName('img'));
-        $this->assertTrue($node->isVoidNode());
+        $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->setNodeName('invalid name'));
         $this->assertFalse($node->setNodeName('#comment'));
         $this->assertFalse($node->setNodeName('#text'));
