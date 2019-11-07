@@ -31,7 +31,7 @@ use phpStructs\Queue;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.7
+ * @version 1.7.8
  */
 class HTMLNode {
     /**
@@ -902,13 +902,14 @@ class HTMLNode {
      * @since 1.0
      * @deprecated since version 1.7.4
      */
-    public function mustClose() {
+    private function mustClose() {
         return $this->requireClose;
     }
     /**
      * Checks if the given node is a void node.
+     * A void node is a node which cannot have child nodes in its body.
      * @return boolean If the node is a void node, the method will return true. 
-     * False if not.
+     * False if not. Note that text nodes and comment nodes are considered as void tags.
      */
     public function isVoidNode() {
         return !$this->mustClose();
@@ -1377,7 +1378,8 @@ class HTMLNode {
     /**
      * Returns HTML string that represents the node as a whole.
      * @param boolean $formatted Set to true to return a well formatted 
-     * HTML document (has new lines and indentations). Default is false.
+     * HTML document (has new lines and indentations). Note that the size of 
+     * generated node will increase if this one is set to true. Default is false.
      * @param int $initTab Initial tab count (indentation). Used in case of the document is 
      * well formatted. This number represents the size of code indentation.
      * @return string HTML string that represents the node.
@@ -1784,6 +1786,19 @@ class HTMLNode {
             }
             return $tab;
         }
+    }
+    /**
+     * Returns a child node given its index.
+     * @param int $index The position of the child node. This must be an integer 
+     * value starting from 0.
+     * @return HTMLNode|null If the child does exist, the method will return 
+     * an object of type 'HTMLNode'. If no element was found, the method will 
+     * return null.
+     * @since 1.7.8
+     */
+    public function getChild($index) {
+        $child = $this->children()->get($index);
+        return $child;
     }
     /**
      * Returns a node based on its attribute value (Direct child).
