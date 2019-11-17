@@ -29,31 +29,42 @@ use phpStructs\html\HTMLNode;
  * A class that represents Unordered List HTML element (ul)
  *
  * @author Ibrahim
- * @version 1.0.1
+ * @version 1.0.2
  */
 class UnorderedList extends HTMLNode{
+    /**
+     * Creates new instance of the class.
+     * @since 1.0
+     */
     public function __construct() {
         parent::__construct('ul');
     }
     /**
      * Adds new item to the list.
-     * @param string $listItemText The text that will be displayed by the 
-     * list item.
+     * @param string|ListItem $listItemText The text that will be displayed by the 
+     * list item. Also, it can be an object of type 'ListItem'.
      * @param boolean $escHtmlEntities If set to TRUE, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is TRUE.
+     * in the given text. Applicable only if the first parameter is a text. 
+     * Default is true.
      * @since 1.0
      */
     public function addListItem($listItemText,$escHtmlEntities=true) {
-        $li = new ListItem();
-        $li->addTextNode($listItemText,$escHtmlEntities);
-        $this->addChild($li);
+        if($listItemText instanceof ListItem){
+            $this->addChild($listItemText);
+        }
+        else{
+            $li = new ListItem();
+            $li->addTextNode($listItemText,$escHtmlEntities);
+            $this->addChild($li);
+        }
     }
     /**
      * Adds multiple items at once to the list.
      * @param array $arrOfItems An array that contains strings 
-     * that represents each list item.
+     * that represents each list item. Also, it can have objects of type 
+     * 'ListItem'.
      * @param boolean $escHtmlEntities If set to TRUE, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
@@ -68,20 +79,38 @@ class UnorderedList extends HTMLNode{
         }
     }
     /**
+     * Returns a child node given its index.
+     * @param int $index The position of the child node. This must be an integer 
+     * value starting from 0.
+     * @return ListItem|null If the child does exist, 
+     * the method will return 
+     * an object of type 'ListItem'. If no 
+     * element was found, the method will return null.
+     * @since 1.0.2
+     */
+    public function getChild($index) {
+        return parent::getChild($index);
+    }
+    /**
      * Adds a sublist to the main list.
-     * @param UnorderedList $ul An object of type UnorderedList.
+     * @param UnorderedList|OrderedList $ul An object of type UnorderedList or 
+     * an object of type OrderedList.
      * @since 1.0
      */
     public function addSubList($ul){
-        $this->addChild($ul);
+        if($ul instanceof UnorderedList || $ul instanceof OrderedList){
+            $li = new ListItem();
+            $li->addList($ul);
+            $this->addChild($li);
+        }
     }
     /**
      * Adds new list item or a sub-list.
-     * @param ListItem|UnorderedList $node The node that will be added.
+     * @param ListItem $node The node that will be added.
      * @since 1.0
      */
     public function addChild($node) {
-        if($node instanceof ListItem || $node instanceof UnorderedList){
+        if($node instanceof ListItem){
             parent::addChild($node);
         }
     }
