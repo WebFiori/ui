@@ -25,5 +25,5 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 The library support all versions starting from version 5.6 up to version 7.3.
 
 ## Download
-The latest release of the library is <a href="https://github.com/usernane/phpStructs/releases/tag/v1.8.5">v1.8.5<a>. You can download it from the <a href="https://github.com/usernane/phpStructs/releases">Releases</a> page of the repo.
+The latest release of the library is <a href="https://github.com/usernane/phpStructs/releases/tag/v1.8.6">v1.8.6<a>. You can download it from the <a href="https://github.com/usernane/phpStructs/releases">Releases</a> page of the repo.
 
