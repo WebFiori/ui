@@ -639,6 +639,20 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testRemoveChild06() {
+        $node = new HTMLNode();
+        $el00 = new HTMLNode('p');
+        $el00->setID('paragraph');
+        $node->addChild($el00);
+        $this->assertEquals('<div><p id="paragraph"></p></div>',$node->toHTML());
+        $p = $node->getChildByID('paragraph');
+        $r = $node->removeChild($p);
+        $this->assertTrue($p === $r);
+        $this->assertEquals('<div></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testGetElementByID00() {
         $node = new HTMLNode();
         $this->assertNull($node->getChildByID('not-exist'));
