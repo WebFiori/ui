@@ -347,7 +347,64 @@ class LinkedListTest extends TestCase{
      * @test
      */
     public function testRemoveByEl00() {
-        $this->assertTrue(true);
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $testEl = $list->get(0);
+        $this->assertTrue($testEl === $el00);
+        $removed = $list->removeElement($testEl);
+        $this->assertTrue($removed === $testEl);
+        $this->assertEquals(3,$list->size());
+        $this->assertEquals('Element #1',$list->getFirst());
+        $this->assertTrue($el01 === $list->getFirst());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveByEl01() {
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $testEl = $list->get(3);
+        $this->assertTrue($testEl === $el03);
+        $removed = $list->removeElement($testEl);
+        $this->assertTrue($removed === $testEl);
+        $this->assertEquals(3,$list->size());
+        $this->assertEquals('Element #2',$list->getLast());
+        $this->assertTrue($el02 === $list->getLast());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveByEl02() {
+        $list = new LinkedList();
+        $el00 = 'Element #0';
+        $el01 = 'Element #1';
+        $el02 = 'Element #2';
+        $el03 = 'Element #3';
+        $list->add($el00);
+        $list->add($el01);
+        $list->add($el02);
+        $list->add($el03);
+        $testEl = $list->get(2);
+        $this->assertTrue($testEl === $el02);
+        $removed = $list->removeElement($testEl);
+        $this->assertTrue($removed === $testEl);
+        $this->assertEquals(3,$list->size());
+        $this->assertEquals('Element #3',$list->getLast());
+        $this->assertTrue($el03 === $list->getLast());
     }
     /**
      * @test
