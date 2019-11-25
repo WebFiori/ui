@@ -451,6 +451,12 @@ class LinkedList implements Countable, Iterator{
                     return $el;
                 }
             }
+            else if($this->tail->data() === $val){
+                $el = &$this->tail->data();
+                if($this->removeLast() !== null){
+                    return $el;
+                }
+            }
             else{
                 $node = $this->head;
                 $nextNode = &$this->head->next();
