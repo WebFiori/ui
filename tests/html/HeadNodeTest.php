@@ -559,7 +559,7 @@ class HeadNodeTest extends TestCase{
         $this->assertFalse($headNode->addAlternate('  ', '  AR  '));
         $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR'));
         $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',array('id'=>'en-alternate')));
-        $node = &$headNode->getChildByID('en-alternate');
+        $node = $headNode->getChildByID('en-alternate');
         $this->assertTrue($node instanceof HTMLNode);
         $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
         $this->assertEquals('En',$node->getAttributeValue('hreflang'));
