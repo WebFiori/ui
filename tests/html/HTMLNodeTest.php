@@ -653,6 +653,72 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testRemoveChild07() {
+        $node = new HTMLNode();
+        $el00 = new HTMLNode('p');
+        $el00->setID('paragraph-1');
+        $node->addChild($el00);
+        $this->assertEquals('<div><p id="paragraph-1"></p></div>',$node->toHTML());
+        $el01 = new HTMLNode('p');
+        $el01->setID('paragraph-2');
+        $node->addChild($el01);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-2"></p>'
+                . '</div>',$node->toHTML());
+        $el02 = new HTMLNode('p');
+        $el02->setID('paragraph-3');
+        $node->addChild($el02);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-2"></p>'
+                . '<p id="paragraph-3"></p>'
+                . '</div>',$node->toHTML());
+        $middleP = $node->getChildByID('paragraph-2');
+        $this->assertTrue($el01 === $middleP);
+        $p01 = $node->removeChild($middleP);
+        $this->assertTrue($p01 === $el01);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-3"></p>'
+                . '</div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild08() {
+        $node = new HTMLNode();
+        $el00 = new HTMLNode('p');
+        $el00->setID('paragraph-1');
+        $node->addChild($el00);
+        $this->assertEquals('<div><p id="paragraph-1"></p></div>',$node->toHTML());
+        $el01 = new HTMLNode('p');
+        $el01->setID('paragraph-2');
+        $node->addChild($el01);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-2"></p>'
+                . '</div>',$node->toHTML());
+        $el02 = new HTMLNode('p');
+        $el02->setID('paragraph-3');
+        $node->addChild($el02);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-2"></p>'
+                . '<p id="paragraph-3"></p>'
+                . '</div>',$node->toHTML());
+        $lastP = $node->getChildByID('paragraph-3');
+        $this->assertTrue($el02 === $lastP);
+        $p02 = $node->removeChild($lastP);
+        $this->assertTrue($p02 === $el02);
+        $this->assertEquals('<div>'
+                . '<p id="paragraph-1"></p>'
+                . '<p id="paragraph-2"></p>'
+                . '</div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testGetElementByID00() {
         $node = new HTMLNode();
         $this->assertNull($node->getChildByID('not-exist'));
