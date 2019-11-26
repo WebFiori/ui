@@ -59,6 +59,7 @@ class QueueTest extends TestCase{
         $el01 = new AnyObject(0, 'Test Obj');
         $this->assertTrue($queue->enqueue($el01));
         $this->assertEquals(1,$queue->size());
+        $this->assertEquals(1,count($queue));
         $this->assertEquals(-1,$queue->max());
         
         $this->assertTrue($queue->peek() === $el01);
