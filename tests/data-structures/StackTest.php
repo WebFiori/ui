@@ -59,6 +59,7 @@ class StackTest extends TestCase{
         $el01 = new AnyObject(0, 'Test Obj');
         $this->assertTrue($stack->push($el01));
         $this->assertEquals(1,$stack->size());
+        $this->assertEquals(1,count($stack));
         $this->assertEquals(-1,$stack->max());
         
         $this->assertTrue($stack->peek() === $el01);
