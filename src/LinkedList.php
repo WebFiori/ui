@@ -26,7 +26,7 @@ namespace phpStructs;
 use Countable;
 use Iterator;
 /**
- * A class that represents a linked list.
+ * A class that represents a linked list data structure.
  *
  * @author Ibrahim 
  * @version 1.4.3
