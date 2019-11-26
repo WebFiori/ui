@@ -1804,7 +1804,8 @@ class HTMLNode {
     }
     /**
      * Returns a node based on its attribute value (Direct child).
-     * @param string $attrName The name of the attribute.
+     * @param string $attrName The name of the attribute. Supplying lower case 
+     * name or upper case name is the same.
      * @param string $attrVal The value of the attribute.
      * @return HTMLNode|null The method will return an object of type HTMLNode 
      * if a node is found. Other than that, the method will return null. Note 
@@ -1828,7 +1829,8 @@ class HTMLNode {
     /**
      * Returns the value of an attribute.
      * Calling this method is similar to calling HTMLNode::getAttributeValue().
-     * @param string $attrName The name of the attribute.
+     * @param string $attrName The name of the attribute. Upper case name and 
+     * lower case name is treated same way. Which means 'ID' is like 'id'.
      * @return string|null The method will return the value of the attribute 
      * if found. If no such attribute, the method will return null.
      * @since 1.7.7
@@ -1841,7 +1843,8 @@ class HTMLNode {
     }
     /**
      * Returns the value of an attribute.
-     * @param string $attrName The name of the attribute.
+     * @param string $attrName The name of the attribute. It can be in upper 
+     * or lower case.
      * @return string|null The method will return the value of the attribute 
      * if found. If no such attribute, the method will return null.
      * @since 1.1
@@ -1854,7 +1857,8 @@ class HTMLNode {
     }
     /**
      * Checks if the node has a given attribute or not.
-     * @param string $attrName The name of the attribute.
+     * @param string $attrName The name of the attribute. It can be in upper case 
+     * or lower case.
      * @return boolean true if the attribute is set.
      * @since 1.1
      */
