@@ -31,7 +31,7 @@ use phpStructs\Queue;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.8
+ * @version 1.7.9
  */
 class HTMLNode {
     /**
@@ -247,6 +247,30 @@ class HTMLNode {
             $this->attributes = [];
         }
         $this->useOriginalTxt = false;
+    }
+    /**
+     * Sets multiple attributes at once.
+     * @param array $attrsArr An associative array that has attributes names 
+     * and values.. The indices will represents 
+     * attributes names and the value of each index represents the values of 
+     * the attributes.
+     * @return boolean|array If the given value does not represents an array, 
+     * the method will return false. Other than that, the method will return 
+     * an associative array. The indices of the array will be the names of the 
+     * attributes and the values will be booleans. If an attribute is set, the 
+     * value of the index will be set to true. If not set, the index will be 
+     * set to false.
+     * @since 1.7.9
+     */
+    public function setAttributes($attrsArr) {
+        if(gettype($attrsArr) == 'array'){
+            $retVal=[];
+            foreach ($attrsArr as $attr => $val){
+                $retVal[$attr] = $this->setAttribute($attr, $val);
+            }
+            return $retVal;
+        }
+        return false;
     }
     /**
      * Validates the name of the node.
