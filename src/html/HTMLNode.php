@@ -273,6 +273,15 @@ class HTMLNode {
         return false;
     }
     /**
+     * Returns the value of the attribute 'id' of the element.
+     * @return string|null If the attribute 'id' is set, the method will return 
+     * its value. If not set, the method will return null.
+     * @since 1.7.9
+     */
+    public function getID() {
+        return $this->getAttribute('id');
+    }
+    /**
      * Validates the name of the node.
      * @param string $name The name of the node in lower case.
      * @return boolean If the name is valid, the method will return true. If 
