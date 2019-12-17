@@ -175,6 +175,54 @@ class LinkedList implements Countable, Iterator{
             return false;
         }
     }
+    
+    public function insert(&$el,$position) {
+        if($this->validateSize()){
+            $size = $this->size();
+            if($size == 0 && $position == 0){
+                //empty list and insert at start.
+                return $this->add($el);
+            }
+            else if($size != 0 && $position == $size - 1){
+                //insert at the end.
+                return $this->add($el);
+            }
+            else{
+                if($position < $size){
+                    //insert in the middle or at the start
+                    if($position == 0){
+                        //inser at the start.
+                        $newNode = new Node($el, $this->head);
+                        $this->head = $newNode;
+                        $this->size++;
+                        return true;
+                    }
+                    else{
+                        //insert in the middle.
+                        $pointer = 1;
+                        $currentNode = $this->head;
+                        $nextToCurrent = $currentNode->next();
+                        while ($currentNode != null){
+                            if($pointer == $position){
+                                $newNode = new Node($el,$nextToCurrent);
+                                $currentNode->setNext($newNode);
+                                $this->size++;
+                                return true;
+                            }
+                            else{
+                                $currentNode = $nextToCurrent;
+                                $nextToCurrent = $nextToCurrent->next();
+                            }
+                            $pointer++;
+                        }
+                    }
+                    $this->size++;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * Returns the first element that was added to the list.
      * @return mixed The first element that was added to the list. If the list 
