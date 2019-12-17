@@ -13,6 +13,132 @@ class LinkedListTest extends TestCase{
     /**
      * @test
      */
+    public function testInsert00() {
+        $list = new LinkedList();
+        $num = '1';
+        $this->assertTrue($list->insert($num, 0));
+        $this->assertEquals(1,$list->size());
+        $this->assertEquals('1',$list->get(0));
+    }
+    /**
+     * @test
+     */
+    public function testInsert01() {
+        $list = new LinkedList();
+        $num = 1;
+        $this->assertFalse($list->insert($num, 1));
+        $this->assertEquals(0,$list->size());
+    }
+    /**
+     * @test
+     */
+    public function testInsert02() {
+        $list = new LinkedList();
+        $num00 = 1;
+        $num01 = 2;
+        $num02 = 3;
+        $list->add($num00);
+        $list->add($num01);
+        $list->add($num02);
+        $num04 = 0;
+        $this->assertTrue($list->insert($num04, 0));
+        $this->assertEquals(4,$list->size());
+        $this->assertEquals(0,$list->getFirst());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($x,$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function testInsert03() {
+        $list = new LinkedList();
+        $num00 = 1;
+        $num01 = 2;
+        $num02 = 3;
+        $list->add($num00);
+        $list->add($num01);
+        $list->add($num02);
+        $num04 = 0;
+        $this->assertTrue($list->insert($num04, 0));
+        var_dump($list->toArray());
+        $this->assertEquals(4,$list->size());
+        $this->assertEquals(0,$list->getFirst());
+        
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($x,$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function testInsert04() {
+        $list = new LinkedList();
+        $num00 = 1;
+        $num01 = 2;
+        $num02 = 3;
+        $num04 = 4;
+        $list->add($num00);
+        $list->add($num01);
+        $list->add($num02);
+        $this->assertTrue($list->insert($num04, 2));
+        $this->assertEquals(4,$list->size());
+        $this->assertSame($num04,$list->getLast());
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($x+1,$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
+    public function testInsert05() {
+        $list = new LinkedList();
+        $num00 = 0;
+        $num01 = 1;
+        $num02 = 2;
+        $num03 = 3;
+        $num04 = 4;
+        $num05 = 5;
+        $num06 = 6;
+        $list->add($num01);
+        $list->add($num03);
+        $list->add($num05);
+        $this->assertEquals($num01,$list->get(0));
+        $this->assertEquals($num03,$list->get(1));
+        $this->assertEquals($num05,$list->get(2));
+        $this->assertEquals([
+            1,3,5
+        ],$list->toArray());
+        $this->assertTrue($list->insert($num00, 0));
+        $this->assertEquals([
+            0,1,3,5
+        ],$list->toArray());
+        $this->assertTrue($list->insert($num02, 2));
+        $this->assertEquals([
+            0,1,2,3,5
+        ],$list->toArray());
+        $this->assertTrue($list->insert($num04, 4));
+        $this->assertEquals([
+            0,1,2,3,4,5
+        ],$list->toArray());
+        $this->assertTrue($list->insert($num06, 6));
+        $this->assertEquals([
+            0,1,2,3,4,5
+        ],$list->toArray());
+        $this->assertEquals(7,$list->size());
+        $this->assertEquals(6,$list->getLast());
+        $this->assertEquals(0,$list->get(0));
+        $this->assertEquals(1,$list->get(1));
+        $this->assertEquals(2,$list->get(2));
+        $this->assertEquals(4,$list->get(4));
+        $this->assertEquals(6,$list->get(6));
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($x,$list->get($x));
+        }
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $list = new LinkedList();
         $this->assertEquals(-1,$list->max());
