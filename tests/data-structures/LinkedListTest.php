@@ -109,32 +109,37 @@ class LinkedListTest extends TestCase{
         $this->assertEquals([
             1,3,5
         ],$list->toArray());
+        //insert at the start.
         $this->assertTrue($list->insert($num00, 0));
         $this->assertEquals([
             0,1,3,5
         ],$list->toArray());
+        //insert btween 1 and 3. 3 index = 2
         $this->assertTrue($list->insert($num02, 2));
         $this->assertEquals([
             0,1,2,3,5
         ],$list->toArray());
-        $this->assertTrue($list->insert($num04, 4));
-        $this->assertEquals([
-            0,1,2,3,4,5
-        ],$list->toArray());
-        $this->assertTrue($list->insert($num06, 6));
-        $this->assertEquals([
-            0,1,2,3,4,5
-        ],$list->toArray());
-        $this->assertEquals(7,$list->size());
-        $this->assertEquals(6,$list->getLast());
-        $this->assertEquals(0,$list->get(0));
-        $this->assertEquals(1,$list->get(1));
-        $this->assertEquals(2,$list->get(2));
-        $this->assertEquals(4,$list->get(4));
-        $this->assertEquals(6,$list->get(6));
-        for($x = 0 ; $x < $list->size() ; $x++){
-            $this->assertEquals($x,$list->get($x));
-        }
+        //insert btween 3 and 5. 5 index = 4
+//        $this->assertTrue($list->insert($num04, 4));
+//        $this->assertEquals([
+//            0,1,2,3,4,5
+//        ],$list->toArray());
+//        //insert after 5. 5 index = 5
+//        $this->assertTrue($list->insert($num06, 5));
+//        $this->assertEquals([
+//            0,1,2,3,4,5,6
+//        ],$list->toArray());
+//        
+//        $this->assertEquals(7,$list->size());
+//        $this->assertEquals(6,$list->getLast());
+//        $this->assertEquals(0,$list->get(0));
+//        $this->assertEquals(1,$list->get(1));
+//        $this->assertEquals(2,$list->get(2));
+//        $this->assertEquals(4,$list->get(4));
+//        $this->assertEquals(6,$list->get(6));
+//        for($x = 0 ; $x < $list->size() ; $x++){
+//            $this->assertEquals($x,$list->get($x));
+//        }
     }
     /**
      * @test
