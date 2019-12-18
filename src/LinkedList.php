@@ -175,7 +175,25 @@ class LinkedList implements Countable, Iterator{
             return false;
         }
     }
-    
+    /**
+     * Insert new element in the middle of the list.
+     * The method will try to insert new element at the given position. If the 
+     * position is index 0, the element will be inserted at the start of the 
+     * list. If the position equals to LinkedList::size() - 1, then the 
+     * element will be inserted at the end of the list. If position is between 
+     * 0 and LinkedList::size() - 1, then the element will be inserted in the 
+     * middle. The element will be not inserted in only two cases:
+     * <ul>
+     * <li>Position is not between 0 and LinkedList::size() - 1 inclusive.</li>
+     * <li>The list accepts only a specific number of elements and its full.</li>
+     * </ul>
+     * Note that the element at the specified index will be moved to the 
+     * next position and the new element will replace it.
+     * @param mixed $el The new element that will be added.
+     * @param int $position The index at which the element will be inserted in.
+     * @return boolean If the element is inserted, the method will return true. 
+     * If not, the method will return false.
+     */
     public function insert(&$el,$position) {
         if($this->validateSize()){
             $size = $this->size();
