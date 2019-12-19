@@ -242,6 +242,8 @@ class HeadNode extends HTMLNode{
     }
     /**
      * Returns an object of type HTMLNode that represents the title node.
+     * Note that the title node will be always in position 0 or 1 in the 
+     * body of the head node.
      * @return HTMLNode The method will return 
      * an object of type HTMLNode that represents title node.
      * @since 1.1.3
