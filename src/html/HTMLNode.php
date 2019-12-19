@@ -698,7 +698,7 @@ class HTMLNode {
                         }
                         if($isBaseSet){
                             foreach ($chNode['attributes'] as $attr => $val){
-                                $htmlNode->getBase()->setAttribute($attr, $val);
+                                $htmlNode->getBaseNode()->setAttribute($attr, $val);
                             }
                         }
                     }
@@ -1275,7 +1275,15 @@ class HTMLNode {
     }
     /**
      * Insert new HTML element at specific position.
-     * @param HTMLNode $el The new element that will be inserted.
+     * @param HTMLNode $el The new element that will be inserted. It is possible 
+     * to insert child elements to the element if the following conditions are 
+     * met:
+     * <ul>
+     * <li>If the node is not a text node.</li>
+     * <li>The node is not a comment node.</li>
+     * <li>The note is not a void node.</li>
+     * <li>The note is not it self. (making a node as a child of it self)</li>
+     * </ul>
      * @param int $position The position at which the element will be added. 
      * it must be a value between 0 and <code>HTMLNode::childrenCount()</code> inclusive.
      * @return boolean If the element is inserted, the method will return true. 
@@ -1283,16 +1291,27 @@ class HTMLNode {
      * @since 1.7.9
      */
     public function insert($el,$position) {
-        if($el instanceof HTMLNode){
-            return $this->childrenList->insert($el, $position);
+        $retVal = false;
+        if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
+            if(($el instanceof HTMLNode) && $el !== $this){
+                $retVal = $this->childrenList->insert($el, $position);
+                if($retVal === true){
+                    $el->_setParent($this);
+                }
+            }
         }
-        return false;
+        return $retVal;
     }
     /**
      * Adds new child node.
      * @param HTMLNode $node The node that will be added. The node can have 
-     * child nodes only if 3 conditions are met. If the node is not a text node 
-     * , the node is not a comment node and the node must have ending tag.
+     * child nodes only if 4 conditions are met:
+     * <ul>
+     * <li>If the node is not a text node.</li>
+     * <li>The node is not a comment node.</li>
+     * <li>The note is not a void node.</li>
+     * <li>The note is not it self. (making a node as a child of it self)</li>
+     * </ul>
      * @since 1.0
      */
     public function addChild($node) {
