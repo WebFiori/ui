@@ -81,7 +81,8 @@ class LinkedListTest extends TestCase{
         $list->add($num00);
         $list->add($num01);
         $list->add($num02);
-        $this->assertTrue($list->insert($num04, 2));
+        //insert at the end 
+        $this->assertTrue($list->insert($num04, 3));
         $this->assertEquals(4,$list->size());
         $this->assertSame($num04,$list->getLast());
         for($x = 0 ; $x < $list->size() ; $x++){
@@ -120,26 +121,138 @@ class LinkedListTest extends TestCase{
             0,1,2,3,5
         ],$list->toArray());
         //insert btween 3 and 5. 5 index = 4
-//        $this->assertTrue($list->insert($num04, 4));
-//        $this->assertEquals([
-//            0,1,2,3,4,5
-//        ],$list->toArray());
-//        //insert after 5. 5 index = 5
-//        $this->assertTrue($list->insert($num06, 5));
-//        $this->assertEquals([
-//            0,1,2,3,4,5,6
-//        ],$list->toArray());
-//        
-//        $this->assertEquals(7,$list->size());
-//        $this->assertEquals(6,$list->getLast());
-//        $this->assertEquals(0,$list->get(0));
-//        $this->assertEquals(1,$list->get(1));
-//        $this->assertEquals(2,$list->get(2));
-//        $this->assertEquals(4,$list->get(4));
-//        $this->assertEquals(6,$list->get(6));
-//        for($x = 0 ; $x < $list->size() ; $x++){
-//            $this->assertEquals($x,$list->get($x));
-//        }
+        $this->assertTrue($list->insert($num04, 4));
+        $this->assertEquals([
+            0,1,2,3,4,5
+        ],$list->toArray());
+        //insert after 5. 5 index = 5
+        //but if we give 5, it will insert btween 5 and 4
+        $this->assertTrue($list->insert($num06, 6));
+        $this->assertEquals([
+            0,1,2,3,4,5,6
+        ],$list->toArray());
+        
+        $this->assertEquals(7,$list->size());
+        $this->assertEquals(6,$list->getLast());
+        $this->assertEquals(0,$list->get(0));
+        $this->assertEquals(1,$list->get(1));
+        $this->assertEquals(2,$list->get(2));
+        $this->assertEquals(4,$list->get(4));
+        $this->assertEquals(6,$list->get(6));
+        for($x = 0 ; $x < $list->size() ; $x++){
+            $this->assertEquals($x,$list->get($x));
+        }
+    }
+    /**
+     * @test
+     * Tryning insert at the start with other operations.
+     */
+    public function testInsert06() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $this->assertTrue($list->insert($el00, 0));
+        $this->assertSame($el00,$list->get(0));
+        $this->assertEquals(1,$list->size());
+        
+        $el01 = 'World';
+        $this->assertTrue($list->insert($el01, 0));
+        $this->assertSame($el01,$list->get(0));
+        $this->assertSame($el00,$list->get(1));
+        $this->assertEquals(2,$list->size());
+        
+        $el02 = 'XY';
+        $this->assertTrue($list->insert($el02, 0));
+        $this->assertSame($el02,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el00,$list->get(2));
+
+        $el03 = 'Good';
+        $list->add($el03);
+        $this->assertEquals(4,$list->size());
+        $this->assertSame($el02,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el00,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        
+        $el04 = 'UR Good';
+        $this->assertTrue($list->insert($el04, 0));
+        $this->assertEquals(5,$list->size());
+        $this->assertSame($el04,$list->get(0));
+        $this->assertSame($el02,$list->get(1));
+        $this->assertSame($el01,$list->get(2));
+        $this->assertSame($el00,$list->get(3));
+        $this->assertSame($el03,$list->get(4));
+        
+        $list->removeFirst();
+        $this->assertEquals(4,$list->size());
+        $this->assertSame($el02,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el00,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        
+        $this->assertTrue($list->insert($el04, 0));
+        $this->assertEquals(5,$list->size());
+        $this->assertSame($el04,$list->get(0));
+        $this->assertSame($el02,$list->get(1));
+        $this->assertSame($el01,$list->get(2));
+        $this->assertSame($el00,$list->get(3));
+        $this->assertSame($el03,$list->get(4));
+    }
+    /**
+     * @test
+     * Tryning insert at the end with other operations.
+     */
+    public function testInsert07() {
+        $list = new LinkedList();
+        $el00 = 'Hello';
+        $this->assertTrue($list->insert($el00, $list->size()));
+        $this->assertSame($el00,$list->get(0));
+        $this->assertEquals(1,$list->size());
+        
+        $el01 = 'World';
+        $this->assertTrue($list->insert($el01, $list->size()));
+        $this->assertEquals(2,$list->size());
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        
+        
+        $el02 = 'XY';
+        $this->assertTrue($list->insert($el02, $list->size()));
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el02,$list->get(2));
+
+        $el03 = 'Good';
+        $list->add($el03);
+        $this->assertEquals(4,$list->size());
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el02,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        
+        $el04 = 'UR Good';
+        $this->assertTrue($list->insert($el04, $list->size()));
+        $this->assertEquals(5,$list->size());
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el02,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        $this->assertSame($el04,$list->get(4));
+        
+        $list->removeLast();
+        $this->assertEquals(4,$list->size());
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el02,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        
+        $this->assertTrue($list->insert($el04, $list->size()));
+        $this->assertEquals(5,$list->size());
+        $this->assertSame($el00,$list->get(0));
+        $this->assertSame($el01,$list->get(1));
+        $this->assertSame($el02,$list->get(2));
+        $this->assertSame($el03,$list->get(3));
+        $this->assertSame($el04,$list->get(4));
     }
     /**
      * @test
