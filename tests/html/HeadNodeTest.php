@@ -12,6 +12,20 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testOrderOfChildren00() {
+        $node = new HeadNode();
+        $node->setTitle('Hello World!');
+        $node->setCharSet('utf-8');
+        $node->setCanonical('http://example.com');
+        $node->setBase('http://example.com');
+        $this->assertSame($node->getBaseNode(),$node->getChild(0));
+        $this->assertSame($node->getTitleNode(),$node->getChild(1));
+        $this->assertSame($node->getCharsetNode(),$node->getChild(2));
+        $this->assertSame($node->getCanonicalNode(),$node->getChild(3));
+    }
+    /**
+     * @test
+     */
     public function addLinkTest00() {
         $node = new HeadNode();
         $this->assertFalse($node->addLink('', ''));
@@ -147,7 +161,7 @@ class HeadNodeTest extends TestCase{
     public function testConstructor00() {
         $node = new HeadNode();
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNotNull($node->getTitleNode());
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
@@ -162,7 +176,7 @@ class HeadNodeTest extends TestCase{
     public function testConstructor01() {
         $node = new HeadNode('My Page','https://example.com/my-page','https://example.com/');
         $this->assertEquals(4,$node->childrenCount());
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNotNull($node->getTitleNode());
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
@@ -177,7 +191,7 @@ class HeadNodeTest extends TestCase{
     public function testConstructor03() {
         $node = new HeadNode('','','');
         $this->assertEquals(1,$node->childrenCount());
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNotNull($node->getTitleNode());
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
@@ -423,7 +437,7 @@ class HeadNodeTest extends TestCase{
      */
     public function testSetBase00() {
         $node = new HeadNode();
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertEquals(2,$node->childrenCount());
     }
@@ -432,7 +446,7 @@ class HeadNodeTest extends TestCase{
      */
     public function testSetBase01() {
         $node = new HeadNode();
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertTrue($node->setBase('https://example.com/'));
         $this->assertEquals('https://example.com/',$node->getBaseURL());
@@ -447,13 +461,13 @@ class HeadNodeTest extends TestCase{
      */
     public function testSetBase02() {
         $node = new HeadNode();
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertTrue($node->setBase('https://example.com/'));
         $this->assertEquals(3,$node->childrenCount());
         $this->assertEquals('https://example.com/',$node->getBaseURL());
         $this->assertTrue($node->setBase(null));
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertEquals(2,$node->childrenCount());
     }
@@ -462,13 +476,13 @@ class HeadNodeTest extends TestCase{
      */
     public function testSetBase03() {
         $node = new HeadNode('','','https://example.com/');
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertEquals('https://example.com/',$node->getBaseURL());
         $this->assertEquals(2,$node->childrenCount());
         $this->assertTrue($node->setBase('https://example2.com/'));
         $this->assertEquals(2,$node->childrenCount());
         $this->assertTrue($node->setBase(null));
-        $this->assertNotNull($node->getBase());
+        $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertEquals(1,$node->childrenCount());
     }
