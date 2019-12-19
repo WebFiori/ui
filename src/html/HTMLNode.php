@@ -1274,6 +1274,21 @@ class HTMLNode {
         return $this->null;
     }
     /**
+     * Insert new HTML element at specific position.
+     * @param HTMLNode $el The new element that will be inserted.
+     * @param int $position The position at which the element will be added. 
+     * it must be a value between 0 and <code>HTMLNode::childrenCount()</code> inclusive.
+     * @return boolean If the element is inserted, the method will return true. 
+     * Other than that, it will return false.
+     * @since 1.7.9
+     */
+    public function insert($el,$position) {
+        if($el instanceof HTMLNode){
+            return $this->childrenList->insert($el, $position);
+        }
+        return false;
+    }
+    /**
      * Adds new child node.
      * @param HTMLNode $node The node that will be added. The node can have 
      * child nodes only if 3 conditions are met. If the node is not a text node 
