@@ -250,8 +250,6 @@ class LinkedList implements Countable, Iterator{
                             $pointer++;
                         }
                     }
-                    $this->size++;
-                    return true;
                 }
             }
         }
