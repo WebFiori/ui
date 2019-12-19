@@ -61,7 +61,6 @@ class LinkedListTest extends TestCase{
         $list->add($num02);
         $num04 = 0;
         $this->assertTrue($list->insert($num04, 0));
-        var_dump($list->toArray());
         $this->assertEquals(4,$list->size());
         $this->assertEquals(0,$list->getFirst());
         
