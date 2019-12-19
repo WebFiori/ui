@@ -351,6 +351,43 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testInsert00() {
+        $node = new HTMLNode();
+        $this->assertFalse($node->insert($node, 0));
+        $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testInsert01() {
+        $node = HTMLNode::createTextNode('Hello');
+        $xNode = new HTMLNode();
+        $this->assertFalse($node->insert($xNode, 0));
+        $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testInsert02() {
+        $node = HTMLNode::createComment('Hello Comment');
+        $xNode = new HTMLNode();
+        $this->assertFalse($node->insert($xNode, 0));
+        $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testInsert03() {
+        $node = HTMLNode::createTextNode('Hello');
+        $xNode = new HTMLNode();
+        $this->assertTrue($xNode->insert($node, 0));
+        $this->assertEquals(1,$xNode->childrenCount());
+        $xNode->insert(HTMLNode::createComment('A Comment'), 0);
+        $this->assertEquals('#COMMENT',$xNode->getChild(0)->getNodeName());
+    }
+    /**
+     * @test
+     */
     public function testHasAttribute00() {
         $node = new HTMLNode();
         $this->assertFalse($node->hasAttribute('x-attr'));
