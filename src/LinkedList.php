@@ -201,7 +201,23 @@ class LinkedList implements Countable, Iterator{
                 //empty list and insert at start.
                 return $this->add($el);
             }
-            else if($size != 0 && $position == $size - 1){
+            else if($size == 1 && $position == 0){
+                //list size is 1 and position = 0. inser at the start.
+                $newNode = new Node($el, $this->head);
+                $this->head = $newNode;
+                $this->tail = $this->head->next();
+                $this->size++;
+                return true;
+            }
+            else if($size == 1 && $position == 1){
+                //list size is 1 and position = 1. inser at the end.
+                $newNode = new Node($el);
+                $this->tail = $newNode;
+                $this->head->setNext($this->tail);
+                $this->size++;
+                return true;
+            }
+            else if($position == $size){
                 //insert at the end.
                 return $this->add($el);
             }
