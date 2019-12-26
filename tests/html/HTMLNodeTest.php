@@ -388,6 +388,19 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testInsert04() {
+        $node = new HTMLNode();
+        $addedNode = new HTMLNode('label');
+        $node->addChild($addedNode);
+        $insertedNode = new HTMLNode('img');
+        $node->insert($insertedNode, 0);
+        $this->assertEquals(2,$node->childrenCount());
+        $this->assertSame($insertedNode,$node->getChild(0));
+        $this->assertSame($addedNode,$node->getChild(1));
+    }
+    /**
+     * @test
+     */
     public function testHasAttribute00() {
         $node = new HTMLNode();
         $this->assertFalse($node->hasAttribute('x-attr'));
@@ -1200,10 +1213,23 @@ and open the template in the editor.
     /**
      * @test
      */
-    public function testHTMLAsArray_10() {
+    public function testToHTML11() {
         $htmlTxt = '';
         $array = HTMLNode::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
+    }
+    public function testHTMLAsArray_11() {
+        $test = HTMLNode::fromHTMLText('<td>'
+                . 'SWE:'
+                . '<br>'
+                . '- Added exctra column to the users table to store mobile number.'
+                . '<br>'
+                . '- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: '
+                . '<a href="https://alyaseenagri.com/crm/view-employees" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
+                . '<br>'
+                . '- Applied the update to the system.</td>', false);
+        $this->assertEquals('td',$test->getNodeName());
+        $this->assertEquals(8,$test->childrenCount());
     }
     /**
      * 
