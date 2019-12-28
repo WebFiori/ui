@@ -1110,7 +1110,7 @@ and open the template in the editor.
         $this->assertEquals($array[1]['tag-name'],'html');
         $this->assertEquals(count($array[1]['children']),1);
         $this->assertEquals($array[1]['children'][0]['tag-name'],'head');
-        $this->assertEquals($array[1]['children'][0]['children'][0]['body-text'],'Testing if it works');
+        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'Testing if it works');
     }
     /**
      * @test
@@ -1124,7 +1124,7 @@ and open the template in the editor.
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
         $this->assertEquals(count($array[1]['children']),1);
-        $this->assertEquals($array[1]['children'][0]['children'][0]['body-text'],'   Testing  ');
+        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'Testing');
         $this->assertEquals(count($array[1]['children'][0]['children']),3);
     }
     /**
@@ -1142,14 +1142,16 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_06() {
-        $htmlTxt = '<div></div><div><!--       A Comment.       --><input></div><div><img><img><input><pre></pre></div>';
+        $htmlTxt = '<div></div>'
+                . '<div><!--       A Comment.       --><input></div>'
+                . '<div><img><img><input><pre></pre></div>';
         $array = HTMLNode::htmlAsArray($htmlTxt);
-        $this->assertEquals(count($array),3);
-        $this->assertEquals(count($array[0]['children']),0);
-        $this->assertEquals(count($array[1]['children']),2);
-        $this->assertEquals(count($array[2]['children']),4);
-        $this->assertEquals($array[1]['children'][0]['tag-name'],'#COMMENT');
-        $this->assertEquals($array[1]['children'][0]['body-text'],'       A Comment.       ');
+        $this->assertEquals(3,count($array));
+        $this->assertEquals(0,count($array[0]['children']));
+        $this->assertEquals(2,count($array[1]['children']));
+        $this->assertEquals(4,count($array[2]['children']));
+        $this->assertEquals('#COMMENT',$array[1]['children'][0]['tag-name']);
+        $this->assertEquals('A Comment.',$array[1]['children'][0]['body-text']);
     }
     /**
      * @test
@@ -1218,6 +1220,9 @@ and open the template in the editor.
         $array = HTMLNode::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
     }
+    /**
+     * @test
+     */
     public function testHTMLAsArray_11() {
         $test = HTMLNode::fromHTMLText('<td>'
                 . 'SWE:'
@@ -1230,6 +1235,45 @@ and open the template in the editor.
                 . '- Applied the update to the system.</td>', false);
         $this->assertEquals('td',$test->getNodeName());
         $this->assertEquals(8,$test->childrenCount());
+        $this->assertEquals('#TEXT',$test->getChild(0)->getNodeName());
+        $this->assertEquals('SWE:',$test->getChild(0)->getText());
+        $this->assertEquals('br',$test->getChild(1)->getNodeName());
+        $this->assertEquals('#TEXT',$test->getChild(2)->getNodeName());
+        $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
+        $this->assertEquals('br',$test->getChild(3)->getNodeName());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(4)->getText());
+        $this->assertEquals('a',$test->getChild(5)->getNodeName());
+        $this->assertEquals('br',$test->getChild(6)->getNodeName());
+        $this->assertEquals('#TEXT',$test->getChild(7)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_12() {
+        $test = HTMLNode::fromHTMLText('<td>'
+                . 'SWE:'
+                . '<br>'
+                . '- Added exctra column to the users table to store mobile number.'
+                . '<br>'
+                . '<!--A Comment    -->'
+                . '- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: '
+                . '<a href="https://alyaseenagri.com/crm/view-employees" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
+                . '<br>'
+                . '- Applied the update to the system.</td>', false);
+        $this->assertEquals('td',$test->getNodeName());
+        $this->assertEquals(9,$test->childrenCount());
+        $this->assertEquals('#TEXT',$test->getChild(0)->getNodeName());
+        $this->assertEquals('SWE:',$test->getChild(0)->getText());
+        $this->assertEquals('br',$test->getChild(1)->getNodeName());
+        $this->assertEquals('#TEXT',$test->getChild(2)->getNodeName());
+        $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
+        $this->assertEquals('br',$test->getChild(3)->getNodeName());
+        $this->assertEquals('#COMMENT',$test->getChild(4)->getNodeName());
+        $this->assertEquals('A Comment',$test->getChild(4)->getText());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(5)->getText());
+        $this->assertEquals('a',$test->getChild(6)->getNodeName());
+        $this->assertEquals('br',$test->getChild(7)->getNodeName());
+        $this->assertEquals('#TEXT',$test->getChild(8)->getNodeName());
     }
     /**
      * 

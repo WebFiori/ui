@@ -422,7 +422,7 @@ class HTMLNode {
                 $node = $array[$x];
                 if(strlen(trim($node)) != 0){
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
-                    $nodesNames[$nodesNamesIndex]['body-text'] = $nodesNames[$nodesNamesIndex][1];
+                    $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][1]);
                     if(strlen($nodesNames[$nodesNamesIndex]['body-text']) == 0){
                         unset($nodesNames[$nodesNamesIndex]['body-text']);
                     }
@@ -444,7 +444,14 @@ class HTMLNode {
                         //if we have '!' or '-' at the start of the name, then 
                         //it must be a comment.
                         $nodesNames[$nodesNamesIndex]['tag-name'] = '#COMMENT';
-                        $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][0],"!--");
+                        if(isset($nodesNames[$nodesNamesIndex]['body-text'])){
+                            //a text node after a comment node.
+                            $nodesNames[$nodesNamesIndex+1] = [
+                                'body-text'=>$nodesNames[$nodesNamesIndex]['body-text'],
+                                'tag-name'=>'#TEXT'
+                            ];
+                        }
+                        $nodesNames[$nodesNamesIndex]['body-text'] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
                     }
                     else{
                         $nodeName = strtolower($nodeName);
@@ -475,15 +482,19 @@ class HTMLNode {
                         }
                     }
                     unset($nodesNames[$nodesNamesIndex][0]);
-                    if(isset($nodesNames[$nodesNamesIndex]['is-void-tag']) && 
-                            $nodesNames[$nodesNamesIndex]['is-void-tag'] === true && 
-                            isset($nodesNames[$nodesNamesIndex]['body-text']) && 
-                            strlen(trim($nodesNames[$nodesNamesIndex]['body-text'])) != 0){
+                    if(isset($nodesNames[$nodesNamesIndex]['body-text']) && 
+                            strlen(trim($nodesNames[$nodesNamesIndex]['body-text'])) != 0 && 
+                            $nodesNames[$nodesNamesIndex]['tag-name'] != '#COMMENT'){
                         $nodesNamesIndex++;
                         $nodesNames[$nodesNamesIndex]['tag-name'] = '#TEXT';
                         $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex-1]['body-text']);
+                        unset($nodesNames[$nodesNamesIndex-1]['body-text']);
                     }
                     $nodesNamesIndex++;
+                    if(isset($nodesNames[$nodesNamesIndex])){
+                        //skip a text node which is added after a comment node
+                        $nodesNamesIndex++;
+                    }
                 }
             }
             $x = 0;
@@ -699,7 +710,9 @@ class HTMLNode {
                 for($x = 0 ; $x < count($nodeArr['children']) ; $x++){
                     $chNode = $nodeArr['children'][$x];
                     if($chNode['tag-name'] == 'title'){
-                        $htmlNode->setTitle($chNode['body-text']);
+                        if(count($chNode['children']) == 1 && $chNode['children'][0]['tag-name'] == '#TEXT'){
+                            $htmlNode->setTitle($chNode['children'][0]['body-text']);
+                        }
                         foreach ($chNode['attributes'] as $attr => $val){
                             $htmlNode->getTitleNode()->setAttribute($attr, $val);
                         }
