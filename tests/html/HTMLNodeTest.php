@@ -35,6 +35,42 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testApplyClass00() {
+        $node = new HTMLNode();
+        $ch00 = new HTMLNode();
+        $node->addChild($ch00);
+        $node->addChild(new HTMLNode('img'));
+        $node->addChild(new HTMLNode('input'));
+        $node->applyClass('col');
+        foreach ($node as $child){
+            $this->assertEquals('col',$child->getClassName());
+        }
+        $node->applyClass('row');
+        foreach ($node as $child){
+            $this->assertEquals('row',$child->getClassName());
+        }
+        $node->applyClass('np',false);
+        foreach ($node as $child){
+            $this->assertEquals('row np',$child->getClassName());
+        }
+    }
+    /**
+     * @test
+     */
+    public function testIterator00() {
+        $node = new HTMLNode();
+        $node->addTextNode('Hello #0');
+        $node->addTextNode('Hello #1');
+        $node->addChild('Hello #2');
+        $index = 0;
+        foreach ($node as $child){
+            $this->assertEquals('Hello #'.$index,$child->getText());
+            $index++;
+        }
+    }
+    /**
+     * @test
+     */
     public function testGetChildByAttributeValue00() {
         $node = new HTMLNode('#text');
         $this->assertNull($node->getChildByAttributeValue('cool', 'nice'));
