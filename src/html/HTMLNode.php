@@ -27,13 +27,15 @@ use Exception;
 use phpStructs\LinkedList;
 use phpStructs\Stack;
 use phpStructs\Queue;
+use Countable;
+use Iterator;
 /**
  * A class that represents HTML element.
  *
  * @author Ibrahim
  * @version 1.7.9
  */
-class HTMLNode {
+class HTMLNode implements Countable, Iterator{
     /**
      * An array that contains all unpaired (or void) HTML tags.
      * An unpaired tag is a tag that does tot require closing tag. Its 
@@ -325,6 +327,20 @@ class HTMLNode {
      */
     public function getName() {
         return $this->getAttribute('name');
+    }
+    /**
+     * Sets the attribute 'class' for all child nodes.
+     * @param string $cName The value of the attribute.
+     * @param boolean $override If set to true and the child has already this 
+     * attribute set, the given value will override the existing value. If set to 
+     * false, the new value will be appended to the existing one. Default is 
+     * true.
+     * @since 1.7.9
+     */
+    public function applyClass($cName,$override=true) {
+        foreach ($this as $child){
+            $child->setClassName($cName,$override);
+        }
     }
     /**
      * Validates the name of the node.
@@ -2030,4 +2046,72 @@ class HTMLNode {
     public function __toString() {
         return $this->toHTML(false);
     }
+    /**
+     * Returns the number of child nodes attached to the node.
+     * If the node is a text node, a comment node or a void node, 
+     * the method will return 0.
+     * @return int The number of child nodes attached to the node.
+     * @since 1.7.9
+     */
+    public function count() {
+        return $this->childrenCount();
+    }
+    /**
+     * Returns the element that the iterator is currently is pointing to.
+     * This method is only used if the list is used in a 'foreach' loop. 
+     * The developer should not call it manually unless he knows what he 
+     * is doing.
+     * @return HTMLNode The element that the iterator is currently is pointing to.
+     * @since 1.7.9
+     */
+    public function current() {
+        return $this->childrenList->current();
+    }
+    /**
+     * Returns the current node in the iterator.
+     * This method is only used if the list is used in a 'foreach' loop. 
+     * The developer should not call it manually unless he knows what he 
+     * is doing.
+     * @return HTMLNode An object of type 'HTMLNode' or null if the node 
+     * has no children is empty or the iterator is finished.
+     * @since 1.4.3 
+     */
+    public function key() {
+        $this->childrenList->key()->data();
+    }
+    /**
+     * Returns the next element in the iterator.
+     * This method is only used if the list is used in a 'foreach' loop. 
+     * The developer should not call it manually unless he knows what he 
+     * is doing.
+     * @return HTMLNode The next element in the iterator. If the iterator is 
+     * finished or the list is empty, the method will return null.
+     * @since 1.4.3 
+     */
+    public function next() {
+        $this->childrenList->next();
+    }
+    /**
+     * Return iterator pointer to the first element in the list.
+     * This method is only used if the list is used in a 'foreach' loop. 
+     * The developer should not call it manually unless he knows what he 
+     * is doing.
+     * @since 1.4.3 
+     */
+    public function rewind() {
+        $this->childrenList->rewind();
+    }
+    /**
+     * Checks if the iterator has more elements or not.
+     * This method is only used if the list is used in a 'foreach' loop. 
+     * The developer should not call it manually unless he knows what he 
+     * is doing.
+     * @return boolean If there is a next element, the method 
+     * will return true. False otherwise.
+     * @since 1.7.9
+     */
+    public function valid() {
+        return $this->childrenList->valid();
+    }
+
 }
