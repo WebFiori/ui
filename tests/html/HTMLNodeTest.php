@@ -387,6 +387,18 @@ class HTMLNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testSetAttribute07() {
+        $node = new HTMLNode();
+        $this->assertTrue($node->setAttribute('disabled',null));
+        $this->assertNull($node->getAttribute('disabled'));
+        $this->assertEquals('<div disabled>',$node->open());
+        $node->setAttribute('data-name', '');
+        $this->assertEquals('',$node->getAttribute('data-name'));
+        $this->assertEquals('<div disabled data-name=""></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testInsert00() {
         $node = new HTMLNode();
         $this->assertFalse($node->insert($node, 0));
