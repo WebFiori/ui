@@ -55,7 +55,7 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'CodeSnippet.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Input.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'JsCode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Label.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'LinkNode.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'Anchor.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'UnorderedList.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
