@@ -29,11 +29,19 @@ use phpStructs\html\HTMLNode;
  * A class that represents Unordered List HTML element (ul)
  *
  * @author Ibrahim
- * @version 1.0.2
+ * @version 1.0.3
  */
 class UnorderedList extends HTMLNode{
     /**
      * Creates new instance of the class.
+     * Can add multiple items at once to the list if given.
+     * @param array $arrOfItems [as of 1.0.3] An array that contains strings 
+     * that represents each list item. Also, it can have objects of type 
+     * 'ListItem'.
+     * @param boolean $escHtmlEntities [as of 1.0.3] If set to TRUE, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is TRUE.
      * @since 1.0
      */
     public function __construct($arrOfItems = [], $escHtmlEntities = true) {
