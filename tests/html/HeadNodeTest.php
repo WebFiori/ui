@@ -285,6 +285,15 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
         return $node;
     }
+    public function testAddJs03() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js3?', ['async','ok'=>'yes'], false));
+        $this->assertEquals('<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<script type="text/javascript" src="https://example.com/js3" async ok="yes"></script>'
+                . '</head>',$node->toHTML());
+    }
     public function testAddJs02() {
         $node = new HeadNode();
         $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], false));
@@ -355,6 +364,22 @@ class HeadNodeTest extends TestCase{
     }
     /**
      * @test
+     * @depends testAddCss00
+     */
+    public function testAddCss02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1', [
+            'reloaded','async'=>'false','data-action'
+        ], false));
+        $this->assertEquals(''
+                . '<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<link rel="stylesheet" href="https://example.com/css1" reloaded async="false" data-action>'
+                . '</head>',$node->toHTML());
+    }
+    /**
+     * @test
      */
     public function testAddCcc02() {
         $node = new HeadNode();
@@ -388,7 +413,14 @@ class HeadNodeTest extends TestCase{
      * @test
      */
     public function testAddLink00() {
-        $this->assertTrue(true);
+        $node = new HeadNode();
+        $node->addLink('extra', 'https://example.com', ['async','data-access'=>'remote','hello']);
+        $this->assertEquals(''
+                . '<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<link rel="extra" href="https://example.com" async data-access="remote" hello>'
+                . '</head>',$node->toHTML());
     }
     /**
      * @test
@@ -578,5 +610,20 @@ class HeadNodeTest extends TestCase{
         $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
         $this->assertEquals('En',$node->getAttributeValue('hreflang'));
         $this->assertEquals('alternate',$node->getAttributeValue('rel'));
+    }
+    /**
+     * @test
+     */
+    public function testAddAlternate01() {
+        $node = new HeadNode();
+        $node->addAlternate('https://example.com/en', 'en', [
+            'async','data-x'=>'o-my-god'
+        ]);
+        $this->assertEquals(''
+                . '<head>'
+                . '<title>Default</title>'
+                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                . '<link rel="alternate" hreflang="en" href="https://example.com/en" async data-x="o-my-god">'
+                . '</head>',$node->toHTML());
     }
 }
