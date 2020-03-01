@@ -53,7 +53,7 @@ The output of this code is HTML 5 document. The structure of the document will b
 </html>
 ```
 ## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html">here</a> The following code shows a code which is used to create a basic login form.
+To add more elements to the body of the document, the class <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html">here</a>. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use phpStructs\html\HTMLDoc;
