@@ -25,7 +25,7 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 The library support all versions starting from version 5.6 up to version 7.4.
 
 ## Download
-The latest release of the library is <a href="https://github.com/usernane/phpStructs/releases/tag/v1.8.6">v1.8.6<a>. You can download it from the <a href="https://github.com/usernane/phpStructs/releases">Releases</a> page of the repo.
+The latest release of the library is <a href="https://github.com/usernane/phpStructs/releases/tag/v1.8.9">v1.8.9<a>. You can download it from the <a href="https://github.com/usernane/phpStructs/releases">Releases</a> page of the repo.
   
 ## Usage
 The very basic use case is to have HTML document with some text in its body. The class <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html/HTMLDoc">HTMLDoc</a> represent HTML 5 document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
