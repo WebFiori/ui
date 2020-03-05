@@ -1538,7 +1538,7 @@ class HTMLNode implements Countable, Iterator{
                     $retVal .= ' '.$attr;
                 }
                 else{
-                    $retVal .= ' '.$attr.'="'.$val.'"';
+                    $retVal .= ' '.$attr.'="'. str_replace('"', '\"', $val).'"';
                 }
             }
             $retVal .= '>';
