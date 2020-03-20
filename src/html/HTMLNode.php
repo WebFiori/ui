@@ -2230,7 +2230,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>Must not start with a number.</li>
      * <li>Must not start with '-'.</li>
      * <li>Can only have the following characters in its name: [A-Z], [a-z], 
-     * [0-9] and '='.</li>
+     * [0-9], ':', '@' and '-'.</li>
      * <ul>
      * @since 1.7.4
      */
