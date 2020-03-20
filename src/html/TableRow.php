@@ -23,29 +23,16 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\TableCell;
-use phpStructs\html\HTMLNode;
+
 /**
  * A class that represents &lt;tr&gt; node.
  *
  * @author Ibrahim
  * @version 1.0.1
  */
-class TableRow extends HTMLNode{
+class TableRow extends HTMLNode {
     public function __construct() {
         parent::__construct('tr');
-    }
-    /**
-     * Adds new child node to the row.
-     * The node will be added only if its an instance of the class 
-     * 'TableCell'.
-     * @param TableCell $node New table cell.
-     * @since 1.0
-     */
-    public function addChild($node) {
-        if($node instanceof TableCell){
-            parent::addChild($node);
-        }
     }
     /**
      * Adds new cell to the row.
@@ -63,19 +50,31 @@ class TableRow extends HTMLNode{
      * method is a string.
      * @since 1.0
      */
-    public function addCell($cellText,$type='td',$escEntities=false,$attrs=[]) {
-        if($cellText instanceof TableCell){
+    public function addCell($cellText,$type = 'td',$escEntities = false,$attrs = []) {
+        if ($cellText instanceof TableCell) {
             $this->addChild($cellText);
-        }
-        else{
+        } else {
             $cell = new TableCell($type);
             $cell->addTextNode($cellText,$escEntities);
-            if(gettype($attrs) == 'array'){
-                foreach ($attrs as $a=>$v){
+
+            if (gettype($attrs) == 'array') {
+                foreach ($attrs as $a => $v) {
                     $cell->setAttribute($a, $v);
                 }
             }
             $this->addChild($cell);
+        }
+    }
+    /**
+     * Adds new child node to the row.
+     * The node will be added only if its an instance of the class 
+     * 'TableCell'.
+     * @param TableCell $node New table cell.
+     * @since 1.0
+     */
+    public function addChild($node) {
+        if ($node instanceof TableCell) {
+            parent::addChild($node);
         }
     }
     /**

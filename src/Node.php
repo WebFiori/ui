@@ -1,24 +1,25 @@
 <?php
 namespace phpStructs;
+
 /**
  * A singly linked node that can be used to construct different data structures.
  * It is somehow the core class of this library.
  * @author Ibrahim
  * @version 1.1
  */
-class Node{
-    /**
-     * The next node.
-     * @var Node
-     * @since 1.0 
-     */
-    private $next;
+class Node {
     /**
      * The data that the node is holding.
      * @var mixed
      * @since 1.0 
      */
     private $data;
+    /**
+     * The next node.
+     * @var Node
+     * @since 1.0 
+     */
+    private $next;
     /**
      * Constructs a new node with specific data and next node.
      * Note that the method will only accept references.
@@ -28,7 +29,7 @@ class Node{
      * null.
      * @since 1.0
      */
-    public function __construct(&$data,&$next=null) {
+    public function __construct(&$data,&$next = null) {
         $this->setData($data);
         $this->setNext($next);
     }
@@ -37,7 +38,7 @@ class Node{
      * @return mixed The data that is stored in the node.
      * @since 1.0
      */
-    public function &data(){
+    public function &data() {
         return $this->data;
     }
     /**
@@ -46,7 +47,7 @@ class Node{
      * an instance of Node is returned.
      * @since 1.0
      */
-    public function &next(){
+    public function &next() {
         return $this->next;
     }
     /**
@@ -55,7 +56,7 @@ class Node{
      * @param mixed $data A reference to the data that the node will hold.
      * @since 1.0
      */
-    public function setData(&$data){
+    public function setData(&$data) {
         $this->data = $data;
     }
     /**
@@ -66,12 +67,13 @@ class Node{
      * it will be not set.
      * @since 1.0
      */
-    public function setNext(&$next){
-        if($next instanceof Node){
+    public function setNext(&$next) {
+        if ($next instanceof Node) {
             $this->next = $next;
-        }
-        else if($next == null){
-            $this->next = null;
+        } else {
+            if ($next == null) {
+                $this->next = null;
+            }
         }
     }
 }

@@ -23,35 +23,23 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\HTMLNode;
+
 /**
  * A class that represents &lt;label&gt; tag.
  *
  * @author Ibrahim
  * @version 1.0.1
  */
-class Label extends HTMLNode{
+class Label extends HTMLNode {
     /**
      * Creates a new label node with specific text on it.
      * @param string $text The text that will be displayed by the label. 
      * Default is empty string.
      * @since 1.0
      */
-    public function __construct($text='') {
+    public function __construct($text = '') {
         parent::__construct('label');
         parent::addChild(self::createTextNode($text,false));
-    }
-    /**
-     * Sets the text that will be displayed by the label.
-     * @param string $text The text that will be displayed by the label.
-     * @param boolean $escEntities If set to TRUE, the method will 
-     * replace the characters '&lt;', '&gt;' and 
-     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is TRUE.
-     * @since 1.0
-     */
-    public function setText($text,$escEntities=true) {
-        $this->children()->get(0)->setText($text,$escEntities);
     }
     /**
      * Sets the value of the attribute 'for'.
@@ -62,15 +50,27 @@ class Label extends HTMLNode{
      * @since 1.0.1
      */
     public function setFor($elIdOrInput) {
-        if($elIdOrInput instanceof Input){
+        if ($elIdOrInput instanceof Input) {
             $id = $elIdOrInput->getAttributeValue('id');
-            if($id !== null){
+
+            if ($id !== null) {
                 $this->setAttribute('for', $id);
             }
-        }
-        else{
+        } else {
             $trimmed = trim($elIdOrInput);
             $this->setAttribute('for', $trimmed);
         }
+    }
+    /**
+     * Sets the text that will be displayed by the label.
+     * @param string $text The text that will be displayed by the label.
+     * @param boolean $escEntities If set to TRUE, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is TRUE.
+     * @since 1.0
+     */
+    public function setText($text,$escEntities = true) {
+        $this->children()->get(0)->setText($text,$escEntities);
     }
 }

@@ -23,39 +23,40 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\tests;
+
 use phpStructs\Comparable;
 /**
  * An object for testing some of data structures functionality.
  *
  * @author Eng.Ibrahim
  */
-class AnyObject implements Comparable{
-    private $objNum;
+class AnyObject implements Comparable {
     private $objName;
+    private $objNum;
     public function __construct($objNum,$objName) {
         $this->objNum = $objNum;
         $this->objName = $objName;
     }
-    public function getObjNum() {
-        return $this->objNum;
+    public function __toString() {
+        return 'Name: \''.$this->objName.'\', Number: \''.$this->objNum.'\'.';
+    }
+    public function compare($other) {
+        if ($other instanceof AnyObject) {
+            if ($this->objNum > $other->objNum) {
+                return 1;
+            } else {
+                if ($this->objNum < $other->objNum) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
     }
     public function getObjName() {
         return $this->objName;
     }
-    public function compare($other) {
-        if($other instanceof AnyObject){
-            if($this->objNum > $other->objNum){
-                return 1;
-            }
-            else if($this->objNum < $other->objNum){
-                return -1;
-            }
-            else{
-                return 0;
-            }
-        }
-    }
-    public function __toString() {
-        return 'Name: \''.$this->objName.'\', Number: \''.$this->objNum.'\'.';
+    public function getObjNum() {
+        return $this->objNum;
     }
 }

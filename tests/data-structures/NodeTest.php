@@ -23,22 +23,23 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\tests\dataStructures;
-use PHPUnit\Framework\TestCase;
+
 use phpStructs\Node;
 use phpStructs\tests\AnyObject;
+use PHPUnit\Framework\TestCase;
 /**
  * A test class for the class 'Node'
  *
  * @author Eng.Ibrahim
  */
-class NodeTest extends TestCase{
+class NodeTest extends TestCase {
     /**
      * Creates new node with only one data item.
      * The aim of this test is to check if next node is null or not. Expected 
      * result is that it should be null.
      * @test
      */
-    public function test_01(){
+    public function test_01() {
         $str = 'testing';
         $node = new Node($str);
         $this->assertNull($node->next());
@@ -49,7 +50,7 @@ class NodeTest extends TestCase{
      * the same as added data (same reference and type).
      * @test
      */
-    public function test_02(){
+    public function test_02() {
         $str = 'testing';
         $node = new Node($str);
         $this->assertTrue($node->data() === $str);
@@ -60,7 +61,7 @@ class NodeTest extends TestCase{
      * 'Node' to be linked with it. 
      * @test
      */
-    public function test_03(){
+    public function test_03() {
         $str = 'testing';
         $anyObj = new AnyObject(0, 'Hello');
         $node = new Node($str,$anyObj);
@@ -72,12 +73,13 @@ class NodeTest extends TestCase{
      * the constructor. 
      * @test
      */
-    public function test_04(){
+    public function test_04() {
         $str00 = 'testing';
         $str01 = 'more testing';
         $otherNode = new Node($str01);
         $node00 = new Node($str00, $otherNode);
         $this->assertTrue($node00->next() instanceof Node);
+
         return $node00;
     }
     /**
@@ -86,7 +88,7 @@ class NodeTest extends TestCase{
      * or not (same value and reference). 
      * @test
      */
-    public function test_05(){
+    public function test_05() {
         $str00 = 'testing';
         $str01 = 'more testing';
         $otherNode = new Node($str01);
@@ -100,7 +102,7 @@ class NodeTest extends TestCase{
      * is used in this test. 
      * @test
      */
-    public function test_07(){
+    public function test_07() {
         $str00 = 'testing';
         $str01 = 'more testing';
         $otherNode = new Node($str01);
@@ -115,7 +117,7 @@ class NodeTest extends TestCase{
      * is used in this test.
      * @test
      */
-    public function test_08(){
+    public function test_08() {
         $null = null;
         $str = 'testing';
         $node = new Node($null);
@@ -128,7 +130,7 @@ class NodeTest extends TestCase{
      * not. 
      * @test
      */
-    public function test_09(){
+    public function test_09() {
         $str00 = 'testing';
         $str01 = 'more testing';
         $otherNode = new Node($str01);

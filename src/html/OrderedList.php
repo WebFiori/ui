@@ -30,7 +30,7 @@ namespace phpStructs\html;
  * @author Ibrahim
  * @version 1.0.1
  */
-class OrderedList extends HTMLNode{
+class OrderedList extends HTMLNode {
     /**
      * Creates new instance of the class.
      * @param array $arrOfItems An array that contains strings 
@@ -47,6 +47,16 @@ class OrderedList extends HTMLNode{
         $this->addListItems($arrOfItems, $escHtmlEntities);
     }
     /**
+     * Adds new list item or a sub-list.
+     * @param ListItem $node The node that will be added.
+     * @since 1.0
+     */
+    public function addChild($node) {
+        if ($node instanceof ListItem) {
+            parent::addChild($node);
+        }
+    }
+    /**
      * Adds new item to the list.
      * @param string|ListItem $listItemText The text that will be displayed by the 
      * list item. Also, it can be an object of type 'ListItem'.
@@ -57,11 +67,10 @@ class OrderedList extends HTMLNode{
      * Default is true.
      * @since 1.0
      */
-    public function addListItem($listItemText,$escHtmlEntities=true) {
-        if($listItemText instanceof ListItem){
+    public function addListItem($listItemText,$escHtmlEntities = true) {
+        if ($listItemText instanceof ListItem) {
             $this->addChild($listItemText);
-        }
-        else{
+        } else {
             $li = new ListItem();
             $li->addTextNode($listItemText,$escHtmlEntities);
             $this->addChild($li);
@@ -78,11 +87,24 @@ class OrderedList extends HTMLNode{
      * in the given text. Default is TRUE.
      * @since 1.0.1
      */
-    public function addListItems($arrOfItems,$escHtmlEntities=true) {
-        if(gettype($arrOfItems) == 'array'){
-            foreach ($arrOfItems as $listItem){
+    public function addListItems($arrOfItems,$escHtmlEntities = true) {
+        if (gettype($arrOfItems) == 'array') {
+            foreach ($arrOfItems as $listItem) {
                 $this->addListItem($listItem,$escHtmlEntities);
             }
+        }
+    }
+    /**
+     * Adds a sublist to the main list.
+     * @param UnorderedList|OrderedList $ul An object of type UnorderedList or 
+     * an object of type OrderedList.
+     * @since 1.0
+     */
+    public function addSubList($ul) {
+        if ($ul instanceof UnorderedList || $ul instanceof OrderedList) {
+            $li = new ListItem();
+            $li->addList($ul);
+            $this->addChild($li);
         }
     }
     /**
@@ -97,28 +119,5 @@ class OrderedList extends HTMLNode{
      */
     public function getChild($index) {
         return parent::getChild($index);
-    }
-    /**
-     * Adds a sublist to the main list.
-     * @param UnorderedList|OrderedList $ul An object of type UnorderedList or 
-     * an object of type OrderedList.
-     * @since 1.0
-     */
-    public function addSubList($ul){
-        if($ul instanceof UnorderedList || $ul instanceof OrderedList){
-            $li = new ListItem();
-            $li->addList($ul);
-            $this->addChild($li);
-        }
-    }
-    /**
-     * Adds new list item or a sub-list.
-     * @param ListItem $node The node that will be added.
-     * @since 1.0
-     */
-    public function addChild($node) {
-        if($node instanceof ListItem){
-            parent::addChild($node);
-        }
     }
 }
