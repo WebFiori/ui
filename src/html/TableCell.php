@@ -38,9 +38,12 @@ class TableCell extends HTMLNode {
      * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
      * in the body of the table and 'th' if the cell is in the header. If 
      * none of the two is given, 'td' will be used by default.
+     * @param string|HTMLNode $cellBody An optional item that can be added to 
+     * the body of the cell. Note that if it is a text, HTML entities will be 
+     * escaped.
      * @since 1.0
      */
-    public function __construct($cellType = 'td') {
+    public function __construct($cellType = 'td',$cellBody = null) {
         parent::__construct();
         $cType = strtolower($cellType);
 
@@ -48,6 +51,14 @@ class TableCell extends HTMLNode {
             $this->setNodeName($cType);
         } else {
             $this->setNodeName('td');
+        }
+
+        if ($cellBody instanceof HTMLNode) {
+            $this->addChild($cellBody);
+        } else {
+            if (gettype($cellBody) == 'string') {
+                $this->addTextNode($cellType);
+            }
         }
     }
     /**
