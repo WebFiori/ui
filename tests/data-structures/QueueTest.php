@@ -1,14 +1,15 @@
 <?php
 namespace phpStructs\tests\dataStructures;
-use PHPUnit\Framework\TestCase;
-use phpStructs\tests\AnyObject;
+
 use phpStructs\Queue;
+use phpStructs\tests\AnyObject;
+use PHPUnit\Framework\TestCase;
 /**
  * Description of QueueTest
  *
  * @author Ibrahim
  */
-class QueueTest extends TestCase{
+class QueueTest extends TestCase {
     /**
      * @test
      */
@@ -61,7 +62,7 @@ class QueueTest extends TestCase{
         $this->assertEquals(1,$queue->size());
         $this->assertEquals(1,count($queue));
         $this->assertEquals(-1,$queue->max());
-        
+
         $this->assertTrue($queue->peek() === $el01);
         $this->assertEquals(1,$queue->size());
         $el01Ref = $queue->dequeue();
@@ -103,7 +104,8 @@ class QueueTest extends TestCase{
         $this->assertFalse($queue->enqueue(null));
         $this->assertEquals(0,$queue->size());
         $this->assertEquals(10,$queue->max());
-        for($x = 0 ; $x < $queue->max() ; $x++){
+
+        for ($x = 0 ; $x < $queue->max() ; $x++) {
             $this->assertTrue($queue->enqueue('Element #'.$x));
         }
         $this->assertEquals(10,$queue->size());
@@ -115,7 +117,8 @@ class QueueTest extends TestCase{
         $this->assertTrue($queue->enqueue('Element #10'));
         $this->assertEquals(10,$queue->size());
         $elNum = 1;
-        while ($el = $queue->dequeue()){
+
+        while ($el = $queue->dequeue()) {
             $this->assertEquals('Element #'.$elNum,$el);
             $elNum++;
         }
@@ -131,7 +134,8 @@ class QueueTest extends TestCase{
         $this->assertFalse($queue->enqueue(null));
         $this->assertEquals(0,$queue->size());
         $this->assertEquals(10,$queue->max());
-        for($x = 0 ; $x < $queue->max() ; $x++){
+
+        for ($x = 0 ; $x < $queue->max() ; $x++) {
             $this->assertTrue($queue->enqueue(new AnyObject($x, 'Object #'.$x)));
         }
         $this->assertEquals(10,$queue->size());
@@ -144,11 +148,11 @@ class QueueTest extends TestCase{
         $this->assertTrue($queue->enqueue('Element #10'));
         $this->assertEquals(10,$queue->size());
         $elNum = 1;
-        while ($el = $queue->dequeue()){
-            if(gettype($el) == 'string'){
+
+        while ($el = $queue->dequeue()) {
+            if (gettype($el) == 'string') {
                 $this->assertEquals('Element #10',$el);
-            }
-            else{
+            } else {
                 $this->assertEquals('Object #'.$elNum,$el->getObjName());
             }
             $elNum++;
@@ -198,72 +202,72 @@ class QueueTest extends TestCase{
     public function testToString() {
         $queue = new Queue(5);
         $this->assertEquals("Queue[\n"
-                . "]"
-                . "",$queue.'');
+                ."]"
+                ."",$queue.'');
         $queue->enqueue('Hello');
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Hello(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>Hello(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->enqueue(new \Exception());
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Hello(string),\n"
-                . "    [1]=>(object)\n"
-                . "]"
-                . "",$queue.'');
-        $queue->enqueue(array());
+                ."    [0]=>Hello(string),\n"
+                ."    [1]=>(object)\n"
+                ."]"
+                ."",$queue.'');
+        $queue->enqueue([]);
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Hello(string),\n"
-                . "    [1]=>(object),\n"
-                . "    [2]=>(array)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>Hello(string),\n"
+                ."    [1]=>(object),\n"
+                ."    [2]=>(array)\n"
+                ."]"
+                ."",$queue.'');
         $queue->enqueue(88.08);
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Hello(string),\n"
-                . "    [1]=>(object),\n"
-                . "    [2]=>(array),\n"
-                . "    [3]=>88.08(double)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>Hello(string),\n"
+                ."    [1]=>(object),\n"
+                ."    [2]=>(array),\n"
+                ."    [3]=>88.08(double)\n"
+                ."]"
+                ."",$queue.'');
         $queue->enqueue('Another String.');
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Hello(string),\n"
-                . "    [1]=>(object),\n"
-                . "    [2]=>(array),\n"
-                . "    [3]=>88.08(double),\n"
-                . "    [4]=>Another String.(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>Hello(string),\n"
+                ."    [1]=>(object),\n"
+                ."    [2]=>(array),\n"
+                ."    [3]=>88.08(double),\n"
+                ."    [4]=>Another String.(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->dequeue();
         $this->assertEquals("Queue[\n"
-                . "    [0]=>(object),\n"
-                . "    [1]=>(array),\n"
-                . "    [2]=>88.08(double),\n"
-                . "    [3]=>Another String.(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>(object),\n"
+                ."    [1]=>(array),\n"
+                ."    [2]=>88.08(double),\n"
+                ."    [3]=>Another String.(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->dequeue();
         $this->assertEquals("Queue[\n"
-                . "    [0]=>(array),\n"
-                . "    [1]=>88.08(double),\n"
-                . "    [2]=>Another String.(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>(array),\n"
+                ."    [1]=>88.08(double),\n"
+                ."    [2]=>Another String.(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->dequeue();
         $this->assertEquals("Queue[\n"
-                . "    [0]=>88.08(double),\n"
-                . "    [1]=>Another String.(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>88.08(double),\n"
+                ."    [1]=>Another String.(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->dequeue();
         $this->assertEquals("Queue[\n"
-                . "    [0]=>Another String.(string)\n"
-                . "]"
-                . "",$queue.'');
+                ."    [0]=>Another String.(string)\n"
+                ."]"
+                ."",$queue.'');
         $queue->dequeue();
         $this->assertEquals("Queue[\n"
-                . "]"
-                . "",$queue.'');
+                ."]"
+                ."",$queue.'');
     }
 }

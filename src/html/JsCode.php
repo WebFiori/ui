@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\HTMLNode;
+
 /**
  * A node that represents in line JavaScript code that can be inserted on a 
  * head node.
@@ -31,7 +31,7 @@ use phpStructs\html\HTMLNode;
  * @author Ibrahim
  * @version 1.0
  */
-class JsCode extends HTMLNode{
+class JsCode extends HTMLNode {
     /**
      * Creates a new instance of the class.
      */
@@ -40,20 +40,19 @@ class JsCode extends HTMLNode{
         parent::setAttribute('type', 'text/javascript');
     }
     /**
-     * Adds new line of JS code into the body.
-     * @param string $jsCode JavaScript code.
-     * @since 1.0
-     */
-    public function addCode($jsCode) {
-        parent::addChild(self::createTextNode($jsCode,FALSE));
-    }
-    /**
      * A method that does nothing.
      * @param type $node
      * @since 1.0
      */
     public function addChild($node) {
-        
+    }
+    /**
+     * Adds new line of JS code into the body.
+     * @param string $jsCode JavaScript code.
+     * @since 1.0
+     */
+    public function addCode($jsCode) {
+        parent::addChild(self::createTextNode($jsCode,false));
     }
     /**
      * Sets a value for an attribute.
@@ -64,8 +63,8 @@ class JsCode extends HTMLNode{
      * @param string $val The value of the attribute. Default is empty string.
      * @since 1.0
      */
-    public function setAttribute($name,$val='') {
-        if($name != 'type'){
+    public function setAttribute($name,$val = '') {
+        if ($name != 'type') {
             parent::setAttribute($name, $val);
         }
     }
@@ -74,8 +73,7 @@ class JsCode extends HTMLNode{
      * @since 1.0
      * @param type $val
      */
-    public function setClassName($val,$val2=true) {
-        
+    public function setClassName($val,$val2 = true) {
     }
     /**
      * * A method that does nothing.
@@ -83,7 +81,6 @@ class JsCode extends HTMLNode{
      * @param type $val
      */
     public function setName($val) {
-        
     }
     /**
      * A method that does nothing.
@@ -91,7 +88,6 @@ class JsCode extends HTMLNode{
      * @param type $val
      */
     public function setTabIndex($val) {
-        
     }
     /**
      * A method that does nothing.
@@ -99,8 +95,7 @@ class JsCode extends HTMLNode{
      * @param type $text
      * @param type $esc Description
      */
-    public function setText($text,$esc=true) {
-        
+    public function setText($text,$esc = true) {
     }
     /**
      * A method that does nothing.
@@ -108,7 +103,6 @@ class JsCode extends HTMLNode{
      * @param type $val
      */
     public function setTitle($val) {
-        
     }
     /**
      * A method that does nothing.
@@ -116,7 +110,5 @@ class JsCode extends HTMLNode{
      * @param type $val
      */
     public function setWritingDir($val) {
-        
     }
-    
 }

@@ -1,56 +1,16 @@
 <?php
 namespace phpStructs\tests\html;
+
 namespace phpStructs\tests\html;
-use PHPUnit\Framework\TestCase;
-use phpStructs\html\HTMLNode;
+
 use phpStructs\html\Input;
+use PHPUnit\Framework\TestCase;
 /**
  * Description of InputTest
  *
  * @author Eng.Ibrahim
  */
-class InputTest extends TestCase{
-    /**
-     * 
-     * @test
-     */
-    public function testConstructor00() {
-        $inputEl = new Input();
-        $this->assertEquals('input',$inputEl->getNodeName());
-        $this->assertEquals('text',$inputEl->getType());
-        $this->assertFalse($inputEl->setNodeName(''));
-        return $inputEl;
-    }
-    /**
-     * 
-     * @test
-     */
-    public function testConstructor01() {
-        $inputEl = new Input('textarea');
-        $this->assertEquals('textarea',$inputEl->getNodeName());
-        $this->assertNull($inputEl->getType());
-        return $inputEl;
-    }
-    /**
-     * 
-     * @test
-     */
-    public function testConstructor02() {
-        $inputEl = new Input('select');
-        $this->assertEquals('select',$inputEl->getNodeName());
-        $this->assertNull($inputEl->getType());
-        return $inputEl;
-    }
-    /**
-     * 
-     * @test
-     */
-    public function testConstructor03() {
-        $inputEl = new Input('ghfhfhg');
-        $this->assertEquals('input',$inputEl->getNodeName());
-        $this->assertEquals('text',$inputEl->getType());
-        return $inputEl;
-    }
+class InputTest extends TestCase {
     /**
      * @test
      * @depends testConstructor00
@@ -101,61 +61,106 @@ class InputTest extends TestCase{
      */
     public function testAddOptions00() {
         $input = new Input('select');
-        $input->addOptions(array('Option 0','Option 1', 'Option 2'));
+        $input->addOptions(['Option 0','Option 1', 'Option 2']);
         $this->assertEquals('<select>'
-                . '<option value="0">Option 0</option>'
-                . '<option value="1">Option 1</option>'
-                . '<option value="2">Option 2</option>'
-                . '</select>',$input->toHTML());
+                .'<option value="0">Option 0</option>'
+                .'<option value="1">Option 1</option>'
+                .'<option value="2">Option 2</option>'
+                .'</select>',$input->toHTML());
     }
     /**
      * @test
      */
     public function testAddOptions01() {
         $input = new Input('select');
-        $input->addOptions(array('Option 0','Option 1', 'Option 2','a-00'=>array(
-            'label'=>'Hello World',
-            'attributes'=>array(
-                'selected'=>''
-            )
-        ), 'nice'=>'Nice'));
+        $input->addOptions(['Option 0','Option 1', 'Option 2','a-00' => [
+            'label' => 'Hello World',
+            'attributes' => [
+                'selected' => ''
+            ]
+        ], 'nice' => 'Nice']);
         $this->assertEquals('<select>'
-                . '<option value="0">Option 0</option>'
-                . '<option value="1">Option 1</option>'
-                . '<option value="2">Option 2</option>'
-                . '<option value="a-00" selected="">Hello World</option>'
-                . '<option value="nice">Nice</option>'
-                . '</select>',$input->toHTML());
+                .'<option value="0">Option 0</option>'
+                .'<option value="1">Option 1</option>'
+                .'<option value="2">Option 2</option>'
+                .'<option value="a-00" selected="">Hello World</option>'
+                .'<option value="nice">Nice</option>'
+                .'</select>',$input->toHTML());
     }
     /**
      * @test
      */
     public function testAddOptionsGroup00() {
         $input = new Input('select');
-        $optionsGroup = array(
-            'label'=>'Options Group 00',
-            'options'=>array(
-                'Option 0','Option 1', 'Option 2','a-00'=>array(
-                    'label'=>'Hello World',
-                    'attributes'=>array(
-                        'selected'=>''
-                    )
-                ), 'nice'=>'Nice'
-            ),
-            'attributes'=>array(
-                'id'=>'my-options-group'
-            )
-        );
+        $optionsGroup = [
+            'label' => 'Options Group 00',
+            'options' => [
+                'Option 0','Option 1', 'Option 2','a-00' => [
+                    'label' => 'Hello World',
+                    'attributes' => [
+                        'selected' => ''
+                    ]
+                ], 'nice' => 'Nice'
+            ],
+            'attributes' => [
+                'id' => 'my-options-group'
+            ]
+        ];
         $input->addOptionsGroup($optionsGroup);
         $this->assertEquals('<select>'
-                . '<optgroup label="Options Group 00" id="my-options-group">'
-                . '<option value="0">Option 0</option>'
-                . '<option value="1">Option 1</option>'
-                . '<option value="2">Option 2</option>'
-                . '<option value="a-00" selected="">Hello World</option>'
-                . '<option value="nice">Nice</option>'
-                . '</optgroup>'
-                . '</select>',$input->toHTML());
+                .'<optgroup label="Options Group 00" id="my-options-group">'
+                .'<option value="0">Option 0</option>'
+                .'<option value="1">Option 1</option>'
+                .'<option value="2">Option 2</option>'
+                .'<option value="a-00" selected="">Hello World</option>'
+                .'<option value="nice">Nice</option>'
+                .'</optgroup>'
+                .'</select>',$input->toHTML());
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testConstructor00() {
+        $inputEl = new Input();
+        $this->assertEquals('input',$inputEl->getNodeName());
+        $this->assertEquals('text',$inputEl->getType());
+        $this->assertFalse($inputEl->setNodeName(''));
+
+        return $inputEl;
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testConstructor01() {
+        $inputEl = new Input('textarea');
+        $this->assertEquals('textarea',$inputEl->getNodeName());
+        $this->assertNull($inputEl->getType());
+
+        return $inputEl;
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testConstructor02() {
+        $inputEl = new Input('select');
+        $this->assertEquals('select',$inputEl->getNodeName());
+        $this->assertNull($inputEl->getType());
+
+        return $inputEl;
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testConstructor03() {
+        $inputEl = new Input('ghfhfhg');
+        $this->assertEquals('input',$inputEl->getNodeName());
+        $this->assertEquals('text',$inputEl->getType());
+
+        return $inputEl;
     }
     /**
      * @test
@@ -180,6 +185,7 @@ class InputTest extends TestCase{
         $input = new Input('textarea');
         $this->assertTrue($input->setPlaceholder('Enter your suggestions here.'));
         $this->assertEquals('<textarea placeholder="Enter your suggestions here."></textarea>',$input->toHTML());
+
         return $input;
     }
     /**

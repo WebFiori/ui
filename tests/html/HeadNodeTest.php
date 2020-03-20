@@ -1,28 +1,15 @@
 <?php
 namespace phpStructs\tests\html;
-use PHPUnit\Framework\TestCase;
+
 use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
+use PHPUnit\Framework\TestCase;
 /**
  * Description of HeadNodeTest
  *
  * @author Eng.Ibrahim
  */
-class HeadNodeTest extends TestCase{
-    /**
-     * @test
-     */
-    public function testOrderOfChildren00() {
-        $node = new HeadNode();
-        $node->setTitle('Hello World!');
-        $node->setCharSet('utf-8');
-        $node->setCanonical('http://example.com');
-        $node->setBase('http://example.com');
-        $this->assertSame($node->getBaseNode(),$node->getChild(0));
-        $this->assertSame($node->getTitleNode(),$node->getChild(1));
-        $this->assertSame($node->getCharsetNode(),$node->getChild(2));
-        $this->assertSame($node->getCanonicalNode(),$node->getChild(3));
-    }
+class HeadNodeTest extends TestCase {
     /**
      * @test
      */
@@ -66,15 +53,78 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->addLink(
                 '  stylesheet   ', 
                 '  https://example.com/my-css.css',
-                array(
-                    'rel'=>'Hello',
-                    'href'=>'NA',
-                    'async'=>'true'
-                )));
+                [
+                    'rel' => 'Hello',
+                    'href' => 'NA',
+                    'async' => 'true'
+                ]));
         $css = $node->children()->get($node->childrenCount() - 1);
         $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
         $this->assertEquals('https://example.com/my-css.css',$css->getAttributeValue('href'));
         $this->assertEquals('true',$css->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     * @depends testAddMeta02
+     * @param HeadNode $headNode D
+     */
+    public function getMetaTest00($headNode) {
+        $metas = $headNode->getMetaNodes();
+        $this->assertEquals(2,count($metas));
+        $meta00 = $metas->get(0);
+        $this->assertEquals('viewport',$meta00->getAttributeValue('name'));
+        $meta01 = $metas->get(1);
+        $this->assertEquals('description',$meta01->getAttributeValue('name'));
+    }
+    /**
+     * @test
+     */
+    public function testAddAlternate00() {
+        $headNode = new HeadNode();
+        $this->assertFalse($headNode->addAlternate('    ', '    '));
+        $this->assertFalse($headNode->addAlternate('   https://example.com/my-page?lang=ar', '    '));
+        $this->assertFalse($headNode->addAlternate('  ', '  AR  '));
+        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR'));
+        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',['id' => 'en-alternate']));
+        $node = $headNode->getChildByID('en-alternate');
+        $this->assertTrue($node instanceof HTMLNode);
+        $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
+        $this->assertEquals('En',$node->getAttributeValue('hreflang'));
+        $this->assertEquals('alternate',$node->getAttributeValue('rel'));
+    }
+    /**
+     * @test
+     */
+    public function testAddAlternate01() {
+        $node = new HeadNode();
+        $node->addAlternate('https://example.com/en', 'en', [
+            'async','data-x' => 'o-my-god'
+        ]);
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="alternate" hreflang="en" href="https://example.com/en" async data-x="o-my-god">'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddCcc02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], false));
+        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], false));
+        $this->assertFalse($node->addCSS('?hello=true', [], false));
+        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], false));
+        $this->assertTrue($node->addCSS('https://example.com/css3?', ['async' => ''], false));
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="stylesheet" href="https://example.com/css1?hello=true">'
+                .'<link rel="stylesheet" href="https://example.com/css2?hello=true">'
+                .'<link rel="stylesheet" href="https://example.com/css3" async="">'
+                .'</head>',$node->toHTML());
     }
     /**
      * @test
@@ -158,6 +208,175 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
+    public function testAddCss00() {
+        $node = new HeadNode();
+        $this->assertEquals(0,$node->getCSSNodes()->size());
+        $this->assertTrue($node->addCSS('https://example.com/my-css.css'));
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $this->assertFalse($node->addCSS(''));
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $cssNode = new HTMLNode('link');
+        $cssNode->setAttribute('rel', 'stylesheet');
+        $cssNode->setAttribute('href', 'https://somelink.com/my-css.css');
+        $node->addChild($cssNode);
+        $this->assertEquals(2,$node->getCSSNodes()->size());
+        $css = $node->getCSSNodes()->get(0);
+        $node->removeChild($css);
+        $this->assertEquals(1,$node->getCSSNodes()->size());
+        $node->addCSS('https://example2.com/my-css.css', [
+            'rel' => 'xyz',
+            'href' => 'hello world',
+            'async' => ''
+        ]);
+        $list = $node->getCSSNodes();
+        $css = $list->get($list->size() - 1);
+        $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
+        $this->assertEquals('',$css->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     * @depends testAddCss00
+     */
+    public function testAddCss01() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], true));
+        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], true));
+        $this->assertFalse($node->addCSS('?hello=true', [], true));
+        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], true));
+        $this->assertTrue($node->addCSS('https://example.com/css3?', [], true));
+
+        return $node;
+    }
+    /**
+     * @test
+     * @depends testAddCss00
+     */
+    public function testAddCss02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addCSS('https://example.com/css1', [
+            'reloaded','async' => 'false','data-action'
+        ], false));
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="stylesheet" href="https://example.com/css1" reloaded async="false" data-action>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddJs00() {
+        $node = new HeadNode();
+        $this->assertEquals(0,$node->getJSNodes()->size());
+        $this->assertTrue($node->addJs('https://example.com/my-js.js'));
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $this->assertFalse($node->addJs(''));
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $jsNode = new HTMLNode('script');
+        $jsNode->setAttribute('type', 'text/javascript');
+        $jsNode->setAttribute('src', 'https://somelink.com/my-js.js');
+        $node->addChild($jsNode);
+        $this->assertEquals(2,$node->getJSNodes()->size());
+        $js = $node->getJSNodes()->get(0);
+        $node->removeChild($js);
+        $this->assertEquals(1,$node->getJSNodes()->size());
+        $node->addJs('https://example2.com/my-js.js', [
+            'rel' => 'xyz',
+            'href' => 'hello world',
+            'async' => 'true'
+        ]);
+        $list = $node->getJSNodes();
+        $js = $list->get($list->size() - 1);
+        $this->assertEquals('text/javascript',$js->getAttributeValue('type'));
+        $this->assertEquals('true',$js->getAttributeValue('async'));
+    }
+    /**
+     * @test
+     * @depends testAddJs00
+     */
+    public function testAddJs01() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], true));
+        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], true));
+        $this->assertFalse($node->addJs('?hello=true', [], true));
+        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], true));
+        $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
+
+        return $node;
+    }
+    public function testAddJs02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], false));
+        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], false));
+        $this->assertFalse($node->addJs('?hello=true', [], true));
+        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], false));
+        $this->assertTrue($node->addJs('https://example.com/js3?', ['async' => ''], false));
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js1?hello=true"></script>'
+                .'<script type="text/javascript" src="https://example.com/js2?hello=true"></script>'
+                .'<script type="text/javascript" src="https://example.com/js3" async=""></script>'
+                .'</head>',$node->toHTML());
+    }
+    public function testAddJs03() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addJs('https://example.com/js3?', ['async','ok' => 'yes'], false));
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js3" async ok="yes"></script>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddLink00() {
+        $node = new HeadNode();
+        $node->addLink('extra', 'https://example.com', ['async','data-access' => 'remote','hello']);
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="extra" href="https://example.com" async data-access="remote" hello>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddMeta00() {
+        $node = new HeadNode();
+        $this->assertFalse($node->addMeta('', ''));
+        $this->assertEquals(2,$node->childrenCount());
+        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+    }
+    /**
+     * @test
+     */
+    public function testAddMeta01() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+        $this->assertEquals(3,$node->childrenCount());
+        $this->assertFalse($node->addMeta('description', 'Hello'));
+    }
+    /**
+     * @test
+     */
+    public function testAddMeta02() {
+        $node = new HeadNode();
+        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+        $meta = $node->getMeta('description');
+        $this->assertEquals('Page Description.',$meta->getAttributeValue('content'));
+        $this->assertTrue($node->addMeta('description', 'Hello',true));
+        $meta = $node->getMeta('description');
+        $this->assertEquals('Hello',$meta->getAttributeValue('content'));
+
+        return $node;
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $node = new HeadNode();
         $this->assertEquals(2,$node->childrenCount());
@@ -203,12 +422,6 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
-    public function testGetJsNodes00() {
-        $this->assertTrue(true);
-    }
-    /**
-     * @test
-     */
     public function testGetCssNodes00() {
         $node = new HeadNode();
         $this->assertTrue(true);
@@ -216,186 +429,8 @@ class HeadNodeTest extends TestCase{
     /**
      * @test
      */
-    public function testAddMeta00() {
-        $node = new HeadNode();
-        $this->assertFalse($node->addMeta('', ''));
-        $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
-    }
-    /**
-     * @test
-     */
-    public function testAddMeta01() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
-        $this->assertEquals(3,$node->childrenCount());
-        $this->assertFalse($node->addMeta('description', 'Hello'));
-    }
-    /**
-     * @test
-     */
-    public function testAddMeta02() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
-        $meta = $node->getMeta('description');
-        $this->assertEquals('Page Description.',$meta->getAttributeValue('content'));
-        $this->assertTrue($node->addMeta('description', 'Hello',true));
-        $meta = $node->getMeta('description');
-        $this->assertEquals('Hello',$meta->getAttributeValue('content'));
-        return $node;
-    }
-    /**
-     * @test
-     */
-    public function testAddJs00() {
-        $node = new HeadNode();
-        $this->assertEquals(0,$node->getJSNodes()->size());
-        $this->assertTrue($node->addJs('https://example.com/my-js.js'));
-        $this->assertEquals(1,$node->getJSNodes()->size());
-        $this->assertFalse($node->addJs(''));
-        $this->assertEquals(1,$node->getJSNodes()->size());
-        $jsNode = new HTMLNode('script');
-        $jsNode->setAttribute('type', 'text/javascript');
-        $jsNode->setAttribute('src', 'https://somelink.com/my-js.js');
-        $node->addChild($jsNode);
-        $this->assertEquals(2,$node->getJSNodes()->size());
-        $js = $node->getJSNodes()->get(0);
-        $node->removeChild($js);
-        $this->assertEquals(1,$node->getJSNodes()->size());
-        $node->addJs('https://example2.com/my-js.js', array(
-            'rel'=>'xyz',
-            'href'=>'hello world',
-            'async'=>'true'
-        ));
-        $list = $node->getJSNodes();
-        $js = $list->get($list->size() - 1);
-        $this->assertEquals('text/javascript',$js->getAttributeValue('type'));
-        $this->assertEquals('true',$js->getAttributeValue('async'));
-    }
-    /**
-     * @test
-     * @depends testAddJs00
-     */
-    public function testAddJs01() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], true));
-        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], true));
-        $this->assertFalse($node->addJs('?hello=true', [], true));
-        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], true));
-        $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
-        return $node;
-    }
-    public function testAddJs03() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js3?', ['async','ok'=>'yes'], false));
-        $this->assertEquals('<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<script type="text/javascript" src="https://example.com/js3" async ok="yes"></script>'
-                . '</head>',$node->toHTML());
-    }
-    public function testAddJs02() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], false));
-        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], false));
-        $this->assertFalse($node->addJs('?hello=true', [], true));
-        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], false));
-        $this->assertTrue($node->addJs('https://example.com/js3?', ['async'=>''], false));
-        $this->assertEquals('<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<script type="text/javascript" src="https://example.com/js1?hello=true"></script>'
-                . '<script type="text/javascript" src="https://example.com/js2?hello=true"></script>'
-                . '<script type="text/javascript" src="https://example.com/js3" async=""></script>'
-                . '</head>',$node->toHTML());
-    }
-    /**
-     * @test
-     * @depends testAddJs01
-     */
-    public function testHasJs00($node) {
-        $this->assertTrue($node->hasJs('https://example.com/js1'));
-        $this->assertTrue($node->hasJs('https://example.com/js1?something=x'));
-        $this->assertTrue($node->hasJs('https://example.com/js2'));
-        $this->assertTrue($node->hasJs('  https://example.com/js2  '));
-        $this->assertTrue($node->hasJs('https://example.com/js3'));
-        $this->assertFalse($node->hasJs('https://example.com/js4'));
-    }
-    /**
-     * @test
-     */
-    public function testAddCss00() {
-        $node = new HeadNode();
-        $this->assertEquals(0,$node->getCSSNodes()->size());
-        $this->assertTrue($node->addCSS('https://example.com/my-css.css'));
-        $this->assertEquals(1,$node->getCSSNodes()->size());
-        $this->assertFalse($node->addCSS(''));
-        $this->assertEquals(1,$node->getCSSNodes()->size());
-        $cssNode = new HTMLNode('link');
-        $cssNode->setAttribute('rel', 'stylesheet');
-        $cssNode->setAttribute('href', 'https://somelink.com/my-css.css');
-        $node->addChild($cssNode);
-        $this->assertEquals(2,$node->getCSSNodes()->size());
-        $css = $node->getCSSNodes()->get(0);
-        $node->removeChild($css);
-        $this->assertEquals(1,$node->getCSSNodes()->size());
-        $node->addCSS('https://example2.com/my-css.css', array(
-            'rel'=>'xyz',
-            'href'=>'hello world',
-            'async'=>''
-        ));
-        $list = $node->getCSSNodes();
-        $css = $list->get($list->size() - 1);
-        $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
-        $this->assertEquals('',$css->getAttributeValue('async'));
-    }
-    /**
-     * @test
-     * @depends testAddCss00
-     */
-    public function testAddCss01() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], true));
-        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], true));
-        $this->assertFalse($node->addCSS('?hello=true', [], true));
-        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], true));
-        $this->assertTrue($node->addCSS('https://example.com/css3?', [], true));
-        return $node;
-    }
-    /**
-     * @test
-     * @depends testAddCss00
-     */
-    public function testAddCss02() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1', [
-            'reloaded','async'=>'false','data-action'
-        ], false));
-        $this->assertEquals(''
-                . '<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<link rel="stylesheet" href="https://example.com/css1" reloaded async="false" data-action>'
-                . '</head>',$node->toHTML());
-    }
-    /**
-     * @test
-     */
-    public function testAddCcc02() {
-        $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], false));
-        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], false));
-        $this->assertFalse($node->addCSS('?hello=true', [], false));
-        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], false));
-        $this->assertTrue($node->addCSS('https://example.com/css3?', ['async'=>''], false));
-        $this->assertEquals(''
-                . '<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<link rel="stylesheet" href="https://example.com/css1?hello=true">'
-                . '<link rel="stylesheet" href="https://example.com/css2?hello=true">'
-                . '<link rel="stylesheet" href="https://example.com/css3" async="">'
-                . '</head>',$node->toHTML());
+    public function testGetJsNodes00() {
+        $this->assertTrue(true);
     }
     /**
      * @test
@@ -411,16 +446,15 @@ class HeadNodeTest extends TestCase{
     }
     /**
      * @test
+     * @depends testAddJs01
      */
-    public function testAddLink00() {
-        $node = new HeadNode();
-        $node->addLink('extra', 'https://example.com', ['async','data-access'=>'remote','hello']);
-        $this->assertEquals(''
-                . '<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<link rel="extra" href="https://example.com" async data-access="remote" hello>'
-                . '</head>',$node->toHTML());
+    public function testHasJs00($node) {
+        $this->assertTrue($node->hasJs('https://example.com/js1'));
+        $this->assertTrue($node->hasJs('https://example.com/js1?something=x'));
+        $this->assertTrue($node->hasJs('https://example.com/js2'));
+        $this->assertTrue($node->hasJs('  https://example.com/js2  '));
+        $this->assertTrue($node->hasJs('https://example.com/js3'));
+        $this->assertFalse($node->hasJs('https://example.com/js4'));
     }
     /**
      * @test
@@ -463,6 +497,20 @@ class HeadNodeTest extends TestCase{
         $this->assertNull($node->getCharset());
         $this->assertFalse($node->hasMeta('charset'));
         $this->assertEquals(2,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testOrderOfChildren00() {
+        $node = new HeadNode();
+        $node->setTitle('Hello World!');
+        $node->setCharSet('utf-8');
+        $node->setCanonical('http://example.com');
+        $node->setBase('http://example.com');
+        $this->assertSame($node->getBaseNode(),$node->getChild(0));
+        $this->assertSame($node->getTitleNode(),$node->getChild(1));
+        $this->assertSame($node->getCharsetNode(),$node->getChild(2));
+        $this->assertSame($node->getCanonicalNode(),$node->getChild(3));
     }
     /**
      * @test
@@ -581,49 +629,5 @@ class HeadNodeTest extends TestCase{
         $this->assertTrue($node->setTitle(null));
         $this->assertEquals(1,$node->childrenCount());
         $this->assertEquals('',$node->getTitle());
-    }
-    /**
-     * @test
-     * @depends testAddMeta02
-     * @param HeadNode $headNode D
-     */
-    public function getMetaTest00($headNode) {
-        $metas = $headNode->getMetaNodes();
-        $this->assertEquals(2,count($metas));
-        $meta00 = $metas->get(0);
-        $this->assertEquals('viewport',$meta00->getAttributeValue('name'));
-        $meta01 = $metas->get(1);
-        $this->assertEquals('description',$meta01->getAttributeValue('name'));
-    }
-    /**
-     * @test
-     */
-    public function testAddAlternate00() {
-        $headNode = new HeadNode();
-        $this->assertFalse($headNode->addAlternate('    ', '    '));
-        $this->assertFalse($headNode->addAlternate('   https://example.com/my-page?lang=ar', '    '));
-        $this->assertFalse($headNode->addAlternate('  ', '  AR  '));
-        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR'));
-        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',array('id'=>'en-alternate')));
-        $node = $headNode->getChildByID('en-alternate');
-        $this->assertTrue($node instanceof HTMLNode);
-        $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
-        $this->assertEquals('En',$node->getAttributeValue('hreflang'));
-        $this->assertEquals('alternate',$node->getAttributeValue('rel'));
-    }
-    /**
-     * @test
-     */
-    public function testAddAlternate01() {
-        $node = new HeadNode();
-        $node->addAlternate('https://example.com/en', 'en', [
-            'async','data-x'=>'o-my-god'
-        ]);
-        $this->assertEquals(''
-                . '<head>'
-                . '<title>Default</title>'
-                . '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                . '<link rel="alternate" hreflang="en" href="https://example.com/en" async data-x="o-my-god">'
-                . '</head>',$node->toHTML());
     }
 }

@@ -23,25 +23,16 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\HTMLNode;
+
 /**
  * A class that represents &lt;br&gt; tag.
  *
  * @author Ibrahim
  * @version 1.0
  */
-class Br extends HTMLNode{
+class Br extends HTMLNode {
     public function __construct() {
         parent::__construct('br');
-    }
-    /**
-     * A method that does nothing.
-     * @param type $param
-     * @param type $param2
-     * @since 1.0
-     */
-    public function setAttribute($param,$param2='') {
-        
     }
     /**
      * A method that does nothing.
@@ -49,6 +40,13 @@ class Br extends HTMLNode{
      * @since 1.0
      */
     public function addChild($param) {
-        
+    }
+    /**
+     * A method that does nothing.
+     * @param type $param
+     * @param type $param2
+     * @since 1.0
+     */
+    public function setAttribute($param,$param2 = '') {
     }
 }

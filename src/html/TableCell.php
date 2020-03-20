@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\HTMLNode;
+
 /**
  * A class that represents a cell in HTML table.
  * The cell can be of type &lt;th&gt; or &lt;td&gt;.
@@ -31,7 +31,7 @@ use phpStructs\html\HTMLNode;
  * @author Ibrahim
  * @version 1.0
  */
-class TableCell extends HTMLNode{
+class TableCell extends HTMLNode {
     /**
      * Creates new instance of the class.
      * @param string $cellType The type of the cell. This attribute 
@@ -40,15 +40,41 @@ class TableCell extends HTMLNode{
      * none of the two is given, 'td' will be used by default.
      * @since 1.0
      */
-    public function __construct($cellType='td') {
+    public function __construct($cellType = 'td') {
         parent::__construct();
         $cType = strtolower($cellType);
-        if($cType == 'td' || $cType == 'th'){
+
+        if ($cType == 'td' || $cType == 'th') {
             $this->setNodeName($cType);
-        }
-        else{
+        } else {
             $this->setNodeName('td');
         }
+    }
+    /**
+     * Returns the value of the attribute 'colspan'.
+     * This attribute indicates for how many columns the cell extends. If this attribute 
+     * is not set, the default value for it will be 1.
+     * @return int The number of columns that the cell will span.
+     * @since 1.0
+     */
+    public function getColSpan() {
+        $colSpn = $this->getAttributeValue('colspan');
+        $retVal = $colSpn === null ? 1 : $colSpn;
+
+        return $retVal;
+    }
+    /**
+     * Returns the value of the attribute 'rowspan'.
+     * This attribute indicates for how many rows the cell extends. If this attribute 
+     * is not set, the default value for it will be 1.
+     * @return int The number of rows that the cell will span.
+     * @since 1.0
+     */
+    public function getRowSpan() {
+        $colSpn = $this->getAttributeValue('rowspan');
+        $retVal = $colSpn === null ? 1 : $colSpn;
+
+        return $retVal;
     }
     /**
      * Sets the value of the attribute 'colspan'.
@@ -59,7 +85,7 @@ class TableCell extends HTMLNode{
      * @since 1.0
      */
     public function setColSpan($colSpan) {
-        if($colSpan >= 1 && $colSpan <= 1000){
+        if ($colSpan >= 1 && $colSpan <= 1000) {
             $this->setAttribute('colspan', $colSpan);
         }
     }
@@ -73,32 +99,8 @@ class TableCell extends HTMLNode{
      * @since 1.0
      */
     public function setRowSpan($rowSpan) {
-        if($rowSpan >= 0 && $rowSpan <= 65534){
+        if ($rowSpan >= 0 && $rowSpan <= 65534) {
             $this->setAttribute('rowspan', $rowSpan);
         }
-    }
-    /**
-     * Returns the value of the attribute 'colspan'.
-     * This attribute indicates for how many columns the cell extends. If this attribute 
-     * is not set, the default value for it will be 1.
-     * @return int The number of columns that the cell will span.
-     * @since 1.0
-     */
-    public function getColSpan(){
-        $colSpn = $this->getAttributeValue('colspan');
-        $retVal = $colSpn === null ? 1 : $colSpn;
-        return $retVal;
-    }
-    /**
-     * Returns the value of the attribute 'rowspan'.
-     * This attribute indicates for how many rows the cell extends. If this attribute 
-     * is not set, the default value for it will be 1.
-     * @return int The number of rows that the cell will span.
-     * @since 1.0
-     */
-    public function getRowSpan(){
-        $colSpn = $this->getAttributeValue('rowspan');
-        $retVal = $colSpn === null ? 1 : $colSpn;
-        return $retVal;
     }
 }

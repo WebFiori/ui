@@ -23,13 +23,13 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
-use phpStructs\html\HTMLNode;
+
 /**
  * A class that represents &lt;a&gt; tag with text only.
  * @author Ibrahim
  * @version 1.0
  */
-class Anchor extends HTMLNode{
+class Anchor extends HTMLNode {
     /**
      * Constructs a new instance of the class
      * @param string $href The link.
@@ -37,13 +37,13 @@ class Anchor extends HTMLNode{
      * @param string $target The value to set for the attribute 'target'. 
      * Default is '_self'.
      */
-    public function __construct($href,$label,$target='_self') {
+    public function __construct($href,$label,$target = '_self') {
         parent::__construct('a');
         $this->setAttribute('href',$href);
-        if(strlen($target) != 0){
+
+        if (strlen($target) != 0) {
             $this->setAttribute('target',$target);
-        }
-        else{
+        } else {
             $this->setAttribute('target', '_blank');
         }
         parent::addChild(self::createTextNode($label,false));
@@ -61,7 +61,7 @@ class Anchor extends HTMLNode{
      * @param string $name The value to set.
      * @since 1.0
      */
-    public function setTarget($name){
+    public function setTarget($name) {
         $this->setAttribute('target', $name);
     }
     /**
@@ -73,7 +73,7 @@ class Anchor extends HTMLNode{
      * in the given text. Default is TRUE.
      * @since 1.0
      */
-    public function setText($text,$escHtmlEntities=true){
+    public function setText($text,$escHtmlEntities = true) {
         $this->children()->get(0)->setText($text,$escHtmlEntities);
     }
 }

@@ -23,6 +23,7 @@
  * THE SOFTWARE.
  */
 namespace phpStructs;
+
 /**
  * An interface that is used to compare objects. It is used by the class 
  * LinkedList's sorting method in order to compare objects.
