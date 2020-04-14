@@ -111,17 +111,15 @@ class Queue implements Countable {
             $this->size--;
 
             return $data;
-        } else {
-            if ($this->size == 1) {
-                $data = $this->head->data();
-                $this->head = null;
-                $this->tail = null;
-                $this->size--;
+        } else if ($this->size == 1) {
+            $data = $this->head->data();
+            $this->head = null;
+            $this->tail = null;
+            $this->size--;
 
-                return $data;
-            } else {
-                return $this->null;
-            }
+            return $data;
+        } else {
+            return $this->null;
         }
     }
     /**
@@ -143,12 +141,10 @@ class Queue implements Countable {
                 } else {
                     $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
                 }
+            } else if ($dataType == 'object' || $dataType == 'array') {
+                $retVal .= '    ['.$index.']=>('.$dataType."),\n";
             } else {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-                }
+                $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
             }
             $index++;
             $node = $node->next();
@@ -177,33 +173,29 @@ class Queue implements Countable {
      * @since 1.0
      */
     public function enqueue($el) {
-        if ($this->validateSize()) {
-            if ($el !== null) {
-                if ($this->size() == 0) {
-                    $this->head = new Node($el);
-                    $this->size++;
+        if ($this->validateSize() && $el !== null) {
+            if ($this->size() == 0) {
+                $this->head = new Node($el);
+                $this->size++;
 
-                    return true;
-                } else {
-                    if ($this->size() == 1) {
-                        $this->tail = new Node($el);
-                        $this->head->setNext($this->tail);
-                        $this->size++;
+                return true;
+            } else if ($this->size() == 1) {
+                $this->tail = new Node($el);
+                $this->head->setNext($this->tail);
+                $this->size++;
 
-                        return true;
-                    } else {
-                        $node = $this->head;
+                return true;
+            } else {
+                $node = $this->head;
 
-                        while ($node->next() !== null) {
-                            $node = $node->next();
-                        }
-                        $this->tail = new Node($el);
-                        $node->setNext($this->tail);
-                        $this->size++;
-
-                        return true;
-                    }
+                while ($node->next() !== null) {
+                    $node = $node->next();
                 }
+                $this->tail = new Node($el);
+                $node->setNext($this->tail);
+                $this->size++;
+
+                return true;
             }
         }
 
