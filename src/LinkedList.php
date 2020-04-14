@@ -677,12 +677,13 @@ class LinkedList implements Countable, Iterator {
      * @since 1.2
      */
     public function replace(&$oldEl,&$newEl) {
-        if ($this->size() == 1) {
-            if ($this->head->data() === $oldEl) {
-                $this->head->setData($newEl);
+        if($this->size() == 0){
+            return false;
+        }
+        else if ($this->size() == 1 && $this->head->data() === $oldEl) {
+            $this->head->setData($newEl);
 
-                return true;
-            }
+            return true;
         } else if ($this->size() > 1 && $this->head->data() === $oldEl) {
             $this->head->setData($newEl);
 
