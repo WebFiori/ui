@@ -94,31 +94,27 @@ class LinkedList implements Countable, Iterator {
      * @since 1.1
      */
     public function &get($index) {
-        if (gettype($index) == 'integer') {
-            if ($index < $this->size() && $index > -1) {
-                if ($index == 0) {
-                    $first = &$this->getFirst();
+        if (gettype($index) == 'integer' && $index < $this->size() && $index > -1) {
+            if ($index == 0) {
+                $first = &$this->getFirst();
 
-                    return $first;
-                } else {
-                    if ($index == $this->size() - 1) {
-                        $last = &$this->getLast();
+                return $first;
+            } else if ($index == $this->size() - 1) {
+                $last = &$this->getLast();
 
-                        return $last;
-                    } else {
-                        $nextNode = $this->head->next();
-                        $node = $this->head;
+                return $last;
+            } else {
+                $nextNode = $this->head->next();
+                $node = $this->head;
 
-                        for ($i = 1 ; ; $i++) {
-                            if ($i == $index) {
-                                $data = &$nextNode->data();
+                for ($i = 1 ; ; $i++) {
+                    if ($i == $index) {
+                        $data = &$nextNode->data();
 
-                                return $data;
-                            }
-                            $node = $nextNode;
-                            $nextNode = $nextNode->next();
-                        }
+                        return $data;
                     }
+                    $node = $nextNode;
+                    $nextNode = $nextNode->next();
                 }
             }
         }
@@ -143,38 +139,34 @@ class LinkedList implements Countable, Iterator {
                     return $el;
                 }
             }
-        } else {
-            if ($this->size() > 1) {
-                if ($this->head->data() === $val) {
-                    $el = &$this->head->data();
+        } else if ($this->size() > 1) {
+            if ($this->head->data() === $val) {
+                $el = &$this->head->data();
 
-                    if ($this->removeFirst() != null) {
-                        return $el;
+                if ($this->removeFirst() != null) {
+                    return $el;
+                }
+            } else if ($this->tail->data() === $val) {
+                $el = &$this->tail->data();
+
+                if ($this->removeLast() !== null) {
+                    return $el;
+                }
+            } else {
+                $node = $this->head;
+                $nextNode = &$this->head->next();
+
+                while ($nextNode != null) {
+                    $data = &$nextNode->data();
+
+                    if ($data === $val) {
+                        $node->setNext($nextNode->next());
+                        $this->_reduceSize();
+
+                        return $data;
                     }
-                } else {
-                    if ($this->tail->data() === $val) {
-                        $el = &$this->tail->data();
-
-                        if ($this->removeLast() !== null) {
-                            return $el;
-                        }
-                    } else {
-                        $node = $this->head;
-                        $nextNode = &$this->head->next();
-
-                        while ($nextNode != null) {
-                            $data = &$nextNode->data();
-
-                            if ($data === $val) {
-                                $node->setNext($nextNode->next());
-                                $this->_reduceSize();
-
-                                return $data;
-                            }
-                            $node = $nextNode;
-                            $nextNode = &$nextNode->next();
-                        }
-                    }
+                    $node = $nextNode;
+                    $nextNode = &$nextNode->next();
                 }
             }
         }
@@ -190,23 +182,21 @@ class LinkedList implements Countable, Iterator {
     public function &removeLast() {
         if ($this->size() == 1) {
             return $this->removeFirst();
-        } else {
-            if ($this->size() > 1) {
-                $nextNode = &$this->head->next();
-                $node = $this->head;
+        } else if ($this->size() > 1) {
+            $nextNode = &$this->head->next();
+            $node = $this->head;
 
-                while ($nextNode->next() != null) {
-                    $node = $nextNode;
-                    $nextNode = &$nextNode->next();
-                }
-                $data = &$nextNode->data();
-                $null = null;
-                $node->setNext($null);
-                $this->tail = $node;
-                $this->_reduceSize();
-
-                return $data;
+            while ($nextNode->next() != null) {
+                $node = $nextNode;
+                $nextNode = &$nextNode->next();
             }
+            $data = &$nextNode->data();
+            $null = null;
+            $node->setNext($null);
+            $this->tail = $node;
+            $this->_reduceSize();
+
+            return $data;
         }
 
         return $this->null;
@@ -225,14 +215,12 @@ class LinkedList implements Countable, Iterator {
             $this->_reduceSize();
 
             return $data;
-        } else {
-            if ($this->size() > 1) {
-                $data = &$this->head->data();
-                $this->head = &$this->head->next();
-                $this->_reduceSize();
+        } else if ($this->size() > 1) {
+            $data = &$this->head->data();
+            $this->head = &$this->head->next();
+            $this->_reduceSize();
 
-                return $data;
-            }
+            return $data;
         }
 
         return $this->null;
@@ -248,29 +236,27 @@ class LinkedList implements Countable, Iterator {
      * @since 1.0
      */
     public function &remove($index) {
-        if (gettype($index) == 'integer') {
-            if ($index < $this->size() && $index > -1) {
-                if ($index == 0) {
-                    return $this->removeFirst();
-                } else {
-                    if ($index == $this->size() - 1) {
-                        return $this->removeLast();
-                    } else {
-                        $nextNode = $this->head->next();
-                        $node = $this->head;
+        if (gettype($index) == 'integer' && $index < $this->size() && $index > -1) {
+            if ($index == 0) {
+                
+                return $this->removeFirst();
+            } else if ($index == $this->size() - 1) {
+                
+                return $this->removeLast();
+            } else {
+                $nextNode = $this->head->next();
+                $node = $this->head;
 
-                        for ($i = 1 ; ; $i++) {
-                            if ($i == $index) {
-                                $data = $nextNode->data();
-                                $node->setNext($nextNode->next());
-                                $this->_reduceSize();
+                for ($i = 1 ; ; $i++) {
+                    if ($i == $index) {
+                        $data = $nextNode->data();
+                        $node->setNext($nextNode->next());
+                        $this->_reduceSize();
 
-                                return $data;
-                            }
-                            $node = $nextNode;
-                            $nextNode = $nextNode->next();
-                        }
+                        return $data;
                     }
+                    $node = $nextNode;
+                    $nextNode = $nextNode->next();
                 }
             }
         }
@@ -301,12 +287,10 @@ class LinkedList implements Countable, Iterator {
     public function &getLast() {
         if ($this->size() == 1) {
             $data = &$this->getFirst();
+        } else if ($this->size() > 1) {
+            $data = &$this->tail->data();
         } else {
-            if ($this->size() > 1) {
-                $data = &$this->tail->data();
-            } else {
-                $data = $this->null;
-            }
+            $data = $this->null;
         }
 
         return $data;
@@ -330,12 +314,10 @@ class LinkedList implements Countable, Iterator {
                 } else {
                     $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
                 }
+            } else if ($dataType == 'object' || $dataType == 'array') {
+                $retVal .= '    ['.$index.']=>('.$dataType."),\n";
             } else {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-                }
+                $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
             }
             $index++;
             $node = $node->next();
@@ -359,25 +341,23 @@ class LinkedList implements Countable, Iterator {
                 $this->size = 1;
 
                 return true;
+            } else if ($this->size() == 1) {
+                $this->tail = new Node($el);
+                $this->head->setNext($this->tail);
+                $this->size++;
+
+                return true;
             } else {
-                if ($this->size() == 1) {
-                    $this->tail = new Node($el);
-                    $this->head->setNext($this->tail);
-                    $this->size++;
+                $node = $this->head;
 
-                    return true;
-                } else {
-                    $node = $this->head;
-
-                    while ($node->next() != null) {
-                        $node = $node->next();
-                    }
-                    $this->tail = new Node($el);
-                    $node->setNext($this->tail);
-                    $this->size++;
-
-                    return true;
+                while ($node->next() != null) {
+                    $node = $node->next();
                 }
+                $this->tail = new Node($el);
+                $node->setNext($this->tail);
+                $this->size++;
+
+                return true;
             }
         }
 
@@ -404,21 +384,19 @@ class LinkedList implements Countable, Iterator {
     public function contains(&$el) {
         if ($this->size() == 0) {
             return false;
+        } else if ($this->size() == 1) {
+            return $this->head->data() === $el;
         } else {
-            if ($this->size() == 1) {
-                return $this->head->data() === $el;
-            } else {
-                $node = $this->head;
+            $node = $this->head;
 
-                while ($node != null) {
-                    if ($node != null && $node->data() === $el) {
-                        return true;
-                    }
-                    $node = $node->next();
+            while ($node != null) {
+                if ($node != null && $node->data() === $el) {
+                    return true;
                 }
-
-                return false;
+                $node = $node->next();
             }
+
+            return false;
         }
     }
     /**
@@ -440,10 +418,8 @@ class LinkedList implements Countable, Iterator {
     public function countElement(&$el) {
         $count = 0;
 
-        if ($this->size() == 1) {
-            if ($this->head->data() === $el) {
-                $count++;
-            }
+        if ($this->size() == 1 && $this->head->data() === $el) {
+            $count++;
         } else {
             $node = $this->head;
 
@@ -485,24 +461,22 @@ class LinkedList implements Countable, Iterator {
     public function indexOf($el) {
         if ($this->size() == 1) {
             return $this->head->data() === $el ? 0 : -1;
+        } else if ($this->size() == 0) {
+            return -1;
         } else {
-            if ($this->size() == 0) {
-                return -1;
-            } else {
-                $tmpIndex = 0;
-                $node = $this->head;
+            $tmpIndex = 0;
+            $node = $this->head;
 
-                while ($node->next() != null) {
-                    if ($node->data() === $el) {
-                        return $tmpIndex;
-                    }
-                    $node = &$node->next();
-                    $tmpIndex++;
-                }
-
+            while ($node->next() != null) {
                 if ($node->data() === $el) {
                     return $tmpIndex;
                 }
+                $node = &$node->next();
+                $tmpIndex++;
+            }
+
+            if ($node->data() === $el) {
+                return $tmpIndex;
             }
         }
 
@@ -534,60 +508,52 @@ class LinkedList implements Countable, Iterator {
             if ($size == 0 && $position == 0) {
                 //empty list and insert at start.
                 return $this->add($el);
-            } else {
-                if ($size == 1 && $position == 0) {
-                    //list size is 1 and position = 0. inser at the start.
+            } else if ($size == 1 && $position == 0) {
+                //list size is 1 and position = 0. inser at the start.
+                $newNode = new Node($el, $this->head);
+                $this->head = $newNode;
+                $this->tail = $this->head->next();
+                $this->size++;
+
+                return true;
+            } else if ($size == 1 && $position == 1) {
+                //list size is 1 and position = 1. inser at the end.
+                $newNode = new Node($el);
+                $this->tail = $newNode;
+                $this->head->setNext($this->tail);
+                $this->size++;
+
+                return true;
+            } else if ($position == $size) {
+                //insert at the end.
+                return $this->add($el);
+            } else if ($position < $size) {
+                //insert in the middle or at the start
+                if ($position == 0) {
+                    //inser at the start.
                     $newNode = new Node($el, $this->head);
                     $this->head = $newNode;
-                    $this->tail = $this->head->next();
                     $this->size++;
 
                     return true;
                 } else {
-                    if ($size == 1 && $position == 1) {
-                        //list size is 1 and position = 1. inser at the end.
-                        $newNode = new Node($el);
-                        $this->tail = $newNode;
-                        $this->head->setNext($this->tail);
-                        $this->size++;
+                    //insert in the middle.
+                    $pointer = 1;
+                    $currentNode = $this->head;
+                    $nextToCurrent = $currentNode->next();
 
-                        return true;
-                    } else {
-                        if ($position == $size) {
-                            //insert at the end.
-                            return $this->add($el);
+                    while ($currentNode != null) {
+                        if ($pointer == $position) {
+                            $newNode = new Node($el,$nextToCurrent);
+                            $currentNode->setNext($newNode);
+                            $this->size++;
+
+                            return true;
                         } else {
-                            if ($position < $size) {
-                                //insert in the middle or at the start
-                                if ($position == 0) {
-                                    //inser at the start.
-                                    $newNode = new Node($el, $this->head);
-                                    $this->head = $newNode;
-                                    $this->size++;
-
-                                    return true;
-                                } else {
-                                    //insert in the middle.
-                                    $pointer = 1;
-                                    $currentNode = $this->head;
-                                    $nextToCurrent = $currentNode->next();
-
-                                    while ($currentNode != null) {
-                                        if ($pointer == $position) {
-                                            $newNode = new Node($el,$nextToCurrent);
-                                            $currentNode->setNext($newNode);
-                                            $this->size++;
-
-                                            return true;
-                                        } else {
-                                            $currentNode = $nextToCurrent;
-                                            $nextToCurrent = $nextToCurrent->next();
-                                        }
-                                        $pointer++;
-                                    }
-                                }
-                            }
+                            $currentNode = $nextToCurrent;
+                            $nextToCurrent = $nextToCurrent->next();
                         }
+                        $pointer++;
                     }
                 }
             }
@@ -628,16 +594,14 @@ class LinkedList implements Countable, Iterator {
                 } else {
                     return false;
                 }
-            } else {
-                if (!$hasObject) {
-                    while ($j >= 0 && $array[$j] > $val) {
-                        $array[$j + 1] = $array[$j];
-                        $j--;
-                    }
-                    $array[$j + 1] = $val;
-                } else {
-                    return false;
+            } else if (!$hasObject) {
+                while ($j >= 0 && $array[$j] > $val) {
+                    $array[$j + 1] = $array[$j];
+                    $j--;
                 }
+                $array[$j + 1] = $val;
+            } else {
+                return false;
             }
         }
 
@@ -713,34 +677,26 @@ class LinkedList implements Countable, Iterator {
      * @since 1.2
      */
     public function replace(&$oldEl,&$newEl) {
-        if ($this->size() == 1) {
-            if ($this->head->data() === $oldEl) {
-                $this->head->setData($newEl);
+        if($this->size() == 0){
+            return false;
+        } else if ($this->size() >= 1 && $this->head->data() === $oldEl) {
+            $this->head->setData($newEl);
 
-                return true;
-            }
+            return true;
         } else {
-            if ($this->size() > 1) {
-                if ($this->head->data() === $oldEl) {
-                    $this->head->setData($newEl);
+            $node = $this->head;
+            $nextNode = &$this->head->next();
+
+            while ($nextNode != null) {
+                $data = &$nextNode->data();
+
+                if ($data === $oldEl) {
+                    $nextNode->setData($newEl);
 
                     return true;
-                } else {
-                    $node = $this->head;
-                    $nextNode = &$this->head->next();
-
-                    while ($nextNode != null) {
-                        $data = &$nextNode->data();
-
-                        if ($data === $oldEl) {
-                            $nextNode->setData($newEl);
-
-                            return true;
-                        }
-                        $node = $nextNode;
-                        $nextNode = &$nextNode->next();
-                    }
                 }
+                $node = $nextNode;
+                $nextNode = &$nextNode->next();
             }
         }
 
@@ -774,17 +730,14 @@ class LinkedList implements Countable, Iterator {
 
         if ($this->size() == 1) {
             array_push($array, $this->head->data());
-        } else {
-            if ($this->size() == 0) {
-            } else {
-                $node = $this->head;
+        } else if ($this->size() != 0) {
+            $node = $this->head;
 
-                while ($node->next() != null) {
-                    array_push($array, $node->data());
-                    $node = $node->next();
-                }
+            while ($node->next() != null) {
                 array_push($array, $node->data());
+                $node = $node->next();
             }
+            array_push($array, $node->data());
         }
 
         return $array;

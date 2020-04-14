@@ -70,10 +70,8 @@ class Node {
     public function setNext(&$next) {
         if ($next instanceof Node) {
             $this->next = $next;
-        } else {
-            if ($next == null) {
-                $this->next = null;
-            }
+        } else if ($next == null) {
+            $this->next = null;
         }
     }
 }

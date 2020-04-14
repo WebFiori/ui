@@ -91,12 +91,10 @@ class Stack implements Countable {
     public function &peek() {
         if ($this->size() == 1) {
             return $this->head->data();
+        } else if ($this->size() > 1) {
+            return $this->tail->data();
         } else {
-            if ($this->size() > 1) {
-                return $this->tail->data();
-            } else {
-                return $this->null;
-            }
+            return $this->null;
         }
     }
     /**
@@ -109,30 +107,28 @@ class Stack implements Countable {
     public function &pop() {
         if ($this->size() == 0) {
             return $this->null;
+        } else if ($this->size() == 1) {
+            $data = $this->head->data();
+            $this->head = null;
+            $this->tail = null;
+            $this->size--;
+
+            return $data;
         } else {
-            if ($this->size() == 1) {
-                $data = $this->head->data();
-                $this->head = null;
-                $this->tail = null;
-                $this->size--;
+            $node = $this->head;
+            $nextNode = $this->head->next();
 
-                return $data;
-            } else {
-                $node = $this->head;
-                $nextNode = $this->head->next();
-
-                while ($nextNode->next() !== null) {
-                    $node = $nextNode;
-                    $nextNode = $nextNode->next();
-                }
-                $data = $nextNode->data();
-                $null = null;
-                $node->setNext($null);
-                $this->tail = $node;
-                $this->size--;
-
-                return $data;
+            while ($nextNode->next() !== null) {
+                $node = $nextNode;
+                $nextNode = $nextNode->next();
             }
+            $data = $nextNode->data();
+            $null = null;
+            $node->setNext($null);
+            $this->tail = $node;
+            $this->size--;
+
+            return $data;
         }
     }
     /**
@@ -154,12 +150,10 @@ class Stack implements Countable {
                 } else {
                     $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
                 }
+            } else if ($dataType == 'object' || $dataType == 'array') {
+                $retVal .= '    ['.$index.']=>('.$dataType."),\n";
             } else {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-                }
+                $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
             }
             $index++;
             $node = $node->next();
@@ -203,29 +197,25 @@ class Stack implements Countable {
      * @since 1.0
      */
     public function push($el) {
-        if ($el !== null) {
-            if ($this->validateSize()) {
-                if ($this->size() == 0) {
-                    $this->head = new Node($el);
-                    $this->size++;
+        if ($el !== null && $this->validateSize()) {
+            if ($this->size() == 0) {
+                $this->head = new Node($el);
+                $this->size++;
 
-                    return true;
-                } else {
-                    if ($this->size() == 1) {
-                        $this->tail = new Node($el);
-                        $this->head->setNext($this->tail);
-                        $this->size++;
+                return true;
+            } else if ($this->size() == 1) {
+                $this->tail = new Node($el);
+                $this->head->setNext($this->tail);
+                $this->size++;
 
-                        return true;
-                    } else {
-                        $node = $this->tail;
-                        $this->tail = new Node($el);
-                        $node->setNext($this->tail);
-                        $this->size++;
+                return true;
+            } else {
+                $node = $this->tail;
+                $this->tail = new Node($el);
+                $node->setNext($this->tail);
+                $this->size++;
 
-                        return true;
-                    }
-                }
+                return true;
             }
         }
 
