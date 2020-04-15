@@ -31,16 +31,16 @@ $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
 $rootDirTrimmed = trim($rootDir,'/\\');
 //echo 'Include Path: \''. get_include_path().'\''."\n";
-if(explode($DS, $rootDirTrimmed)[0] == 'home'){
+if (explode($DS, $rootDirTrimmed)[0] == 'home') {
     //linux.
     $rootDir = $DS.$rootDirTrimmed.$DS;
-}
-else{
+} else {
     $rootDir = $rootDirTrimmed.$DS;
 }
 define('ROOT', $rootDir);
 //echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'src'.$DS.'Node.php';
+require_once $rootDir.'src'.$DS.'DataStruct.php';
 require_once $rootDir.'src'.$DS.'LinkedList.php';
 require_once $rootDir.'src'.$DS.'Stack.php';
 require_once $rootDir.'src'.$DS.'Queue.php';
@@ -62,3 +62,9 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
 
 require_once $rootDir.'tests'.$DS.'AnyObject.php';
+
+use phpStructs\html\HTMLDoc;
+
+$doc = new HTMLDoc();
+$doc->getBody()->addTextNode('Hello World!');
+echo $doc;

@@ -1628,7 +1628,7 @@ class LinkedListTest extends TestCase {
      */
     public function testToString00() {
         $list = new LinkedList();
-        $this->assertEquals("List[\n]",$list.'');
+        $this->assertEquals("phpStructs\LinkedList[\n]",$list.'');
     }
     /**
      * @test
@@ -1637,21 +1637,21 @@ class LinkedListTest extends TestCase {
         $list = new LinkedList();
         $el00 = 'EL #00';
         $list->add($el00);
-        $this->assertEquals("List[\n    [0]=>EL #00(string)\n]",$list.'');
+        $this->assertEquals("phpStructs\LinkedList[\n    [0]=>EL #00(string)\n]",$list.'');
         $el01 = 55;
         $list->add($el01);
-        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer)\n]",$list.'');
+        $this->assertEquals("phpStructs\LinkedList[\n    [0]=>EL #00(string),\n    [1]=>55(integer)\n]",$list.'');
         $obj00 = new AnyObject(0, 'Obj 00');
         $list->add($obj00);
-        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object)\n]",$list.'');
+        $this->assertEquals("phpStructs\LinkedList[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object)\n]",$list.'');
         $list->add($obj00);
-        $this->assertEquals("List[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object),\n    [3]=>(object)\n]",$list.'');
+        $this->assertEquals("phpStructs\LinkedList[\n    [0]=>EL #00(string),\n    [1]=>55(integer),\n    [2]=>(object),\n    [3]=>(object)\n]",$list.'');
         $arr00 = [];
         $list->add($arr00);
         $list->remove(1);
         $list->removeFirst();
-        //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]",$list.'');
+        //$this->assertEquals("phpStructs\LinkedList[\n    [0]=>(object),\n    [1]=>(object),\n    [2]=>(array)\n]",$list.'');
         $list->add($arr00);
-        //$this->assertEquals("List[\n    [0]=>(object),\n    [1]=>(object),\n     [2]=>(array),\n    [3]=>(array)\n]",$list.'');
+        //$this->assertEquals("phpStructs\LinkedList[\n    [0]=>(object),\n    [1]=>(object),\n     [2]=>(array),\n    [3]=>(array)\n]",$list.'');
     }
 }
