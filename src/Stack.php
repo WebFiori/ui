@@ -25,14 +25,13 @@
  */
 namespace phpStructs;
 
-use Countable;
 /**
  * A class that represents a stack data structure.
  *
  * @author Ibrahim
- * @version 1.1.1
+ * @version 1.1.2
  */
-class Stack implements Countable {
+class Stack extends DataStruct {
     /**
      * The bottom node of the stack.
      * @var Node
@@ -132,46 +131,6 @@ class Stack implements Countable {
         }
     }
     /**
-     * Returns a string that represents the stack and its element.
-     * @return string A string that represents the stack and its element.
-     */
-    public function __toString() {
-        $retVal = "Stack[\n";
-        $node = $this->head;
-        $index = 0;
-
-        while ($node != null) {
-            $data = $node->data();
-            $dataType = gettype($data);
-
-            if ($node->next() == null) {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType.")\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
-                }
-            } else if ($dataType == 'object' || $dataType == 'array') {
-                $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-            } else {
-                $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-            }
-            $index++;
-            $node = $node->next();
-        }
-        $retVal .= ']';
-
-        return $retVal;
-    }
-    /**
-     * Returns the number of elements in the stack.
-     * This one is similar to calling the method "Queue::<a href="#size">size()</a>".
-     * @return int Number of elements in the stack.
-     * @since 1.1.1
-     */
-    public function count() {
-        return $this->size();
-    }
-    /**
      * Returns the number of maximum elements the stack can hold.
      * @return int If the maximum number of elements was set to 0 or a 
      * negative number, the method will return -1 which indicates that 
@@ -248,4 +207,39 @@ class Stack implements Countable {
 
         return false;
     }
+    /**
+     * Adds new element to the top of the stack.
+     * @param mixed $el The element that will be added. If it is null, the 
+     * method will not add it.
+     * @return boolean The method will return true if the element is added. 
+     * The method will return false only in two cases, If the maximum 
+     * number of elements is reached and trying to add new one or the given element 
+     * is null.
+     * @since 1.1.2
+     */
+    public function add(&$el) {
+        return $this->push($el);
+    }
+
+    /**
+     * Returns an indexed array that contains the elements of the stack.
+     * @return array An indexed array that contains the elements of the stack.
+     * @since 1.1.2
+     */
+    public function toArray() {
+        $elsArray = [];
+        if ($this->size() == 1) {
+            $elsArray[] = $this->head->data();
+        } else if ($this->size() != 0) {
+            $node = $this->head;
+
+            while ($node->next() != null) {
+                $elsArray[] = $node->data();
+                $node = $node->next();
+            }
+            $elsArray[] = $node->data();
+        }
+        return $elsArray;
+    }
+
 }

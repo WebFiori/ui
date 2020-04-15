@@ -32,7 +32,7 @@ use Iterator;
  * @author Ibrahim 
  * @version 1.4.3
  */
-class LinkedList implements Countable, Iterator {
+class LinkedList extends DataStruct implements Iterator {
     /**
      * The first node in the list.
      * @var Node
@@ -296,37 +296,6 @@ class LinkedList implements Countable, Iterator {
         return $data;
     }
     /**
-     * Returns a string that represents the list and its element.
-     * @return string A string that represents the list and its element.
-     */
-    public function __toString() {
-        $retVal = "List[\n";
-        $node = $this->head;
-        $index = 0;
-
-        while ($node != null) {
-            $data = $node->data();
-            $dataType = gettype($data);
-
-            if ($node->next() == null) {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType.")\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
-                }
-            } else if ($dataType == 'object' || $dataType == 'array') {
-                $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-            } else {
-                $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-            }
-            $index++;
-            $node = $node->next();
-        }
-        $retVal .= ']';
-
-        return $retVal;
-    }
-    /**
      * Adds new element to the list.
      * @param mixed $el The element that will be added. It can be of any type.
      * @return boolean true if the element is added. The method will return 
@@ -398,15 +367,6 @@ class LinkedList implements Countable, Iterator {
 
             return false;
         }
-    }
-    /**
-     * Returns the number of elements in the list.
-     * Calling this method is simply like calling the method LinkedList::size().
-     * @return int The number of elements in the list.
-     * @since 1.4.2
-     */
-    public function count() {
-        return $this->size();
     }
     /**
      * Returns the number of times a given element has appeared on the list.
