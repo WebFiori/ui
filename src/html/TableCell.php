@@ -68,7 +68,7 @@ class TableCell extends HTMLNode {
      */
     public function getColSpan() {
         $colSpn = $this->getAttributeValue('colspan');
-        
+
         return $colSpn === null ? 1 : $colSpn;
     }
     /**
@@ -80,7 +80,7 @@ class TableCell extends HTMLNode {
      */
     public function getRowSpan() {
         $colSpn = $this->getAttributeValue('rowspan');
-        
+
         return $colSpn === null ? 1 : $colSpn;
     }
     /**

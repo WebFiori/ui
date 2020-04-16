@@ -129,6 +129,19 @@ class Queue extends DataStruct {
      * The method will return false only in two cases, If the maximum 
      * number of elements is reached and trying to add new one or the given element 
      * is null.
+     * @since 1.1.2
+     */
+    public function add(&$el) {
+        return $this->enqueue($el);
+    }
+    /**
+     * Adds new element to the bottom of the queue.
+     * @param mixed $el The element that will be added. If it is null, the 
+     * method will not add it.
+     * @return boolean The method will return true if the element is added. 
+     * The method will return false only in two cases, If the maximum 
+     * number of elements is reached and trying to add new one or the given element 
+     * is null.
      * @since 1.0
      */
     public function enqueue($el) {
@@ -184,6 +197,30 @@ class Queue extends DataStruct {
         return $this->size;
     }
     /**
+     * Returns an indexed array that contains the elements of the queue.
+     * @return array An indexed array that contains the elements of the queue.
+     * @since 1.1.2
+     */
+    public function toArray() {
+        $array = [];
+
+        if ($this->size() == 1) {
+            $array[] = $this->head->data();
+        } else {
+            if ($this->size() != 0) {
+                $node = $this->head;
+
+                while ($node->next() != null) {
+                    $array[] = $node->data();
+                    $node = $node->next();
+                }
+                $array[] = $node->data();
+            }
+        }
+
+        return $array;
+    }
+    /**
      * Checks if the queue can hold more elements or not.
      * @return boolean true if the queue can hold more elements.
      * @since 1.0
@@ -201,38 +238,4 @@ class Queue extends DataStruct {
 
         return false;
     }
-    /**
-     * Adds new element to the bottom of the queue.
-     * @param mixed $el The element that will be added. If it is null, the 
-     * method will not add it.
-     * @return boolean The method will return true if the element is added. 
-     * The method will return false only in two cases, If the maximum 
-     * number of elements is reached and trying to add new one or the given element 
-     * is null.
-     * @since 1.1.2
-     */
-    public function add(&$el) {
-        return $this->enqueue($el);
-    }
-    /**
-     * Returns an indexed array that contains the elements of the queue.
-     * @return array An indexed array that contains the elements of the queue.
-     * @since 1.1.2
-     */
-    public function toArray() {
-        $array = [];
-        if ($this->size() == 1) {
-            $array[] = $this->head->data();
-        } else if ($this->size() != 0) {
-            $node = $this->head;
-
-            while ($node->next() != null) {
-                $array[] = $node->data();
-                $node = $node->next();
-            }
-            $array[] = $node->data();
-        }
-        return $array;
-    }
-
 }

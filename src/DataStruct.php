@@ -31,19 +31,34 @@ use Countable;
  * @author Ibrahim
  * @version 1.0
  */
-abstract class DataStruct implements Countable{
+abstract class DataStruct implements Countable {
     /**
-     * Returns an array that contains the elements of the data structure.
-     * @return array An array that contains the elements of the data structure.
-     * @since 1.0
+     * Returns a string that represents the data structure and its element.
+     * @return string A string that represents the data structure and its element.
      */
-    public abstract function toArray();
-     /**
-     * Returns the number of elements in the data structure.
-     * @return int The number of elements in the data structure.
-     * @since 1.0
-     */
-    public abstract function size();
+    public function __toString() {
+        $retVal = get_class($this)."[\n";
+        $elementsArr = $this->toArray();
+        $comma = ',';
+        $elsCount = count($elementsArr);
+
+        for ($x = 0 ; $x < $elsCount ; $x++) {
+            $data = $elementsArr[$x];
+            $dataType = gettype($data);
+
+            if ($x + 1 == $elsCount) {
+                $comma = '';
+            }
+
+            if ($dataType == 'object' || $dataType == 'array') {
+                $retVal .= '    ['.$x.']=>('.$dataType.")$comma\n";
+            } else {
+                $retVal .= '    ['.$x.']=>'.$data.'('.$dataType.")$comma\n";
+            }
+        }
+
+        return $retVal.']';
+    }
     /**
      * Adds new element to the data structure.
      * @param mixed $el The element that will be added. It can be of any type.
@@ -62,30 +77,15 @@ abstract class DataStruct implements Countable{
         return $this->size();
     }
     /**
-     * Returns a string that represents the data structure and its element.
-     * @return string A string that represents the data structure and its element.
+     * Returns the number of elements in the data structure.
+     * @return int The number of elements in the data structure.
+     * @since 1.0
      */
-    public function __toString() {
-        $retVal = get_class($this)."[\n";
-        $elementsArr = $this->toArray();
-        $comma = ',';
-        $elsCount = count($elementsArr);
-        
-        for ($x = 0 ; $x <  $elsCount ; $x++) {
-            $data = $elementsArr[$x];
-            $dataType = gettype($data);
-            
-            if($x + 1 == $elsCount){
-                $comma = '';
-            }
-            
-            if ($dataType == 'object' || $dataType == 'array') {
-                $retVal .= '    ['.$x.']=>('.$dataType.")$comma\n";
-            } else {
-                $retVal .= '    ['.$x.']=>'.$data.'('.$dataType.")$comma\n";
-            }
-        }
-        
-        return $retVal . ']';
-    }
+    public abstract function size();
+    /**
+     * Returns an array that contains the elements of the data structure.
+     * @return array An array that contains the elements of the data structure.
+     * @since 1.0
+     */
+    public abstract function toArray();
 }

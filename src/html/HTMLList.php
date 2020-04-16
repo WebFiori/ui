@@ -5,7 +5,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace phpStructs\html;
 
 /**
@@ -13,7 +12,7 @@ namespace phpStructs\html;
  *
  * @author Ibrahim
  */
-class HTMLList extends HTMLNode{
+class HTMLList extends HTMLNode {
     /**
      * Creates new instance of the class.
      * @param string $listType A string that represents list type. It can have 
@@ -30,7 +29,8 @@ class HTMLList extends HTMLNode{
     public function __construct($listType = 'ul', $arrOfItems = [], $escHtmlEntities = true) {
         parent::__construct('ul');
         $lower = strtolower(trim($listType));
-        if($lower == 'ol'){
+
+        if ($lower == 'ol') {
             $this->setNodeName('ol');
         }
         $this->addListItems($arrOfItems, $escHtmlEntities);
@@ -66,35 +66,6 @@ class HTMLList extends HTMLNode{
         }
     }
     /**
-     * Returns a child node given its index.
-     * @param int $index The position of the child node. This must be an integer 
-     * value starting from 0.
-     * @return ListItem|null If the child does exist, 
-     * the method will return 
-     * an object of type 'ListItem'. If no 
-     * element was found, the method will return null.
-     * @since 1.0.2
-     */
-    public function getChild($index) {
-        $ch = parent::getChild($index);
-        if($ch instanceof ListItem){
-            return $ch;
-        }
-        return null;
-    }
-    /**
-     * Adds a sublist to the main list.
-     * @param HTMLList $ul An object of type 'HTMLList'.
-     * @since 1.0
-     */
-    public function addSubList($ul) {
-        if ($ul instanceof HTMLList) {
-            $li = new ListItem();
-            $li->addList($ul);
-            $this->addChild($li);
-        }
-    }
-    /**
      * Adds multiple items at once to the list.
      * @param array $arrOfItems An array that contains strings 
      * that represents each list item. Also, it can have objects of type 
@@ -111,5 +82,36 @@ class HTMLList extends HTMLNode{
                 $this->addListItem($listItem,$escHtmlEntities);
             }
         }
+    }
+    /**
+     * Adds a sublist to the main list.
+     * @param HTMLList $ul An object of type 'HTMLList'.
+     * @since 1.0
+     */
+    public function addSubList($ul) {
+        if ($ul instanceof HTMLList) {
+            $li = new ListItem();
+            $li->addList($ul);
+            $this->addChild($li);
+        }
+    }
+    /**
+     * Returns a child node given its index.
+     * @param int $index The position of the child node. This must be an integer 
+     * value starting from 0.
+     * @return ListItem|null If the child does exist, 
+     * the method will return 
+     * an object of type 'ListItem'. If no 
+     * element was found, the method will return null.
+     * @since 1.0.2
+     */
+    public function getChild($index) {
+        $ch = parent::getChild($index);
+
+        if ($ch instanceof ListItem) {
+            return $ch;
+        }
+
+        return null;
     }
 }

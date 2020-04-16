@@ -24,7 +24,6 @@
  */
 namespace phpStructs;
 
-use Countable;
 use Iterator;
 /**
  * A class that represents a linked list data structure.
@@ -140,24 +139,6 @@ class LinkedList extends DataStruct implements Iterator {
             }
         }
 
-        return $this->null;
-    }
-    private function &_removeElementHelper(&$val) {
-        $node = $this->head;
-        $nextNode = &$this->head->next();
-
-        while ($nextNode != null) {
-            $data = &$nextNode->data();
-
-            if ($data === $val) {
-                $node->setNext($nextNode->next());
-                $this->_reduceSize();
-
-                return $data;
-            }
-            $node = $nextNode;
-            $nextNode = &$nextNode->next();
-        }
         return $this->null;
     }
     /**
@@ -486,36 +467,6 @@ class LinkedList extends DataStruct implements Iterator {
 
         return $retVal;
     }
-    private function _insertStart(&$el, $noTail=true) {
-        $newNode = new Node($el, $this->head);
-        $this->head = $newNode;
-        if($noTail){
-            $this->tail = $this->head->next();
-        }
-        $this->size++;
-    }
-    private function _insertMiddle(&$el,&$position) {
-        $pointer = 1;
-        $currentNode = $this->head;
-        $nextToCurrent = $currentNode->next();
-        $retVal = false;
-        while ($currentNode != null) {
-            if ($pointer == $position) {
-                $newNode = new Node($el,$nextToCurrent);
-                $currentNode->setNext($newNode);
-                $this->size++;
-
-                $retVal = true;
-            } else {
-                $currentNode = $nextToCurrent;
-                if($nextToCurrent !== null){
-                    $nextToCurrent = $nextToCurrent->next();
-                }
-            }
-            $pointer++;
-        }
-        return $retVal;
-    }
     /**
      * Sort the elements of the list using insertion sort algorithm.
      * @param boolean $ascending If set to true, list elements 
@@ -706,6 +657,59 @@ class LinkedList extends DataStruct implements Iterator {
      */
     public function valid() {
         return $this->iteratorEl !== null;
+    }
+    private function &_removeElementHelper(&$val) {
+        $node = $this->head;
+        $nextNode = &$this->head->next();
+
+        while ($nextNode != null) {
+            $data = &$nextNode->data();
+
+            if ($data === $val) {
+                $node->setNext($nextNode->next());
+                $this->_reduceSize();
+
+                return $data;
+            }
+            $node = $nextNode;
+            $nextNode = &$nextNode->next();
+        }
+
+        return $this->null;
+    }
+    private function _insertMiddle(&$el,&$position) {
+        $pointer = 1;
+        $currentNode = $this->head;
+        $nextToCurrent = $currentNode->next();
+        $retVal = false;
+
+        while ($currentNode != null) {
+            if ($pointer == $position) {
+                $newNode = new Node($el,$nextToCurrent);
+                $currentNode->setNext($newNode);
+                $this->size++;
+
+                $retVal = true;
+            } else {
+                $currentNode = $nextToCurrent;
+
+                if ($nextToCurrent !== null) {
+                    $nextToCurrent = $nextToCurrent->next();
+                }
+            }
+            $pointer++;
+        }
+
+        return $retVal;
+    }
+    private function _insertStart(&$el, $noTail = true) {
+        $newNode = new Node($el, $this->head);
+        $this->head = $newNode;
+
+        if ($noTail) {
+            $this->tail = $this->head->next();
+        }
+        $this->size++;
     }
     /**
      * Reduce the size of the list.

@@ -38,6 +38,12 @@ use phpStructs\Stack;
  */
 class HTMLNode implements Countable, Iterator {
     /**
+     * A constant that indicates a node is of type text.
+     * @var string
+     * @since 1.8.1
+     */
+    const C_NODE = '#COMMENT';
+    /**
      * An associative array of default formatting options for the code.
      * It is used when displaying the actual generated HTML code. The array has 
      * the following indices and values:
@@ -87,6 +93,12 @@ class HTMLNode implements Countable, Iterator {
         ]
     ];
     /**
+     * A constant that indicates a node is of type text.
+     * @var string
+     * @since 1.8.1
+     */
+    const T_NODE = '#TEXT';
+    /**
      * An array that contains all unpaired (or void) HTML tags.
      * An unpaired tag is a tag that does tot require closing tag. Its 
      * body is empty and does not contain any thing.
@@ -113,18 +125,6 @@ class HTMLNode implements Countable, Iterator {
         'br','hr','meta','img','input','wbr','embed',
         'base','col','link','param','source','track','area'
     ];
-    /**
-     * A constant that indicates a node is of type text.
-     * @var string
-     * @since 1.8.1
-     */
-    const T_NODE = '#TEXT';
-    /**
-     * A constant that indicates a node is of type text.
-     * @var string
-     * @since 1.8.1
-     */
-    const C_NODE = '#COMMENT';
     /**
      * An array of key-value elements. The key acts as the attribute name 
      * and the value acts as the value of the attribute.
@@ -298,18 +298,6 @@ class HTMLNode implements Countable, Iterator {
         if ($this->mustClose()) {
             $this->addChild(self::createComment($text));
         }
-    }
-    /**
-     * Returns the last added child.
-     * @return HTMLNode The child will be returned as an object of type 'HTMLNode'. 
-     * If the node has no children, the method will return null.
-     * @since 1.8.2
-     */
-    public function getLastChild() {
-        if($this->childrenCount() >= 1){
-            return $this->getChild($this->childrenCount() - 1);
-        }
-        return null;
     }
     /**
      * Adds a text node as a child.
@@ -560,6 +548,7 @@ class HTMLNode implements Countable, Iterator {
 
             return $retVal;
         }
+
         return null;
     }
     /**
@@ -611,7 +600,6 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.8
      */
     public function getChild($index) {
-        
         return $this->children()->get($index);
     }
     /**
@@ -647,7 +635,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getChildByID($val) {
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && strlen($val) != 0) {
-                
             return $this->_getChildByID($val, $this->children());
         }
 
@@ -707,6 +694,19 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getID() {
         return $this->getAttribute('id');
+    }
+    /**
+     * Returns the last added child.
+     * @return HTMLNode The child will be returned as an object of type 'HTMLNode'. 
+     * If the node has no children, the method will return null.
+     * @since 1.8.2
+     */
+    public function getLastChild() {
+        if ($this->childrenCount() >= 1) {
+            return $this->getChild($this->childrenCount() - 1);
+        }
+
+        return null;
     }
     /**
      * Returns the value of the attribute 'name' of the element.

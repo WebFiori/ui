@@ -188,6 +188,31 @@ class Stack extends DataStruct {
     public function size() {
         return $this->size;
     }
+
+    /**
+     * Returns an indexed array that contains the elements of the stack.
+     * @return array An indexed array that contains the elements of the stack.
+     * @since 1.1.2
+     */
+    public function toArray() {
+        $elsArray = [];
+
+        if ($this->size() == 1) {
+            $elsArray[] = $this->head->data();
+        } else {
+            if ($this->size() != 0) {
+                $node = $this->head;
+
+                while ($node->next() != null) {
+                    $elsArray[] = $node->data();
+                    $node = $node->next();
+                }
+                $elsArray[] = $node->data();
+            }
+        }
+
+        return $elsArray;
+    }
     /**
      * Checks if the stack can hold more elements or not.
      * @return boolean true if the stack can hold more elements.
@@ -206,39 +231,4 @@ class Stack extends DataStruct {
 
         return false;
     }
-    /**
-     * Adds new element to the top of the stack.
-     * @param mixed $el The element that will be added. If it is null, the 
-     * method will not add it.
-     * @return boolean The method will return true if the element is added. 
-     * The method will return false only in two cases, If the maximum 
-     * number of elements is reached and trying to add new one or the given element 
-     * is null.
-     * @since 1.1.2
-     */
-    public function add(&$el) {
-        return $this->push($el);
-    }
-
-    /**
-     * Returns an indexed array that contains the elements of the stack.
-     * @return array An indexed array that contains the elements of the stack.
-     * @since 1.1.2
-     */
-    public function toArray() {
-        $elsArray = [];
-        if ($this->size() == 1) {
-            $elsArray[] = $this->head->data();
-        } else if ($this->size() != 0) {
-            $node = $this->head;
-
-            while ($node->next() != null) {
-                $elsArray[] = $node->data();
-                $node = $node->next();
-            }
-            $elsArray[] = $node->data();
-        }
-        return $elsArray;
-    }
-
 }

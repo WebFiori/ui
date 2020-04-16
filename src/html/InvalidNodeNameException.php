@@ -5,7 +5,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace phpStructs\html;
 
 use Exception;
@@ -15,6 +14,5 @@ use Exception;
  * @author Ibrahim
  * @version 1.0
  */
-class InvalidNodeNameException extends Exception{
-    
+class InvalidNodeNameException extends Exception {
 }

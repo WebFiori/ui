@@ -363,7 +363,7 @@ class HTMLDoc {
                 return $removed;
             }
         }
-        
+
         return $ch->removeChild($nodeToRemove);
     }
 }
