@@ -282,27 +282,8 @@ class HeadNode extends HTMLNode {
                 $tag->setAttribute('href', $trimmedHref);
             }
             
-            $notAllowed = [
-                'rel','href'
-            ];
-            $this->_addAttrs($tag, $otherAttrs, $notAllowed);
-
-            $insertPosition = -1;
-
-            for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                $chNode = $this->getChild($x);
-
-                if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') {
-                    $insertPosition = $x;
-                }
-            }
-
-            if ($insertPosition != -1) {
-                $this->insert($tag,$insertPosition + 1);
-            } else {
-                $this->addChild($tag);
-            }
-
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
+            
             return true;
         }
 
@@ -361,31 +342,48 @@ class HeadNode extends HTMLNode {
                 }
             }
             
-            $notAllowed = [
-                'src','type'
-            ];
-            $this->_addAttrs($tag, $otherAttrs, $notAllowed);
-            
-            $insertPosition = -1;
-
-            for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                $chNode = $this->getChild($x);
-
-                if ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript') {
-                    $insertPosition = $x;
-                }
-            }
-
-            if ($insertPosition != -1) {
-                $this->insert($tag,$insertPosition + 1);
-            } else {
-                $this->addChild($tag);
-            }
-
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
             return true;
         }
 
         return false;
+    }
+    /**
+     * 
+     * @param HTMLNode $node
+     */
+    private function _cssJsInsertHelper($node, $otherAttrs) {
+        if($node->getName() == 'style'){
+            $notAllowed = [
+                'rel','href'
+            ];
+        }
+        else{
+            $notAllowed = [
+                'src','type'
+            ];
+        }
+        
+        $this->_addAttrs($node, $otherAttrs, $notAllowed);
+
+        $insertPosition = -1;
+
+        for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+            $chNode = $this->getChild($x);
+
+            if($node->getNodeName() == 'style' && $chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') {
+                $insertPosition = $x;
+            }
+            else if ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript') {
+                $insertPosition = $x;
+            }
+        }
+
+        if ($insertPosition != -1) {
+            $this->insert($node,$insertPosition + 1);
+        } else {
+            $this->addChild($node);
+        }
     }
     /**
      * Adds new 'link' node.
