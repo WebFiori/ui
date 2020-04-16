@@ -76,7 +76,11 @@ class HTMLList extends HTMLNode{
      * @since 1.0.2
      */
     public function getChild($index) {
-        return parent::getChild($index);
+        $ch = parent::getChild($index);
+        if($ch instanceof ListItem){
+            return $ch;
+        }
+        return null;
     }
     /**
      * Adds a sublist to the main list.

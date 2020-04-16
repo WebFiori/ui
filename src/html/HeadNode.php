@@ -371,10 +371,8 @@ class HeadNode extends HTMLNode {
         for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
             $chNode = $this->getChild($x);
 
-            if($node->getNodeName() == 'style' && $chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') {
-                $insertPosition = $x;
-            }
-            else if ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript') {
+            if(($node->getNodeName() == 'style' && $chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') 
+               || ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript')) {
                 $insertPosition = $x;
             }
         }
