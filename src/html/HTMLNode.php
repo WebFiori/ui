@@ -643,7 +643,7 @@ class HTMLNode implements Countable, Iterator {
             return $this->_getChildByID($val, $this->children());
         }
 
-        return null;
+        return $this->null;
     }
     /**
      * Returns a linked list that contains all child nodes which has the given 
@@ -919,6 +919,7 @@ class HTMLNode implements Countable, Iterator {
     public static function htmlAsArray($text) {
         $trimmed = trim($text);
         $BT = 'body-text';
+        $TN = 'tag-name';
         if (strlen($trimmed) != 0) {
             $array = explode('<', $trimmed);
             $nodesNames = [];
@@ -1188,7 +1189,7 @@ class HTMLNode implements Countable, Iterator {
             }
         }
 
-        return null;
+        return $this->null;
     }
     /**
      * Replace a direct child node with a new one.

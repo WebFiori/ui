@@ -232,7 +232,7 @@ class HTMLDoc {
      * @since 1.4
      */
     public function removeChild($node) {
-        if ($node instanceof HTMLNod && $node !== $this->body && $node !== $this->headNode) {
+        if ($node instanceof HTMLNode && $node !== $this->body && $node !== $this->headNode) {
             return $this->_removeChild($this->getDocumentRoot(), $node);
         }
 

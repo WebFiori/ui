@@ -38,7 +38,7 @@ if (explode($DS, $rootDirTrimmed)[0] == 'home') {
     $rootDir = $rootDirTrimmed.$DS;
 }
 define('ROOT', $rootDir);
-//echo 'Root Directory: \''.$rootDir.'\'.'."\n";
+echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'src'.$DS.'Node.php';
 require_once $rootDir.'src'.$DS.'DataStruct.php';
 require_once $rootDir.'src'.$DS.'LinkedList.php';
@@ -63,8 +63,3 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
 
 require_once $rootDir.'tests'.$DS.'AnyObject.php';
 
-use phpStructs\html\HTMLDoc;
-
-$doc = new HTMLDoc();
-$doc->getBody()->addTextNode('Hello World!');
-echo $doc;

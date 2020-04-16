@@ -188,7 +188,7 @@ class LinkedList extends DataStruct implements Iterator {
                 $nextNode = &$nextNode->next();
             }
             $data = &$nextNode->data();
-            $node->setNext(null);
+            $node->setNext($this->null);
             $this->tail = $node;
             $this->_reduceSize();
 
@@ -507,7 +507,9 @@ class LinkedList extends DataStruct implements Iterator {
                             $retVal = true;
                         } else {
                             $currentNode = $nextToCurrent;
-                            $nextToCurrent = $nextToCurrent->next();
+                            if($nextToCurrent !== null){
+                                $nextToCurrent = $nextToCurrent->next();
+                            }
                         }
                         $pointer++;
                     }
