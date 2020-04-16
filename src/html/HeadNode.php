@@ -266,10 +266,10 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedHref) != 0) {
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
-
+            $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + random_int(0, 10000)), random_int(0,10),10);
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
                 if (strlen($queryString) != 0) {
                     $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
@@ -341,10 +341,12 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-
+            
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + random_int(0, 10000)), random_int(0,10),10);
+                //php 5.6 does not support random_int
+                $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
                 if (strlen($queryString) == 0) {
                     $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
