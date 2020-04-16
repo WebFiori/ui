@@ -154,6 +154,19 @@ class Stack extends DataStruct {
      * is null.
      * @since 1.0
      */
+    public function add(&$el) {
+        return $this->push($el);
+    }
+    /**
+     * Adds new element to the top of the stack.
+     * @param mixed $el The element that will be added. If it is null, the 
+     * method will not add it.
+     * @return boolean The method will return true if the element is added. 
+     * The method will return false only in two cases, If the maximum 
+     * number of elements is reached and trying to add new one or the given element 
+     * is null.
+     * @since 1.0
+     */
     public function push($el) {
         if ($el !== null && $this->validateSize()) {
             if ($this->size() == 0) {
