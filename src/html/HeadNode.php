@@ -269,7 +269,7 @@ class HeadNode extends HTMLNode {
 
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + rand(0, 10000)), rand(0,10),10);
+                $version = substr(hash('sha256', time() + random_int(0, 10000)), random_int(0,10),10);
 
                 if (strlen($queryString) != 0) {
                     $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
@@ -344,7 +344,7 @@ class HeadNode extends HTMLNode {
 
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + rand(0, 10000)), rand(0,10),10);
+                $version = substr(hash('sha256', time() + random_int(0, 10000)), random_int(0,10),10);
 
                 if (strlen($queryString) == 0) {
                     $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
