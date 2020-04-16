@@ -400,38 +400,36 @@ class HeadNode extends HTMLNode {
         $trimmedRel = trim(strtolower($rel));
         $trimmedHref = trim($href);
 
-        if (strlen($trimmedRel) != 0 && strlen($trimmedHref) != 0) {
-            if ($trimmedRel != 'canonical' && $trimmedRel != 'alternate') {
-                if ($rel == 'stylesheet') {
-                    return $this->addCSS($href, $otherAttrs);
-                } else {
-                    $node = new HTMLNode('link');
-                    $node->setAttribute('rel',$trimmedRel);
-                    $node->setAttribute('href', $trimmedHref);
-                    
-                    $notAllowed = [
-                        'rel','href'
-                    ];
-                    $this->_addAttrs($node, $otherAttrs, $notAllowed);
-                    
-                    $insertPosition = -1;
+        if (strlen($trimmedRel) != 0 && strlen($trimmedHref) != 0 && $trimmedRel != 'canonical' && $trimmedRel != 'alternate') {
+            if ($rel == 'stylesheet') {
+                return $this->addCSS($href, $otherAttrs);
+            } else {
+                $node = new HTMLNode('link');
+                $node->setAttribute('rel',$trimmedRel);
+                $node->setAttribute('href', $trimmedHref);
 
-                    for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                        $chNode = $this->getChild($x);
+                $notAllowed = [
+                    'rel','href'
+                ];
+                $this->_addAttrs($node, $otherAttrs, $notAllowed);
 
-                        if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == $trimmedRel) {
-                            $insertPosition = $x;
-                        }
+                $insertPosition = -1;
+
+                for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+                    $chNode = $this->getChild($x);
+
+                    if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == $trimmedRel) {
+                        $insertPosition = $x;
                     }
-
-                    if ($insertPosition != -1) {
-                        $this->insert($node,$insertPosition + 1);
-                    } else {
-                        $this->addChild($node);
-                    }
-
-                    return true;
                 }
+
+                if ($insertPosition != -1) {
+                    $this->insert($node,$insertPosition + 1);
+                } else {
+                    $this->addChild($node);
+                }
+
+                return true;
             }
         }
 
@@ -759,10 +757,8 @@ class HeadNode extends HTMLNode {
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
                 $node = $this->children()->get($x);
 
-                if ($node->getNodeName() == 'meta') {
-                    if ($node->getAttributeValue('name') == $name) {
-                        return true;
-                    }
+                if ($node->getNodeName() == 'meta' && $node->getAttributeValue('name') == $name) {
+                    return true;
                 }
             }
         }
