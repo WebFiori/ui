@@ -189,13 +189,13 @@ class Queue extends DataStruct {
      * @since 1.0
      */
     private function validateSize() {
-        $max = $this->max();
+        $maxEls = $this->max();
 
-        if ($max == -1) {
+        if ($maxEls == -1) {
             return true;
         }
 
-        if ($max > $this->size()) {
+        if ($maxEls > $this->size()) {
             return true;
         }
 

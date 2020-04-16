@@ -161,7 +161,6 @@ class CodeSnippet extends HTMLNode {
         $this->addChild($this->titleNode);
         $this->addChild($this->lineNumsNode);
         $this->addChild($this->codeDisplay);
-        //$this->codeDisplay->addChild($this->lineNumsNode);
         $this->codeDisplay->addChild($this->pre);
         $this->pre->addChild($this->code);
         $this->_addLine();
@@ -222,7 +221,6 @@ class CodeSnippet extends HTMLNode {
                 }
             }
         }
-        //$this->_addLine();
         $this->codeStrNode->setText($xCode."\n");
     }
     /**

@@ -85,8 +85,7 @@ abstract class DataStruct implements Countable{
                 $retVal .= '    ['.$x.']=>'.$data.'('.$dataType.")$comma\n";
             }
         }
-        $retVal .= ']';
-
-        return $retVal;
+        
+        return $retVal . ']';
     }
 }

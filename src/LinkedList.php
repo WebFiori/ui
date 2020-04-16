@@ -96,22 +96,19 @@ class LinkedList extends DataStruct implements Iterator {
     public function &get($index) {
         if (gettype($index) == 'integer' && $index < $this->size() && $index > -1) {
             if ($index == 0) {
-                $first = &$this->getFirst();
-
-                return $first;
+                
+                return $this->getFirst();
             } else if ($index == $this->size() - 1) {
-                $last = &$this->getLast();
-
-                return $last;
+                
+                return $this->getLast();
             } else {
                 $nextNode = $this->head->next();
                 $node = $this->head;
 
                 for ($i = 1 ; ; $i++) {
                     if ($i == $index) {
-                        $data = &$nextNode->data();
-
-                        return $data;
+                        
+                        return $nextNode->data();
                     }
                     $node = $nextNode;
                     $nextNode = $nextNode->next();
@@ -191,8 +188,7 @@ class LinkedList extends DataStruct implements Iterator {
                 $nextNode = &$nextNode->next();
             }
             $data = &$nextNode->data();
-            $null = null;
-            $node->setNext($null);
+            $node->setNext(null);
             $this->tail = $node;
             $this->_reduceSize();
 
@@ -271,9 +267,8 @@ class LinkedList extends DataStruct implements Iterator {
      */
     public function &getFirst() {
         if ($this->size() >= 1) {
-            $data = &$this->head->data();
-
-            return $data;
+            
+            return $this->head->data();
         }
 
         return $this->null;
@@ -462,32 +457,33 @@ class LinkedList extends DataStruct implements Iterator {
      * If not, the method will return false.
      */
     public function insert(&$el,$position) {
+        $retVal = false;
         if ($this->validateSize()) {
-            $size = $this->size();
+            $listSize = $this->size();
 
-            if ($size == 0 && $position == 0) {
+            if ($listSize == 0 && $position == 0) {
                 //empty list and insert at start.
-                return $this->add($el);
-            } else if ($size == 1 && $position == 0) {
+                $retVal = $this->add($el);
+            } else if ($listSize == 1 && $position == 0) {
                 //list size is 1 and position = 0. inser at the start.
                 $newNode = new Node($el, $this->head);
                 $this->head = $newNode;
                 $this->tail = $this->head->next();
                 $this->size++;
 
-                return true;
-            } else if ($size == 1 && $position == 1) {
+                $retVal = true;
+            } else if ($listSize == 1 && $position == 1) {
                 //list size is 1 and position = 1. inser at the end.
                 $newNode = new Node($el);
                 $this->tail = $newNode;
                 $this->head->setNext($this->tail);
                 $this->size++;
 
-                return true;
-            } else if ($position == $size) {
+                $retVal = true;
+            } else if ($position == $listSize) {
                 //insert at the end.
-                return $this->add($el);
-            } else if ($position < $size) {
+                $retVal = $this->add($el);
+            } else if ($position < $listSize) {
                 //insert in the middle or at the start
                 if ($position == 0) {
                     //inser at the start.
@@ -495,7 +491,7 @@ class LinkedList extends DataStruct implements Iterator {
                     $this->head = $newNode;
                     $this->size++;
 
-                    return true;
+                    $retVal = true;
                 } else {
                     //insert in the middle.
                     $pointer = 1;
@@ -508,7 +504,7 @@ class LinkedList extends DataStruct implements Iterator {
                             $currentNode->setNext($newNode);
                             $this->size++;
 
-                            return true;
+                            $retVal = true;
                         } else {
                             $currentNode = $nextToCurrent;
                             $nextToCurrent = $nextToCurrent->next();
@@ -519,7 +515,7 @@ class LinkedList extends DataStruct implements Iterator {
             }
         }
 
-        return false;
+        return $retVal;
     }
     /**
      * Sort the elements of the list using insertion sort algorithm.

@@ -122,8 +122,7 @@ class Stack extends DataStruct {
                 $nextNode = $nextNode->next();
             }
             $data = $nextNode->data();
-            $null = null;
-            $node->setNext($null);
+            $node->setNext(null);
             $this->tail = $node;
             $this->size--;
 
