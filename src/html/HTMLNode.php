@@ -34,7 +34,7 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.8.1
+ * @version 1.8.2
  */
 class HTMLNode implements Countable, Iterator {
     /**
@@ -246,7 +246,7 @@ class HTMLNode implements Countable, Iterator {
             $this->name = strtolower($name);
 
             if (!$this->_validateName($this->getNodeName())) {
-                throw new Exception('Invalid node name: \''.$name.'\'.');
+                throw new InvalidNodeNameException('Invalid node name: \''.$name.'\'.');
             }
         }
 
@@ -298,6 +298,18 @@ class HTMLNode implements Countable, Iterator {
         if ($this->mustClose()) {
             $this->addChild(self::createComment($text));
         }
+    }
+    /**
+     * Returns the last added child.
+     * @return HTMLNode The child will be returned as an object of type 'HTMLNode'. 
+     * If the node has no children, the method will return null.
+     * @since 1.8.2
+     */
+    public function getLastChild() {
+        if($this->childrenCount() >= 1){
+            return $this->getChild($this->childrenCount() - 1);
+        }
+        return null;
     }
     /**
      * Adds a text node as a child.
@@ -587,11 +599,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.1
      */
     public function getAttributeValue($attrName) {
-        if ($this->hasAttribute($attrName)) {
-            return $this->attributes[$attrName];
-        }
-
-        return null;
+        return $this->getAttribute($attrName);
     }
     /**
      * Returns a child node given its index.
@@ -1239,28 +1247,18 @@ class HTMLNode implements Countable, Iterator {
 
             if ($isValid) {
                 if ($lower == 'dir') {
-                    $lowerVal = strtolower($trimmedVal);
+                    return $this->setWritingDir($val);
+                } else if ($trimmedName == 'style') {
+                    $styleArr = $this->_styleArray($trimmedVal);
 
-                    if ($lowerVal == 'ltr' || $lowerVal == 'rtl') {
-                        $this->attributes[$lower] = $lowerVal;
-
-                        return true;
-                    }
+                    return $this->setStyle($styleArr);
+                } else if ($val === null) {
+                    $this->attributes[$lower] = null;
                 } else {
-                    if ($trimmedName == 'style') {
-                        $styleArr = $this->_styleArray($trimmedVal);
-
-                        return $this->setStyle($styleArr);
-                    } else {
-                        if ($val === null) {
-                            $this->attributes[$lower] = null;
-                        } else {
-                            $this->attributes[$lower] = $trimmedVal;
-                        }
-
-                        return true;
-                    }
+                    $this->attributes[$lower] = $trimmedVal;
                 }
+
+                return true;
             }
         }
 
@@ -1499,7 +1497,14 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function setWritingDir($val) {
-        $this->setAttribute('dir', $val);
+        $lowerVal = strtolower(trim($val));
+
+        if ($lowerVal == 'ltr' || $lowerVal == 'rtl') {
+            $this->attributes['dir'] = $lowerVal;
+
+            return true;
+        }
+        return false;
     }
     /**
      * Returns HTML string that represents the node as a whole.
@@ -2054,9 +2059,9 @@ class HTMLNode implements Countable, Iterator {
         } else if ($node->mustClose()) {
             $chCount = $node->children()->size();
             $this->nodesStack->push($node);
-            $name = $node->getNodeName();
+            $nodeName = $node->getNodeName();
 
-            if ($name == 'pre' || $name == 'textarea' || $name == 'code') {
+            if ($nodeName == 'pre' || $nodeName == 'textarea' || $nodeName == 'code') {
                 $this->codeString .= $this->_getTab().$node->_openAsCode($FO);
             } else {
                 $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
@@ -2183,15 +2188,12 @@ class HTMLNode implements Countable, Iterator {
             for ($x = 0 ; $x < $len ; $x++) {
                 $char = $name[$x];
 
-                if ($x == 0) {
-                    if (($char >= '0' && $char <= '9') || $char == '-') {
-                        return false;
-                    }
+                if ($x == 0 && (($char >= '0' && $char <= '9') || $char == '-')) {
+                    return false;
                 }
 
-                if (($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
-                        || $char == '-' || $char == ':' || $char == '@') {
-                } else {
+                if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
+                        || $char == '-' || $char == ':' || $char == '@')) {
                     return false;
                 }
             }

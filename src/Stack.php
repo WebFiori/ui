@@ -194,13 +194,13 @@ class Stack extends DataStruct {
      * @since 1.0
      */
     private function validateSize() {
-        $max = $this->max();
+        $maxSize = $this->max();
 
-        if ($max == -1) {
+        if ($maxSize == -1) {
             return true;
         }
 
-        if ($max > $this->size()) {
+        if ($maxSize > $this->size()) {
             return true;
         }
 

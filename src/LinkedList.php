@@ -103,14 +103,12 @@ class LinkedList extends DataStruct implements Iterator {
                 return $this->getLast();
             } else {
                 $nextNode = $this->head->next();
-                $node = $this->head;
 
                 for ($i = 1 ; ; $i++) {
                     if ($i == $index) {
                         
                         return $nextNode->data();
                     }
-                    $node = $nextNode;
                     $nextNode = $nextNode->next();
                 }
             }
@@ -130,44 +128,36 @@ class LinkedList extends DataStruct implements Iterator {
     public function &removeElement(&$val) {
         if ($this->size() == 1) {
             if ($this->head->data() === $val) {
-                $el = &$this->head->data();
-
-                if ($this->removeFirst() != null) {
-                    return $el;
-                }
+                return $this->removeFirst();
             }
         } else if ($this->size() > 1) {
             if ($this->head->data() === $val) {
-                $el = &$this->head->data();
-
-                if ($this->removeFirst() != null) {
-                    return $el;
-                }
+                return $this->removeFirst();
             } else if ($this->tail->data() === $val) {
-                $el = &$this->tail->data();
-
-                if ($this->removeLast() !== null) {
-                    return $el;
-                }
+                return $this->removeLast();
             } else {
-                $node = $this->head;
-                $nextNode = &$this->head->next();
-
-                while ($nextNode != null) {
-                    $data = &$nextNode->data();
-
-                    if ($data === $val) {
-                        $node->setNext($nextNode->next());
-                        $this->_reduceSize();
-
-                        return $data;
-                    }
-                    $node = $nextNode;
-                    $nextNode = &$nextNode->next();
-                }
+                return $this->_removeElementHelper($val);
             }
         }
 
+        return $this->null;
+    }
+    private function &_removeElementHelper(&$val) {
+        $node = $this->head;
+        $nextNode = &$this->head->next();
+
+        while ($nextNode != null) {
+            $data = &$nextNode->data();
+
+            if ($data === $val) {
+                $node->setNext($nextNode->next());
+                $this->_reduceSize();
+
+                return $data;
+            }
+            $node = $nextNode;
+            $nextNode = &$nextNode->next();
+        }
         return $this->null;
     }
     /**
@@ -466,10 +456,7 @@ class LinkedList extends DataStruct implements Iterator {
                 $retVal = $this->add($el);
             } else if ($listSize == 1 && $position == 0) {
                 //list size is 1 and position = 0. inser at the start.
-                $newNode = new Node($el, $this->head);
-                $this->head = $newNode;
-                $this->tail = $this->head->next();
-                $this->size++;
+                $this->_insertStart($el);
 
                 $retVal = true;
             } else if ($listSize == 1 && $position == 1) {
@@ -487,36 +474,46 @@ class LinkedList extends DataStruct implements Iterator {
                 //insert in the middle or at the start
                 if ($position == 0) {
                     //inser at the start.
-                    $newNode = new Node($el, $this->head);
-                    $this->head = $newNode;
-                    $this->size++;
+                    $this->_insertStart($el, false);
 
                     $retVal = true;
                 } else {
                     //insert in the middle.
-                    $pointer = 1;
-                    $currentNode = $this->head;
-                    $nextToCurrent = $currentNode->next();
-
-                    while ($currentNode != null) {
-                        if ($pointer == $position) {
-                            $newNode = new Node($el,$nextToCurrent);
-                            $currentNode->setNext($newNode);
-                            $this->size++;
-
-                            $retVal = true;
-                        } else {
-                            $currentNode = $nextToCurrent;
-                            if($nextToCurrent !== null){
-                                $nextToCurrent = $nextToCurrent->next();
-                            }
-                        }
-                        $pointer++;
-                    }
+                    $retVal = $this->_insertMiddle($el, $position);
                 }
             }
         }
 
+        return $retVal;
+    }
+    private function _insertStart(&$el, $noTail=true) {
+        $newNode = new Node($el, $this->head);
+        $this->head = $newNode;
+        if($noTail){
+            $this->tail = $this->head->next();
+        }
+        $this->size++;
+    }
+    private function _insertMiddle(&$el,&$position) {
+        $pointer = 1;
+        $currentNode = $this->head;
+        $nextToCurrent = $currentNode->next();
+        $retVal = false;
+        while ($currentNode != null) {
+            if ($pointer == $position) {
+                $newNode = new Node($el,$nextToCurrent);
+                $currentNode->setNext($newNode);
+                $this->size++;
+
+                $retVal = true;
+            } else {
+                $currentNode = $nextToCurrent;
+                if($nextToCurrent !== null){
+                    $nextToCurrent = $nextToCurrent->next();
+                }
+            }
+            $pointer++;
+        }
         return $retVal;
     }
     /**
@@ -642,7 +639,6 @@ class LinkedList extends DataStruct implements Iterator {
 
             return true;
         } else {
-            $node = $this->head;
             $nextNode = &$this->head->next();
 
             while ($nextNode != null) {
@@ -653,7 +649,6 @@ class LinkedList extends DataStruct implements Iterator {
 
                     return true;
                 }
-                $node = $nextNode;
                 $nextNode = &$nextNode->next();
             }
         }

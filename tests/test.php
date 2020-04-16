@@ -46,6 +46,7 @@ require_once $rootDir.'src'.$DS.'Stack.php';
 require_once $rootDir.'src'.$DS.'Queue.php';
 require_once $rootDir.'src'.$DS.'Comparable.php';
 //HTML classes
+require_once $rootDir.'src'.$DS.'html'.$DS.'InvalidNodeNameException.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLNode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Br.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HeadNode.php';
@@ -56,6 +57,7 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'Input.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'JsCode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Label.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Anchor.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLList.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'UnorderedList.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
