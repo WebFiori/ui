@@ -1269,9 +1269,10 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets multiple attributes at once.
      * @param array $attrsArr An associative array that has attributes names 
-     * and values.. The indices will represents 
+     * and values. The indices will represents 
      * attributes names and the value of each index represents the values of 
-     * the attributes.
+     * the attributes. If the given array has elements without keys, they 
+     * will be added without values.
      * @return boolean|array If the given value does not represents an array, 
      * the method will return false. Other than that, the method will return 
      * an associative array. The indices of the array will be the names of the 
