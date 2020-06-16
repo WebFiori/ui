@@ -15,7 +15,7 @@ A set of classes that provide basic data structures for php in addition to helpe
 </p>
 
 ## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://programmingacademia.com/webfiori/docs/phpStructs .
+This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/phpStructs .
 
 ## Features
 - Supports basic data structures including LinkedList, Stack and Queue.
@@ -61,7 +61,6 @@ use phpStructs\html\HTMLDoc;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\Input;
 use phpStructs\html\Label;
-use phpStructs\html\Br;
 
 //Create new instance of "HTMLDoc".
 $doc = new HTMLDoc();
@@ -81,15 +80,15 @@ $submit = new Input('submit');
 $submit->setAttribute('onclick', 'alert(\'Form Submit\');return false;');
 
 //Add input elements to the form.
-$form->addChild($usernameLbl);
-$form->addChild(new Br());
-$form->addChild($usernameInput);
-$form->addChild(new Br());
-$form->addChild($passwordLbl);
-$form->addChild(new Br());
-$form->addChild($passwordInput);
-$form->addChild(new Br());
-$form->addChild($submit);
+$form->addChild($usernameLbl)
+->addChild('br')
+->addChild($usernameInput)
+->addChild('br')
+->addChild($passwordLbl)
+->addChild('br')
+->addChild($passwordInput)
+->addChild('br')
+->addChild($submit);
 
 //display the document.
 echo $doc;
