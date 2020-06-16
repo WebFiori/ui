@@ -10,7 +10,7 @@ A set of classes that provide basic data structures for php in addition to helpe
   </a>
   <img src="https://img.shields.io/packagist/dt/webfiori/php-structs?color=light-green">
   <a href="https://paypal.me/IbrahimBinAlshikh">
-    <img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fprogrammingacademia.com%2Fwebfiori%2Fapis%2Fshields-get-dontate-badget">
+    <img src="https://img.shields.io/endpoint.svg?url=https://webfiori.com/x/apis/shields-get-dontate-badget">
   </a>
 </p>
 
