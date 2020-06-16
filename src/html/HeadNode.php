@@ -248,6 +248,7 @@ class HeadNode extends HTMLNode {
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
             $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
+
             if ($preventCaching === true) {
                 //used to prevent caching 
                 $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
@@ -262,9 +263,9 @@ class HeadNode extends HTMLNode {
             } else {
                 $tag->setAttribute('href', $trimmedHref);
             }
-            
+
             $this->_cssJsInsertHelper($tag, $otherAttrs);
-            
+
             return true;
         }
 
@@ -303,7 +304,7 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            
+
             if ($preventCaching === true) {
                 //used to prevent caching 
                 //php 5.6 does not support random_int
@@ -322,8 +323,9 @@ class HeadNode extends HTMLNode {
                     $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
                 }
             }
-            
+
             $this->_cssJsInsertHelper($tag, $otherAttrs);
+
             return true;
         }
 

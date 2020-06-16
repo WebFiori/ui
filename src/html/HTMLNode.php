@@ -501,6 +501,7 @@ class HTMLNode implements Countable, Iterator {
     public static function fromHTMLText($text,$asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);
         $TN = 'tag-name';
+
         if (count($nodesArr) >= 1) {
             if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
                 $retVal = new HTMLDoc();
@@ -928,6 +929,7 @@ class HTMLNode implements Countable, Iterator {
         $trimmed = trim($text);
         $BT = 'body-text';
         $TN = 'tag-name';
+
         if (strlen($trimmed) != 0) {
             $array = explode('<', $trimmed);
             $nodesNames = [];
@@ -1504,6 +1506,7 @@ class HTMLNode implements Countable, Iterator {
 
             return true;
         }
+
         return false;
     }
     /**
@@ -1575,6 +1578,7 @@ class HTMLNode implements Countable, Iterator {
     private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
         $retVal = [];
         $TN = 'tag-name';
+
         for (; $x < $nodesCount ; $x++) {
             $node = $parsedNodesArr[$x];
             $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
@@ -1635,6 +1639,7 @@ class HTMLNode implements Countable, Iterator {
     private static function _fromHTMLTextHelper_00($nodeArr) {
         $TN = 'tag-name';
         $BT = 'body-text';
+
         if ($nodeArr[$TN] == self::C_NODE) {
             return self::createComment($nodeArr[$BT]);
         } else if ($nodeArr[$TN] == self::T_NODE) {
