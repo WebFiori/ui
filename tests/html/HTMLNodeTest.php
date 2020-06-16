@@ -1144,6 +1144,16 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testSetAttribute() {
+        $node = new HTMLNode();
+        $node->setAttribute('hello');
+        $this->assertEquals('<div hello></div>', $node->toHTML());
+        $node->setAttribute('hello', '');
+        $this->assertEquals('<div hello=""></div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testSetNodeName00() {
         $node = new HTMLNode();
         $this->assertFalse($node->setNodeName(''));
