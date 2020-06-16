@@ -164,7 +164,7 @@ class CodeSnippet extends HTMLNode {
                 'float' => 'left'
             ]
         );
-        
+
         $this->addChild($this->titleNode);
         $this->addChild($this->lineNumsNode);
         $this->addChild($this->codeDisplay);
@@ -173,14 +173,6 @@ class CodeSnippet extends HTMLNode {
         $this->_addLine();
         $this->setCode($code);
         $this->setTitle($title);
-    }
-    /**
-     * Returns the node that contains the code that will be shown by the snippit.
-     * @return HTMLNode The node that contains the code that will be shown by the snippit.
-     * @since 1.0.3
-     */
-    public function getCodeElement() {
-        return $this->code;
     }
     /**
      * Adds new line of code to the code snippit.
@@ -194,6 +186,14 @@ class CodeSnippet extends HTMLNode {
         $oldCode = $this->codeStrNode->getTextUnescaped();
         $oldCode .= trim($codeAsTxt,"\n\r")."\n";
         $this->codeStrNode->setText($oldCode);
+    }
+    /**
+     * Returns the node that contains the code that will be shown by the snippit.
+     * @return HTMLNode The node that contains the code that will be shown by the snippit.
+     * @since 1.0.3
+     */
+    public function getCodeElement() {
+        return $this->code;
     }
     /**
      * Returns the original text which represents the code.
