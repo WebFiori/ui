@@ -44,12 +44,14 @@ class PNode extends HTMLNode {
      * Adds new child node.
      * @param HTMLNode $node The node that will be added. The paragraph element 
      * can only accept the addition of in-line HTML elements.
+     * @param boolean $useChaining Not used.
+     * @param array $attrs A set of attributes to set for the child.
      * @since 1.0
      */
-    public function addChild($node) {
+    public function addChild($node, $useChaining = true, $attrs = []) {
         if ($node instanceof HTMLNode) {
             if (in_array($node->getNodeName(), PNode::ALLOWED_CHILDS) || $node->isTextNode()) {
-                parent::addChild($node);
+                parent::addChild($node, $useChaining, $attrs);
             }
         }
     }

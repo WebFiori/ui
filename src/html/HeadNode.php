@@ -169,11 +169,13 @@ class HeadNode extends HTMLNode {
      * <li>It is a '#COMMENT' node.</li>
      * </ul>
      * Other than that, the node will be not added.
+     * @param boolean $useChaining Not used.
+     * @param array $attrs Not used.
      * @return boolean If the node is added, the method will return true. If 
      * not added, the method will return false.
      * @since 1.0
      */
-    public function addChild($node) {
+    public function addChild($node, $useChaining = true, $attrs = []) {
         $retVal = false;
 
         if ($node instanceof HTMLNode) {

@@ -76,6 +76,32 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddChild00() {
+        $node = new HTMLNode();
+        $node->addChild('p')
+                ->addChild('div')
+                ->addChild('p')
+                ->addChild('img', false)
+                ->setAttribute('src', 'ok');
+        $this->assertEquals(4, $node->childrenCount());
+        $this->assertEquals('p', $node->getChild(0)->getNodeName());
+        $this->assertEquals('div', $node->getChild(1)->getNodeName());
+        $this->assertEquals('p', $node->getChild(2)->getNodeName());
+        $this->assertEquals('img', $node->getChild(3)->getNodeName());
+        $this->assertEquals('ok', $node->getChild(3)->getAttribute('src'));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild01() {
+        $this->expectException('Exception');
+        $node = new HTMLNode();
+        $node->addChild('invalid name');
+    }
+    /**
+     * @test
+     */
     public function testAddTextNode00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello World!');
@@ -902,7 +928,6 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->addTextNode('Hello #0');
         $node->addTextNode('Hello #1');
-        $node->addChild('Hello #2');
         $index = 0;
 
         foreach ($node as $child) {

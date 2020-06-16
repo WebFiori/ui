@@ -106,17 +106,25 @@ class Input extends HTMLNode {
      * &lt;optgroup&gt;. Also, if the input type is &lt;textarea&gt; and 
      * the given node is a text node, it will be added.
      * @param HTMLNode $node The node that will be added.
+     * @param boolean $useChaining If this parameter is set to true, the method 
+     * will return the same instance at which the child node is added to. If 
+     * set to false, the method will return the child which have been added. 
+     * This can be useful if the developer would like to add a chain of elements 
+     * to the body of the node. Default value is true.
+     * @param array $attrs An optional array of attributes which will be set in 
+     * the newly added child.
+     * @return HTMLNode If the parameter <code>$useChaining</code> is set to true, 
+     * the method will return the '$this' instance. If set to false, it will 
+     * return the newly added child. If no child is added, the method will return null.
      * @since 1.0.1
      */
-    public function addChild($node) {
+    public function addChild($node, $useChaining = true, $attrs = []) {
         if ($node instanceof HTMLNode) {
             if ($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
                     $node->getNodeName() == 'optgroup')) {
-                parent::addChild($node);
-            } else {
-                if ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT') {
-                    parent::addChild($node);
-                }
+                return parent::addChild($node, $useChaining, $attrs);
+            } else if ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT') {
+                return parent::addChild($node, $useChaining, $attrs);
             }
         }
     }

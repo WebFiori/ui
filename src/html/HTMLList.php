@@ -38,11 +38,24 @@ class HTMLList extends HTMLNode {
     /**
      * Adds new list item to the list.
      * @param ListItem $node The list item that will be added.
+     * @param boolean $useChaining If this parameter is set to true, the method 
+     * will return the same instance at which the child node is added to. If 
+     * set to false, the method will return the child which have been added. 
+     * This can be useful if the developer would like to add a chain of elements 
+     * to the body of the node. Default value is true.
+     * @param array $attrs An optional array of attributes which will be set in 
+     * the newly added child.
+     * @return ListItem|null If the parameter <code>$useChaining</code> is set to true, 
+     * the method will return the '$this' instance. If set to false, it will 
+     * return the newly added child. If the given parameter is not 
+     * an instance of 'ListItem', the method will return null.
+     * @throws InvalidNodeNameException The method will throw this exception if 
+     * node name is given and the name is not valid.
      * @since 1.0
      */
-    public function addChild($node) {
+    public function addChild($node, $useChaining = true, $attrs = []) {
         if ($node instanceof ListItem) {
-            parent::addChild($node);
+            return parent::addChild($node, $useChaining, $attrs);
         }
     }
     /**

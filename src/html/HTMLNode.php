@@ -168,11 +168,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.3
      */
     private $nodesStack;
-    /**
-     * A null guard for the methods that return null reference.
-     * @since 1.6
-     */
-    private $null;
+
     /**
      * The original text of a text node.
      * @var string 
@@ -237,13 +233,13 @@ class HTMLNode implements Countable, Iterator {
      */
     public function __construct($name = 'div') {
         $this->null = null;
-        $nameUpper = strtoupper($name);
+        $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::T_NODE || $nameUpper == self::C_NODE) {
             $this->name = $nameUpper;
             $this->requireClose = false;
         } else {
-            $this->name = strtolower($name);
+            $this->name = strtolower(trim($name));
 
             if (!$this->_validateName($this->getNodeName())) {
                 throw new InvalidNodeNameException('Invalid node name: \''.$name.'\'.');
@@ -270,7 +266,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds new child node.
-     * @param HTMLNode $node The node that will be added. The node can have 
+     * @param HTMLNode|string $node The node that will be added. 
+     * It can be an instance of the class 'HTMLNode' or a string that represents the 
+     * name of the node that will be added. The node can have 
      * child nodes only if 4 conditions are met:
      * <ul>
      * <li>If the node is not a text node.</li>
@@ -278,13 +276,40 @@ class HTMLNode implements Countable, Iterator {
      * <li>The note is not a void node.</li>
      * <li>The note is not it self. (making a node as a child of it self)</li>
      * </ul>
+     * @param boolean $useChaining If this parameter is set to true, the method 
+     * will return the same instance at which the child node is added to. If 
+     * set to false, the method will return the child which have been added. 
+     * This can be useful if the developer would like to add a chain of elements 
+     * to the body of the node. Default value is true.
+     * @param array $attrs An optional array of attributes which will be set in 
+     * the newly added child.
+     * @return HTMLNode If the parameter <code>$useChaining</code> is set to true, 
+     * the method will return the '$this' instance. If set to false, it will 
+     * return the newly added child.
+     * @throws InvalidNodeNameException The method will throw this exception if 
+     * node name is given and the name is not valid.
      * @since 1.0
      */
-    public function addChild($node) {
+    public function addChild($node, $useChaining = true, $attrs = []) {
+        
+        if (gettype($node) == 'string') {
+            $toAdd = new HTMLNode($node);
+        } else {
+            $toAdd = $node;
+        }
+        
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
-            && ($node instanceof HTMLNode) && $node !== $this) {
-            $node->_setParent($this);
-            $this->childrenList->add($node);
+            && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
+            $toAdd->setAttributes($attrs);
+            $toAdd->_setParent($this);
+            $this->childrenList->add($toAdd);
+        } 
+        $chain = $useChaining === true;
+        
+        if ($chain) {
+            return $this;
+        } else {
+            return $toAdd;
         }
     }
     /**
@@ -624,8 +649,6 @@ class HTMLNode implements Countable, Iterator {
                 }
             }
         }
-
-        return $this->null;
     }
     /**
      * Returns a child node given its ID.
@@ -638,8 +661,6 @@ class HTMLNode implements Countable, Iterator {
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && strlen($val) != 0) {
             return $this->_getChildByID($val, $this->children());
         }
-
-        return $this->null;
     }
     /**
      * Returns a linked list that contains all child nodes which has the given 
@@ -1193,13 +1214,11 @@ class HTMLNode implements Countable, Iterator {
             $child = $this->children()->removeElement($node);
 
             if ($child instanceof HTMLNode) {
-                $child->_setParent($this->null);
+                $child->_setParent(null);
 
                 return $child;
             }
         }
-
-        return $this->null;
     }
     /**
      * Replace a direct child node with a new one.
@@ -1781,8 +1800,6 @@ class HTMLNode implements Countable, Iterator {
                 }
             }
         }
-
-        return $this->null;
     }
     /**
      * 
