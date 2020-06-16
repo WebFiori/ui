@@ -232,14 +232,11 @@ class HTMLDoc {
      * @since 1.4
      */
     public function removeChild($node) {
-        if ($node instanceof HTMLNode) {
-            if ($node !== $this->body && $node !== $this->headNode) {
-                return $this->_removeChild($this->getDocumentRoot(), $node);
-            }
+        if ($node instanceof HTMLNode && $node !== $this->body && $node !== $this->headNode) {
+            return $this->_removeChild($this->getDocumentRoot(), $node);
         }
-        $null = null;
 
-        return $null;
+        return null;
     }
     /**
      * Saves the document to .html file.
@@ -260,7 +257,7 @@ class HTMLDoc {
         if (strlen($trimmedPath) != 0 && strlen($trimmedName) != 0) {
             $f = fopen($trimmedPath.DIRECTORY_SEPARATOR.$trimmedName.'.html', 'w+');
 
-            if ($f != false) {
+            if ($f) {
                 fwrite($f, $this->toHTML($wellFormatted));
                 fclose($f);
 
@@ -278,12 +275,10 @@ class HTMLDoc {
      * @since 1.0
      */
     public function setHeadNode($node) {
-        if ($node instanceof HeadNode) {
-            if ($this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
-                $this->headNode = $node;
+        if ($node instanceof HeadNode && $this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
+            $this->headNode = $node;
 
-                return true;
-            }
+            return true;
         }
 
         return false;
@@ -368,8 +363,7 @@ class HTMLDoc {
                 return $removed;
             }
         }
-        $removed = $ch->removeChild($nodeToRemove);
 
-        return $removed;
+        return $ch->removeChild($nodeToRemove);
     }
 }

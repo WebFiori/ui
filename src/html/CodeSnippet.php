@@ -45,7 +45,7 @@ namespace phpStructs\html;
  * <li>code: The container that contains the code.</li>
  * </ul>
  * @author Ibrahim
- * @version 1.0.2
+ * @version 1.0.3
  */
 class CodeSnippet extends HTMLNode {
     /**
@@ -168,12 +168,19 @@ class CodeSnippet extends HTMLNode {
         $this->addChild($this->titleNode);
         $this->addChild($this->lineNumsNode);
         $this->addChild($this->codeDisplay);
-        //$this->codeDisplay->addChild($this->lineNumsNode);
         $this->codeDisplay->addChild($this->pre);
         $this->pre->addChild($this->code);
         $this->_addLine();
         $this->setCode($code);
         $this->setTitle($title);
+    }
+    /**
+     * Returns the node that contains the code that will be shown by the snippit.
+     * @return HTMLNode The node that contains the code that will be shown by the snippit.
+     * @since 1.0.3
+     */
+    public function getCodeElement() {
+        return $this->code;
     }
     /**
      * Adds new line of code to the code snippit.
@@ -216,7 +223,8 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Sets the code that will be displayed by the snippit block.
-     * @param string $code The code.
+     * @param string $code The code. Note that to make the code appears in 
+     * multi-lines, it must be included between double quotation marks.
      * @since 1.0
      */
     public function setCode($code) {
@@ -231,8 +239,8 @@ class CodeSnippet extends HTMLNode {
                 }
             }
         }
-        //$this->_addLine();
         $this->codeStrNode->setText($xCode."\n");
+        $this->_addLine();
     }
     /**
      * Sets the title of the snippit.

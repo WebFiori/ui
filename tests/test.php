@@ -31,21 +31,22 @@ $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
 $rootDirTrimmed = trim($rootDir,'/\\');
 //echo 'Include Path: \''. get_include_path().'\''."\n";
-if(explode($DS, $rootDirTrimmed)[0] == 'home'){
+if (explode($DS, $rootDirTrimmed)[0] == 'home') {
     //linux.
     $rootDir = $DS.$rootDirTrimmed.$DS;
-}
-else{
+} else {
     $rootDir = $rootDirTrimmed.$DS;
 }
 define('ROOT', $rootDir);
-//echo 'Root Directory: \''.$rootDir.'\'.'."\n";
+echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'src'.$DS.'Node.php';
+require_once $rootDir.'src'.$DS.'DataStruct.php';
 require_once $rootDir.'src'.$DS.'LinkedList.php';
 require_once $rootDir.'src'.$DS.'Stack.php';
 require_once $rootDir.'src'.$DS.'Queue.php';
 require_once $rootDir.'src'.$DS.'Comparable.php';
 //HTML classes
+require_once $rootDir.'src'.$DS.'html'.$DS.'InvalidNodeNameException.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLNode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Br.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HeadNode.php';
@@ -56,9 +57,11 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'Input.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'JsCode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Label.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Anchor.php';
+require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLList.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'UnorderedList.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
 
 require_once $rootDir.'tests'.$DS.'AnyObject.php';
+

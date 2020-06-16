@@ -34,9 +34,15 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.8.0
+ * @version 1.8.2
  */
 class HTMLNode implements Countable, Iterator {
+    /**
+     * A constant that indicates a node is of type text.
+     * @var string
+     * @since 1.8.1
+     */
+    const C_NODE = '#COMMENT';
     /**
      * An associative array of default formatting options for the code.
      * It is used when displaying the actual generated HTML code. The array has 
@@ -86,6 +92,12 @@ class HTMLNode implements Countable, Iterator {
             'operator-color' => 'gray'
         ]
     ];
+    /**
+     * A constant that indicates a node is of type text.
+     * @var string
+     * @since 1.8.1
+     */
+    const T_NODE = '#TEXT';
     /**
      * An array that contains all unpaired (or void) HTML tags.
      * An unpaired tag is a tag that does tot require closing tag. Its 
@@ -227,28 +239,26 @@ class HTMLNode implements Countable, Iterator {
         $this->null = null;
         $nameUpper = strtoupper($name);
 
-        if ($nameUpper == '#TEXT' || $nameUpper == '#COMMENT') {
+        if ($nameUpper == self::T_NODE || $nameUpper == self::C_NODE) {
             $this->name = $nameUpper;
             $this->requireClose = false;
         } else {
             $this->name = strtolower($name);
 
             if (!$this->_validateName($this->getNodeName())) {
-                throw new Exception('Invalid node name: \''.$name.'\'.');
+                throw new InvalidNodeNameException('Invalid node name: \''.$name.'\'.');
             }
         }
 
         if ($this->isTextNode() === true || $this->isComment()) {
             $this->requireClose = false;
+        } else if (in_array($this->name, self::VOID_TAGS)) {
+            $this->requireClose = false;
         } else {
-            if (in_array($this->name, self::VOID_TAGS)) {
-                $this->requireClose = false;
-            } else {
-                $this->requireClose = true;
-                $this->childrenList = new LinkedList();
-            }
-            $this->attributes = [];
+            $this->requireClose = true;
+            $this->childrenList = new LinkedList();
         }
+        $this->attributes = [];
         $this->useOriginalTxt = false;
     }
     /**
@@ -271,11 +281,10 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function addChild($node) {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
-            if (($node instanceof HTMLNode) && $node !== $this) {
-                $node->_setParent($this);
-                $this->childrenList->add($node);
-            }
+        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
+            && ($node instanceof HTMLNode) && $node !== $this) {
+            $node->_setParent($this);
+            $this->childrenList->add($node);
         }
     }
     /**
@@ -439,7 +448,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.5
      */
     public static function createComment($text) {
-        $comment = new HTMLNode('#COMMENT');
+        $comment = new HTMLNode(self::C_NODE);
         $comment->setText($text);
 
         return $comment;
@@ -456,7 +465,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.5
      */
     public static function createTextNode($nodeText,$escHtmlEntities = true) {
-        $text = new HTMLNode('#TEXT');
+        $text = new HTMLNode(self::T_NODE);
         $text->setText($nodeText,$escHtmlEntities);
 
         return $text;
@@ -491,14 +500,14 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function fromHTMLText($text,$asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);
-
+        $TN = 'tag-name';
         if (count($nodesArr) >= 1) {
-            if ($asHTMLDocObj && ($nodesArr[0]['tag-name'] == 'html' || $nodesArr[0]['tag-name'] == '!DOCTYPE')) {
+            if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
                 $retVal = new HTMLDoc();
                 $retVal->getHeadNode()->removeAllChildNodes();
 
                 for ($x = 0 ; $x < count($nodesArr) ; $x++) {
-                    if ($nodesArr[$x]['tag-name'] == 'html') {
+                    if ($nodesArr[$x][$TN] == 'html') {
                         $htmlNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
 
                         for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
@@ -516,7 +525,7 @@ class HTMLNode implements Countable, Iterator {
                             }
                         }
                     } else {
-                        if ($nodesArr[$x]['tag-name'] != 'head') {
+                        if ($nodesArr[$x][$TN] != 'head') {
                             $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
                             $retVal->setHeadNode($headNode);
                         }
@@ -579,11 +588,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.1
      */
     public function getAttributeValue($attrName) {
-        if ($this->hasAttribute($attrName)) {
-            return $this->attributes[$attrName];
-        }
-
-        return null;
+        return $this->getAttribute($attrName);
     }
     /**
      * Returns a child node given its index.
@@ -595,9 +600,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.8
      */
     public function getChild($index) {
-        $child = $this->children()->get($index);
-
-        return $child;
+        return $this->children()->get($index);
     }
     /**
      * Returns a node based on its attribute value (Direct child).
@@ -615,10 +618,8 @@ class HTMLNode implements Countable, Iterator {
             for ($x = 0 ; $x < $this->children()->size() ; $x++) {
                 $ch = $this->children()->get($x);
 
-                if ($ch->hasAttribute($attrName)) {
-                    if ($ch->getAttributeValue($attrName) == $attrVal) {
-                        return $ch;
-                    }
+                if ($ch->hasAttribute($attrName) && $ch->getAttributeValue($attrName) == $attrVal) {
+                    return $ch;
                 }
             }
         }
@@ -633,12 +634,8 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function getChildByID($val) {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
-            if (strlen($val) != 0) {
-                $ch = $this->_getChildByID($val, $this->children());
-
-                return $ch;
-            }
+        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && strlen($val) != 0) {
+            return $this->_getChildByID($val, $this->children());
         }
 
         return $this->null;
@@ -656,7 +653,7 @@ class HTMLNode implements Countable, Iterator {
     public function getChildrenByTag($val) {
         $valToSearch = strtoupper($val);
 
-        if (!($valToSearch == '#TEXT' || $valToSearch == '#COMMENT')) {
+        if (!($valToSearch == self::T_NODE || $valToSearch == self::C_NODE)) {
             $valToSearch = strtolower($val);
         }
         $list = new LinkedList();
@@ -697,6 +694,19 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getID() {
         return $this->getAttribute('id');
+    }
+    /**
+     * Returns the last added child.
+     * @return HTMLNode The child will be returned as an object of type 'HTMLNode'. 
+     * If the node has no children, the method will return null.
+     * @since 1.8.2
+     */
+    public function getLastChild() {
+        if ($this->childrenCount() >= 1) {
+            return $this->getChild($this->childrenCount() - 1);
+        }
+
+        return null;
     }
     /**
      * Returns the value of the attribute 'name' of the element.
@@ -858,10 +868,8 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function hasChild($node) {
-        if (!$this->isTextNode() && !$this->isComment()) {
-            if ($node instanceof HTMLNode) {
-                return $this->children()->indexOf($node) != -1;
-            }
+        if (!$this->isTextNode() && !$this->isComment() && $node instanceof HTMLNode) {
+            return $this->children()->indexOf($node) != -1;
         }
 
         return false;
@@ -918,7 +926,8 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function htmlAsArray($text) {
         $trimmed = trim($text);
-
+        $BT = 'body-text';
+        $TN = 'tag-name';
         if (strlen($trimmed) != 0) {
             $array = explode('<', $trimmed);
             $nodesNames = [];
@@ -929,10 +938,10 @@ class HTMLNode implements Countable, Iterator {
 
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
-                    $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex][1]);
+                    $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][1]);
 
-                    if (strlen($nodesNames[$nodesNamesIndex]['body-text']) == 0) {
-                        unset($nodesNames[$nodesNamesIndex]['body-text']);
+                    if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
+                        unset($nodesNames[$nodesNamesIndex][$BT]);
                     }
                     unset($nodesNames[$nodesNamesIndex][1]);
                     $nodeName = '';
@@ -953,19 +962,19 @@ class HTMLNode implements Countable, Iterator {
                             (isset($nodeName[2]) && $nodeName[2] == '-')) {
                         //if we have '!' or '-' at the start of the name, then 
                         //it must be a comment.
-                        $nodesNames[$nodesNamesIndex]['tag-name'] = '#COMMENT';
+                        $nodesNames[$nodesNamesIndex][$TN] = self::C_NODE;
 
-                        if (isset($nodesNames[$nodesNamesIndex]['body-text'])) {
+                        if (isset($nodesNames[$nodesNamesIndex][$BT])) {
                             //a text node after a comment node.
                             $nodesNames[$nodesNamesIndex + 1] = [
-                                'body-text' => $nodesNames[$nodesNamesIndex]['body-text'],
-                                'tag-name' => '#TEXT'
+                                $BT => $nodesNames[$nodesNamesIndex][$BT],
+                                $TN => self::T_NODE
                             ];
                         }
-                        $nodesNames[$nodesNamesIndex]['body-text'] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
+                        $nodesNames[$nodesNamesIndex][$BT] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
                     } else {
                         $nodeName = strtolower($nodeName);
-                        $nodesNames[$nodesNamesIndex]['tag-name'] = $nodeName;
+                        $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
                         $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
 
                         if ($nodeName[0] == '/') {
@@ -975,13 +984,11 @@ class HTMLNode implements Countable, Iterator {
 
                             if (in_array($nodeName, self::VOID_TAGS)) {
                                 $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                            } else if ($nodeName == '!doctype') {
+                                $nodesNames[$nodesNamesIndex][$TN] = '!DOCTYPE';
+                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
                             } else {
-                                if ($nodeName == '!doctype') {
-                                    $nodesNames[$nodesNamesIndex]['tag-name'] = '!DOCTYPE';
-                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
-                                } else {
-                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
-                                }
+                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
                             }
                         }
                         $attributesStrLen = strlen($nodesNames[$nodesNamesIndex][0]);
@@ -994,13 +1001,13 @@ class HTMLNode implements Countable, Iterator {
                     }
                     unset($nodesNames[$nodesNamesIndex][0]);
 
-                    if (isset($nodesNames[$nodesNamesIndex]['body-text']) && 
-                            strlen(trim($nodesNames[$nodesNamesIndex]['body-text'])) != 0 && 
-                            $nodesNames[$nodesNamesIndex]['tag-name'] != '#COMMENT') {
+                    if (isset($nodesNames[$nodesNamesIndex][$BT]) && 
+                            strlen(trim($nodesNames[$nodesNamesIndex][$BT])) != 0 && 
+                            $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
                         $nodesNamesIndex++;
-                        $nodesNames[$nodesNamesIndex]['tag-name'] = '#TEXT';
-                        $nodesNames[$nodesNamesIndex]['body-text'] = trim($nodesNames[$nodesNamesIndex - 1]['body-text']);
-                        unset($nodesNames[$nodesNamesIndex - 1]['body-text']);
+                        $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
+                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex - 1][$BT]);
+                        unset($nodesNames[$nodesNamesIndex - 1][$BT]);
                     }
                     $nodesNamesIndex++;
 
@@ -1037,13 +1044,11 @@ class HTMLNode implements Countable, Iterator {
     public function insert($el,$position) {
         $retVal = false;
 
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
-            if (($el instanceof HTMLNode) && $el !== $this) {
-                $retVal = $this->childrenList->insert($el, $position);
+        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && ($el instanceof HTMLNode) && $el !== $this) {
+            $retVal = $this->childrenList->insert($el, $position);
 
-                if ($retVal === true) {
-                    $el->_setParent($this);
-                }
+            if ($retVal === true) {
+                $el->_setParent($this);
             }
         }
 
@@ -1056,7 +1061,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.5
      */
     public function isComment() {
-        return $this->getNodeName() == '#COMMENT';
+        return $this->getNodeName() == self::C_NODE;
     }
     /**
      * Returns the value of the property $isFormatted.
@@ -1077,7 +1082,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function isTextNode() {
-        return $this->getNodeName() == '#TEXT';
+        return $this->getNodeName() == self::T_NODE;
     }
     /**
      * Returns the value of the property $useOriginalTxt.
@@ -1182,15 +1187,13 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function removeChild($node) {
-        if ($this->mustClose()) {
-            if ($node instanceof HTMLNode) {
-                $child = $this->children()->removeElement($node);
+        if ($this->mustClose() && $node instanceof HTMLNode) {
+            $child = $this->children()->removeElement($node);
 
-                if ($child instanceof HTMLNode) {
-                    $child->_setParent($this->null);
+            if ($child instanceof HTMLNode) {
+                $child->_setParent($this->null);
 
-                    return $child;
-                }
+                return $child;
             }
         }
 
@@ -1204,14 +1207,9 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function replaceChild($oldNode,$replacement) {
-        if (!$this->isTextNode() && !$this->isComment()) {
-            if ($oldNode instanceof HTMLNode) {
-                if ($this->hasChild($oldNode)) {
-                    if ($replacement instanceof HTMLNode) {
-                        return $this->children()->replace($oldNode, $replacement);
-                    }
-                }
-            }
+        if (!$this->isTextNode() && !$this->isComment() && $oldNode instanceof HTMLNode 
+                && $this->hasChild($oldNode) && $replacement instanceof HTMLNode) {
+            return $this->children()->replace($oldNode, $replacement);
         }
 
         return false;
@@ -1249,28 +1247,18 @@ class HTMLNode implements Countable, Iterator {
 
             if ($isValid) {
                 if ($lower == 'dir') {
-                    $lowerVal = strtolower($trimmedVal);
+                    return $this->setWritingDir($val);
+                } else if ($trimmedName == 'style') {
+                    $styleArr = $this->_styleArray($trimmedVal);
 
-                    if ($lowerVal == 'ltr' || $lowerVal == 'rtl') {
-                        $this->attributes[$lower] = $lowerVal;
-
-                        return true;
-                    }
+                    return $this->setStyle($styleArr);
+                } else if ($val === null) {
+                    $this->attributes[$lower] = null;
                 } else {
-                    if ($trimmedName == 'style') {
-                        $styleArr = $this->_styleArray($trimmedVal);
-
-                        return $this->setStyle($styleArr);
-                    } else {
-                        if ($val === null) {
-                            $this->attributes[$lower] = null;
-                        } else {
-                            $this->attributes[$lower] = $trimmedVal;
-                        }
-
-                        return true;
-                    }
+                    $this->attributes[$lower] = $trimmedVal;
                 }
+
+                return true;
             }
         }
 
@@ -1363,7 +1351,7 @@ class HTMLNode implements Countable, Iterator {
         if ($this->isTextNode() || $this->isComment()) {
             $uName = strtoupper($name);
 
-            if (($this->isTextNode() && $uName == '#COMMENT') || ($this->isComment() && $uName == '#TEXT')) {
+            if (($this->isTextNode() && $uName == self::C_NODE) || ($this->isComment() && $uName == self::T_NODE)) {
                 $this->name = $uName;
 
                 return true;
@@ -1462,17 +1450,15 @@ class HTMLNode implements Countable, Iterator {
 
             if ($this->isComment()) {
                 $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
-            } else {
-                if ($escHtmlEntities === true) {
-                    $charsToReplace = [
-                    '&' => '&amp;',
-                    '<' => '&lt;',
-                    '>' => '&gt;'
-                ];
+            } else if ($escHtmlEntities === true) {
+                $charsToReplace = [
+                '&' => '&amp;',
+                '<' => '&lt;',
+                '>' => '&gt;'
+            ];
 
-                    foreach ($charsToReplace as $ch => $rep) {
-                        $text = str_replace($ch, $rep, $text);
-                    }
+                foreach ($charsToReplace as $ch => $rep) {
+                    $text = str_replace($ch, $rep, $text);
                 }
             }
             $this->text = $text;
@@ -1511,7 +1497,14 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function setWritingDir($val) {
-        $this->setAttribute('dir', $val);
+        $lowerVal = strtolower(trim($val));
+
+        if ($lowerVal == 'ltr' || $lowerVal == 'rtl') {
+            $this->attributes['dir'] = $lowerVal;
+
+            return true;
+        }
+        return false;
     }
     /**
      * Returns HTML string that represents the node as a whole.
@@ -1581,34 +1574,28 @@ class HTMLNode implements Countable, Iterator {
      */
     private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
         $retVal = [];
-
+        $TN = 'tag-name';
         for (; $x < $nodesCount ; $x++) {
             $node = $parsedNodesArr[$x];
             $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
             $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
 
-            if ($node['tag-name'] == '#COMMENT') {
+            if ($node[$TN] == self::C_NODE) {
                 unset($node['is-closing-tag']);
                 $retVal[] = $node;
+            } else if ($node[$TN] == self::T_NODE) {
+                $retVal[] = $node;
+            } else if ($isVoid) {
+                unset($node['is-closing-tag']);
+                unset($node['body-text']);
+                $retVal[] = $node;
+            } else if ($isClosingTag) {
+                return $retVal;
             } else {
-                if ($node['tag-name'] == '#TEXT') {
-                    $retVal[] = $node;
-                } else {
-                    if ($isVoid) {
-                        unset($node['is-closing-tag']);
-                        unset($node['body-text']);
-                        $retVal[] = $node;
-                    } else {
-                        if ($isClosingTag) {
-                            return $retVal;
-                        } else {
-                            $x++;
-                            $node['children'] = self::_buildArrayTree($parsedNodesArr, $x, $nodesCount);
-                            unset($node['is-closing-tag']);
-                            $retVal[] = $node;
-                        }
-                    }
-                }
+                $x++;
+                $node['children'] = self::_buildArrayTree($parsedNodesArr, $x, $nodesCount);
+                unset($node['is-closing-tag']);
+                $retVal[] = $node;
             }
         }
 
@@ -1621,16 +1608,12 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.5
      */
     private function _closeAsCode($FO) {
-        if ($FO['with-colors'] === true) {
-            if (!$this->isTextNode() && !$this->isComment()) {
-                return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
-                .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>'
-                        .'<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
-            }
-        } else {
-            if (!$this->isTextNode() && !$this->isComment()) {
-                return '&lt;/'.$this->getNodeName().'&gt;';
-            }
+        if ($FO['with-colors'] === true && !$this->isTextNode() && !$this->isComment()) {
+            return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
+            .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>'
+                    .'<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
+        } else if (!$this->isTextNode() && !$this->isComment()) {
+            return '&lt;/'.$this->getNodeName().'&gt;';
         }
 
         return '';
@@ -1650,129 +1633,115 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode
      */
     private static function _fromHTMLTextHelper_00($nodeArr) {
-        if ($nodeArr['tag-name'] == '#COMMENT') {
-            return self::createComment($nodeArr['body-text']);
-        } else {
-            if ($nodeArr['tag-name'] == '#TEXT') {
-                return self::createTextNode($nodeArr['body-text']);
-            } else {
-                if ($nodeArr['tag-name'] == 'head') {
-                    $htmlNode = new HeadNode();
-                    $htmlNode->removeAllChildNodes();
+        $TN = 'tag-name';
+        $BT = 'body-text';
+        if ($nodeArr[$TN] == self::C_NODE) {
+            return self::createComment($nodeArr[$BT]);
+        } else if ($nodeArr[$TN] == self::T_NODE) {
+            return self::createTextNode($nodeArr[$BT]);
+        } else if ($nodeArr[$TN] == 'head') {
+            $htmlNode = new HeadNode();
+            $htmlNode->removeAllChildNodes();
 
-                    for ($x = 0 ; $x < count($nodeArr['children']) ; $x++) {
-                        $chNode = $nodeArr['children'][$x];
+            for ($x = 0 ; $x < count($nodeArr['children']) ; $x++) {
+                $chNode = $nodeArr['children'][$x];
 
-                        if ($chNode['tag-name'] == 'title') {
-                            if (count($chNode['children']) == 1 && $chNode['children'][0]['tag-name'] == '#TEXT') {
-                                $htmlNode->setTitle($chNode['children'][0]['body-text']);
-                            }
+                if ($chNode[$TN] == 'title') {
+                    if (count($chNode['children']) == 1 && $chNode['children'][0][$TN] == self::T_NODE) {
+                        $htmlNode->setTitle($chNode['children'][0][$BT]);
+                    }
 
-                            foreach ($chNode['attributes'] as $attr => $val) {
-                                $htmlNode->getTitleNode()->setAttribute($attr, $val);
-                            }
-                        } else {
-                            if ($chNode['tag-name'] == 'base') {
-                                $isBaseSet = false;
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        $htmlNode->getTitleNode()->setAttribute($attr, $val);
+                    }
+                } else if ($chNode[$TN] == 'base') {
+                    $isBaseSet = false;
 
-                                foreach ($chNode['attributes'] as $attr => $val) {
-                                    if ($attr == 'href') {
-                                        $isBaseSet = $htmlNode->setBase($val);
-                                        break;
-                                    }
-                                }
-
-                                if ($isBaseSet) {
-                                    foreach ($chNode['attributes'] as $attr => $val) {
-                                        $htmlNode->getBaseNode()->setAttribute($attr, $val);
-                                    }
-                                }
-                            } else {
-                                if ($chNode['tag-name'] == 'link') {
-                                    $isCanonical = false;
-                                    $tmpNode = new HTMLNode('link');
-
-                                    foreach ($chNode['attributes'] as $attr => $val) {
-                                        $tmpNode->setAttribute($attr, $val);
-                                        $lower = strtolower($val);
-
-                                        if ($attr == 'rel' && $lower == 'canonical') {
-                                            $isCanonical = true;
-                                            $tmpNode->setAttribute($attr, $lower);
-                                        } else {
-                                            if ($attr == 'rel' && $lower == 'stylesheet') {
-                                                $tmpNode->setAttribute($attr, $lower);
-                                            }
-                                        }
-                                    }
-
-                                    if ($isCanonical) {
-                                        $isCanonicalSet = $htmlNode->setCanonical($tmpNode->getAttributeValue('href'));
-
-                                        if ($isCanonicalSet) {
-                                            foreach ($tmpNode->getAttributes() as $attr => $val) {
-                                                $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
-                                            }
-                                        }
-                                    } else {
-                                        $htmlNode->addChild($tmpNode);
-                                    }
-                                } else {
-                                    if ($chNode['tag-name'] == 'script') {
-                                        $tmpNode = self::_fromHTMLTextHelper_00($chNode);
-
-                                        foreach ($tmpNode->getAttributes() as $attr => $val) {
-                                            $tmpNode->setAttribute($attr, $val);
-                                            $lower = strtolower($val);
-
-                                            if ($attr == 'type' && $lower == 'text/javascript') {
-                                                $tmpNode->setAttribute($attr, $lower);
-                                            }
-                                        }
-                                        $htmlNode->addChild($tmpNode);
-                                    } else {
-                                        if ($chNode['tag-name'] == 'meta') {
-                                            if (isset($chNode['attributes']['charset'])) {
-                                                $htmlNode->setCharSet($chNode['attributes']['charset']);
-                                            } else {
-                                                $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
-                                            }
-                                        } else {
-                                            $newCh = self::_fromHTMLTextHelper_00($chNode);
-                                            $htmlNode->addChild($newCh);
-                                        }
-                                    }
-                                }
-                            }
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        if ($attr == 'href') {
+                            $isBaseSet = $htmlNode->setBase($val);
+                            break;
                         }
                     }
-                } else {
-                    if ($nodeArr['tag-name'] == '!DOCTYPE') {
-                        return self::createTextNode('<!DOCTYPE html>',false);
+
+                    if ($isBaseSet) {
+                        foreach ($chNode['attributes'] as $attr => $val) {
+                            $htmlNode->getBaseNode()->setAttribute($attr, $val);
+                        }
+                    }
+                } else if ($chNode[$TN] == 'link') {
+                    $isCanonical = false;
+                    $tmpNode = new HTMLNode('link');
+
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        $tmpNode->setAttribute($attr, $val);
+                        $lower = strtolower($val);
+
+                        if ($attr == 'rel' && $lower == 'canonical') {
+                            $isCanonical = true;
+                            $tmpNode->setAttribute($attr, $lower);
+                        } else if ($attr == 'rel' && $lower == 'stylesheet') {
+                            $tmpNode->setAttribute($attr, $lower);
+                        }
+                    }
+
+                    if ($isCanonical) {
+                        $isCanonicalSet = $htmlNode->setCanonical($tmpNode->getAttributeValue('href'));
+
+                        if ($isCanonicalSet) {
+                            foreach ($tmpNode->getAttributes() as $attr => $val) {
+                                $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
+                            }
+                        }
                     } else {
-                        $htmlNode = new HTMLNode($nodeArr['tag-name']);
+                        $htmlNode->addChild($tmpNode);
                     }
-                }
+                } else if ($chNode[$TN] == 'script') {
+                    $tmpNode = self::_fromHTMLTextHelper_00($chNode);
 
-                if (isset($nodeArr['attributes'])) {
-                    foreach ($nodeArr['attributes'] as $key => $value) {
-                        $htmlNode->setAttribute($key, $value);
+                    foreach ($tmpNode->getAttributes() as $attr => $val) {
+                        $tmpNode->setAttribute($attr, $val);
+                        $lower = strtolower($val);
+
+                        if ($attr == 'type' && $lower == 'text/javascript') {
+                            $tmpNode->setAttribute($attr, $lower);
+                        }
                     }
-                }
-
-                if ($nodeArr['tag-name'] != 'head' && isset($nodeArr['children'])) {
-                    foreach ($nodeArr['children'] as $child) {
-                        $htmlNode->addChild(self::_fromHTMLTextHelper_00($child));
+                    $htmlNode->addChild($tmpNode);
+                } else if ($chNode[$TN] == 'meta') {
+                    if (isset($chNode['attributes']['charset'])) {
+                        $htmlNode->setCharSet($chNode['attributes']['charset']);
+                    } else {
+                        $htmlNode->addChild(self::_fromHTMLTextHelper_00($chNode));
                     }
+                } else {
+                    $newCh = self::_fromHTMLTextHelper_00($chNode);
+                    $htmlNode->addChild($newCh);
                 }
+            }
+        } else if ($nodeArr[$TN] == '!DOCTYPE') {
+            return self::createTextNode('<!DOCTYPE html>',false);
+        } else {
+            $htmlNode = new HTMLNode($nodeArr[$TN]);
+        }
 
-                if (isset($nodeArr['body-text']) && strlen(trim($nodeArr['body-text'])) != 0) {
-                    $htmlNode->addTextNode($nodeArr['body-text']);
-                }
-
-                return $htmlNode;
+        if (isset($nodeArr['attributes'])) {
+            foreach ($nodeArr['attributes'] as $key => $value) {
+                $htmlNode->setAttribute($key, $value);
             }
         }
+
+        if ($nodeArr[$TN] != 'head' && isset($nodeArr['children'])) {
+            foreach ($nodeArr['children'] as $child) {
+                $htmlNode->addChild(self::_fromHTMLTextHelper_00($child));
+            }
+        }
+
+        if (isset($nodeArr[$BT]) && strlen(trim($nodeArr[$BT])) != 0) {
+            $htmlNode->addTextNode($nodeArr[$BT]);
+        }
+
+        return $htmlNode;
     }
     /**
      * 
@@ -1868,27 +1837,23 @@ class HTMLNode implements Countable, Iterator {
     private function _openAsCode($FO) {
         $retVal = '';
 
-        if ($FO['with-colors'] === true) {
-            if (!$this->isTextNode() && !$this->isComment()) {
-                $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;</span>'
-                        .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>';
+        if ($FO['with-colors'] === true && !$this->isTextNode() && !$this->isComment()) {
+            $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;</span>'
+                    .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>';
 
-                foreach ($this->getAttributes() as $attr => $val) {
-                    $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
-                            .'<span style="color:'.$FO['colors']['operator-color'].'">=</span> '
-                            .'<span style="color:'.$FO['colors']['attribute-value-color'].'">"'.$val.'"</span>';
-                }
-                $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
+            foreach ($this->getAttributes() as $attr => $val) {
+                $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
+                        .'<span style="color:'.$FO['colors']['operator-color'].'">=</span> '
+                        .'<span style="color:'.$FO['colors']['attribute-value-color'].'">"'.$val.'"</span>';
             }
-        } else {
-            if (!$this->isTextNode() && !$this->isComment()) {
-                $retVal .= '&lt;'.$this->getNodeName();
+            $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
+        } else if (!$this->isTextNode() && !$this->isComment()) {
+            $retVal .= '&lt;'.$this->getNodeName();
 
-                foreach ($this->getAttributes() as $attr => $val) {
-                    $retVal .= ' '.$attr.' = "'.$val.'"';
-                }
-                $retVal .= '&gt;';
+            foreach ($this->getAttributes() as $attr => $val) {
+                $retVal .= ' '.$attr.' = "'.$val.'"';
             }
+            $retVal .= '&gt;';
         }
 
         return $retVal;
@@ -1918,32 +1883,26 @@ class HTMLNode implements Countable, Iterator {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = true;
-            } else {
-                if ($char == ' ' && strlen(trim($str)) != 0 && !$inQouted) {
-                    $str = trim($str);
+            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inQouted) {
+                $str = trim($str);
 
-                    if (strlen($str) != 0) {
-                        self::_parseAttributesHelper($queue, $isEqualFound, $str);
-                    }
-                    $isEqualFound = false;
-                } else {
-                    if (($char == '"' || $char == "'") && $inQouted) {
-                        self::_parseAttributesHelper($queue, $isEqualFound, $str);
-                        $isEqualFound = false;
-                        $inQouted = false;
-                    } else {
-                        if (($char == '"' || $char == "'") && !$inQouted) {
-                            $str = trim($str);
-
-                            if (strlen($str) != 0) {
-                                self::_parseAttributesHelper($queue, $isEqualFound, $str);
-                            }
-                            $inQouted = true;
-                        } else {
-                            $str .= $char;
-                        }
-                    }
+                if (strlen($str) != 0) {
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
+                $isEqualFound = false;
+            } else if (($char == '"' || $char == "'") && $inQouted) {
+                self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                $isEqualFound = false;
+                $inQouted = false;
+            } else if (($char == '"' || $char == "'") && !$inQouted) {
+                $str = trim($str);
+
+                if (strlen($str) != 0) {
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                }
+                $inQouted = true;
+            } else {
+                $str .= $char;
             }
         }
         $trimmed = trim($str);
@@ -1987,17 +1946,15 @@ class HTMLNode implements Countable, Iterator {
     private function _popNode() {
         $node = $this->nodesStack->pop();
 
-        if ($node != null) {
-            if ($node->isFormatted() !== null && $node->isFormatted() === false) {
-                $this->htmlString .= $node->close();
-            } else {
-                $nodeType = $node->getNodeName();
+        if ($node != null && $node->isFormatted() !== null && $node->isFormatted() === false) {
+            $this->htmlString .= $node->close();
+        } else {
+            $nodeType = $node->getNodeName();
 
-                if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
-                    $this->htmlString .= $node->close().$this->nl;
-                } else {
-                    $this->htmlString .= $this->_getTab().$node->close().$this->nl;
-                }
+            if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
+                $this->htmlString .= $node->close().$this->nl;
+            } else {
+                $this->htmlString .= $this->_getTab().$node->close().$this->nl;
             }
         }
     }
@@ -2010,9 +1967,9 @@ class HTMLNode implements Countable, Iterator {
         $node = $this->nodesStack->pop();
 
         if ($node != null) {
-            $name = $node->getNodeName();
+            $nodeName = $node->getNodeName();
 
-            if ($name == 'pre' || $name == 'textarea' || $name == 'code') {
+            if ($nodeName == 'pre' || $nodeName == 'textarea' || $nodeName == 'code') {
                 $this->codeString .= $node->_closeAsCode($FO).$this->nl;
             } else {
                 $this->codeString .= $this->_getTab().$node->_closeAsCode($FO).$this->nl;
@@ -2053,33 +2010,31 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $this->htmlString .= $this->_getTab().$node->getComment().$this->nl;
                 }
-            } else {
-                if ($node->mustClose()) {
-                    $chCount = $node->children()->size();
-                    $this->nodesStack->push($node);
+            } else if ($node->mustClose()) {
+                $chCount = $node->children()->size();
+                $this->nodesStack->push($node);
 
-                    if ($node->isFormatted() !== null && $node->isFormatted() === false) {
-                        $this->htmlString .= $node->open();
-                    } else {
-                        $nodeType = $node->getNodeName();
-
-                        if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
-                            $this->htmlString .= $this->_getTab().$node->open();
-                        } else {
-                            $this->htmlString .= $this->_getTab().$node->open().$this->nl;
-                        }
-                    }
-                    $this->_addTab();
-
-                    for ($x = 0 ; $x < $chCount ; $x++) {
-                        $nodeAtx = $node->children()->get($x);
-                        $this->_pushNode($nodeAtx);
-                    }
-                    $this->_reduceTab();
-                    $this->_popNode();
+                if ($node->isFormatted() !== null && $node->isFormatted() === false) {
+                    $this->htmlString .= $node->open();
                 } else {
-                    $this->htmlString .= $this->_getTab().$node->open().$this->nl;
+                    $nodeType = $node->getNodeName();
+
+                    if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
+                        $this->htmlString .= $this->_getTab().$node->open();
+                    } else {
+                        $this->htmlString .= $this->_getTab().$node->open().$this->nl;
+                    }
                 }
+                $this->_addTab();
+
+                for ($x = 0 ; $x < $chCount ; $x++) {
+                    $nodeAtx = $node->children()->get($x);
+                    $this->_pushNode($nodeAtx);
+                }
+                $this->_reduceTab();
+                $this->_popNode();
+            } else {
+                $this->htmlString .= $this->_getTab().$node->open().$this->nl;
             }
         }
     }
@@ -2095,36 +2050,32 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $this->codeString .= $this->_getTab().$node->getText().$this->nl;
             }
-        } else {
-            if ($node->isComment()) {
-                if ($FO['with-colors'] === true) {
-                    $this->codeString .= $this->_getTab().'<span style="color:'.$FO['colors']['comment-color'].'">&lt!--'.$node->getText().'--&gt;</span>'.$this->nl;
-                } else {
-                    $this->codeString .= $this->_getTab().'&lt!--'.$node->getText().'--&gt;'.$this->nl;
-                }
+        } else if ($node->isComment()) {
+            if ($FO['with-colors'] === true) {
+                $this->codeString .= $this->_getTab().'<span style="color:'.$FO['colors']['comment-color'].'">&lt!--'.$node->getText().'--&gt;</span>'.$this->nl;
             } else {
-                if ($node->mustClose()) {
-                    $chCount = $node->children()->size();
-                    $this->nodesStack->push($node);
-                    $name = $node->getNodeName();
-
-                    if ($name == 'pre' || $name == 'textarea' || $name == 'code') {
-                        $this->codeString .= $this->_getTab().$node->_openAsCode($FO);
-                    } else {
-                        $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
-                    }
-                    $this->_addTab();
-
-                    for ($x = 0 ; $x < $chCount ; $x++) {
-                        $nodeAtx = $node->children()->get($x);
-                        $this->_pushNodeAsCode($nodeAtx,$FO);
-                    }
-                    $this->_reduceTab();
-                    $this->_popNodeAsCode($FO);
-                } else {
-                    $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
-                }
+                $this->codeString .= $this->_getTab().'&lt!--'.$node->getText().'--&gt;'.$this->nl;
             }
+        } else if ($node->mustClose()) {
+            $chCount = $node->children()->size();
+            $this->nodesStack->push($node);
+            $nodeName = $node->getNodeName();
+
+            if ($nodeName == 'pre' || $nodeName == 'textarea' || $nodeName == 'code') {
+                $this->codeString .= $this->_getTab().$node->_openAsCode($FO);
+            } else {
+                $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
+            }
+            $this->_addTab();
+
+            for ($x = 0 ; $x < $chCount ; $x++) {
+                $nodeAtx = $node->children()->get($x);
+                $this->_pushNodeAsCode($nodeAtx,$FO);
+            }
+            $this->_reduceTab();
+            $this->_popNodeAsCode($FO);
+        } else {
+            $this->codeString .= $this->_getTab().$node->_openAsCode($FO).$this->nl;
         }
     }
 
@@ -2200,19 +2151,15 @@ class HTMLNode implements Countable, Iterator {
         if (gettype($FO['tab-spaces']) == 'integer') {
             if ($FO['tab-spaces'] < 0) {
                 $FO['tab-spaces'] = 0;
-            } else {
-                if ($FO['tab-spaces'] > 8) {
-                    $FO['tab-spaces'] = 8;
-                }
+            } else if ($FO['tab-spaces'] > 8) {
+                $FO['tab-spaces'] = 8;
             }
         } else {
             $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
         }
         //initial tab validation
-        if (gettype($FO['initial-tab']) == 'integer') {
-            if ($FO['initial-tab'] < 0) {
-                $FO['initial-tab'] = 0;
-            }
+        if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
+            $FO['initial-tab'] = 0;
         } else {
             $FO['initial-tab'] = self::DEFAULT_CODE_FORMAT['initial-tab'];
         }
@@ -2241,15 +2188,12 @@ class HTMLNode implements Countable, Iterator {
             for ($x = 0 ; $x < $len ; $x++) {
                 $char = $name[$x];
 
-                if ($x == 0) {
-                    if (($char >= '0' && $char <= '9') || $char == '-') {
-                        return false;
-                    }
+                if ($x == 0 && (($char >= '0' && $char <= '9') || $char == '-')) {
+                    return false;
                 }
 
-                if (($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
-                        || $char == '-' || $char == ':' || $char == '@') {
-                } else {
+                if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
+                        || $char == '-' || $char == ':' || $char == '@')) {
                     return false;
                 }
             }

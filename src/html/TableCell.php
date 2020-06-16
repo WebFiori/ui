@@ -55,10 +55,8 @@ class TableCell extends HTMLNode {
 
         if ($cellBody instanceof HTMLNode) {
             $this->addChild($cellBody);
-        } else {
-            if (gettype($cellBody) == 'string') {
-                $this->addTextNode($cellType);
-            }
+        } else if (gettype($cellBody) == 'string') {
+            $this->addTextNode($cellType);
         }
     }
     /**
@@ -70,9 +68,8 @@ class TableCell extends HTMLNode {
      */
     public function getColSpan() {
         $colSpn = $this->getAttributeValue('colspan');
-        $retVal = $colSpn === null ? 1 : $colSpn;
 
-        return $retVal;
+        return $colSpn === null ? 1 : $colSpn;
     }
     /**
      * Returns the value of the attribute 'rowspan'.
@@ -83,9 +80,8 @@ class TableCell extends HTMLNode {
      */
     public function getRowSpan() {
         $colSpn = $this->getAttributeValue('rowspan');
-        $retVal = $colSpn === null ? 1 : $colSpn;
 
-        return $retVal;
+        return $colSpn === null ? 1 : $colSpn;
     }
     /**
      * Sets the value of the attribute 'colspan'.

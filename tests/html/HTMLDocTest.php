@@ -172,7 +172,9 @@ class HTMLDocTest extends TestCase {
         $doc->addChild($ch01);
         $doc->addChild($ch02);
         $doc->addChild($ch03);
+        $this->assertEquals(4,$doc->getBody()->childrenCount());
         $removed = $doc->removeChild($ch00);
+        $this->assertEquals(3,$doc->getBody()->childrenCount());
         $this->assertTrue($removed === $ch00);
         $this->assertFalse($removed === $ch02);
         $this->assertTrue($doc->removeChild($ch01) === $ch01);

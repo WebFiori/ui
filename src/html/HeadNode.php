@@ -132,23 +132,10 @@ class HeadNode extends HTMLNode {
             $node->setAttribute('hreflang', $trimmedLang);
             $node->setAttribute('href', $trimmedUrl);
 
-            if (gettype($otherAttrs) == 'array') {
-                foreach ($otherAttrs as $attr => $val) {
-                    if (gettype($attr) == 'integer') {
-                        $trimmedAttr = trim(strtolower($val));
-
-                        if ($trimmedAttr != 'rel' && $trimmedAttr != 'hreflang' && $trimmedAttr != 'href') {
-                            $node->setAttribute($trimmedAttr);
-                        }
-                    } else {
-                        $trimmedAttr = trim(strtolower($attr));
-
-                        if ($trimmedAttr != 'rel' && $trimmedAttr != 'hreflang' && $trimmedAttr != 'href') {
-                            $node->setAttribute($trimmedAttr, $val);
-                        }
-                    }
-                }
-            }
+            $notAllowed = [
+                'rel','hreflang','href'
+            ];
+            $this->_addAttrs($node, $otherAttrs, $notAllowed);
             $insertPosition = -1;
 
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
@@ -208,24 +195,20 @@ class HeadNode extends HTMLNode {
                         parent::addChild($node);
                         $retVal = true;
                     }
-                } else {
-                    if ($nodeName == 'base' || $nodeName == 'title') {
+                } else if ($nodeName == 'base' || $nodeName == 'title') {
+                    $retVal = false;
+                } else if ($nodeName == 'link') {
+                    $relVal = $node->getAttribute('rel');
+
+                    if ($relVal == 'canonical') {
                         $retVal = false;
                     } else {
-                        if ($nodeName == 'link') {
-                            $relVal = $node->getAttributeValue('rel');
-
-                            if ($relVal == 'canonical') {
-                                $retVal = false;
-                            } else {
-                                parent::addChild($node);
-                                $retVal = true;
-                            }
-                        } else {
-                            parent::addChild($node);
-                            $retVal = true;
-                        }
+                        parent::addChild($node);
+                        $retVal = true;
                     }
+                } else {
+                    parent::addChild($node);
+                    $retVal = true;
                 }
             }
         }
@@ -255,68 +238,33 @@ class HeadNode extends HTMLNode {
         if (count($splitted) == 2) {
             $trimmedHref = trim($splitted[0]);
             $queryString = trim($splitted[1]);
+        } else if (count($splitted) > 2) {
+            return false;
         } else {
-            if (count($splitted) > 2) {
-                return false;
-            } else {
-                $queryString = '';
-            }
+            $queryString = '';
         }
 
         if (strlen($trimmedHref) != 0) {
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
-
+            $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + rand(0, 10000)), rand(0,10),10);
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
                 if (strlen($queryString) != 0) {
                     $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
                 } else {
                     $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
                 }
+            } else if (strlen($queryString) != 0) {
+                $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
             } else {
-                if (strlen($queryString) != 0) {
-                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
-                } else {
-                    $tag->setAttribute('href', $trimmedHref);
-                }
+                $tag->setAttribute('href', $trimmedHref);
             }
-
-            if (gettype($otherAttrs) == 'array') {
-                foreach ($otherAttrs as $attr => $val) {
-                    if (gettype($attr) == 'integer') {
-                        $trimmedAttr = trim(strtolower($val));
-
-                        if ($trimmedAttr != 'rel' && $trimmedAttr != 'href') {
-                            $tag->setAttribute($val);
-                        }
-                    } else {
-                        $trimmedAttr = trim(strtolower($attr));
-
-                        if ($trimmedAttr != 'rel' && $trimmedAttr != 'href') {
-                            $tag->setAttribute($trimmedAttr, $val);
-                        }
-                    }
-                }
-            }
-            $insertPosition = -1;
-
-            for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                $chNode = $this->getChild($x);
-
-                if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') {
-                    $insertPosition = $x;
-                }
-            }
-
-            if ($insertPosition != -1) {
-                $this->insert($tag,$insertPosition + 1);
-            } else {
-                $this->addChild($tag);
-            }
-
+            
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
+            
             return true;
         }
 
@@ -346,21 +294,21 @@ class HeadNode extends HTMLNode {
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
             $queryString = trim($splitted[1]);
+        } else if (count($splitted) > 2) {
+            return false;
         } else {
-            if (count($splitted) > 2) {
-                return false;
-            } else {
-                $queryString = '';
-            }
+            $queryString = '';
         }
 
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-
+            
             if ($preventCaching === true) {
                 //used to prevent caching 
-                $version = substr(hash('sha256', time() + rand(0, 10000)), rand(0,10),10);
+                //php 5.6 does not support random_int
+                $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
                 if (strlen($queryString) == 0) {
                     $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
@@ -374,40 +322,8 @@ class HeadNode extends HTMLNode {
                     $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
                 }
             }
-
-            if (gettype($otherAttrs) == 'array') {
-                foreach ($otherAttrs as $indexOrAttrName => $attrOrVal) {
-                    if (gettype($indexOrAttrName) == 'integer') {
-                        $trimmedAttr = trim(strtolower($attrOrVal));
-
-                        if ($trimmedAttr != 'type' && $trimmedAttr != 'src') {
-                            $tag->setAttribute($trimmedAttr);
-                        }
-                    } else {
-                        $trimmedAttr = trim(strtolower($indexOrAttrName));
-
-                        if ($trimmedAttr != 'type' && $trimmedAttr != 'src') {
-                            $tag->setAttribute($trimmedAttr, $attrOrVal);
-                        }
-                    }
-                }
-            }
-            $insertPosition = -1;
-
-            for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                $chNode = $this->getChild($x);
-
-                if ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript') {
-                    $insertPosition = $x;
-                }
-            }
-
-            if ($insertPosition != -1) {
-                $this->insert($tag,$insertPosition + 1);
-            } else {
-                $this->addChild($tag);
-            }
-
+            
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
             return true;
         }
 
@@ -430,50 +346,36 @@ class HeadNode extends HTMLNode {
         $trimmedRel = trim(strtolower($rel));
         $trimmedHref = trim($href);
 
-        if (strlen($trimmedRel) != 0 && strlen($trimmedHref) != 0) {
-            if ($trimmedRel != 'canonical' && $trimmedRel != 'alternate') {
-                if ($rel == 'stylesheet') {
-                    return $this->addCSS($href, $otherAttrs);
-                } else {
-                    $node = new HTMLNode('link');
-                    $node->setAttribute('rel',$trimmedRel);
-                    $node->setAttribute('href', $trimmedHref);
+        if (strlen($trimmedRel) != 0 && strlen($trimmedHref) != 0 && $trimmedRel != 'canonical' && $trimmedRel != 'alternate') {
+            if ($rel == 'stylesheet') {
+                return $this->addCSS($href, $otherAttrs);
+            } else {
+                $node = new HTMLNode('link');
+                $node->setAttribute('rel',$trimmedRel);
+                $node->setAttribute('href', $trimmedHref);
 
-                    if (gettype($otherAttrs) == 'array') {
-                        foreach ($otherAttrs as $attr => $val) {
-                            if (gettype($attr) == 'integer') {
-                                $trimmedAttr = trim(strtolower($val));
+                $notAllowed = [
+                    'rel','href'
+                ];
+                $this->_addAttrs($node, $otherAttrs, $notAllowed);
 
-                                if ($trimmedAttr != 'rel' && $trimmedAttr != 'href') {
-                                    $node->setAttribute($val);
-                                }
-                            } else {
-                                $trimmedAttr = trim(strtolower($attr));
+                $insertPosition = -1;
 
-                                if ($trimmedAttr != 'rel' && $trimmedAttr != 'href') {
-                                    $node->setAttribute($trimmedAttr, $val);
-                                }
-                            }
-                        }
+                for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+                    $chNode = $this->getChild($x);
+
+                    if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == $trimmedRel) {
+                        $insertPosition = $x;
                     }
-                    $insertPosition = -1;
-
-                    for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                        $chNode = $this->getChild($x);
-
-                        if ($chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == $trimmedRel) {
-                            $insertPosition = $x;
-                        }
-                    }
-
-                    if ($insertPosition != -1) {
-                        $this->insert($node,$insertPosition + 1);
-                    } else {
-                        $this->addChild($node);
-                    }
-
-                    return true;
                 }
+
+                if ($insertPosition != -1) {
+                    $this->insert($node,$insertPosition + 1);
+                } else {
+                    $this->addChild($node);
+                }
+
+                return true;
             }
         }
 
@@ -501,29 +403,27 @@ class HeadNode extends HTMLNode {
                 $meta->setAttribute('content', $content);
 
                 return true;
-            } else {
-                if ($meta === null) {
-                    $meta = new HTMLNode('meta');
-                    $meta->setAttribute('name', $trimmedName);
-                    $meta->setAttribute('content', $content);
-                    $insertPosition = -1;
+            } else if ($meta === null) {
+                $meta = new HTMLNode('meta');
+                $meta->setAttribute('name', $trimmedName);
+                $meta->setAttribute('content', $content);
+                $insertPosition = -1;
 
-                    for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                        $chNode = $this->getChild($x);
+                for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+                    $chNode = $this->getChild($x);
 
-                        if ($chNode->getNodeName() == 'meta') {
-                            $insertPosition = $x;
-                        }
+                    if ($chNode->getNodeName() == 'meta') {
+                        $insertPosition = $x;
                     }
-
-                    if ($insertPosition != -1) {
-                        $this->insert($meta,$insertPosition + 1);
-                    } else {
-                        $this->addChild($meta);
-                    }
-
-                    return true;
                 }
+
+                if ($insertPosition != -1) {
+                    $this->insert($meta,$insertPosition + 1);
+                } else {
+                    $this->addChild($meta);
+                }
+
+                return true;
             }
         }
 
@@ -543,10 +443,8 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'link') {
-                if ($child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'alternate') {
-                    $list->add($child);
-                }
+            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'alternate') {
+                $list->add($child);
             }
         }
 
@@ -624,10 +522,8 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'link') {
-                if ($child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'stylesheet') {
-                    $list->add($child);
-                }
+            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'stylesheet') {
+                $list->add($child);
             }
         }
 
@@ -648,10 +544,8 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'script') {
-                if ($child->hasAttribute('type') && $child->getAttributeValue('type') == 'text/javascript') {
-                    $list->add($child);
-                }
+            if ($childName == 'script' && $child->hasAttribute('type') && $child->getAttributeValue('type') == 'text/javascript') {
+                $list->add($child);
             }
         }
 
@@ -676,16 +570,13 @@ class HeadNode extends HTMLNode {
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
                 $node = $this->children()->get($x);
 
-                if ($node->getNodeName() == 'meta') {
-                    if ($node->getAttributeValue('name') == $name) {
-                        return $node;
-                    }
+                if ($node->getNodeName() == 'meta' && $node->getAttributeValue('name') == $name) {
+                    return $node;
                 }
             }
         }
-        $null = null;
 
-        return $null;
+        return null;
     }
     /**
      * Returns a linked list of all meta tags.
@@ -746,9 +637,6 @@ class HeadNode extends HTMLNode {
 
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
-            $queryString = trim($splitted[1]);
-        } else {
-            $queryString = '';
         }
         $cssNodes = $this->getCSSNodes();
 
@@ -782,9 +670,6 @@ class HeadNode extends HTMLNode {
 
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
-            $queryString = trim($splitted[1]);
-        } else {
-            $queryString = '';
         }
         $jsNodes = $this->getJSNodes();
 
@@ -818,10 +703,8 @@ class HeadNode extends HTMLNode {
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
                 $node = $this->children()->get($x);
 
-                if ($node->getNodeName() == 'meta') {
-                    if ($node->getAttributeValue('name') == $name) {
-                        return true;
-                    }
+                if ($node->getNodeName() == 'meta' && $node->getAttributeValue('name') == $name) {
+                    return true;
                 }
             }
         }
@@ -988,5 +871,58 @@ class HeadNode extends HTMLNode {
         }
 
         return false;
+    }
+    private function _addAttrs(&$node,$otherAttrs,$notAllowed) {
+        if (gettype($otherAttrs) == 'array') {
+            foreach ($otherAttrs as $attr => $val) {
+                if (gettype($attr) == 'integer') {
+                    $trimmedAttr = trim(strtolower($val));
+
+                    if (!in_array($trimmedAttr, $notAllowed)) {
+                        $node->setAttribute($trimmedAttr);
+                    }
+                } else {
+                    $trimmedAttr = trim(strtolower($attr));
+
+                    if (!in_array($trimmedAttr, $notAllowed)) {
+                        $node->setAttribute($trimmedAttr, $val);
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * 
+     * @param HTMLNode $node
+     */
+    private function _cssJsInsertHelper($node, $otherAttrs) {
+        if ($node->getName() == 'style') {
+            $notAllowed = [
+                'rel','href'
+            ];
+        } else {
+            $notAllowed = [
+                'src','type'
+            ];
+        }
+
+        $this->_addAttrs($node, $otherAttrs, $notAllowed);
+
+        $insertPosition = -1;
+
+        for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+            $chNode = $this->getChild($x);
+
+            if (($node->getNodeName() == 'style' && $chNode->getNodeName() == 'link' && $chNode->getAttribute('rel') == 'stylesheet') 
+               || ($chNode->getNodeName() == 'script' && $chNode->getAttribute('type') == 'text/javascript')) {
+                $insertPosition = $x;
+            }
+        }
+
+        if ($insertPosition != -1) {
+            $this->insert($node,$insertPosition + 1);
+        } else {
+            $this->addChild($node);
+        }
     }
 }

@@ -201,29 +201,29 @@ class QueueTest extends TestCase {
      */
     public function testToString() {
         $queue = new Queue(5);
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."]"
                 ."",$queue.'');
         $queue->enqueue('Hello');
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Hello(string)\n"
                 ."]"
                 ."",$queue.'');
         $queue->enqueue(new \Exception());
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Hello(string),\n"
                 ."    [1]=>(object)\n"
                 ."]"
                 ."",$queue.'');
         $queue->enqueue([]);
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Hello(string),\n"
                 ."    [1]=>(object),\n"
                 ."    [2]=>(array)\n"
                 ."]"
                 ."",$queue.'');
         $queue->enqueue(88.08);
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Hello(string),\n"
                 ."    [1]=>(object),\n"
                 ."    [2]=>(array),\n"
@@ -231,7 +231,7 @@ class QueueTest extends TestCase {
                 ."]"
                 ."",$queue.'');
         $queue->enqueue('Another String.');
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Hello(string),\n"
                 ."    [1]=>(object),\n"
                 ."    [2]=>(array),\n"
@@ -240,7 +240,7 @@ class QueueTest extends TestCase {
                 ."]"
                 ."",$queue.'');
         $queue->dequeue();
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>(object),\n"
                 ."    [1]=>(array),\n"
                 ."    [2]=>88.08(double),\n"
@@ -248,25 +248,25 @@ class QueueTest extends TestCase {
                 ."]"
                 ."",$queue.'');
         $queue->dequeue();
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>(array),\n"
                 ."    [1]=>88.08(double),\n"
                 ."    [2]=>Another String.(string)\n"
                 ."]"
                 ."",$queue.'');
         $queue->dequeue();
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>88.08(double),\n"
                 ."    [1]=>Another String.(string)\n"
                 ."]"
                 ."",$queue.'');
         $queue->dequeue();
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."    [0]=>Another String.(string)\n"
                 ."]"
                 ."",$queue.'');
         $queue->dequeue();
-        $this->assertEquals("Queue[\n"
+        $this->assertEquals("phpStructs\Queue[\n"
                 ."]"
                 ."",$queue.'');
     }

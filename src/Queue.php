@@ -25,15 +25,14 @@
  */
 namespace phpStructs;
 
-use Countable;
 /**
  * A class that represents a queue data structure.
  * The queue is implemented in a way that the first element that comes in will 
  * be the first element to come out (FIFO queue).
  * @author Ibrahim
- * @version 1.1.1
+ * @version 1.1.2
  */
-class Queue implements Countable {
+class Queue extends DataStruct {
     /**
      * The first element in the queue.
      * @var Node
@@ -111,60 +110,29 @@ class Queue implements Countable {
             $this->size--;
 
             return $data;
+        } else if ($this->size == 1) {
+            $data = $this->head->data();
+            $this->head = null;
+            $this->tail = null;
+            $this->size--;
+
+            return $data;
         } else {
-            if ($this->size == 1) {
-                $data = $this->head->data();
-                $this->head = null;
-                $this->tail = null;
-                $this->size--;
-
-                return $data;
-            } else {
-                return $this->null;
-            }
+            return $this->null;
         }
     }
     /**
-     * Returns a string that represents the queue and its element.
-     * @return string A string that represents the queue and its element.
+     * Adds new element to the bottom of the queue.
+     * @param mixed $el The element that will be added. If it is null, the 
+     * method will not add it.
+     * @return boolean The method will return true if the element is added. 
+     * The method will return false only in two cases, If the maximum 
+     * number of elements is reached and trying to add new one or the given element 
+     * is null.
+     * @since 1.1.2
      */
-    public function __toString() {
-        $retVal = 'Queue['."\n";
-        $node = $this->head;
-        $index = 0;
-
-        while ($node != null) {
-            $data = $node->data();
-            $dataType = gettype($data);
-
-            if ($node->next() == null) {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType.")\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType.")\n";
-                }
-            } else {
-                if ($dataType == 'object' || $dataType == 'array') {
-                    $retVal .= '    ['.$index.']=>('.$dataType."),\n";
-                } else {
-                    $retVal .= '    ['.$index.']=>'.$data.'('.$dataType."),\n";
-                }
-            }
-            $index++;
-            $node = $node->next();
-        }
-        $retVal .= ']';
-
-        return $retVal;
-    }
-    /**
-     * Returns the number of elements in the queue.
-     * This one is similar to calling the method "Queue::<a href="#size">size()</a>".
-     * @return int Number of elements in the queue.
-     * @since 1.1.1
-     */
-    public function count() {
-        return $this->size();
+    public function add(&$el) {
+        return $this->enqueue($el);
     }
     /**
      * Adds new element to the bottom of the queue.
@@ -177,33 +145,29 @@ class Queue implements Countable {
      * @since 1.0
      */
     public function enqueue($el) {
-        if ($this->validateSize()) {
-            if ($el !== null) {
-                if ($this->size() == 0) {
-                    $this->head = new Node($el);
-                    $this->size++;
+        if ($this->validateSize() && $el !== null) {
+            if ($this->size() == 0) {
+                $this->head = new Node($el);
+                $this->size++;
 
-                    return true;
-                } else {
-                    if ($this->size() == 1) {
-                        $this->tail = new Node($el);
-                        $this->head->setNext($this->tail);
-                        $this->size++;
+                return true;
+            } else if ($this->size() == 1) {
+                $this->tail = new Node($el);
+                $this->head->setNext($this->tail);
+                $this->size++;
 
-                        return true;
-                    } else {
-                        $node = $this->head;
+                return true;
+            } else {
+                $node = $this->head;
 
-                        while ($node->next() !== null) {
-                            $node = $node->next();
-                        }
-                        $this->tail = new Node($el);
-                        $node->setNext($this->tail);
-                        $this->size++;
-
-                        return true;
-                    }
+                while ($node->next() !== null) {
+                    $node = $node->next();
                 }
+                $this->tail = new Node($el);
+                $node->setNext($this->tail);
+                $this->size++;
+
+                return true;
             }
         }
 
@@ -233,18 +197,42 @@ class Queue implements Countable {
         return $this->size;
     }
     /**
+     * Returns an indexed array that contains the elements of the queue.
+     * @return array An indexed array that contains the elements of the queue.
+     * @since 1.1.2
+     */
+    public function toArray() {
+        $array = [];
+
+        if ($this->size() == 1) {
+            $array[] = $this->head->data();
+        } else {
+            if ($this->size() != 0) {
+                $node = $this->head;
+
+                while ($node->next() != null) {
+                    $array[] = $node->data();
+                    $node = $node->next();
+                }
+                $array[] = $node->data();
+            }
+        }
+
+        return $array;
+    }
+    /**
      * Checks if the queue can hold more elements or not.
      * @return boolean true if the queue can hold more elements.
      * @since 1.0
      */
     private function validateSize() {
-        $max = $this->max();
+        $maxEls = $this->max();
 
-        if ($max == -1) {
+        if ($maxEls == -1) {
             return true;
         }
 
-        if ($max > $this->size()) {
+        if ($maxEls > $this->size()) {
             return true;
         }
 

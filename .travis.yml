@@ -1,15 +1,20 @@
 language: php
 php:
-  - 5.6
-  - 7.2
-  - 7.3
-  - 7.4
-before_install:
+    - 5.6
+    - 7.2
+    - 7.3
+    - 7.4
+addons:
+    sonarcloud:
+        organization: "usernane"
+        token:
+            secure: bj7AUvX1gAhJpR9l2rDUHvek7O5MIb+d/ipS4KO8gYo79taLiDUDO/wmPGB5SXxzbrMwwRxKHhq0OYBY5GSlgVOPBTVPY6nG4926zVQkaAQC/M+l78c5qr99ID8XZ4QR3bvTi6WVnxwXLy5o6emEwJpfUAxKSZt6igSTjcyWSdkI9HXT45uKv8VVKbOUnlOdoc7VKlneY7M9qiU9SlgVA8U3+DWSExdOalDV5LFKp/AYSaLVR/xYoNsaOib+XQU58vEcB7oEew1SAj7WbHPd4YdK3NUlP9EKm7ho61RpflpEvj6jdJ8zV31YHK9vRV1BdSuF0CZ1UlCySShGYQncKiuQeyVf8Ivcq2Vx4aQ6hLIPnkCSx7+BX1xPxmBp5y5lKfhtXQngdYYBxfLW6Vo3Nw0JzRTUjvpkI/92Fl0t1LMbVciW06EaLnbkhtEViYMTbZtnL56ZfQO5DiAURGyut0XLT2Flvai5aOzWZErhfBmjSOlBdIcZy6NJg5A51b3dB72PSBM+s2rf1wx/tFIqJdLlfhklj3/DSrKQW7scezNjzDNAWbFC9IQr2n5weuvMICVnYn19m8GU0Cz3M5ea5l7oKf1NKMwyKdRv+R5/1zcVaztyhHU6oP9XUyc72317HTwf+6VKrlMcTmkibBlcv25QnelJReRYfNtqvrzaKCU=
+
 before_script:
- - composer self-update
- - composer install --prefer-source --no-interaction --dev
+    - composer self-update
+    - composer install --prefer-source --no-interaction --dev
 script:
- - phpunit --configuration phpunit.xml
- 
+    - phpunit --verbose --configuration phpunit.xml
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash)
+    - sonar-scanner
