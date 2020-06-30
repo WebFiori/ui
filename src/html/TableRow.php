@@ -28,7 +28,7 @@ namespace phpStructs\html;
  * A class that represents &lt;tr&gt; node.
  *
  * @author Ibrahim
- * @version 1.0.1
+ * @version 1.0.2
  */
 class TableRow extends HTMLNode {
     public function __construct() {
@@ -36,34 +36,38 @@ class TableRow extends HTMLNode {
     }
     /**
      * Adds new cell to the row.
-     * @param string|TableCell $cellText The text of cell body. It can have HTML. 
-     * Also, it can be an object of type 'TableCell'.
+     * @param string|TableCell|HTMLNode $cellContent The text of cell body. It can have HTML. 
+     * Also, it can be an object of type 'TableCell' or an object of type 
+     * 'HTMLNode'.
      * @param string $type The type of the cell. This attribute 
      * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
      * in the body of the table and 'th' if the cell is in the header. If 
      * none of the two is given, 'td' will be used by default.
-     * @param boolean $escEntities If set to true, the method will replace the 
+     * @param boolean $escEntities If set to true and cell text is provided, 
+     * the method will replace the 
      * characters '&lt;', '&gt;' and '&' with the following HTML 
      * entities: '&lt;', '&gt;' and '&amp;' in the given text. Default is false.
      * @param array $attrs An associative array of attributes which will be 
-     * set for the added list. Applicable only if the first attribute of the 
-     * method is a string.
+     * set for the added cell.
+     * @return TableRow The method will return the same instance.
      * @since 1.0
      */
-    public function addCell($cellText,$type = 'td',$escEntities = false,$attrs = []) {
-        if ($cellText instanceof TableCell) {
-            $this->addChild($cellText);
+    public function addCell($cellContent,$type = 'td',$escEntities = false,$attrs = []) {
+        if ($cellContent instanceof TableCell) {
+            $cellContent->setAttributes($attrs);
+            $this->addChild($cellContent);
         } else {
             $cell = new TableCell($type);
-            $cell->addTextNode($cellText,$escEntities);
-
-            if (gettype($attrs) == 'array') {
-                foreach ($attrs as $a => $v) {
-                    $cell->setAttribute($a, $v);
-                }
+            
+            if ($cellContent instanceof HTMLNode) {
+                $cell->addChild($cellContent);
+            } else {
+                $cell->addTextNode($cellContent,$escEntities);
             }
+            $cell->setAttributes($attrs);
             $this->addChild($cell);
         }
+        return $this;
     }
     /**
      * Adds new child node to the row.
