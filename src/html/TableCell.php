@@ -89,12 +89,14 @@ class TableCell extends HTMLNode {
      * attribute can have any value from 1 up to 1000. If the given value is 
      * not in the range, the attribute will not set.
      * @param int $colSpan The number of columns that the cell will span.
+     * @return TableCell The method will return the same instance.
      * @since 1.0
      */
     public function setColSpan($colSpan) {
         if ($colSpan >= 1 && $colSpan <= 1000) {
             $this->setAttribute('colspan', $colSpan);
         }
+        return $this;
     }
     /**
      * Sets the value of the attribute 'rowspan'.
@@ -103,11 +105,13 @@ class TableCell extends HTMLNode {
      * not in the range, the attribute will not set. If 0 is given, this means 
      * the cell will span till the end of table section.
      * @param int $rowSpan The number of rows that the cell will span.
+     * @return TableCell The method will return the same instance.
      * @since 1.0
      */
     public function setRowSpan($rowSpan) {
         if ($rowSpan >= 0 && $rowSpan <= 65534) {
             $this->setAttribute('rowspan', $rowSpan);
         }
+        return $this;
     }
 }
