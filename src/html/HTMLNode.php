@@ -748,7 +748,7 @@ class HTMLNode implements Countable, Iterator {
      * method is called on.
      * @since 1.8.3
      */
-    public function row($attributes = []) {
+    public function tr($attributes = []) {
         if ($this->getNodeName() == 'tbody' || $this->getNodeName() == 'table') {
             $row = new TableRow();
             $row->setAttributes($attributes);
@@ -1658,9 +1658,9 @@ class HTMLNode implements Countable, Iterator {
 
             foreach ($attrsArr as $attr => $val) {
                 if (gettype($attr) == 'integer') {
-                    $retVal[$attr] = $this->setAttribute($val);
+                    $this->setAttribute($val);
                 } else {
-                    $retVal[$attr] = $this->setAttribute($attr, $val);
+                    $this->setAttribute($attr, $val);
                 }
             }
 
