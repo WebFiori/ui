@@ -40,13 +40,15 @@ class Anchor extends HTMLNode {
         'href'
     ];
     /**
-     * Constructs a new instance of the class
+     * Constructs a new instance of the class.
      * @param string $href The link.
-     * @param string $label The label to display.
+     * @param string|HTMLNode $body The label to display. Also, this can be an object of 
+     * type 'HTMLNode'. Note that if text is given and the text contains HTML 
+     * code, the method will not replace the code by HTML entities.
      * @param string $target The value to set for the attribute 'target'. 
      * Default is '_self'.
      */
-    public function __construct($href,$label,$target = '_self') {
+    public function __construct($href, $body, $target = '_self') {
         parent::__construct('a');
         $this->setAttribute(self::$Attrs[1],$href);
 
@@ -55,15 +57,22 @@ class Anchor extends HTMLNode {
         } else {
             $this->setAttribute(self::$Attrs[0], '_blank');
         }
-        parent::addChild(self::createTextNode($label,false));
+        if ($body instanceof HTMLNode) {
+            $this->addChild($body);
+        } else if (strlen($body) > 0) {
+            $this->text($body, false);
+        }
     }
     /**
      * Sets the value of the property 'href' of the link tag.
-     * @param string $link The value to set.
+     * @param string $link The value to set. It must be non-empty string.
      * @since 1.0
      */
     public function setHref($link) {
-        $this->setAttribute(self::$Attrs[1], $link);
+        $trimmed = trim($link);
+        if (strlen($trimmed) > 0) {
+            $this->setAttribute(self::$Attrs[1], $trimmed);
+        }
     }
     /**
      * Sets the value of the property 'target' of the link tag.
@@ -75,6 +84,8 @@ class Anchor extends HTMLNode {
     }
     /**
      * Sets the text that will be seen by the user.
+     * Note that this method is only applicable if the first child of the 
+     * anchor is of type '#TEXT'.
      * @param string $text The text to set.
      * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
@@ -83,6 +94,9 @@ class Anchor extends HTMLNode {
      * @since 1.0
      */
     public function setText($text,$escHtmlEntities = true) {
-        $this->children()->get(0)->setText($text,$escHtmlEntities);
+        $node = $this->getChild(0);
+        if ($node->getNodeName() == '#TEXT') {
+            $node->setText($text,$escHtmlEntities);
+        }
     }
 }
