@@ -644,7 +644,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $type The type of the list. It can have only two values, 'li' 
      * or 'ul'. If 'ul' is given, an object of type 'UnorderedList' will be added. 
      * If 'ol' is given, an object of type 'OrderedList' will be added. Default value is 'ul'. 
-     * @param array $listItems An array that contains list items. They can be a simple text, 
+     * @param array $items An array that contains list items. They can be a simple text, 
      * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
      * list item is a text, the item will be added without placing HTML entities in 
      * the text if the text has HTMLCode.
@@ -654,11 +654,11 @@ class HTMLNode implements Countable, Iterator {
      * method is called on.
      * @since 1.8.3
      */
-    public function list($type = 'ul', $listItems = [], $attributes = []) {
+    public function list($type = 'ul', $items = [], $attributes = []) {
         if ($type == 'ol') {
-            $list = new OrderedList($listItems, false);
+            $list = new OrderedList($items, false);
         } else {
-            $list = new UnorderedList($listItems, false);
+            $list = new UnorderedList($items, false);
         }
         $list->setAttributes($attributes);
         
