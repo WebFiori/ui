@@ -54,43 +54,31 @@ The output of this code is HTML 5 document. The structure of the document will b
 </html>
 ```
 ## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html">here</a>. The following code shows a code which is used to create a basic login form.
+To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/phpStructs/html">here</a>. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use phpStructs\html\HTMLDoc;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\Input;
-use phpStructs\html\Label;
 
 //Create new instance of "HTMLDoc".
 $doc = new HTMLDoc();
 
-//Create new HTML form node.
-$form = new HTMLNode('form');
+// Build a login form.
+$doc->getBody()->text('Login to System')
+        ->hr()
+        ->form(['method' => 'post', 'actiion' => 'https://example.com/login'])
+        ->label('Username:')
+        ->br()
+        ->input('text', ['placeholder'=>'You can use your email address.', 'style' => 'width:250px'])
+        ->br()
+        ->label('Password:')
+        ->br()
+        ->input('password', ['placeholder' => 'Type in your password here.', 'style' => 'width:250px'])
+        ->br()
+        ->input('submit', ['value' => 'Login']);
 
-//Add the form to the body of the document.
-$doc->addChild($form);
-
-//Create input elements.
-$usernameLbl = new Label('Username:');
-$usernameInput = new Input('text');
-$passwordLbl = new Label('Password:');
-$passwordInput = new Input('password');
-$submit = new Input('submit');
-$submit->setAttribute('onclick', 'alert(\'Form Submit\');return false;');
-
-//Add input elements to the form.
-$form->addChild($usernameLbl)
-->addChild('br')
-->addChild($usernameInput)
-->addChild('br')
-->addChild($passwordLbl)
-->addChild('br')
-->addChild($passwordInput)
-->addChild('br')
-->addChild($submit);
-
-//display the document.
 echo $doc;
 ```
 
+The output of the code would be similar to the following image.
+
+<img src="https://webfiori.com/assets/images/login-form.png">
