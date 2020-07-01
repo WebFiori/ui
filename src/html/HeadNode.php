@@ -191,7 +191,7 @@ class HeadNode extends HTMLNode {
                         parent::addChild($node);
                     }
                 } else if ($nodeName == 'base' || $nodeName == 'title') {
-                    $retVal = false;
+                    return $this;
                 } else if ($nodeName == 'link') {
                     $relVal = $node->getAttribute('rel');
 
