@@ -106,7 +106,7 @@ class Input extends HTMLNode {
      * &lt;optgroup&gt;. Also, if the input type is &lt;textarea&gt; and 
      * the given node is a text node, it will be added.
      * @param HTMLNode $node The node that will be added.
-     * @param boolean $useChaining If this parameter is set to true, the method 
+     * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -118,13 +118,13 @@ class Input extends HTMLNode {
      * return the newly added child. If no child is added, the method will return null.
      * @since 1.0.1
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
+    public function addChild($node, $chainOnParent = true, $attrs = []) {
         if ($node instanceof HTMLNode) {
             if ($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
                     $node->getNodeName() == 'optgroup')) {
-                return parent::addChild($node, $useChaining, $attrs);
+                return parent::addChild($node, $chainOnParent, $attrs);
             } else if ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT') {
-                return parent::addChild($node, $useChaining, $attrs);
+                return parent::addChild($node, $chainOnParent, $attrs);
             }
         }
     }
@@ -143,6 +143,8 @@ class Input extends HTMLNode {
      * of attributes which will be set for the option. The key will act as the 
      * attribute name and the value of the key will act as the value of the 
      * attribute.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0.1
      */
     public function addOption($options = []) {
@@ -158,6 +160,8 @@ class Input extends HTMLNode {
             }
             $this->addChild($option);
         }
+        
+        return $this;
     }
     /**
      * Adds multiple options at once to an input element of type 'select'.
@@ -173,6 +177,8 @@ class Input extends HTMLNode {
      * attribute name and the value of the key will act as the value of the 
      * attribute.</li>
      * </ul>
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0.1
      */
     public function addOptions($arrayOfOpt) {
@@ -193,6 +199,8 @@ class Input extends HTMLNode {
                 }
             }
         }
+        
+        return $this;
     }
     /**
      * Adds an 'optgroup' child element.
@@ -213,6 +221,8 @@ class Input extends HTMLNode {
      * attribute name and the value of the key will act as the value of the 
      * attribute.</li></li>
      * </ul>
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0.1
      */
     public function addOptionsGroup($optionsGroupArr) {
@@ -247,6 +257,8 @@ class Input extends HTMLNode {
             }
             $this->addChild($optGroup);
         }
+        
+        return $this;
     }
     /**
      * Returns the value of the attribute 'type'.
@@ -255,14 +267,14 @@ class Input extends HTMLNode {
      * @since 1.0
      */
     public function getType() {
-        return $this->getAttributeValue('type');
+        return $this->getAttribute('type');
     }
     /**
      * Sets the value of the attribute 'inputmode'.
      * @param string $mode The value to set. It must be a value from the array 
      * Input::INPUT_MODES.
-     * @return boolean If the attribute value is set or updated, the method will 
-     * return true. False if not.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setInputMode($mode) {
@@ -272,15 +284,15 @@ class Input extends HTMLNode {
             return $this->setAttribute('inputmode', $lMode);
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the value of the attribute 'list'
      * @param string $listId The ID of the element that will be acting 
      * as pre-defined list of elements. It cannot be set for hidden, file, 
      * checkbox, textarea, select and radio input types.
-     * @return boolean If datalist is set, the method will return true. If 
-     * it is not set, the method will return false.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setList($listId) {
@@ -291,24 +303,26 @@ class Input extends HTMLNode {
                 $iType != 'checkbox' && 
                 $iType != 'radio' && ($this->getNodeName() != 'textarea' || $this->getNodeName() == 'select')) {
             $this->setAttribute('list', $listId);
-
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the value of the attribute 'max'.
      * @param string $max The value to set.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setMax($max) {
-        $this->setAttribute('max', $max);
+        return $this->setAttribute('max', $max);
     }
     /**
      * Sets the value of the attribute 'maxlength'.
      * @param string $length The value to set. The attribute value can be set only 
      * for text, email, search, tel and url input types.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setMaxLength($length) {
@@ -317,19 +331,24 @@ class Input extends HTMLNode {
         if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
             $this->setAttribute('maxlength', $length);
         }
+        return $this;
     }
     /**
      * Sets the value of the attribute 'min'.
      * @param string $min The value to set.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setMin($min) {
-        $this->setAttribute('min', $min);
+        return $this->setAttribute('min', $min);
     }
     /**
      * Sets the value of the attribute 'minlength'.
      * @param string $length The value to set. The attribute value can be set only 
      * for text, email, search, tel and url input types.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setMinLength($length) {
@@ -338,6 +357,8 @@ class Input extends HTMLNode {
         if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
             $this->setAttribute('minlength', $length);
         }
+        
+        return $this;
     }
     /**
      * A method that does nothing.
@@ -363,8 +384,8 @@ class Input extends HTMLNode {
      * @param string|null $text The value to set. The attribute can be 
      * set only if the type of the input is text or password or number. If null 
      * is given, the attribute will be unset If it was set.
-     * @return boolean If placeholder is set, the method will return true. If 
-     * it is not set, the method will return false.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      */
     public function setPlaceholder($text) {
         if ($text !== null) {
@@ -382,10 +403,9 @@ class Input extends HTMLNode {
         } else if ($this->hasAttribute('placeholder')) {
             $this->removeAttribute('placeholder');
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the value of the attribute 'type'.
@@ -397,6 +417,8 @@ class Input extends HTMLNode {
      * be set using this method.
      * @return boolean If input type is updated, the method will return true. 
      * If input type is not updated, the method will return false.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setType($type) {
@@ -406,18 +428,20 @@ class Input extends HTMLNode {
             $l = strtolower(trim($type));
 
             if (in_array($l, Input::INPUT_TYPES) && $l != 'textarea' && $l != 'select') {
-                return $this->setAttribute('type', $l);
+                $this->setAttribute('type', $l);
             }
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the value of the attribute 'value'
      * @param string $text The value to set.
+     * @return Input The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setValue($text) {
-        $this->setAttribute('value', $text);
+        return $this->setAttribute('value', $text);
     }
 }
