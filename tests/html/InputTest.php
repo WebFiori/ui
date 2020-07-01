@@ -17,14 +17,15 @@ class InputTest extends TestCase {
      * @param Input $inputEl
      */
     public function setTypeTest00($inputEl) {
-        $this->assertTrue($inputEl->setType('file'));
+        $inputEl->setType('file');
         $this->assertEquals('file',$inputEl->getType());
-        $this->assertTrue($inputEl->setType(' Date'));
+        $inputEl->setType(' Date');
         $this->assertEquals('date',$inputEl->getType());
-        $this->assertTrue($inputEl->setType(' NumbeR '));
+        $inputEl->setType(' NumbeR ');
         $this->assertEquals('number',$inputEl->getType());
-        $this->assertFalse($inputEl->setType('textarea'));
-        $this->assertFalse($inputEl->setType('select'));
+        $inputEl->setType('textarea');
+        $inputEl->setType('select');
+        $this->assertEquals('number',$inputEl->getType());
     }
     /**
      * @test
@@ -32,14 +33,15 @@ class InputTest extends TestCase {
      * @param Input $inputEl
      */
     public function setTypeTest01($inputEl) {
-        $this->assertFalse($inputEl->setType('file'));
+        $inputEl->setType('file');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType(' Date'));
+        $inputEl->setType(' Date');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType(' NumbeR '));
+        $inputEl->setType(' NumbeR ');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType('textarea'));
-        $this->assertFalse($inputEl->setType('select'));
+        $inputEl->setType('textarea');
+        $inputEl->setType('select');
+        $this->assertNull($inputEl->getType());
     }
     /**
      * @test
@@ -47,14 +49,15 @@ class InputTest extends TestCase {
      * @param Input $inputEl
      */
     public function setTypeTest02($inputEl) {
-        $this->assertFalse($inputEl->setType('file'));
+        $inputEl->setType('file');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType(' Date'));
+        $inputEl->setType(' Date');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType(' NumbeR '));
+        $inputEl->setType(' NumbeR ');
         $this->assertNull($inputEl->getType());
-        $this->assertFalse($inputEl->setType('textarea'));
-        $this->assertFalse($inputEl->setType('select'));
+        $inputEl->setType('textarea');
+        $inputEl->setType('select');
+        $this->assertNull($inputEl->getType());
     }
     /**
      * @test

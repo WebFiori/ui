@@ -94,8 +94,10 @@ class Input extends HTMLNode {
         } else {
             parent::setNodeName('input');
 
-            if (!$this->setType($lType)) {
+            if (!in_array($lType, Input::INPUT_TYPES)) {
                 $this->setType('text');
+            } else {
+                $this->setType($lType);
             }
         }
     }
@@ -415,8 +417,6 @@ class Input extends HTMLNode {
      * It can be only a value from the array Input::INPUT_TYPES. Also, if 
      * the input type is 'textarea' or 'select', this attribute will never 
      * be set using this method.
-     * @return boolean If input type is updated, the method will return true. 
-     * If input type is not updated, the method will return false.
      * @return Input The method will return the instance at which the method 
      * is called on.
      * @since 1.0

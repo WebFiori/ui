@@ -48,7 +48,7 @@ class HeadNodeTest extends TestCase {
     public function addLinkTest04() {
         $node = new HeadNode();
         $node->addLink('stylesheet', 'https://example.com/my-css.css');
-        $this->assertEquals(0, $node->getLinkNodes()->size());
+        $this->assertEquals(1, $node->getLinkNodes()->size());
     }
     /**
      * @test
@@ -231,9 +231,11 @@ class HeadNodeTest extends TestCase {
     public function testAddCss00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getCSSNodes()->size());
-        $this->assertTrue($node->addCSS('https://example.com/my-css.css'));
+        $node->addCSS('https://example.com/my-css.css');
+        $this->assertTrue($node->hasCss('https://example.com/my-css.css'));
+        $this->assertTrue($node->hasCss('  https://example.com/my-css.css?x=y   '));
         $this->assertEquals(1,$node->getCSSNodes()->size());
-        $this->assertFalse($node->addCSS(''));
+        $node->addCSS('');
         $this->assertEquals(1,$node->getCSSNodes()->size());
         $cssNode = new HTMLNode('link');
         $cssNode->setAttribute('rel', 'stylesheet');
@@ -259,11 +261,14 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddCss01() {
         $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], true));
-        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], true));
-        $this->assertFalse($node->addCSS('?hello=true', [], true));
-        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], true));
-        $this->assertTrue($node->addCSS('https://example.com/css3?', [], true));
+        $node->addCSS('https://example.com/css1?hello=true', [], true)
+             ->addCSS('https://example.com/css2 ? hello=true', [], true);
+        $this->assertEquals(2, $node->getCSSNodes()->size());
+        $node->addCSS('?hello=true', [], true);
+        $node->addCSS('https://example.com/?hello=true?', [], true);
+        $this->assertEquals(2, $node->getCSSNodes()->size());
+        $node->addCSS('https://example.com/css3?', [], true);
+        $this->assertEquals(3, $node->getCSSNodes()->size());
 
         return $node;
     }
@@ -273,9 +278,9 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddCss02() {
         $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1', [
+        $node->addCSS('https://example.com/css1', [
             'reloaded','async' => 'false','data-action'
-        ], false));
+        ], false);
         $this->assertEquals(''
                 .'<head>'
                 .'<title>Default</title>'
@@ -289,9 +294,11 @@ class HeadNodeTest extends TestCase {
     public function testAddJs00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getJSNodes()->size());
-        $this->assertTrue($node->addJs('https://example.com/my-js.js'));
+        $node->addJs('https://example.com/my-js.js');
+        $this->assertTrue($node->hasJs('https://example.com/my-js.js'));
+        $this->assertTrue($node->hasJs('   https://example.com/my-js.js?xx=uuu  '));
         $this->assertEquals(1,$node->getJSNodes()->size());
-        $this->assertFalse($node->addJs(''));
+        $node->addJs('');
         $this->assertEquals(1,$node->getJSNodes()->size());
         $jsNode = new HTMLNode('script');
         $jsNode->setAttribute('type', 'text/javascript');
@@ -317,21 +324,27 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs01() {
         $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], true));
-        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], true));
-        $this->assertFalse($node->addJs('?hello=true', [], true));
-        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], true));
-        $this->assertTrue($node->addJs('https://example.com/js3?', [], true));
+        $node->addJs('https://example.com/js1?hello=true', [], true);
+        $node->addJs('https://example.com/js2 ? hello=true', [], true);
+        $this->assertEquals(2, $node->getJSNodes()->size());
+        $node->addJs('?hello=true', [], true);
+        $node->addJs('https://example.com/?hello=true??', [], true);
+        $this->assertEquals(2, $node->getJSNodes()->size());
+        $node->addJs('https://example.com/js3?', [], true);
+        $this->assertEquals(3, $node->getJSNodes()->size());
 
         return $node;
     }
     public function testAddJs02() {
         $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js1?hello=true', [], false));
-        $this->assertTrue($node->addJs('https://example.com/js2 ? hello=true', [], false));
-        $this->assertFalse($node->addJs('?hello=true', [], true));
-        $this->assertFalse($node->addJs('https://example.com/?hello=true??', [], false));
-        $this->assertTrue($node->addJs('https://example.com/js3?', ['async' => ''], false));
+        $node->addJs('https://example.com/js1?hello=true', [], false);
+        $node->addJs('https://example.com/js2 ? hello=true', [], false);
+        $this->assertEquals(2, $node->getJSNodes()->size());
+        $node->addJs('?hello=true', [], true);
+        $node->addJs('https://example.com/?hello=true??', [], false);
+        $this->assertEquals(2, $node->getJSNodes()->size());
+        $node->addJs('https://example.com/js3?', ['async' => ''], false);
+        $this->assertEquals(3, $node->getJSNodes()->size());
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
@@ -342,7 +355,7 @@ class HeadNodeTest extends TestCase {
     }
     public function testAddJs03() {
         $node = new HeadNode();
-        $this->assertTrue($node->addJs('https://example.com/js3?', ['async','ok' => 'yes'], false));
+        $node->addJs('https://example.com/js3?', ['async','ok' => 'yes'], false);
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
@@ -367,28 +380,30 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddMeta00() {
         $node = new HeadNode();
-        $this->assertFalse($node->addMeta('', ''));
+        $node->addMeta('', '');
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+        $node->addMeta('description', 'Page Description.');
+        $this->assertEquals(3,$node->childrenCount());
     }
     /**
      * @test
      */
     public function testAddMeta01() {
         $node = new HeadNode();
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+        $node->addMeta('description', 'Page Description.');
         $this->assertEquals(3,$node->childrenCount());
-        $this->assertFalse($node->addMeta('description', 'Hello'));
+        $node->addMeta('description', 'Hello');
+        $this->assertEquals(3,$node->childrenCount());
     }
     /**
      * @test
      */
     public function testAddMeta02() {
         $node = new HeadNode();
-        $this->assertTrue($node->addMeta('description', 'Page Description.'));
+        $node->addMeta('description', 'Page Description.');
         $meta = $node->getMeta('description');
         $this->assertEquals('Page Description.',$meta->getAttributeValue('content'));
-        $this->assertTrue($node->addMeta('description', 'Hello',true));
+        $node->addMeta('description', 'Hello',true);
         $meta = $node->getMeta('description');
         $this->assertEquals('Hello',$meta->getAttributeValue('content'));
 
@@ -444,13 +459,14 @@ class HeadNodeTest extends TestCase {
      */
     public function testGetCssNodes00() {
         $node = new HeadNode();
-        $this->assertTrue(true);
+        $this->assertEquals(0, $node->getCSSNodes()->size());
     }
     /**
      * @test
      */
     public function testGetJsNodes00() {
-        $this->assertTrue(true);
+        $node = new HeadNode();
+        $this->assertEquals(0, $node->getJSNodes()->size());
     }
     /**
      * @test
@@ -492,12 +508,12 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $this->assertNotNull($node->getCharsetNode());
         $this->assertNull($node->getCharset());
-        $this->assertTrue($node->setCharSet('utf-8'));
+        $node->setCharSet('utf-8');
         $this->assertEquals('utf-8',$node->getCharset());
         $this->assertEquals(3,$node->childrenCount());
-        $this->assertTrue($node->setCharSet('ISO-8859-8'));
+        $node->setCharSet('ISO-8859-8');
         $this->assertEquals('ISO-8859-8',$node->getCharset());
-        $this->assertFalse($node->setCharSet(''));
+        $node->setCharSet('');
         $this->assertTrue($node->hasMeta('charset'));
         $this->assertEquals('ISO-8859-8',$node->getCharset());
         $this->assertEquals(3,$node->childrenCount());
@@ -509,10 +525,10 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $this->assertNotNull($node->getCharsetNode());
         $this->assertNull($node->getCharset());
-        $this->assertTrue($node->setCharSet('utf-8'));
+        $node->setCharSet('utf-8');
         $this->assertEquals(3,$node->childrenCount());
         $this->assertEquals('utf-8',$node->getCharset());
-        $this->assertTrue($node->setCharSet(null));
+        $node->setCharSet(null);
         $this->assertNotNull($node->getCharsetNode());
         $this->assertNull($node->getCharset());
         $this->assertFalse($node->hasMeta('charset'));
@@ -548,12 +564,12 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
-        $this->assertTrue($node->setBase('https://example.com/'));
+        $node->setBase('https://example.com/');
         $this->assertEquals('https://example.com/',$node->getBaseURL());
         $this->assertEquals(3,$node->childrenCount());
-        $this->assertTrue($node->setBase('https://example2.com/'));
+        $node->setBase('https://example2.com/');
         $this->assertEquals('https://example2.com/',$node->getBaseURL());
-        $this->assertFalse($node->setBase(''));
+        $node->setBase('');
         $this->assertEquals(3,$node->childrenCount());
     }
     /**
@@ -563,10 +579,10 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
-        $this->assertTrue($node->setBase('https://example.com/'));
+        $node->setBase('https://example.com/');
         $this->assertEquals(3,$node->childrenCount());
         $this->assertEquals('https://example.com/',$node->getBaseURL());
-        $this->assertTrue($node->setBase(null));
+        $node->setBase(null);
         $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertEquals(2,$node->childrenCount());
@@ -581,7 +597,7 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals(2,$node->childrenCount());
         $node->setBase('https://example2.com/');
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->setBase(null));
+        $node->setBase(null);
         $this->assertNotNull($node->getBaseNode());
         $this->assertNull($node->getBaseURL());
         $this->assertEquals(1,$node->childrenCount());
@@ -605,7 +621,8 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals(3,$node->childrenCount());
         $node->setCanonical('https://example2.com/my-page');
         $this->assertEquals('https://example2.com/my-page',$node->getCanonical());
-        $this->assertFalse($node->setCanonical(''));
+        $node->setCanonical('');
+        $this->assertEquals('https://example2.com/my-page', $node->getCanonical());
         $this->assertEquals(3,$node->childrenCount());
     }
     /**
@@ -641,12 +658,12 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals(1,$node->childrenCount());
         $this->assertNotNull($node->getTitleNode());
         $this->assertEquals('',$node->getTitle());
-        $this->assertTrue($node->setTitle('hello page'));
+        $node->setTitle('hello page');
         $this->assertEquals(2,$node->childrenCount());
         $this->assertEquals('hello page',$node->getTitle());
-        $this->assertFalse($node->setTitle(''));
+        $node->setTitle('');
         $this->assertEquals('hello page',$node->getTitle());
-        $this->assertTrue($node->setTitle(null));
+        $node->setTitle(null);
         $this->assertEquals(1,$node->childrenCount());
         $this->assertEquals('',$node->getTitle());
     }

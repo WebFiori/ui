@@ -94,19 +94,17 @@ class HeadNode extends HTMLNode {
     public function __construct($title = 'Default',$canonical = '',$base = '') {
         parent::__construct('head');
 
-        if (!$this->setBase($base)) {
-            $this->baseNode = new HTMLNode('base');
-        }
-
-        if (!$this->setTitle($title)) {
-            $this->titleNode = new HTMLNode('title');
-            $this->titleNode->addTextNode('');
-        }
-
-        if (!$this->setCanonical($canonical)) {
-            $this->canonical = new HTMLNode('link');
-            $this->canonical->setAttribute('rel', 'canonical');
-        }
+        $this->baseNode = new HTMLNode('base');
+        $this->setBase($base);
+            
+        $this->titleNode = new HTMLNode('title');
+        $this->titleNode->addTextNode('');
+        $this->setTitle($title);
+        
+        $this->canonical = new HTMLNode('link');
+        $this->canonical->setAttribute('rel', 'canonical');
+        $this->setCanonical($canonical);
+                    
         $this->metaCharset = new HTMLNode('meta');
         $this->addMeta('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }
