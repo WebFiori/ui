@@ -24,6 +24,7 @@
  */
 namespace phpStructs\tests\html;
 
+use phpStructs\html\Anchor;
 use phpStructs\html\HTMLDoc;
 use phpStructs\html\HTMLNode;
 use PHPUnit\Framework\TestCase;
@@ -161,6 +162,175 @@ class HTMLNodeTest extends TestCase {
         $node->addChild($child00);
         $this->assertTrue(true);
         //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+    }
+    /**
+     * @test
+     */
+    public function testChaining00() {
+        $node = new HTMLNode('table');
+        $node->tr(['class' => 'header-row'])
+                ->getChild(0)
+                ->cell('User ID', 'th')
+                ->cell('Username', 'th')
+                ->cell('Email', 'th')
+                ->cell('Pass Code', 'th')
+                ->getParent()
+                ->tr()
+                ->getChild(1)
+                ->cell(new Anchor('https://example.com', '12345'))
+                ->cell('WarriorVX')
+                ->cell('ibrahim@example.com')
+                ->cell('6677');
+        
+        $this->assertEquals(2, $node->childrenCount());
+        $this->assertEquals('tr', $node->getChild(0)->getNodeName());
+        $this->assertEquals('tr', $node->getChild(1)->getNodeName());
+        $this->assertEquals('<table>'
+                . '<tr class="header-row"><th>User ID</th><th>Username</th><th>Email</th><th>Pass Code</th></tr>'
+                . '<tr><td><a href="https://example.com" target="_self">12345</a></td><td>WarriorVX</td><td>'
+                . 'ibrahim@example.com</td><td>6677</td></tr>'
+                . '</table>', $node->toHTML());
+        
+    }
+    /**
+     * @test
+     */
+    public function testChaining02() {
+        $node = new HTMLNode();
+        $node->form([
+            'method' => 'post',
+            'action' => 'my-action',
+            'enctype' => 'multipart/form-data'
+        ])->getChild(0)
+            ->label('Username:', ['style' => 'font-weight:bold'])
+            ->br()->input('text', ['placeholder' => 'Enter Your Username Or Email'])
+            ->br()->label('Password:', ['style' => 'font-weight:bold'])
+            ->br()->input('password')
+            ->br()->input('submit', [
+                'value' => 'Login'
+            ]);
+        $this->assertEquals('<div>'
+                . '<form method="post" action="my-action" enctype="multipart/form-data">'
+                . '<label style="font-weight:bold;">Username:</label><br>'
+                . '<input type="text" placeholder="Enter Your Username Or Email"><br>'
+                . '<label style="font-weight:bold;">Password:</label><br>'
+                . '<input type="password"><br>'
+                . '<input type="submit" value="Login">'
+                . '</form>'
+                . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining03() {
+        $node = new HTMLNode();
+        $node->div([
+            'itemscope','@onclick'
+        ])->li('Hello')
+          ->ul([
+              'Hello', 'World'
+          ])->ol([
+              'Good', 'Girl', new \phpStructs\html\Label('Test With Node'), 
+              new \phpStructs\html\ListItem()
+          ])
+                ->anchor(null, ['class'=>'imag-link'])->getChild(3)->img(['src'=>'Test','alt'=>'Test']);
+          $this->assertEquals(4, $node->childrenCount());
+          $this->assertEquals('<div><div itemscope @onclick></div>'
+                  . '<ul><li>Hello</li><li>World</li></ul>'
+                  . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
+                  . '<a href target="_self" class="imag-link"><img src="Test" alt="Test"></a>'
+                  . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining04() {
+        $node = new HTMLNode('ul');
+        $node->li('Hello', ['class' => 'first-menu-item'])
+                ->li('World')
+                ->li('From PHP');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<ul>'
+                . '<li class="first-menu-item">Hello</li>'
+                . '<li>World</li>'
+                . '<li>From PHP</li>'
+                . '</ul>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining05() {
+        $node = new HTMLNode('ol');
+        $node->li('Hello', ['class' => 'first-menu-item'])
+                ->li('World')
+                ->li('From PHP');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<ol>'
+                . '<li class="first-menu-item">Hello</li>'
+                . '<li>World</li>'
+                . '<li>From PHP</li>'
+                . '</ol>', $node->toHTML());
+    }
+    public function testChaining01() {
+        $node = new HTMLNode();
+        $node->anchor('Hello', ['href' => 'https://example.com'])
+                ->comment('A random comment in the middle.')
+                ->tr()
+                ->cell()
+                ->section('This is a section.', 3)
+                ->paragraph('A super paragraph.','',['class' => 'sup-pr']);
+        $this->assertEquals(4, $node->childrenCount());
+        $this->assertEquals('a', $node->getChild(0)->getNodeName());
+        $this->assertEquals('#COMMENT', $node->getChild(1)->getNodeName());
+        $this->assertEquals('section', $node->getChild(2)->getNodeName());
+        $this->assertEquals('p', $node->getChild(3)->getNodeName());
+        
+    }
+    /**
+     * @test
+     */
+    public function testCount00() {
+        $node = new HTMLNode();
+        $node->section('Hello')
+                ->br()
+                ->codeSnippit('PHP Code', "")
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(5, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount01() {
+        $node = new HTMLNode('img');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(0, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount02() {
+        $node = new HTMLNode('#text');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(0, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount03() {
+        $node = new HTMLNode('#comment');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph')
+                ->comment('hello');
+        $this->assertEquals(0, $node->count());
     }
     /**
      * @test

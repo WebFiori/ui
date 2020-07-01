@@ -88,7 +88,7 @@ class QueueTest extends TestCase {
         $this->assertEquals(0,$queue->size());
         $this->assertEquals(1,$queue->max());
         $this->assertTrue($queue->enqueue('Hello World!'));
-        $this->assertFalse($queue->enqueue('Other One'));
+        $this->assertFalse($queue->add('Other One'));
         $this->assertEquals(1,$queue->size());
         $this->assertEquals(1,$queue->max());
         $this->assertEquals('Hello World!',$queue->peek());
@@ -110,7 +110,7 @@ class QueueTest extends TestCase {
         }
         $this->assertEquals(10,$queue->size());
         $this->assertEquals('Element #0',$queue->peek());
-        $this->assertFalse($queue->enqueue('Element #10'));
+        $this->assertFalse($queue->add('Element #10'));
         $this->assertEquals('Element #0',$queue->dequeue());
         $this->assertEquals('Element #1',$queue->peek());
         $this->assertEquals(9,$queue->size());

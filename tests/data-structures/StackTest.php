@@ -88,7 +88,7 @@ class StackTest extends TestCase {
         $this->assertEquals(0,$stack->size());
         $this->assertEquals(1,$stack->max());
         $this->assertTrue($stack->push('Hello World!'));
-        $this->assertFalse($stack->push('Other One'));
+        $this->assertFalse($stack->add('Other One'));
         $this->assertEquals(1,$stack->size());
         $this->assertEquals(1,$stack->max());
         $this->assertEquals('Hello World!',$stack->peek());
@@ -110,7 +110,7 @@ class StackTest extends TestCase {
         }
         $this->assertEquals(10,$stack->size());
         $this->assertEquals('Element #9',$stack->peek());
-        $this->assertFalse($stack->push('Element #10'));
+        $this->assertFalse($stack->add('Element #10'));
         $this->assertEquals('Element #9',$stack->pop());
         $this->assertEquals('Element #8',$stack->peek());
         $this->assertEquals(9,$stack->size());
