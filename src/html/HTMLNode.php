@@ -1579,9 +1579,13 @@ class HTMLNode implements Countable, Iterator {
                 if ($lower == 'dir') {
                     return $this->setWritingDir($val);
                 } else if ($trimmedName == 'style') {
-                    $styleArr = $this->_styleArray($trimmedVal);
+                    if (gettype($val) == 'array') {
+                        return $this->setStyle($val);
+                    } else {
+                        $styleArr = $this->_styleArray($trimmedVal);
 
-                    return $this->setStyle($styleArr);
+                        return $this->setStyle($styleArr);
+                    }
                 } else if ($val === null) {
                     $this->attributes[$lower] = null;
                 } else {
