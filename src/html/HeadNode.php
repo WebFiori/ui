@@ -29,7 +29,7 @@ use phpStructs\LinkedList;
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *
  * @author Ibrahim
- * @version 1.1.5
+ * @version 1.1.6
  */
 class HeadNode extends HTMLNode {
     /**
@@ -118,8 +118,8 @@ class HeadNode extends HTMLNode {
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. Default is empty array.
-     * @return boolean If a link element is created and added, the method will 
-     * return true. If not added, the method will return false.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function addAlternate($url,$lang,$otherAttrs = []) {
@@ -152,10 +152,9 @@ class HeadNode extends HTMLNode {
                 $this->addChild($node);
             }
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Adds new child node.
@@ -169,14 +168,13 @@ class HeadNode extends HTMLNode {
      * <li>It is a '#COMMENT' node.</li>
      * </ul>
      * Other than that, the node will be not added.
-     * @param boolean $useChaining Not used.
+     * @param boolean $chainOnParent Not used.
      * @param array $attrs Not used.
-     * @return boolean If the node is added, the method will return true. If 
-     * not added, the method will return false.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
-        $retVal = false;
+    public function addChild($node, $chainOnParent = true, $attrs = []) {
 
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
@@ -187,35 +185,28 @@ class HeadNode extends HTMLNode {
 
                     foreach ($nodeAttrs as $attr => $val) {
                         if (strtolower($attr) == 'charset') {
-                            return false;
+                            return $this;
                         }
                     }
 
-                    if ($this->hasMeta($node->getAttributeValue('name'))) {
-                        $retVal = false;
-                    } else {
+                    if (!$this->hasMeta($node->getAttributeValue('name'))) {
                         parent::addChild($node);
-                        $retVal = true;
                     }
                 } else if ($nodeName == 'base' || $nodeName == 'title') {
                     $retVal = false;
                 } else if ($nodeName == 'link') {
                     $relVal = $node->getAttribute('rel');
 
-                    if ($relVal == 'canonical') {
-                        $retVal = false;
-                    } else {
+                    if ($relVal != 'canonical') {
                         parent::addChild($node);
-                        $retVal = true;
                     }
                 } else {
                     parent::addChild($node);
-                    $retVal = true;
                 }
             }
         }
 
-        return $retVal;
+        return $this;
     }
     /**
      * Adds new CSS source file.
@@ -228,9 +219,8 @@ class HeadNode extends HTMLNode {
      * @param boolean $preventCaching If set to true, a string in the form '?cv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to prevent caching. 
      * Default is true. 'cv' = CSS Version.
-     * @return boolean If a link tag which has the given CSS file is created, the 
-     * method will return true. If no node is added, the method will return 
-     * false.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function addCSS($href, $otherAttrs = [], $preventCaching = true) {
@@ -241,7 +231,7 @@ class HeadNode extends HTMLNode {
             $trimmedHref = trim($splitted[0]);
             $queryString = trim($splitted[1]);
         } else if (count($splitted) > 2) {
-            return false;
+            return $this;
         } else {
             $queryString = '';
         }
@@ -268,10 +258,9 @@ class HeadNode extends HTMLNode {
 
             $this->_cssJsInsertHelper($tag, $otherAttrs);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Adds new JavsScript source file.
@@ -285,9 +274,8 @@ class HeadNode extends HTMLNode {
      * be appended to the 'href' attribute value. It is used to prevent caching. 
      * 'jv' = JavaScript Version.
      * Default is true.
-     * @return boolean If a script node which has the given JS file is added, the 
-     * method will return true. If no node is added, the method will return 
-     * false.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function addJs($loc, $otherAttrs = [],$preventCaching = true) {
@@ -298,7 +286,7 @@ class HeadNode extends HTMLNode {
             $trimmedLoc = trim($splitted[0]);
             $queryString = trim($splitted[1]);
         } else if (count($splitted) > 2) {
-            return false;
+            return $this;
         } else {
             $queryString = '';
         }
@@ -328,10 +316,9 @@ class HeadNode extends HTMLNode {
 
             $this->_cssJsInsertHelper($tag, $otherAttrs);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Adds new 'link' node.
@@ -342,8 +329,8 @@ class HeadNode extends HTMLNode {
      * @param array $otherAttrs An associative array of keys and values. 
      * The keys will be used as an attribute and the key value will be used 
      * as attribute value.
-     * @return boolean The method will return true if the element is created. False 
-     * if not.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.1
      */
     public function addLink($rel,$href,$otherAttrs = []) {
@@ -379,11 +366,10 @@ class HeadNode extends HTMLNode {
                     $this->addChild($node);
                 }
 
-                return true;
             }
         }
 
-        return false;
+        return $this;
     }
     /**
      * Adds new meta tag.
@@ -393,8 +379,8 @@ class HeadNode extends HTMLNode {
      * @param boolean $override A boolean attribute. If a meta node was found 
      * which has the given name and this attribute is set to true, 
      * the content of the meta will be overridden by the passed value. 
-     * @return boolean If the meta tag is added or updated, the method will return 
-     * true. Other than that, the method will return false.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function addMeta($name,$content,$override = false) {
@@ -406,7 +392,7 @@ class HeadNode extends HTMLNode {
             if ($meta !== null && $override === true) {
                 $meta->setAttribute('content', $content);
 
-                return true;
+                return $this;
             } else if ($meta === null) {
                 $meta = new HTMLNode('meta');
                 $meta->setAttribute('name', $trimmedName);
@@ -427,11 +413,10 @@ class HeadNode extends HTMLNode {
                     $this->addChild($meta);
                 }
 
-                return true;
             }
         }
 
-        return false;
+        return $this;
     }
     /**
      * Returns a linked list of all alternate nodes that was added to the header.
@@ -510,6 +495,15 @@ class HeadNode extends HTMLNode {
      */
     public function getCharsetNode() {
         return $this->metaCharset;
+    }
+    /**
+     * Returns a linked list of all link tags which has the name 'link'.
+     * @return LinkedList A linked list of all link tags which has the name 'link'.
+     * the node has no link tags, the method will return an empty list.
+     * @since 1.1.6
+     */
+    public function getLinkNodes() {
+        return $this->getChildrenByTag('link');
     }
     /**
      * Returns a linked list of all link tags that link to a CSS file.
@@ -721,8 +715,8 @@ class HeadNode extends HTMLNode {
      * @param string|null $url The value to set. The base URL will be updated 
      * only if the given parameter is a string and it is not empty. If null is 
      * given, the node will be removed from the body of the head tag.
-     * @return boolean The method will return true if the base URL has been updated. 
-     * False if not.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setBase($url) {
@@ -730,7 +724,7 @@ class HeadNode extends HTMLNode {
             $this->removeChild($this->baseNode);
             $this->baseNode->removeAttribute('href');
 
-            return true;
+            return $this;
         }
         $trimmedUrl = trim($url.'');
 
@@ -744,10 +738,9 @@ class HeadNode extends HTMLNode {
             }
             $this->baseNode->setAttribute('href',$trimmedUrl);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the canonical URL.
@@ -757,8 +750,8 @@ class HeadNode extends HTMLNode {
      * @param string|null $link The URL to set. If null is given, the link node 
      * which represents the canonical URL will be removed from the body of the 
      * head tag.
-     * @return boolean If the canonical is set or removed, the method will return true. False 
-     * if not set.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setCanonical($link) {
@@ -766,7 +759,7 @@ class HeadNode extends HTMLNode {
             $this->removeChild($this->canonical);
             $this->canonical->removeAttribute('href');
 
-            return true;
+            return $this;
         }
         $trimmedLink = trim($link.'');
 
@@ -794,18 +787,17 @@ class HeadNode extends HTMLNode {
             }
             $this->canonical->setAttribute('href', $trimmedLink);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Set the value of the meta tag which has the attribute 'charset'.
      * @param string|null $charset The character set that will be used to 
      * render the document (such as 'UTF-8' or 'ISO-8859-8'. If null is 
      * given, the node will be removed from the head body. 
-     * @return boolean The method will return true if the charset is updated 
-     * or the node is removed. Other than that, the method will return false. 
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.1.4
      */
     public function setCharSet($charset) {
@@ -813,7 +805,7 @@ class HeadNode extends HTMLNode {
             $this->removeChild($this->metaCharset);
             $this->metaCharset->removeAttribute('charset');
 
-            return true;
+            return $this;
         }
         $trimmedCharset = trim($charset);
 
@@ -832,18 +824,17 @@ class HeadNode extends HTMLNode {
             }
             $this->metaCharset->setAttribute('charset', $trimmedCharset);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     /**
      * Sets the text value of the node 'title'.
      * @param string|null $title The title to set. It must be non-empty string in 
      * order to set. If null is given, 'title' node will be omitted from the 
      * body of the 'head' tag.
-     * @return boolean If the title is set or title node is removed, the method 
-     * will return true. False otherwise.
+     * @return HeadNote The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function setTitle($title) {
@@ -851,7 +842,7 @@ class HeadNode extends HTMLNode {
             $this->removeChild($this->titleNode);
             $this->titleNode->children()->get(0)->setText('');
 
-            return true;
+            return $this;
         }
         $trimmedTitle = trim($title);
 
@@ -871,10 +862,9 @@ class HeadNode extends HTMLNode {
             }
             $this->titleNode->children()->get(0)->setText($trimmedTitle);
 
-            return true;
         }
 
-        return false;
+        return $this;
     }
     private function _addAttrs(&$node,$otherAttrs,$notAllowed) {
         if (gettype($otherAttrs) == 'array') {
