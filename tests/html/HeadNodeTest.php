@@ -15,49 +15,54 @@ class HeadNodeTest extends TestCase {
      */
     public function addLinkTest00() {
         $node = new HeadNode();
-        $this->assertFalse($node->addLink('', ''));
+        $node->addLink('', '');
+        $this->assertEquals(0, $node->getLinkNodes()->size());
     }
     /**
      * @test
      */
     public function addLinkTest01() {
         $node = new HeadNode();
-        $this->assertFalse($node->addLink('stylesheet', ''));
+        $node->addLink('stylesheet', '');
+        $this->assertEquals(0, $node->getLinkNodes()->size());
     }
     /**
      * @test
      */
     public function addLinkTest02() {
         $node = new HeadNode();
-        $this->assertFalse($node->addLink('', 'https://myres.com/cee.css'));
+        $node->addLink('', 'https://myres.com/cee.css');
+        $this->assertEquals(0, $node->getLinkNodes()->size());
     }
     /**
      * @test
      */
     public function addLinkTest03() {
         $node = new HeadNode();
-        $this->assertFalse($node->addLink('canonical', 'https://mypage.com/canonical'));
+        $node->addLink('canonical', 'https://mypage.com/canonical');
+        $this->assertEquals(0, $node->getLinkNodes()->size());
     }
     /**
      * @test
      */
     public function addLinkTest04() {
         $node = new HeadNode();
-        $this->assertTrue($node->addLink('stylesheet', 'https://example.com/my-css.css'));
+        $node->addLink('stylesheet', 'https://example.com/my-css.css');
+        $this->assertEquals(0, $node->getLinkNodes()->size());
     }
     /**
      * @test
      */
     public function addLinkTest05() {
         $node = new HeadNode();
-        $this->assertTrue($node->addLink(
+        $node->addLink(
                 '  stylesheet   ', 
                 '  https://example.com/my-css.css',
                 [
                     'rel' => 'Hello',
                     'href' => 'NA',
                     'async' => 'true'
-                ]));
+                ]);
         $css = $node->children()->get($node->childrenCount() - 1);
         $this->assertEquals('stylesheet',$css->getAttributeValue('rel'));
         $this->assertEquals('https://example.com/my-css.css',$css->getAttributeValue('href'));
@@ -81,11 +86,13 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddAlternate00() {
         $headNode = new HeadNode();
-        $this->assertFalse($headNode->addAlternate('    ', '    '));
-        $this->assertFalse($headNode->addAlternate('   https://example.com/my-page?lang=ar', '    '));
-        $this->assertFalse($headNode->addAlternate('  ', '  AR  '));
-        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR'));
-        $this->assertTrue($headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',['id' => 'en-alternate']));
+        $headNode->addAlternate('    ', '    ');
+        $headNode->addAlternate('   https://example.com/my-page?lang=ar', '    ');
+        $headNode->addAlternate('  ', '  AR  ');
+        $this->assertEquals(0, $headNode->getAlternates()->size());
+        $headNode->addAlternate('   https://example.com/my-page?lang=ar', '   AR');
+        $headNode->addAlternate('   https://example.com/my-page?lang=en', '   En',['id' => 'en-alternate']);
+        $this->assertEquals(2, $headNode->getAlternates()->size());
         $node = $headNode->getChildByID('en-alternate');
         $this->assertTrue($node instanceof HTMLNode);
         $this->assertEquals('https://example.com/my-page?lang=en',$node->getAttributeValue('href'));
@@ -112,11 +119,13 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddCcc02() {
         $node = new HeadNode();
-        $this->assertTrue($node->addCSS('https://example.com/css1?hello=true', [], false));
-        $this->assertTrue($node->addCSS('https://example.com/css2 ? hello=true', [], false));
-        $this->assertFalse($node->addCSS('?hello=true', [], false));
-        $this->assertFalse($node->addCSS('https://example.com/?hello=true?', [], false));
-        $this->assertTrue($node->addCSS('https://example.com/css3?', ['async' => ''], false));
+        $node->addCSS('https://example.com/css1?hello=true', [], false);
+        $node->addCSS('https://example.com/css2 ? hello=true', [], false);
+        $this->assertEquals(2, $node->getCSSNodes()->size());
+        $node->addCSS('?hello=true', [], false);
+        $node->addCSS('https://example.com/?hello=true?', [], false);
+        $node->addCSS('https://example.com/css3?', ['async' => ''], false);
+        $this->assertEquals(3, $node->getCSSNodes()->size());
         $this->assertEquals(''
                 .'<head>'
                 .'<title>Default</title>'
@@ -132,7 +141,8 @@ class HeadNodeTest extends TestCase {
     public function testAddChild00() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode();
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -141,7 +151,8 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('meta');
         $notAllowed->setAttribute('charset', 'utf-8');
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -149,7 +160,8 @@ class HeadNodeTest extends TestCase {
     public function testAddChild02() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('title');
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -157,7 +169,8 @@ class HeadNodeTest extends TestCase {
     public function testAddChild03() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('base');
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -166,7 +179,8 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('link');
         $notAllowed->setAttribute('rel', 'canonical');
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -174,7 +188,8 @@ class HeadNodeTest extends TestCase {
     public function testAddChild05() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('#text');
-        $this->assertFalse($node->addChild($notAllowed));
+        $node->addChild($notAllowed);
+        $this->assertFalse($node->hasChild($notAllowed));
         $node->addTextNode('Hello');
         $this->assertEquals(2,$node->childrenCount());
     }
@@ -186,14 +201,18 @@ class HeadNodeTest extends TestCase {
         $allowed = new HTMLNode('meta');
         $allowed->setAttribute('name', 'description');
         $allowed->setAttribute('content', 'Page Description.');
-        $this->assertTrue($node->addChild($allowed));
+        $node->addChild($allowed);
+        $this->assertTrue($node->hasChild($allowed));
         $allowed2 = new HTMLNode('link');
         $allowed2->setAttribute('rel', 'stylesheet');
-        $this->assertTrue($node->addChild($allowed2));
+        $node->addChild($allowed2);
+        $this->assertTrue($node->hasChild($allowed2));
         $allowed3 = new HTMLNode('script');
-        $this->assertTrue($node->addChild($allowed3));
+        $node->addChild($allowed3);
+        $this->assertTrue($node->hasChild($allowed3));
         $allowed4 = new HTMLNode('#comment');
-        $this->assertTrue($node->addChild($allowed4));
+        $node->addChild($allowed4);
+        $this->assertTrue($node->hasChild($allowed4));
     }
     /**
      * @test
@@ -203,7 +222,8 @@ class HeadNodeTest extends TestCase {
         $allowed = new HTMLNode('meta');
         $allowed->setAttribute('name', 'viewport');
         $allowed->setAttribute('content', '....');
-        $this->assertFalse($node->addChild($allowed));
+        $node->addChild($allowed);
+        $this->assertFalse($node->hasChild($allowed));
     }
     /**
      * @test
@@ -559,7 +579,7 @@ class HeadNodeTest extends TestCase {
         $this->assertNotNull($node->getBaseNode());
         $this->assertEquals('https://example.com/',$node->getBaseURL());
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->setBase('https://example2.com/'));
+        $node->setBase('https://example2.com/');
         $this->assertEquals(2,$node->childrenCount());
         $this->assertTrue($node->setBase(null));
         $this->assertNotNull($node->getBaseNode());
@@ -580,10 +600,10 @@ class HeadNodeTest extends TestCase {
      */
     public function testSetCanonical01() {
         $node = new HeadNode();
-        $this->assertTrue($node->setCanonical('https://example.com/my-page'));
+        $node->setCanonical('https://example.com/my-page');
         $this->assertEquals('https://example.com/my-page',$node->getCanonical());
         $this->assertEquals(3,$node->childrenCount());
-        $this->assertTrue($node->setCanonical('https://example2.com/my-page'));
+        $node->setCanonical('https://example2.com/my-page');
         $this->assertEquals('https://example2.com/my-page',$node->getCanonical());
         $this->assertFalse($node->setCanonical(''));
         $this->assertEquals(3,$node->childrenCount());
@@ -593,9 +613,9 @@ class HeadNodeTest extends TestCase {
      */
     public function testSetCanonical02() {
         $node = new HeadNode();
-        $this->assertTrue($node->setCanonical('https://example.com/example'));
+        $node->setCanonical('https://example.com/example');
         $this->assertEquals('https://example.com/example',$node->getCanonical());
-        $this->assertTrue($node->setCanonical(null));
+        $node->setCanonical(null);
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNull($node->getCanonical());
         $this->assertEquals(2,$node->childrenCount());
@@ -606,9 +626,9 @@ class HeadNodeTest extends TestCase {
     public function testSetCanonical03() {
         $node = new HeadNode('','https://example.com/','');
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->setCanonical('https://example2.com/'));
+        $node->setCanonical('https://example2.com/');
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertTrue($node->setCanonical(null));
+        $node->setCanonical(null);
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNull($node->getCanonical());
         $this->assertEquals(1,$node->childrenCount());
