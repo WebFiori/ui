@@ -33,13 +33,18 @@ namespace phpStructs\html;
 class Label extends HTMLNode {
     /**
      * Creates a new label node with specific text on it.
-     * @param string $text The text that will be displayed by the label. 
+     * @param string|HTMLNode $text The text that will be displayed by the label. 
+     * This also can be an object of type 'HTMLNode'.
      * Default is empty string.
      * @since 1.0
      */
     public function __construct($text = '') {
         parent::__construct('label');
-        parent::addChild(self::createTextNode($text,false));
+        if ($text instanceof HTMLNode) {
+            $this->addChild($text);
+        } else {
+            parent::addChild(self::createTextNode($text,false));
+        }
     }
     /**
      * Sets the value of the attribute 'for'.
@@ -60,9 +65,13 @@ class Label extends HTMLNode {
             $trimmed = trim($elIdOrInput);
             $this->setAttribute('for', $trimmed);
         }
+        
+        return $this;
     }
     /**
      * Sets the text that will be displayed by the label.
+     * This method is applicable only if the first child of the label 
+     * is of type '#TEXT'.
      * @param string $text The text that will be displayed by the label.
      * @param boolean $escEntities If set to TRUE, the method will 
      * replace the characters '&lt;', '&gt;' and 
@@ -71,6 +80,11 @@ class Label extends HTMLNode {
      * @since 1.0
      */
     public function setText($text,$escEntities = true) {
-        $this->children()->get(0)->setText($text,$escEntities);
+        $node = $this->getChild(0);
+        if ($node->getNodeName() == '#TEXT') {
+            $node->setText($text,$escEntities);
+        }
+        
+        return $this;
     }
 }
