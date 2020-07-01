@@ -292,13 +292,12 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function addChild($node, $chainOnParent = true, $attrs = []) {
-        
         if (gettype($node) == 'string') {
             $toAdd = new HTMLNode($node);
         } else {
             $toAdd = $node;
         }
-        
+
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
             $toAdd->setAttributes($attrs);
@@ -306,7 +305,7 @@ class HTMLNode implements Countable, Iterator {
             $this->childrenList->add($toAdd);
         } 
         $chain = $chainOnParent === true;
-        
+
         if ($chain) {
             return $this;
         } else {
@@ -325,6 +324,7 @@ class HTMLNode implements Countable, Iterator {
         if ($this->mustClose()) {
             $this->addChild(self::createComment($text));
         }
+
         return $this;
     }
     /**
@@ -343,8 +343,30 @@ class HTMLNode implements Countable, Iterator {
         if ($this->mustClose()) {
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
-        
+
         return $this;
+    }
+    /**
+     * Adds an anchor (&lt;a&gt;) tag to the body of the node.
+     * @param string|HTMLNode $body The body of the tag. This can be a simple text 
+     * or an object of type 'HTMLNode'. Note that if text is given and the text contains HTML 
+     * code, the method will not replace the code by HTML entities.
+     * @param array $attributes An optional array that contains the attributes which 
+     * will be set for the created node.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function anchor($body = null, $attributes = []) {
+        $href = null;
+
+        if (isset($attributes['href'])) {
+            $href = $attributes['href'];
+        }
+        $anchor = new Anchor($href, $body);
+        $anchor->setAttributes($attributes);
+
+        return $this->addChild($anchor);
     }
     /**
      * Sets the attribute 'class' for all child nodes.
@@ -426,6 +448,54 @@ class HTMLNode implements Countable, Iterator {
 
         return $this->codeString;
     }
+            } else {
+                $this->codeString .= $this->_getTab().'&lt;!DOCTYPE html&gt;'.$this->nl;
+            }
+        }
+        $this->nodesStack = new Stack();
+        $this->_pushNodeAsCode($this,$formattingOptionsV);
+
+        if ($usePre) {
+            return $this->codeString.'</pre>';
+        }
+
+        return $this->codeString;
+    }
+    /**
+     * Adds a line break (&lt;br/&gt;) to the body of the node.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function br() {
+        return $this->addChild(new Br());
+    }
+    /**
+     * Adds a cell (&lt;td&gt; or &lt;th&gt;) to the body of the node.
+     * The method will create the cell as an object of type 'TableCell'.
+     * Note that the cell will be added only if the node name is 'tr'.
+     * @param string|HTMLNode $cellBody The text of cell body. It can have HTML. 
+     * Also, it can be an object of type 'HTMLNode'.
+     * @param string $cellType The type of the cell. This attribute 
+     * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
+     * in the body of the table and 'th' if the cell is in the header. If 
+     * none of the two is given, 'td' will be used by default.
+     * @param array $attributes An optional array of attributes to set for the 
+     * cell.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     * 
+     */
+    public function cell($cellBody = null, $cellType = 'td', $attributes = []) {
+        if ($this->getNodeName() == 'tr') {
+            $cell = new TableCell($cellType, $cellBody);
+            $cell->setAttributes($attributes);
+            $this->addChild($cell);
+        }
+
+        return $this;
+    }
     /**
      * Returns a linked list of all child nodes.
      * @return LinkedList|null A linked list of all child nodes. if the 
@@ -464,6 +534,46 @@ class HTMLNode implements Countable, Iterator {
         return '';
     }
     /**
+     * Adds an object of type 'CodeSnippit' as a child element.
+     * @param string $title The title of the code snippit such as 'PHP Code'.
+     * @param string $code The code that will be displayed by the snippit. It 
+     * is recommended that the code enclosed between double quotation marks.
+     * @param array $attributes An optional array of attributes to set for the 
+     * parent element in the object. Note that if the array has the 
+     * attribute 'class' or the attribute 'style', they will be ignored.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function codeSnippit($title, $code, $attributes = []) {
+        $snippit = new CodeSnippet($title, $code);
+
+        if (gettype($attributes) == 'array') {
+            if (isset($attributes['class'])) {
+                unset($attributes['class']);
+            }
+
+            if (isset($attributes['style'])) {
+                unset($attributes['style']);
+            }
+        }
+        $snippit->setAttributes($attributes);
+
+        return $this->addChild($snippit);
+    }
+    /**
+     * Adds a comment node as a child.
+     * The comment node will be added to the body of the node only 
+     * if it is not a void node.
+     * @param string $txt The text that will be in the node.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function comment($txt) {
+        return $this->addCommentNode($txt);
+    }
+    /**
      * Returns the number of child nodes attached to the node.
      * If the node is a text node, a comment node or a void node, 
      * the method will return 0.
@@ -485,352 +595,6 @@ class HTMLNode implements Countable, Iterator {
         $comment->setText($text);
 
         return $comment;
-    }
-    /**
-     * Adds a comment node as a child.
-     * The comment node will be added to the body of the node only 
-     * if it is not a void node.
-     * @param string $txt The text that will be in the node.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function comment($txt) {
-        return $this->addCommentNode($txt);
-    }
-    /**
-     * Adds a text node as a child.
-     * The text node will be added to the body of the node only 
-     * if it is not a void node.
-     * @param string $txt The text that will be in the node.
-     * @param boolean $escEntities If set to true, the method will 
-     * replace the characters '&lt;', '&gt;' and 
-     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is true.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function text($txt, $escEntities = true) {
-        return $this->addTextNode($txt, $escEntities);
-    }
-    /**
-     * Adds new label (&lt;label&gt;) element to the body of the node.
-     * The method will create an object of type 'Label' and add it as a 
-     * child to the body.
-     * @param string|array $body The body of the label. It can be a simple 
-     * text or it can be an object of type 'HTMLNode'.
-     * @param array $attributes An optional array that contains attributes to 
-     * set for the label.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function label($body, $attributes = []) {
-        $label = new Label($body);
-        $label->setAttributes($attributes);
-        return $this->addChild($label);
-    }
-    /**
-     * Adds a horizontal rule (&lt;hr/&gt;) to the body of the node.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function hr() {
-        return $this->addChild(new HTMLNode('hr'));
-    }
-    /**
-     * Adds new input (&lt;input&gt;, &lt;select&gt; or &lt;textarea&gt;) 
-     * element as a child to the body of the node.
-     * The method will create an object of type 'Input' and add it as a child.
-     * @param string $inputType The type of the input element. The values of 
-     * this parameter must be taken from the array Input::INPUT_TYPES. Default 
-     * value is 'text'.
-     * @param type $attributes An optional array that contains attributes to 
-     * set for the input. If the array contains the attribute 'type', it will 
-     * be ignored.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function input($inputType = 'text', $attributes = []) {
-        $input = new Input($inputType);
-        
-        if (gettype($attributes) == 'array' && isset($attributes['type'])) {
-            unset($attributes['type']);
-        }
-        $input->setAttributes($attributes);
-        
-        return $this->addChild($input);
-    }
-    /**
-     * Adds a line break (&lt;br/&gt;) to the body of the node.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function br() {
-        return $this->addChild(new Br());
-    }
-    /**
-     * Adds a section (&lt;section&gt;) as a child element.
-     * This method will create a section element with a heading element in its 
-     * body.
-     * Note that if the title of the contains HTML entities, they will be not escaped 
-     * and will be treated as HTML code.
-     * @param string|HTMLNode $title The title that will be set in the heading tag. 
-     * This also can be an object of type 'HTMLNode'.
-     * @param int $headingLvl Heading level. It can be a value between 1 
-     * and 6 inclusive. Default value is 1.
-     * @param array $attributes An optional array of attributes that will be set in 
-     * the section element.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function section($title, $headingLvl = 1, $attributes = []) {
-        $hAsInt = intval($headingLvl);
-        $hLvl = $hAsInt > 0 && $hAsInt <= 6 ? $hAsInt : 1;
-        $heading = new HTMLNode('h'.$hLvl);
-        
-        if ($title instanceof HTMLNode) {
-            $heading->addChild($title);
-        } else {
-            $heading->text($title, false);
-        }
-        $section = new HTMLNode('section');
-        $section->setAttributes($attributes)->addChild($heading);
-        
-        return $this->addChild($section);
-    }
-    /**
-     * Adds a &lt;form&gt; element to the body of the node.
-     * @param array $attributes An optional array of attributes that will be set in 
-     * the form element.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function form($attributes = []) {
-        return $this->addChild(new HTMLNode('form'), false)->setAttributes($attributes)->getParent();
-    }
-    /**
-     * Adds a &lt;div&gt; element to the body of the node.
-     * @param array $attributes An optional array of attributes that will be set in 
-     * the div element.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function div($attributes = []) {
-        return $this->addChild(new HTMLNode(), false)->setAttributes($attributes)->getParent();
-    }
-    /**
-     * Adds an image element (&lt;img&gt;) to the body of the node.
-     * @param array $attributes An optional array of attributes that will be set in 
-     * the image element.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function img($attributes = []) {
-        $img = new HTMLNode('img');
-        $img->setAttributes($attributes);
-        return $this->addChild($img);
-    }
-    /**
-     * Adds a list item element (&lt;li&gt;) to the body of the node.
-     * The method will add the node as an object of type 'ListItem'.
-     * Note that it will be added only if the node is of type 'ul' or 'li'.
-     * @param HTMLNode|string $itemBody The body of the list item. It can be a simple 
-     * text or an object of type 'HTMLNode'.
-     * @param array $attributes An optional array of attributes that will be set in 
-     * the list item element.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function li($itemBody, $attributes = []) {
-        if ($this->getNodeName() == 'ul' || $this->getNodeName() == 'ol') {
-            $item = new ListItem();
-            
-            if ($itemBody instanceof HTMLNode) {
-                $item->addChild($itemBody);
-            } else {
-                $item->addTextNode($itemBody, false);
-            }
-            $item->setAttributes($attributes);
-            $this->addChild($item);
-        }
-        return $this;
-    }
-    /**
-     * Adds a list (&lt;ul&gt;) to the body of the node. 
-     * The method will create an object of type 'UnorderedList' and add it as 
-     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
-     * added.
-     * @param array $items An array that contains list items. They can be a simple text, 
-     * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
-     * list item is a text, the item will be added without placing HTML entities in 
-     * the text if the text has HTMLCode.
-     * @param array $attributes An optional array of attributes to set for the 
-     * list.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function ul($items = [], $attributes = []) {
-        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
-            $list = new UnorderedList($items, false);
-            $list->setAttributes($attributes);
-
-            $this->addChild($list);
-        }
-        return $this;
-    }
-    /**
-     * Adds a list (&lt;ol&gt;) to the body of the node. 
-     * The method will create an object of type 'UnorderedList' and add it as 
-     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
-     * added.
-     * @param array $items An array that contains list items. They can be a simple text, 
-     * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
-     * list item is a text, the item will be added without placing HTML entities in 
-     * the text if the text has HTMLCode.
-     * @param array $attributes An optional array of attributes to set for the 
-     * list.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function ol($items = [], $attributes = []) {
-        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
-            $list = new OrderedList($items, false);
-            $list->setAttributes($attributes);
-
-            $this->addChild($list);
-        }
-        return $this;
-    }
-    /**
-     * Adds a cell (&lt;td&gt; or &lt;th&gt;) to the body of the node.
-     * The method will create the cell as an object of type 'TableCell'.
-     * Note that the cell will be added only if the node name is 'tr'.
-     * @param string|HTMLNode $cellBody The text of cell body. It can have HTML. 
-     * Also, it can be an object of type 'HTMLNode'.
-     * @param string $cellType The type of the cell. This attribute 
-     * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
-     * in the body of the table and 'th' if the cell is in the header. If 
-     * none of the two is given, 'td' will be used by default.
-     * @param array $attributes An optional array of attributes to set for the 
-     * cell.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     * 
-     */
-    public function cell($cellBody = null, $cellType = 'td', $attributes = []) {
-        if ($this->getNodeName() == 'tr') {
-            $cell = new TableCell($cellType, $cellBody);
-            $cell->setAttributes($attributes);
-            $this->addChild($cell);
-        }
-        return $this;
-    }
-    /**
-     * Adds a row (&lt;tr&gt;) to the body of the node.
-     * The method will create the row as an object of type 'TableRow'.
-     * Note that the row will be added only if the node name is 'tbody' or 'table'.
-     * @param array $attributes An optional array of attributes to set for the 
-     * row.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function tr($attributes = []) {
-        if ($this->getNodeName() == 'tbody' || $this->getNodeName() == 'table') {
-            $row = new TableRow();
-            $row->setAttributes($attributes);
-            $this->addChild($row);
-        }
-        return $this;
-    }
-    /**
-     * Adds an object of type 'CodeSnippit' as a child element.
-     * @param string $title The title of the code snippit such as 'PHP Code'.
-     * @param string $code The code that will be displayed by the snippit. It 
-     * is recommended that the code enclosed between double quotation marks.
-     * @param array $attributes An optional array of attributes to set for the 
-     * parent element in the object. Note that if the array has the 
-     * attribute 'class' or the attribute 'style', they will be ignored.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function codeSnippit($title, $code, $attributes = []) {
-        $snippit = new CodeSnippet($title, $code);
-        
-        if (gettype($attributes) == 'array') {
-            
-            if (isset($attributes['class'])) {
-                unset($attributes['class']);
-            }
-            
-            if (isset($attributes['style'])) {
-                unset($attributes['style']);
-            }
-        }
-        $snippit->setAttributes($attributes);
-        return $this->addChild($snippit);
-    }
-    /**
-     * Adds a paragraph (&lt;p&gt;) as a child element.
-     * @param string|HTMLNode $body An optional text to add to the body of the paragraph. 
-     * This also can be an object of type 'HTMLNode'. Note that if HTMLNode 
-     * object is given, its name must be part of the array PNode::ALLOWED_CHILDS or 
-     * the method will not add it.
-     * @param boolean $escEntities If set to true, the method will 
-     * replace the characters '&lt;', '&gt;' and 
-     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is true.
-     * @param type $attributes
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function paragraph($body = null, $escEntities = true, $attributes = []) {
-        $paragraph = new PNode();
-        
-        if ($body instanceof HTMLNode) {
-            $paragraph->addChild($body);
-        } else if (strlen($body) > 0) {
-            $paragraph->text($body, $escEntities);
-        }
-        $paragraph->setAttributes($attributes);
-        
-        return $this->addChild($paragraph);
-    }
-    /**
-     * Adds an anchor (&lt;a&gt;) tag to the body of the node.
-     * @param string|HTMLNode $body The body of the tag. This can be a simple text 
-     * or an object of type 'HTMLNode'. Note that if text is given and the text contains HTML 
-     * code, the method will not replace the code by HTML entities.
-     * @param array $attributes An optional array that contains the attributes which 
-     * will be set for the created node.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
-     * @since 1.8.3
-     */
-    public function anchor($body = null, $attributes = []) {
-        $href = null;
-        
-        if (isset($attributes['href'])) {
-            $href = $attributes['href'];
-        }
-        $anchor = new Anchor($href, $body);
-        $anchor->setAttributes($attributes);
-        return $this->addChild($anchor);
     }
     /**
      * Creates new text node.
@@ -859,6 +623,28 @@ class HTMLNode implements Countable, Iterator {
      */
     public function current() {
         return $this->childrenList->current();
+    }
+    /**
+     * Adds a &lt;div&gt; element to the body of the node.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the div element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function div($attributes = []) {
+        return $this->addChild(new HTMLNode(), false)->setAttributes($attributes)->getParent();
+    }
+    /**
+     * Adds a &lt;form&gt; element to the body of the node.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the form element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function form($attributes = []) {
+        return $this->addChild(new HTMLNode('form'), false)->setAttributes($attributes)->getParent();
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
@@ -1229,7 +1015,7 @@ class HTMLNode implements Countable, Iterator {
     public function hasAttribute($attrName) {
         if (!$this->isTextNode() && !$this->isComment()) {
             $trimmed = strtolower(trim($attrName));
-            
+
             return array_key_exists($trimmed, $this->attributes);
         }
 
@@ -1249,6 +1035,15 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return false;
+    }
+    /**
+     * Adds a horizontal rule (&lt;hr/&gt;) to the body of the node.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function hr() {
+        return $this->addChild(new HTMLNode('hr'));
     }
 
     /**
@@ -1402,6 +1197,44 @@ class HTMLNode implements Countable, Iterator {
         return [];
     }
     /**
+     * Adds an image element (&lt;img&gt;) to the body of the node.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the image element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function img($attributes = []) {
+        $img = new HTMLNode('img');
+        $img->setAttributes($attributes);
+
+        return $this->addChild($img);
+    }
+    /**
+     * Adds new input (&lt;input&gt;, &lt;select&gt; or &lt;textarea&gt;) 
+     * element as a child to the body of the node.
+     * The method will create an object of type 'Input' and add it as a child.
+     * @param string $inputType The type of the input element. The values of 
+     * this parameter must be taken from the array Input::INPUT_TYPES. Default 
+     * value is 'text'.
+     * @param type $attributes An optional array that contains attributes to 
+     * set for the input. If the array contains the attribute 'type', it will 
+     * be ignored.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function input($inputType = 'text', $attributes = []) {
+        $input = new Input($inputType);
+
+        if (gettype($attributes) == 'array' && isset($attributes['type'])) {
+            unset($attributes['type']);
+        }
+        $input->setAttributes($attributes);
+
+        return $this->addChild($input);
+    }
+    /**
      * Insert new HTML element at specific position.
      * @param HTMLNode $el The new element that will be inserted. It is possible 
      * to insert child elements to the element if the following conditions are 
@@ -1419,7 +1252,6 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.9
      */
     public function insert($el,$position) {
-
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && ($el instanceof HTMLNode) && $el !== $this) {
             $retVal = $this->childrenList->insert($el, $position);
 
@@ -1497,6 +1329,51 @@ class HTMLNode implements Countable, Iterator {
         $this->childrenList->key()->data();
     }
     /**
+     * Adds new label (&lt;label&gt;) element to the body of the node.
+     * The method will create an object of type 'Label' and add it as a 
+     * child to the body.
+     * @param string|array $body The body of the label. It can be a simple 
+     * text or it can be an object of type 'HTMLNode'.
+     * @param array $attributes An optional array that contains attributes to 
+     * set for the label.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function label($body, $attributes = []) {
+        $label = new Label($body);
+        $label->setAttributes($attributes);
+
+        return $this->addChild($label);
+    }
+    /**
+     * Adds a list item element (&lt;li&gt;) to the body of the node.
+     * The method will add the node as an object of type 'ListItem'.
+     * Note that it will be added only if the node is of type 'ul' or 'li'.
+     * @param HTMLNode|string $itemBody The body of the list item. It can be a simple 
+     * text or an object of type 'HTMLNode'.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the list item element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function li($itemBody, $attributes = []) {
+        if ($this->getNodeName() == 'ul' || $this->getNodeName() == 'ol') {
+            $item = new ListItem();
+
+            if ($itemBody instanceof HTMLNode) {
+                $item->addChild($itemBody);
+            } else {
+                $item->addTextNode($itemBody, false);
+            }
+            $item->setAttributes($attributes);
+            $this->addChild($item);
+        }
+
+        return $this;
+    }
+    /**
      * Returns the next element in the iterator.
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
@@ -1507,6 +1384,31 @@ class HTMLNode implements Countable, Iterator {
      */
     public function next() {
         $this->childrenList->next();
+    }
+    /**
+     * Adds a list (&lt;ol&gt;) to the body of the node. 
+     * The method will create an object of type 'UnorderedList' and add it as 
+     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
+     * added.
+     * @param array $items An array that contains list items. They can be a simple text, 
+     * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
+     * list item is a text, the item will be added without placing HTML entities in 
+     * the text if the text has HTMLCode.
+     * @param array $attributes An optional array of attributes to set for the 
+     * list.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function ol($items = [], $attributes = []) {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
+            $list = new OrderedList($items, false);
+            $list->setAttributes($attributes);
+
+            $this->addChild($list);
+        }
+
+        return $this;
     }
     /**
      * Returns a string that represents the opening part of the node.
@@ -1533,6 +1435,35 @@ class HTMLNode implements Countable, Iterator {
         return $retVal;
     }
     /**
+     * Adds a paragraph (&lt;p&gt;) as a child element.
+     * @param string|HTMLNode $body An optional text to add to the body of the paragraph. 
+     * This also can be an object of type 'HTMLNode'. Note that if HTMLNode 
+     * object is given, its name must be part of the array PNode::ALLOWED_CHILDS or 
+     * the method will not add it.
+     * @param boolean $escEntities If set to true, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is true.
+     * @param type $attributes
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function paragraph($body = null, $escEntities = true, $attributes = []) {
+        $paragraph = new PNode();
+
+        if ($body instanceof HTMLNode) {
+            $paragraph->addChild($body);
+        } else {
+            if (strlen($body) > 0) {
+                $paragraph->text($body, $escEntities);
+            }
+        }
+        $paragraph->setAttributes($attributes);
+
+        return $this->addChild($paragraph);
+    }
+    /**
      * Removes all child nodes.
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
@@ -1542,6 +1473,7 @@ class HTMLNode implements Countable, Iterator {
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
             $this->childrenList->clear();
         }
+
         return $this;
     }
     /**
@@ -1559,6 +1491,7 @@ class HTMLNode implements Countable, Iterator {
                 unset($this->attributes[$trimmed]);
             }
         }
+
         return $this;
     }
     /**
@@ -1603,6 +1536,37 @@ class HTMLNode implements Countable, Iterator {
      */
     public function rewind() {
         $this->childrenList->rewind();
+    }
+    /**
+     * Adds a section (&lt;section&gt;) as a child element.
+     * This method will create a section element with a heading element in its 
+     * body.
+     * Note that if the title of the contains HTML entities, they will be not escaped 
+     * and will be treated as HTML code.
+     * @param string|HTMLNode $title The title that will be set in the heading tag. 
+     * This also can be an object of type 'HTMLNode'.
+     * @param int $headingLvl Heading level. It can be a value between 1 
+     * and 6 inclusive. Default value is 1.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the section element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function section($title, $headingLvl = 1, $attributes = []) {
+        $hAsInt = intval($headingLvl);
+        $hLvl = $hAsInt > 0 && $hAsInt <= 6 ? $hAsInt : 1;
+        $heading = new HTMLNode('h'.$hLvl);
+
+        if ($title instanceof HTMLNode) {
+            $heading->addChild($title);
+        } else {
+            $heading->text($title, false);
+        }
+        $section = new HTMLNode('section');
+        $section->setAttributes($attributes)->addChild($heading);
+
+        return $this->addChild($section);
     }
     /**
      * Sets a value for an attribute.
@@ -1655,7 +1619,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setAttributes($attrsArr) {
         if (gettype($attrsArr) == 'array') {
-
             foreach ($attrsArr as $attr => $val) {
                 if (gettype($attr) == 'integer') {
                     $this->setAttribute($val);
@@ -1663,7 +1626,6 @@ class HTMLNode implements Countable, Iterator {
                     $this->setAttribute($attr, $val);
                 }
             }
-
         }
 
         return $this;
@@ -1685,6 +1647,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $this->setAttribute('class', $this->getClassName().' '.$val);
         }
+
         return $this;
     }
     /**
@@ -1894,6 +1857,22 @@ class HTMLNode implements Countable, Iterator {
         return $this;
     }
     /**
+     * Adds a text node as a child.
+     * The text node will be added to the body of the node only 
+     * if it is not a void node.
+     * @param string $txt The text that will be in the node.
+     * @param boolean $escEntities If set to true, the method will 
+     * replace the characters '&lt;', '&gt;' and 
+     * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
+     * in the given text. Default is true.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function text($txt, $escEntities = true) {
+        return $this->addTextNode($txt, $escEntities);
+    }
+    /**
      * Returns HTML string that represents the node as a whole.
      * @param boolean $formatted Set to true to return a well formatted 
      * HTML document (has new lines and indentations). Note that the size of 
@@ -1930,6 +1909,50 @@ class HTMLNode implements Countable, Iterator {
         $this->_pushNode($this,$formatted);
 
         return $this->htmlString;
+    }
+    /**
+     * Adds a row (&lt;tr&gt;) to the body of the node.
+     * The method will create the row as an object of type 'TableRow'.
+     * Note that the row will be added only if the node name is 'tbody' or 'table'.
+     * @param array $attributes An optional array of attributes to set for the 
+     * row.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function tr($attributes = []) {
+        if ($this->getNodeName() == 'tbody' || $this->getNodeName() == 'table') {
+            $row = new TableRow();
+            $row->setAttributes($attributes);
+            $this->addChild($row);
+        }
+
+        return $this;
+    }
+    /**
+     * Adds a list (&lt;ul&gt;) to the body of the node. 
+     * The method will create an object of type 'UnorderedList' and add it as 
+     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
+     * added.
+     * @param array $items An array that contains list items. They can be a simple text, 
+     * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
+     * list item is a text, the item will be added without placing HTML entities in 
+     * the text if the text has HTMLCode.
+     * @param array $attributes An optional array of attributes to set for the 
+     * list.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function ul($items = [], $attributes = []) {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
+            $list = new UnorderedList($items, false);
+            $list->setAttributes($attributes);
+
+            $this->addChild($list);
+        }
+
+        return $this;
     }
     /**
      * Checks if the iterator has more elements or not.
