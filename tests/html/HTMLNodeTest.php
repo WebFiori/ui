@@ -876,7 +876,7 @@ and open the template in the editor.
      */
     public function testInsert00() {
         $node = new HTMLNode();
-        $this->assertFalse($node->insert($node, 0));
+        $node->insert($node, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -885,7 +885,7 @@ and open the template in the editor.
     public function testInsert01() {
         $node = HTMLNode::createTextNode('Hello');
         $xNode = new HTMLNode();
-        $this->assertFalse($node->insert($xNode, 0));
+        $node->insert($xNode, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -894,7 +894,7 @@ and open the template in the editor.
     public function testInsert02() {
         $node = HTMLNode::createComment('Hello Comment');
         $xNode = new HTMLNode();
-        $this->assertFalse($node->insert($xNode, 0));
+        $node->insert($xNode, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -903,7 +903,7 @@ and open the template in the editor.
     public function testInsert03() {
         $node = HTMLNode::createTextNode('Hello');
         $xNode = new HTMLNode();
-        $this->assertTrue($xNode->insert($node, 0));
+        $xNode->insert($node, 0);
         $this->assertEquals(1,$xNode->childrenCount());
         $xNode->insert(HTMLNode::createComment('A Comment'), 0);
         $this->assertEquals('#COMMENT',$xNode->getChild(0)->getNodeName());
@@ -1068,40 +1068,51 @@ and open the template in the editor.
      */
     public function testSetAttribute00() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute(''));
-        $this->assertFalse($node->setAttribute('     '));
-        $this->assertFalse($node->setAttribute('dir'));
-        $bool = $node->setAttribute('   dir');
-        $this->assertFalse($bool);
+        $node->setAttribute('   dir');
+        $this->assertFalse($node->hasAttribute('dir'));
     }
     /**
      * @test
      */
     public function testSetAttribute01() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('hello'));
+        $node->setAttribute('hello');
+        $this->assertTrue($node->hasAttribute('hello'));
         $node->setAttribute(' hello ', 'world!');
-        $node->setAttribute('   BIG ONE', 'Random Val  ');
+        $this->assertTrue($node->hasAttribute('hello'));
+        $this->assertEquals('world!',$node->getAttributeValue('hello'));
     }
     /**
      * @test
      */
     public function testSetAttribute02() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('dir'));
-        $this->assertFalse($node->setAttribute(' dir ', 'XXXX!'));
-        $this->assertTrue($node->setAttribute(' dir ', 'LTR'));
-        $this->assertTrue($node->setAttribute(' dir ', 'rTl'));
+        $node->setAttribute('dir');
+        $this->assertFalse($node->hasAttribute('dir'));
+        $node->setAttribute(' dir ', 'XXXX!');
+        $this->assertFalse($node->hasAttribute('dir'));
+        $node->setAttribute(' dir ', 'LTR');
+        $this->assertTrue($node->hasAttribute('dir'));
+        $this->assertEquals('ltr', $node->getAttribute('dir'));
+        $this->assertEquals('ltr', $node->getWritingDir());
+        $node->setAttribute(' dir ', 'rTl');
+        $this->assertEquals('rtl', $node->getAttribute('dir'));
+        $this->assertEquals('rtl', $node->getWritingDir());
+        
     }
     /**
      * @test
      */
     public function testSetAttribute03() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('style',''));
-        $this->assertFalse($node->setAttribute('style','color:'));
-        $this->assertFalse($node->setAttribute('style','color:;background:;'));
-        $this->assertFalse($node->setAttribute('style',':;:;:;'));
+        $node->setAttribute('style','');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style','color:');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style','color:;background:;');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style',':;:;:;');
+        $this->assertFalse($node->hasAttribute('style'));
         $this->assertEquals([],$node->getStyle());
         $this->assertNull($node->getAttribute('style'));
     }
@@ -1110,7 +1121,7 @@ and open the template in the editor.
      */
     public function testSetAttribute04() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('style','color:red'));
+        $node->setAttribute('style','color:red');
         $this->assertEquals([
             'color' => 'red'
         ],$node->getStyle());
@@ -1121,7 +1132,7 @@ and open the template in the editor.
      */
     public function testSetAttribute05() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('style','color  :red; : ; hello: ; border: 1px solid'));
+        $node->setAttribute('style','color  :red; : ; hello: ; border: 1px solid');
         $this->assertEquals([
             'color' => 'red',
             'border' => '1px solid'
@@ -1133,15 +1144,17 @@ and open the template in the editor.
      */
     public function testSetAttribute06() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('0-data','550'));
-        $this->assertFalse($node->setAttribute('-data','550'));
+        $node->setAttribute('0-data','550');
+        $this->assertFalse($node->hasAttribute('0-data'));
+        $node->setAttribute('-data','550');
+        $this->assertFalse($node->hasAttribute('-data'));
     }
     /**
      * @test
      */
     public function testSetAttribute07() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('disabled',null));
+        $node->setAttribute('disabled',null);
         $this->assertNull($node->getAttribute('disabled'));
         $this->assertEquals('<div disabled>',$node->open());
         $node->setAttribute('data-name', '');
@@ -1153,7 +1166,7 @@ and open the template in the editor.
      */
     public function testSetAttribute08() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute(':disabled',"hell"));
+        $node->setAttribute(':disabled',"hell");
         $this->assertEquals('hell',$node->getAttribute(':disabled'));
         $this->assertEquals('<div :disabled="hell"></div>',$node->toHTML());
     }
@@ -1162,7 +1175,7 @@ and open the template in the editor.
      */
     public function testSetAttribute09() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('placeholder','This is "NOT" funny.'));
+        $node->setAttribute('placeholder','This is "NOT" funny.');
         $this->assertEquals('This is "NOT" funny.',$node->getAttribute('placeholder'));
         $this->assertEquals('<div placeholder="This is \"NOT\" funny."></div>',$node->toHTML());
     }
