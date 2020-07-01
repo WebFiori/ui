@@ -8,7 +8,7 @@ A set of classes that provide basic data structures for php in addition to helpe
   <a href="https://codecov.io/gh/usernane/phpStructs">
     <img src="https://codecov.io/gh/usernane/phpStructs/branch/master/graph/badge.svg" />
   </a>
-  <a href="https://sonarcloud.io/dashboard?id=usernane_webfiori">
+  <a href="https://sonarcloud.io/dashboard?id=usernane_phpStructs">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=usernane_phpStructs&metric=alert_status" />
   </a>
   <a href="https://github.com/usernane/phpStructs/releases">
