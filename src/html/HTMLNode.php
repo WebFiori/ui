@@ -640,10 +640,36 @@ class HTMLNode implements Countable, Iterator {
         return $this->addChild($img);
     }
     /**
-     * Adds a list (&lt;ol&gt; or &lt;ul&gt;) to the body of the node.
-     * @param string $type The type of the list. It can have only two values, 'li' 
-     * or 'ul'. If 'ul' is given, an object of type 'UnorderedList' will be added. 
-     * If 'ol' is given, an object of type 'OrderedList' will be added. Default value is 'ul'. 
+     * Adds a list item element (&lt;li&gt;) to the body of the node.
+     * The method will add the node as an object of type 'ListItem'.
+     * Note that it will be added only if the node is of type 'ul' or 'li'.
+     * @param HTMLNode|string $itemBody The body of the list item. It can be a simple 
+     * text or an object of type 'HTMLNode'.
+     * @param array $attributes An optional array of attributes that will be set in 
+     * the list item element.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function li($itemBody, $attributes = []) {
+        if ($this->getNodeName() == 'ul' || $this->getNodeName() == 'ol') {
+            $item = new ListItem();
+            
+            if ($itemBody instanceof HTMLNode) {
+                $item->addChild($itemBody);
+            } else {
+                $item->addTextNode($itemBody, false);
+            }
+            $item->setAttributes($attributes);
+            $this->addChild($item);
+        }
+        return $this;
+    }
+    /**
+     * Adds a list (&lt;ul&gt;) to the body of the node. 
+     * The method will create an object of type 'UnorderedList' and add it as 
+     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
+     * added.
      * @param array $items An array that contains list items. They can be a simple text, 
      * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
      * list item is a text, the item will be added without placing HTML entities in 
@@ -654,15 +680,38 @@ class HTMLNode implements Countable, Iterator {
      * method is called on.
      * @since 1.8.3
      */
-    public function list($type = 'ul', $items = [], $attributes = []) {
-        if ($type == 'ol') {
-            $list = new OrderedList($items, false);
-        } else {
+    public function ul($items = [], $attributes = []) {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
             $list = new UnorderedList($items, false);
+            $list->setAttributes($attributes);
+
+            $this->addChild($list);
         }
-        $list->setAttributes($attributes);
-        
-        return $this->addChild($list);
+        return $this;
+    }
+    /**
+     * Adds a list (&lt;ol&gt;) to the body of the node. 
+     * The method will create an object of type 'UnorderedList' and add it as 
+     * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
+     * added.
+     * @param array $items An array that contains list items. They can be a simple text, 
+     * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
+     * list item is a text, the item will be added without placing HTML entities in 
+     * the text if the text has HTMLCode.
+     * @param array $attributes An optional array of attributes to set for the 
+     * list.
+     * @return HTMLNode The method will return the instance that this 
+     * method is called on.
+     * @since 1.8.3
+     */
+    public function ol($items = [], $attributes = []) {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
+            $list = new OrderedList($items, false);
+            $list->setAttributes($attributes);
+
+            $this->addChild($list);
+        }
+        return $this;
     }
     /**
      * Adds a cell (&lt;td&gt; or &lt;th&gt;) to the body of the node.
