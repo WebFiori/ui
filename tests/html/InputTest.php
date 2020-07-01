@@ -167,7 +167,7 @@ class InputTest extends TestCase {
      */
     public function testSetPlaceHolder00() {
         $input = new Input('text');
-        $this->assertTrue($input->setPlaceholder('Hello'));
+        $input->setPlaceholder('Hello');
         $this->assertEquals('<input type="text" placeholder="Hello">',$input->toHTML());
     }
     /**
@@ -175,7 +175,7 @@ class InputTest extends TestCase {
      */
     public function testSetPlaceHolder01() {
         $input = new Input('password');
-        $this->assertTrue($input->setPlaceholder('Type in your password here.'));
+        $input->setPlaceholder('Type in your password here.');
         $this->assertEquals('<input type="password" placeholder="Type in your password here.">',$input->toHTML());
     }
     /**
@@ -183,7 +183,7 @@ class InputTest extends TestCase {
      */
     public function testSetPlaceHolder02() {
         $input = new Input('textarea');
-        $this->assertTrue($input->setPlaceholder('Enter your suggestions here.'));
+        $input->setPlaceholder('Enter your suggestions here.');
         $this->assertEquals('<textarea placeholder="Enter your suggestions here."></textarea>',$input->toHTML());
 
         return $input;
@@ -193,7 +193,7 @@ class InputTest extends TestCase {
      */
     public function testSetPlaceHolder03() {
         $input = new Input('date');
-        $this->assertFalse($input->setPlaceholder('Enter your suggestions here.',$input->toHTML()));
+        $input->setPlaceholder('Enter your suggestions here.',$input->toHTML());
         $this->assertEquals('<input type="date">',$input->toHTML());
     }
     /**
@@ -202,6 +202,7 @@ class InputTest extends TestCase {
      * @param Input $input Description
      */
     public function testSetPlaceHolder04($input) {
-        $this->assertTrue($input->setPlaceholder(null));
+        $input->setPlaceholder(null);
+        $this->assertNull($input->getAttribute('placeholder'));
     }
 }
