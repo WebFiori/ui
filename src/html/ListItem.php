@@ -47,6 +47,8 @@ class ListItem extends HTMLNode {
      * Default is 'ul'.
      * @param array $attrs An optional associative array of attributes which 
      * will be set for the list.
+     * @return ListItem The method will return the instance at which the method 
+     * is called on.
      * @since 1.1.1
      */
     public function addList($listItems,$type = 'ul',$attrs = []) {
@@ -71,5 +73,6 @@ class ListItem extends HTMLNode {
                 }
             }
         }
+        return $this;
     }
 }
