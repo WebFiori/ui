@@ -55,7 +55,7 @@ class TableCell extends HTMLNode {
         if ($cellBody instanceof HTMLNode) {
             $this->addChild($cellBody);
         } else if (gettype($cellBody) == 'string') {
-            $this->addTextNode($cellType, false);
+            $this->addTextNode($cellBody, false);
         }
     }
     /**
