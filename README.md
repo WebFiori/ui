@@ -8,6 +8,12 @@ A set of classes that provide basic data structures for php in addition to helpe
   <a href="https://codecov.io/gh/usernane/phpStructs">
     <img src="https://codecov.io/gh/usernane/phpStructs/branch/master/graph/badge.svg" />
   </a>
+  <a href="https://sonarcloud.io/dashboard?id=usernane_webfiori">
+      <img src="https://sonarcloud.io/api/project_badges/measure?project=usernane_phpStructs&metric=alert_status" />
+  </a>
+  <a href="https://github.com/usernane/phpStructs/releases">
+      <img src="https://img.shields.io/github/release/usernane/phpStructs.svg?label=latest" />
+  </a>
   <img src="https://img.shields.io/packagist/dt/webfiori/php-structs?color=light-green">
   <a href="https://paypal.me/IbrahimBinAlshikh">
     <img src="https://img.shields.io/endpoint.svg?url=https://webfiori.com/x/apis/shields-get-dontate-badget">
@@ -24,9 +30,6 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 
 ## Supported PHP Versions
 The library support all versions starting from version 5.6 up to version 7.4.
-
-## Download
-The latest release of the library is <a href="https://github.com/usernane/phpStructs/releases/tag/v1.8.9">v1.8.9<a>. You can download it from the <a href="https://github.com/usernane/phpStructs/releases">Releases</a> page of the repo.
   
 ## Usage
 The very basic use case is to have HTML document with some text in its body. The class <a href="https://programmingacademia.com/webfiori/docs/phpStructs/html/HTMLDoc">HTMLDoc</a> represent HTML 5 document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
