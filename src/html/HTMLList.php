@@ -19,7 +19,7 @@ class HTMLList extends HTMLNode {
      * two values, 'ul' or 'li'. Default is 'ul'.
      * @param array $arrOfItems An array that contains strings 
      * that represents each list item. Also, it can have objects of type 
-     * 'ListItem'.
+     * 'ListItem' or 'HTMLNode'.
      * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
@@ -36,58 +36,76 @@ class HTMLList extends HTMLNode {
         $this->addListItems($arrOfItems, $escHtmlEntities);
     }
     /**
-     * Adds new list item to the list.
-     * @param ListItem $node The list item that will be added.
-     * @param boolean $useChaining If this parameter is set to true, the method 
+     * Adds new child node.
+     * @param HTMLNode|string $node The node that will be added. 
+     * It can be an instance of the class 'HTMLNode' or a string that represents the 
+     * name of the node that will be added. The node can have 
+     * child nodes only if 4 conditions are met:
+     * <ul>
+     * <li>If the node is not a text node.</li>
+     * <li>The node is not a comment node.</li>
+     * <li>The note is not a void node.</li>
+     * <li>The note is not it self. (making a node as a child of it self)</li>
+     * </ul>
+     * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
-     * to the body of the node. Default value is true.
+     * to the body of the parent or child. Default value is true. It means the 
+     * chaining will happen at parent level.
      * @param array $attrs An optional array of attributes which will be set in 
      * the newly added child.
-     * @return ListItem|null If the parameter <code>$useChaining</code> is set to true, 
+     * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
-     * return the newly added child. If the given parameter is not 
-     * an instance of 'ListItem', the method will return null.
+     * return the newly added child.
      * @throws InvalidNodeNameException The method will throw this exception if 
      * node name is given and the name is not valid.
      * @since 1.0
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
+    public function addChild($node, $chainOnParent = true, $attrs = []) {
         if ($node instanceof ListItem) {
-            return parent::addChild($node, $useChaining, $attrs);
+            return parent::addChild($node, $chainOnParent, $attrs);
         }
     }
     /**
      * Adds new item to the list.
-     * @param string|ListItem $listItemText The text that will be displayed by the 
-     * list item. Also, it can be an object of type 'ListItem'.
-     * @param boolean $escHtmlEntities If set to TRUE, the method will 
-     * replace the characters '&lt;', '&gt;' and 
+     * @param string|ListItem|HTMLNode $listItemBody The text that will be displayed by the 
+     * list item. Also, it can be an object of type 'HTMLNode'.
+     * @param boolean $escHtmlEntities If set to true and the body of the list is a text, 
+     * the method will replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Applicable only if the first parameter is a text. 
      * Default is true.
+     * @return HTMLList The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
-    public function addListItem($listItemText,$escHtmlEntities = true) {
-        if ($listItemText instanceof ListItem) {
-            $this->addChild($listItemText);
+    public function addListItem($listItemBody,$escHtmlEntities = true) {
+        if ($listItemBody instanceof ListItem) {
+            $this->addChild($listItemBody);
         } else {
             $li = new ListItem();
-            $li->addTextNode($listItemText,$escHtmlEntities);
+            if ($listItemBody instanceof HTMLNode) {
+                $li->addChild($listItemBody);
+            } else {
+                $li->addTextNode($listItemBody,$escHtmlEntities);
+            }
             $this->addChild($li);
         }
+        return $this;
     }
     /**
      * Adds multiple items at once to the list.
      * @param array $arrOfItems An array that contains strings 
      * that represents each list item. Also, it can have objects of type 
-     * 'ListItem'.
-     * @param boolean $escHtmlEntities If set to TRUE, the method will 
-     * replace the characters '&lt;', '&gt;' and 
+     * 'ListItem' or 'HTMLNode'.
+     * @param boolean $escHtmlEntities If set to true and a text is given for the list 
+     * item, the method will replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
-     * in the given text. Default is TRUE.
+     * in the given text. Default is true.
      * @since 1.0.1
+     * @return HTMLList The method will return the instance at which the method 
+     * is called on.
      */
     public function addListItems($arrOfItems,$escHtmlEntities = true) {
         if (gettype($arrOfItems) == 'array') {
@@ -95,10 +113,13 @@ class HTMLList extends HTMLNode {
                 $this->addListItem($listItem,$escHtmlEntities);
             }
         }
+        return $this;
     }
     /**
      * Adds a sublist to the main list.
      * @param HTMLList $ul An object of type 'HTMLList'.
+     * @return HTMLList The method will return the instance at which the method 
+     * is called on.
      * @since 1.0
      */
     public function addSubList($ul) {
@@ -107,6 +128,7 @@ class HTMLList extends HTMLNode {
             $li->addList($ul);
             $this->addChild($li);
         }
+        return $this;
     }
     /**
      * Returns a child node given its index.
