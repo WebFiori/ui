@@ -96,15 +96,15 @@ class HeadNode extends HTMLNode {
 
         $this->baseNode = new HTMLNode('base');
         $this->setBase($base);
-            
+
         $this->titleNode = new HTMLNode('title');
         $this->titleNode->addTextNode('');
         $this->setTitle($title);
-        
+
         $this->canonical = new HTMLNode('link');
         $this->canonical->setAttribute('rel', 'canonical');
         $this->setCanonical($canonical);
-                    
+
         $this->metaCharset = new HTMLNode('meta');
         $this->addMeta('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }
@@ -149,7 +149,6 @@ class HeadNode extends HTMLNode {
             } else {
                 $this->addChild($node);
             }
-
         }
 
         return $this;
@@ -173,7 +172,6 @@ class HeadNode extends HTMLNode {
      * @since 1.0
      */
     public function addChild($node, $chainOnParent = true, $attrs = []) {
-
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
@@ -255,7 +253,6 @@ class HeadNode extends HTMLNode {
             }
 
             $this->_cssJsInsertHelper($tag, $otherAttrs);
-
         }
 
         return $this;
@@ -313,7 +310,6 @@ class HeadNode extends HTMLNode {
             }
 
             $this->_cssJsInsertHelper($tag, $otherAttrs);
-
         }
 
         return $this;
@@ -363,7 +359,6 @@ class HeadNode extends HTMLNode {
                 } else {
                     $this->addChild($node);
                 }
-
             }
         }
 
@@ -495,15 +490,6 @@ class HeadNode extends HTMLNode {
         return $this->metaCharset;
     }
     /**
-     * Returns a linked list of all link tags which has the name 'link'.
-     * @return LinkedList A linked list of all link tags which has the name 'link'.
-     * the node has no link tags, the method will return an empty list.
-     * @since 1.1.6
-     */
-    public function getLinkNodes() {
-        return $this->getChildrenByTag('link');
-    }
-    /**
      * Returns a linked list of all link tags that link to a CSS file.
      * @return LinkedList A linked list of all link tags that link to a CSS file. If 
      * the node has no CSS link tags, the method will return an empty list.
@@ -546,6 +532,15 @@ class HeadNode extends HTMLNode {
         }
 
         return $list;
+    }
+    /**
+     * Returns a linked list of all link tags which has the name 'link'.
+     * @return LinkedList A linked list of all link tags which has the name 'link'.
+     * the node has no link tags, the method will return an empty list.
+     * @since 1.1.6
+     */
+    public function getLinkNodes() {
+        return $this->getChildrenByTag('link');
     }
     /**
      * Returns HTML node that represents a meta tag.
@@ -735,7 +730,6 @@ class HeadNode extends HTMLNode {
                 parent::insert($this->baseNode,0);
             }
             $this->baseNode->setAttribute('href',$trimmedUrl);
-
         }
 
         return $this;
@@ -784,7 +778,6 @@ class HeadNode extends HTMLNode {
                 parent::insert($this->canonical,$position);
             }
             $this->canonical->setAttribute('href', $trimmedLink);
-
         }
 
         return $this;
@@ -821,7 +814,6 @@ class HeadNode extends HTMLNode {
                 parent::insert($this->metaCharset,$position);
             }
             $this->metaCharset->setAttribute('charset', $trimmedCharset);
-
         }
 
         return $this;
@@ -859,7 +851,6 @@ class HeadNode extends HTMLNode {
                 parent::insert($this->titleNode,$position);
             }
             $this->titleNode->children()->get(0)->setText($trimmedTitle);
-
         }
 
         return $this;

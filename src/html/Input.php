@@ -162,7 +162,7 @@ class Input extends HTMLNode {
             }
             $this->addChild($option);
         }
-        
+
         return $this;
     }
     /**
@@ -201,7 +201,7 @@ class Input extends HTMLNode {
                 }
             }
         }
-        
+
         return $this;
     }
     /**
@@ -259,7 +259,7 @@ class Input extends HTMLNode {
             }
             $this->addChild($optGroup);
         }
-        
+
         return $this;
     }
     /**
@@ -333,6 +333,7 @@ class Input extends HTMLNode {
         if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
             $this->setAttribute('maxlength', $length);
         }
+
         return $this;
     }
     /**
@@ -359,7 +360,7 @@ class Input extends HTMLNode {
         if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
             $this->setAttribute('minlength', $length);
         }
-        
+
         return $this;
     }
     /**

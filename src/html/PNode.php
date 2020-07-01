@@ -54,6 +54,7 @@ class PNode extends HTMLNode {
                 parent::addChild($node, $useChaining, $attrs);
             }
         }
+
         return $this;
     }
     /**

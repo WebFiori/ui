@@ -40,6 +40,7 @@ class Label extends HTMLNode {
      */
     public function __construct($text = '') {
         parent::__construct('label');
+
         if ($text instanceof HTMLNode) {
             $this->addChild($text);
         } else {
@@ -65,7 +66,7 @@ class Label extends HTMLNode {
             $trimmed = trim($elIdOrInput);
             $this->setAttribute('for', $trimmed);
         }
-        
+
         return $this;
     }
     /**
@@ -81,10 +82,11 @@ class Label extends HTMLNode {
      */
     public function setText($text,$escEntities = true) {
         $node = $this->getChild(0);
+
         if ($node->getNodeName() == '#TEXT') {
             $node->setText($text,$escEntities);
         }
-        
+
         return $this;
     }
 }

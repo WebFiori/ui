@@ -96,6 +96,7 @@ class TableCell extends HTMLNode {
         if ($colSpan >= 1 && $colSpan <= 1000) {
             $this->setAttribute('colspan', $colSpan);
         }
+
         return $this;
     }
     /**
@@ -113,6 +114,7 @@ class TableCell extends HTMLNode {
         if ($rowSpan >= 0 && $rowSpan <= 65534) {
             $this->setAttribute('rowspan', $rowSpan);
         }
+
         return $this;
     }
 }

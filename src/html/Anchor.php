@@ -57,6 +57,7 @@ class Anchor extends HTMLNode {
         } else {
             $this->setAttribute(self::$Attrs[0], '_blank');
         }
+
         if ($body instanceof HTMLNode) {
             $this->addChild($body);
         } else if (strlen($body) > 0) {
@@ -70,6 +71,7 @@ class Anchor extends HTMLNode {
      */
     public function setHref($link) {
         $trimmed = trim($link);
+
         if (strlen($trimmed) > 0) {
             $this->setAttribute(self::$Attrs[1], $trimmed);
         }
@@ -95,6 +97,7 @@ class Anchor extends HTMLNode {
      */
     public function setText($text,$escHtmlEntities = true) {
         $node = $this->getChild(0);
+
         if ($node->getNodeName() == '#TEXT') {
             $node->setText($text,$escHtmlEntities);
         }

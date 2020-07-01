@@ -73,6 +73,7 @@ class ListItem extends HTMLNode {
                 }
             }
         }
+
         return $this;
     }
 }

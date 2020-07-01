@@ -85,6 +85,7 @@ class HTMLList extends HTMLNode {
             $this->addChild($listItemBody);
         } else {
             $li = new ListItem();
+
             if ($listItemBody instanceof HTMLNode) {
                 $li->addChild($listItemBody);
             } else {
@@ -92,6 +93,7 @@ class HTMLList extends HTMLNode {
             }
             $this->addChild($li);
         }
+
         return $this;
     }
     /**
@@ -113,6 +115,7 @@ class HTMLList extends HTMLNode {
                 $this->addListItem($listItem,$escHtmlEntities);
             }
         }
+
         return $this;
     }
     /**
@@ -128,6 +131,7 @@ class HTMLList extends HTMLNode {
             $li->addList($ul);
             $this->addChild($li);
         }
+
         return $this;
     }
     /**

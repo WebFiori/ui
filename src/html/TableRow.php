@@ -59,7 +59,7 @@ class TableRow extends HTMLNode {
             $this->addChild($cellContent);
         } else {
             $cell = new TableCell($type);
-            
+
             if ($cellContent instanceof HTMLNode) {
                 $cell->addChild($cellContent);
             } else {
@@ -68,6 +68,7 @@ class TableRow extends HTMLNode {
             $cell->setAttributes($attrs);
             $this->addChild($cell);
         }
+
         return $this;
     }
     /**
