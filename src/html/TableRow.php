@@ -49,7 +49,8 @@ class TableRow extends HTMLNode {
      * entities: '&lt;', '&gt;' and '&amp;' in the given text. Default is false.
      * @param array $attrs An associative array of attributes which will be 
      * set for the added cell.
-     * @return TableRow The method will return the same instance.
+     * @return TableRow The method will return the instance at which the method is 
+     * called on.
      * @since 1.0
      */
     public function addCell($cellContent,$type = 'td',$escEntities = false,$attrs = []) {
@@ -74,7 +75,7 @@ class TableRow extends HTMLNode {
      * The node will be added only if its an instance of the class 
      * 'TableCell'.
      * @param TableCell $node New table cell.
-     * @param boolean $useChaining If this parameter is set to true, the method 
+     * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -87,9 +88,9 @@ class TableRow extends HTMLNode {
      * an instance of 'TableCell', the method will return null.
      * @since 1.0
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
+    public function addChild($node, $chainOnParent = true, $attrs = []) {
         if ($node instanceof TableCell) {
-            return parent::addChild($node, $useChaining, $attrs);
+            return parent::addChild($node, $chainOnParent, $attrs);
         }
     }
     /**
