@@ -448,19 +448,6 @@ class HTMLNode implements Countable, Iterator {
 
         return $this->codeString;
     }
-            } else {
-                $this->codeString .= $this->_getTab().'&lt;!DOCTYPE html&gt;'.$this->nl;
-            }
-        }
-        $this->nodesStack = new Stack();
-        $this->_pushNodeAsCode($this,$formattingOptionsV);
-
-        if ($usePre) {
-            return $this->codeString.'</pre>';
-        }
-
-        return $this->codeString;
-    }
     /**
      * Adds a line break (&lt;br/&gt;) to the body of the node.
      * @return HTMLNode The method will return the instance that this 
