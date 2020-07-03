@@ -135,7 +135,6 @@ class HTMLDoc {
 
         }
         throw new InvalidNodeNameException('A child with name "'.$name.' is not allowed as a chile of the element "body".');
-        return $this->body;
     }
     /**
      * Returns the document as readable HTML code wrapped inside 'pre' element.
