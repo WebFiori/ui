@@ -82,7 +82,7 @@ class HTMLNodeTest extends TestCase {
         $node->addChild('p')
                 ->addChild('div')
                 ->addChild('p')
-                ->addChild('img', false)
+                ->addChild('img',[], false)
                 ->setAttribute('src', 'ok');
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('p', $node->getChild(0)->getNodeName());
