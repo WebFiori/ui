@@ -620,7 +620,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.3
      */
     public function div($attributes = []) {
-        return $this->addChild(new HTMLNode(), false)->setAttributes($attributes)->getParent();
+        return $this->addChild(new HTMLNode(), $attributes);
     }
     /**
      * Adds a &lt;form&gt; element to the body of the node.
@@ -631,7 +631,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.3
      */
     public function form($attributes = []) {
-        return $this->addChild(new HTMLNode('form'), false)->setAttributes($attributes)->getParent();
+        return $this->addChild(new HTMLNode('form'), $attributes);
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
