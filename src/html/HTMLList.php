@@ -47,14 +47,15 @@ class HTMLList extends HTMLNode {
      * <li>The note is not a void node.</li>
      * <li>The note is not it self. (making a node as a child of it self)</li>
      * </ul>
+     * 
+     * @param array $attrs An optional array of attributes which will be set in 
+     * the newly added child.
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
      * to the body of the parent or child. Default value is true. It means the 
      * chaining will happen at parent level.
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
      * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child.
@@ -62,9 +63,9 @@ class HTMLList extends HTMLNode {
      * node name is given and the name is not valid.
      * @since 1.0
      */
-    public function addChild($node, $chainOnParent = true, $attrs = []) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof ListItem) {
-            return parent::addChild($node, $chainOnParent, $attrs);
+            return parent::addChild($node, $attrs, $chainOnParent);
         }
     }
     /**

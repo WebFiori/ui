@@ -98,8 +98,7 @@ class HTMLDoc {
         $this->body->setAttribute('itemtype', 'http://schema.org/WebPage');
         $this->headNode = new HeadNode();
         $this->htmlNode = new HTMLNode('html');
-        $this->getDocumentRoot()->addChild($this->headNode);
-        $this->getDocumentRoot()->addChild($this->body);
+        $this->getDocumentRoot()->addChild($this->headNode)->addChild($this->body);
     }
     /**
      * Returns a string of HTML code that represents the document.
@@ -110,24 +109,33 @@ class HTMLDoc {
     }
     /**
      * Appends new node to the body of the document.
-     * @param HTMLNode $node The node that will be added. It will be added 
+     * @param HTMLNode|string $node The node that will be added. 
+     * It can be an instance of 'HTMLNode' or tag name. It will be added 
      * only if the name of the node is not 'html', 'head' or body.
-     * @return boolean If the child is added, the method will return true. False 
-     * if not added.
+     * @param array $attributes An optional array of attributes which will be set in 
+     * the newly added child.
+     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * will return the same instance at which the child node is added to. If 
+     * set to false, the method will return the child which have been added. 
+     * This can be useful if the developer would like to add a chain of elements 
+     * to the body of the parent or child. Default value is true. It means the 
+     * chaining will happen at parent level.
+     * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
+     * the method will return the 'body' HTML Node. If set to false, it will 
+     * return the newly added child.
+     * @throws InvalidNodeNameException The method will throw this exception if 
+     * node name is given and the name is not valid.
      * @since 1.0
      */
-    public function addChild($node) {
-        if ($node instanceof HTMLNode) {
-            $name = $node->getNodeName();
+    public function addChild($node, $attributes = [], $chainOnParent = true) {
+        $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
-            if ($name != 'body' && $name != 'head' && $name != 'html') {
-                $this->body->addChild($node);
+        if ($name != 'body' && $name != 'head' && $name != 'html') {
+            return $this->body->addChild($node);
 
-                return true;
-            }
         }
-
-        return false;
+        throw new InvalidNodeNameException('A child with name "'.$name.' is not allowed as a chile of the element "body".');
+        return $this->body;
     }
     /**
      * Returns the document as readable HTML code wrapped inside 'pre' element.

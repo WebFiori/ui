@@ -44,7 +44,7 @@ class JsCode extends HTMLNode {
      * @param type $node
      * @since 1.0
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
+    public function addChild($node, $attrs = [], $useChaining = true) {
     }
     /**
      * Adds new line of JS code into the body.

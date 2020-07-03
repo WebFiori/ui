@@ -165,13 +165,14 @@ class HeadNode extends HTMLNode {
      * <li>It is a '#COMMENT' node.</li>
      * </ul>
      * Other than that, the node will be not added.
-     * @param boolean $chainOnParent Not used.
      * @param array $attrs Not used.
+     * @param boolean $chainOnParent Not used.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
      * @since 1.0
      */
-    public function addChild($node, $chainOnParent = true, $attrs = []) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 

@@ -46,12 +46,14 @@ class PNode extends HTMLNode {
      * can only accept the addition of in-line HTML elements.
      * @param boolean $useChaining Not used.
      * @param array $attrs A set of attributes to set for the child.
+     * @return PNode The method will always return the same instance at 
+     * which the method is called on.
      * @since 1.0
      */
-    public function addChild($node, $useChaining = true, $attrs = []) {
+    public function addChild($node, $attrs = [], $useChaining = true) {
         if ($node instanceof HTMLNode) {
             if (in_array($node->getNodeName(), PNode::ALLOWED_CHILDS) || $node->isTextNode()) {
-                parent::addChild($node, $useChaining, $attrs);
+                parent::addChild($node, $attrs);
             }
         }
 

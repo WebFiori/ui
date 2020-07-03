@@ -6,6 +6,7 @@ namespace phpStructs\tests\html;
 use phpStructs\html\HTMLDoc;
 use phpStructs\html\HTMLNode;
 use PHPUnit\Framework\TestCase;
+use phpStructs\html\InvalidNodeNameException;
 /**
  * Description of HTMLDocTest
  *
@@ -16,31 +17,53 @@ class HTMLDocTest extends TestCase {
      * @test
      */
     public function testAddChild00() {
+        $this->expectException('Exception');
         $doc = new HTMLDoc();
         $ch = '';
-        $this->assertFalse($doc->addChild($ch));
+        $doc->addChild($ch);
+        
+        
+    }
+    /**
+     * @test
+     */
+    public function testAddChild02() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node00 = new HTMLNode('html');
-        $this->assertFalse($doc->addChild($node00));
+        $doc->addChild($node00);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild03() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node01 = new HTMLNode('body');
-        $this->assertFalse($doc->addChild($node01));
+        $doc->addChild($node01);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild04() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node02 = new HTMLNode('head');
-        $this->assertFalse($doc->addChild($node02));
+        $doc->addChild($node02);
     }
     /**
      * @test
      */
     public function testAddChild01() {
         $doc = new HTMLDoc();
-        $ch = '';
-        $this->assertFalse($doc->addChild($ch));
         $node00 = new HTMLNode('div');
-        $this->assertTrue($doc->addChild($node00));
+        $doc->addChild($node00);
         $this->assertEquals(1,$doc->getBody()->childrenCount());
         $node01 = new HTMLNode('input');
-        $this->assertTrue($doc->addChild($node01));
+        $doc->addChild($node01);
         $this->assertEquals(2,$doc->getBody()->childrenCount());
         $node02 = new HTMLNode('textarea');
-        $this->assertTrue($doc->addChild($node02));
+        $doc->addChild($node02);
         $this->assertEquals(3,$doc->getBody()->childrenCount());
     }
     /**

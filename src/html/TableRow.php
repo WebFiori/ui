@@ -76,22 +76,22 @@ class TableRow extends HTMLNode {
      * The node will be added only if its an instance of the class 
      * 'TableCell'.
      * @param TableCell $node New table cell.
+     * @param array $attrs An optional array of attributes which will be set in 
+     * the newly added child.
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
      * to the body of the node. Default value is true.
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
      * @return TableCell|TableRow|null If the parameter <code>$useChaining</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. If the given parameter is not 
      * an instance of 'TableCell', the method will return null.
      * @since 1.0
      */
-    public function addChild($node, $chainOnParent = true, $attrs = []) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof TableCell) {
-            return parent::addChild($node, $chainOnParent, $attrs);
+            return parent::addChild($node, $attrs, $chainOnParent);
         }
     }
     /**
