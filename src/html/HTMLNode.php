@@ -241,7 +241,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $this->name = strtolower(trim($name));
 
-            if (!$this->_validateName($this->getNodeName())) {
+            if (!$this->_validateNodeName($this->getNodeName())) {
                 throw new InvalidNodeNameException('Invalid node name: \''.$name.'\'.');
             }
         }
@@ -1036,6 +1036,8 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Converts a string of HTML code to an array that looks like a tree of 
      * HTML elements.
+     * This method parses text based on the specifications which are found in 
+     * https://html.spec.whatwg.org/multipage/syntax.html#start-tags
      * @param string $text HTML code.
      * @return array An indexed array. Each index will contain parsed element 
      * information. For example, if the given code is as follows:<br/>
@@ -1097,83 +1099,97 @@ class HTMLNode implements Countable, Iterator {
 
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
-                    $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][1]);
-
-                    if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
-                        unset($nodesNames[$nodesNamesIndex][$BT]);
-                    }
-                    unset($nodesNames[$nodesNamesIndex][1]);
-                    $nodeName = '';
-                    $nodeSignatureLen = strlen($nodesNames[$nodesNamesIndex][0]);
-
-                    for ($y = 0 ; $y < $nodeSignatureLen ; $y++) {
-                        $char = $nodesNames[$nodesNamesIndex][0][$y];
-
-                        if ($char == ' ') {
-                            break;
-                        } else {
-                            $nodeName .= $char;
+                    if (isset($nodesNames[$nodesNamesIndex][1])) {
+                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][1]);
+                        if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
+                            unset($nodesNames[$nodesNamesIndex][$BT]);
                         }
-                    }
+                        unset($nodesNames[$nodesNamesIndex][1]);
+                        $nodeName = '';
+                        //Node signature is of the form 'div attr="val" empty'
+                        $nodeSignatureLen = strlen($nodesNames[$nodesNamesIndex][0]);
+                        
+                        //Extract node name from the signature.
+                        for ($y = 0 ; $y < $nodeSignatureLen ; $y++) {
+                            $char = $nodesNames[$nodesNamesIndex][0][$y];
 
-                    if ((isset($nodeName[0]) && $nodeName[0] == '!') && (
-                            isset($nodeName[1]) && $nodeName[1] == '-') && 
-                            (isset($nodeName[2]) && $nodeName[2] == '-')) {
-                        //if we have '!' or '-' at the start of the name, then 
-                        //it must be a comment.
-                        $nodesNames[$nodesNamesIndex][$TN] = self::C_NODE;
-
-                        if (isset($nodesNames[$nodesNamesIndex][$BT])) {
-                            //a text node after a comment node.
-                            $nodesNames[$nodesNamesIndex + 1] = [
-                                $BT => $nodesNames[$nodesNamesIndex][$BT],
-                                $TN => self::T_NODE
-                            ];
-                        }
-                        $nodesNames[$nodesNamesIndex][$BT] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
-                    } else {
-                        $nodeName = strtolower($nodeName);
-                        $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
-                        $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
-
-                        if ($nodeName[0] == '/') {
-                            $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
-                        } else {
-                            $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
-
-                            if (in_array($nodeName, self::VOID_TAGS)) {
-                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
-                            } else if ($nodeName == '!doctype') {
-                                $nodesNames[$nodesNamesIndex][$TN] = '!DOCTYPE';
-                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                            if ($char == ' ') {
+                                break;
                             } else {
-                                $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
+                                $nodeName .= $char;
                             }
                         }
-                        $attributesStrLen = strlen($nodesNames[$nodesNamesIndex][0]);
+                        
+                        if ((isset($nodeName[0]) && $nodeName[0] == '!') && (
+                                isset($nodeName[1]) && $nodeName[1] == '-') && 
+                                (isset($nodeName[2]) && $nodeName[2] == '-')) {
+                            //if we have '!' or '-' at the start of the name, then 
+                            //it must be a comment.
+                            $nodesNames[$nodesNamesIndex][$TN] = self::C_NODE;
 
-                        if ($attributesStrLen != 0) {
-                            $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0]);
+                            if (isset($nodesNames[$nodesNamesIndex][$BT])) {
+                                //a text node after a comment node.
+                                $nodesNames[$nodesNamesIndex + 1] = [
+                                    $BT => $nodesNames[$nodesNamesIndex][$BT],
+                                    $TN => self::T_NODE
+                                ];
+                            }
+                            $nodesNames[$nodesNamesIndex][$BT] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
                         } else {
-                            $nodesNames[$nodesNamesIndex]['attributes'] = [];
+                            //Check extracted name.
+                            $nodeName = strtolower($nodeName);
+                            $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
+                            $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
+
+                            if ($nodeName[0] == '/') {
+                                //If the node name has /, then its a closing tag (e.g. /div)
+                                $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
+                            } else {
+                                $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
+                                
+                                if (in_array($nodeName, self::VOID_TAGS)) {
+                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                                } else if ($nodeName == '!doctype') {
+                                    //We consider the node !doctype as void node 
+                                    //since it does not have closing tag
+                                    $nodesNames[$nodesNamesIndex][$TN] = '!DOCTYPE';
+                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                                } else {
+                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
+                                }
+                            }
+                            $attributesStrLen = strlen($nodesNames[$nodesNamesIndex][0]);
+
+                            if ($attributesStrLen != 0) {
+                                $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0]);
+                            } else {
+                                $nodesNames[$nodesNamesIndex]['attributes'] = [];
+                            }
                         }
-                    }
-                    unset($nodesNames[$nodesNamesIndex][0]);
+                        unset($nodesNames[$nodesNamesIndex][0]);
 
-                    if (isset($nodesNames[$nodesNamesIndex][$BT]) && 
-                            strlen(trim($nodesNames[$nodesNamesIndex][$BT])) != 0 && 
-                            $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
+                        if (isset($nodesNames[$nodesNamesIndex][$BT]) && 
+                                strlen(trim($nodesNames[$nodesNamesIndex][$BT])) != 0 && 
+                                $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
+                            $nodesNamesIndex++;
+                            $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
+                            $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex - 1][$BT]);
+                            unset($nodesNames[$nodesNamesIndex - 1][$BT]);
+                        }
                         $nodesNamesIndex++;
+
+                        if (isset($nodesNames[$nodesNamesIndex])) {
+                            //skip a text node which is added after a comment node
+                            $nodesNamesIndex++;
+                        }
+                    } else {
+                        //Text Node?
                         $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex - 1][$BT]);
-                        unset($nodesNames[$nodesNamesIndex - 1][$BT]);
-                    }
-                    $nodesNamesIndex++;
-
-                    if (isset($nodesNames[$nodesNamesIndex])) {
-                        //skip a text node which is added after a comment node
+                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][0]);
+                        unset($nodesNames[$nodesNamesIndex][0]);
                         $nodesNamesIndex++;
                     }
+                    
                 }
             }
             $x = 0;
@@ -1573,7 +1589,7 @@ class HTMLNode implements Countable, Iterator {
 
         if (!$this->isTextNode() && !$this->isComment() && strlen($trimmedName) != 0) {
             $lower = strtolower($trimmedName);
-            $isValid = $this->_validateName($lower);
+            $isValid = $this->_validateAttrName($lower);
 
             if ($isValid) {
                 if ($lower == 'dir') {
@@ -1695,7 +1711,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $lName = strtolower($name);
 
-            if ($this->_validateName($lName)) {
+            if ($this->_validateNodeName($lName)) {
                 $reqClose = !in_array($lName, self::VOID_TAGS);
 
                 if ($this->mustClose() && $reqClose !== true) {
@@ -1732,7 +1748,7 @@ class HTMLNode implements Countable, Iterator {
                 $trimmedKey = trim($key);
                 $trimmedVal = trim($val);
 
-                if ($this->_validateName($trimmedKey) && strlen($trimmedVal) != 0) {
+                if ($this->_validateAttrName($trimmedKey) && strlen($trimmedVal) != 0) {
                     $styleStr .= $trimmedKey.':'.$trimmedVal.';';
                 }
             }
@@ -2281,7 +2297,8 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.4
      */
     private static function _parseAttributes($attrsStr) {
-        $inQouted = false;
+        $inSingleQouted = false;
+        $inDoubleQueted = false;
         $isEqualFound = false;
         $queue = new Queue();
         $str = '';
@@ -2289,31 +2306,41 @@ class HTMLNode implements Countable, Iterator {
         for ($x = 0 ; $x < strlen($attrsStr) ; $x++) {
             $char = $attrsStr[$x];
 
-            if ($char == '=' && !$inQouted) {
+            if ($char == '=' && !$inSingleQouted) {
+                //Attribute name extracted.
+                //Add the name of the attribute to the queue.
                 $str = trim($str);
 
                 if (strlen($str) != 0) {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = true;
-            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inQouted) {
+            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQouted) {
+                //Empty attribute (attribute without a value) such as 
+                // <div itemscope ></div>. 'itemscope' is empty attribute.
+                // This also could be attribute without queted value 
+                // (e.g. <input type=text>
                 $str = trim($str);
 
                 if (strlen($str) != 0) {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = false;
-            } else if (($char == '"' || $char == "'") && $inQouted) {
+            } else if (($char == '"' || $char == "'") && $inSingleQouted) {
+                // Attribute value. End of quted value.
+                //Or, it can be end of quted attribute name
                 self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 $isEqualFound = false;
-                $inQouted = false;
-            } else if (($char == '"' || $char == "'") && !$inQouted) {
+                $inSingleQouted = false;
+            } else if (($char == '"' || $char == "'") && !$inSingleQouted) {
+                //This can be the start of quted attribute value.
+                //Or, it can be the end of queted attribute name.
                 $str = trim($str);
 
                 if (strlen($str) != 0) {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
-                $inQouted = true;
+                $inSingleQouted = true;
             } else {
                 $str .= $char;
             }
@@ -2341,6 +2368,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * A helper method for parsing attributes string.
+     * What it does is the following, if equal sign is found, the 
+     * method will add equal sign to the queue and add the value after it. 
+     * If no equal sign is found, it will add the given value to the queue and 
+     * set its value to empty string.
      * @param Queue $queue
      * @param boolean $isEqualFound
      * @param string $val
@@ -2594,7 +2625,7 @@ class HTMLNode implements Countable, Iterator {
      * <ul>
      * @since 1.7.4
      */
-    private function _validateName($name) {
+    private function _validateAttrName($name) {
         $len = strlen($name);
 
         if ($len > 0) {
@@ -2606,7 +2637,52 @@ class HTMLNode implements Countable, Iterator {
                 }
 
                 if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
-                        || $char == '-' || $char == ':' || $char == '@')) {
+                        || $char == '-' 
+                        || $char == ':' 
+                        || $char == '@' 
+                        || $char == '.' 
+                        || $char == '#'
+                        || $char == '['
+                        || $char == ']')) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+    /**
+     * Validates the name of the node.
+     * @param string $name The name of the node in lower case.
+     * @return boolean If the name is valid, the method will return true. If 
+     * it is not valid, it will return false. Valid values must follow the 
+     * following rules:
+     * <ul>
+     * <li>Must not be an empty string.</li>
+     * <li>Must not start with a number.</li>
+     * <li>Must not start with '-'.</li>
+     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
+     * [0-9], ':', '.' and '-'.</li>
+     * <ul>
+     * @since 1.7.4
+     */
+    private function _validateNodeName($name) {
+        $len = strlen($name);
+
+        if ($len > 0) {
+            for ($x = 0 ; $x < $len ; $x++) {
+                $char = $name[$x];
+
+                if ($x == 0 && (($char >= '0' && $char <= '9') || $char == '-')) {
+                    return false;
+                }
+
+                if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
+                        || $char == '-' 
+                        || $char == ':' 
+                        || $char == '.' )) {
                     return false;
                 }
             }

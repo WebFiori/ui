@@ -1044,6 +1044,192 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testHTMLAsArray_13() {
+        $html = 'This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_14() {
+        $html = 'This is a text. <div> This is a div</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ],[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_15() {
+        $html = '<div> This is a div</div>This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_16() {
+        $html = '<div> This is a div<div>With Sub Div</div></div>This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ],
+                [
+                    'tag-name' => 'div',
+                    'is-void-tag' => false,
+                    'attributes' => [],
+                    'children' => [
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => 'With Sub Div',
+                        ]
+                    ]
+                ]
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_17() {
+        $html = '<div> '
+                . 'This is a div'
+                . '<div>With Sub Div</div>'
+                . 'A Text After Div'
+                . '</div>'
+                . 'This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ],
+                [
+                    'tag-name' => 'div',
+                    'is-void-tag' => false,
+                    'attributes' => [],
+                    'children' => [
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => 'With Sub Div',
+                        ]
+                    ]
+                ],
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'A Text After Div',
+                ],
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_18() {
+        $html = "<div :bind=\"{{ok ? 'YES' : 'NO' }}\"> "
+                . 'This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        var_dump($htmlArr);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                ':baind' => "{{ok ? 'YES' : 'NO' }"
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_19() {
+        $html = '<div class="first-class second-class third"> '
+                . 'This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                'class' => 'first-class second-class third'
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_20() {
+        $html = '<input "type"=text value="Hello World">';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'input',
+            'is-void-tag' => true,
+            'attributes' => [
+                'type' => 'text',
+                'value' => 'Hello World'
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
     public function testInsert00() {
         $node = new HTMLNode();
         $node->insert($node, 0);
