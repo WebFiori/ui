@@ -2306,7 +2306,7 @@ class HTMLNode implements Countable, Iterator {
         for ($x = 0 ; $x < strlen($attrsStr) ; $x++) {
             $char = $attrsStr[$x];
 
-            if ($char == '=' && !$inSingleQouted) {
+            if ($char == '=' && !$inSingleQouted && !$inDoubleQueted) {
                 //Attribute name extracted.
                 //Add the name of the attribute to the queue.
                 $str = trim($str);
@@ -2315,7 +2315,7 @@ class HTMLNode implements Countable, Iterator {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = true;
-            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQouted) {
+            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQouted && !$inDoubleQueted) {
                 //Empty attribute (attribute without a value) such as 
                 // <div itemscope ></div>. 'itemscope' is empty attribute.
                 // This also could be attribute without queted value 
@@ -2326,13 +2326,31 @@ class HTMLNode implements Countable, Iterator {
                     self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = false;
-            } else if (($char == '"' || $char == "'") && $inSingleQouted) {
+            } else if (($char == "'" && $inDoubleQueted) || ($char == '"' && $inSingleQouted)) {
+                //Mostly, inside attribute value. We replace double qute with single.
+                $str .= "'";
+            } else if ($char == '"' && $inDoubleQueted) {
+                // Attribute value. End of quted value.
+                //Or, it can be end of quted attribute name
+                self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                $isEqualFound = false;
+                $inDoubleQueted = false;
+            } else if ($char == '"' && !$inDoubleQueted) {
+                //This can be the start of quted attribute value.
+                //Or, it can be the end of queted attribute name.
+                $str = trim($str);
+
+                if (strlen($str) != 0) {
+                    self::_parseAttributesHelper($queue, $isEqualFound, $str);
+                }
+                $inDoubleQueted = true;
+            } else if ($char == "'" && $inSingleQouted) {
                 // Attribute value. End of quted value.
                 //Or, it can be end of quted attribute name
                 self::_parseAttributesHelper($queue, $isEqualFound, $str);
                 $isEqualFound = false;
                 $inSingleQouted = false;
-            } else if (($char == '"' || $char == "'") && !$inSingleQouted) {
+            } else if ($char == "'" && !$inSingleQouted) {
                 //This can be the start of quted attribute value.
                 //Or, it can be the end of queted attribute name.
                 $str = trim($str);
