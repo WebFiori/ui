@@ -1180,7 +1180,7 @@ and open the template in the editor.
             'tag-name' => 'div',
             'is-void-tag' => false,
             'attributes' => [
-                ':baind' => "{{ok ? 'YES' : 'NO' }"
+                ':bind' => "{{ok ? 'YES' : 'NO' }}"
             ],
             'children' => [
                 [
@@ -1190,6 +1190,7 @@ and open the template in the editor.
             ]
         ]],$htmlArr);
     }
+    
     /**
      * @test
      */
@@ -1224,6 +1225,29 @@ and open the template in the editor.
             'attributes' => [
                 'type' => 'text',
                 'value' => 'Hello World'
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_21() {
+        $html = '<div :bind=\'{{ok ? "YES" : "NO" }}\'> '
+                . 'This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        var_dump($htmlArr);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                ':bind' => "{{ok ? 'YES' : 'NO' }}"
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
             ]
         ]],$htmlArr);
     }
