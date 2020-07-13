@@ -38,7 +38,7 @@ if (explode($DS, $rootDirTrimmed)[0] == 'home') {
     $rootDir = $rootDirTrimmed.$DS;
 }
 define('ROOT', $rootDir);
-echo 'Root Directory: \''.$rootDir.'\'.'."\n";
+//echo 'Root Directory: \''.$rootDir.'\'.'."\n";
 require_once $rootDir.'src'.$DS.'Node.php';
 require_once $rootDir.'src'.$DS.'DataStruct.php';
 require_once $rootDir.'src'.$DS.'LinkedList.php';
@@ -46,7 +46,8 @@ require_once $rootDir.'src'.$DS.'Stack.php';
 require_once $rootDir.'src'.$DS.'Queue.php';
 require_once $rootDir.'src'.$DS.'Comparable.php';
 //HTML classes
-require_once $rootDir.'src'.$DS.'html'.$DS.'InvalidNodeNameException.php';
+require_once $rootDir.'src'.$DS.'exceptions'.$DS.'InvalidNodeNameException.php';
+require_once $rootDir.'src'.$DS.'exceptions'.$DS.'TemplateNotFoundException.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLNode.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'Br.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'HeadNode.php';

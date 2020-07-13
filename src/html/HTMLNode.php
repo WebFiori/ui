@@ -34,7 +34,7 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.8.3
+ * @version 1.8.4
  */
 class HTMLNode implements Countable, Iterator {
     /**
@@ -256,6 +256,51 @@ class HTMLNode implements Countable, Iterator {
         }
         $this->attributes = [];
         $this->useOriginalTxt = false;
+    }
+    /**
+     * Loads HTML-like component.
+     * This method can be used to load any component that uses HTML or XML syntax 
+     * into an object. The method can return many types depending on the loaded 
+     * component.
+     * @param string $htmlTemplatePath The location of the file that 
+     * will have the component. It can be of any type (HTML, XML, ...).
+     * @param array $varsArr An array that contains variables values. A variable in 
+     * the component is a string which is enclosed between two curly braces (such as {{name}}. 
+     * This array must be associative. The indices of the array are variables names 
+     * and values of the indices are variables values. For example, if we 
+     * have a variable with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the variable.
+     * @return HeadNode|HTMLDoc|HTMLNode If the given component represents HTML document,
+     *  an object of type 'HTMLDoc' is returned. If the given component 
+     * represents &lt;head&gt; node, the method will return an object of type 
+     * 'HeadNode'. Other than that, the method will return an object of type 
+     * 'HTMLNode'.
+     * @throws TemplateNotFoundException If the file that the component is 
+     * loaded from does not exist.
+     * @since 1.8.4
+     */
+    public static function loadComponent($htmlTemplatePath, $varsArr = []) {
+        if (!file_exists($htmlTemplatePath)) {
+            throw new TemplateNotFoundException('No file was found at "'.$htmlTemplatePath.'".');
+        }
+        $templateCode = self::_setComponentVars($varsArr, file_get_contents($htmlTemplatePath));
+        $asObj = self::fromHTMLText($templateCode);
+        return $asObj;
+    }
+    private static function _setComponentVars($varsArr, $component) {
+        if (gettype($varsArr) == 'array') {
+            $variables = [];
+            preg_match_all('/{{([\:\/\-\\\,\.a-zA-Z0-9\s])*}}/', $component, $variables);
+            foreach ($varsArr as $name => $value) {
+                foreach ($variables[0] as $varName) {
+                    $trimmed = trim($varName, '{{}} ');
+                    if ($trimmed == $name) {
+                        $component = preg_replace('/'.$varName.'/', htmlspecialchars($value), $component);
+                    }
+                }
+            }
+        }
+        return $component;
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
@@ -640,7 +685,7 @@ class HTMLNode implements Countable, Iterator {
      * @param boolean $asHTMLDocObj If set to 'true' and given HTML represents a 
      * structured HTML document, the method will convert the code to an object 
      * of type 'HTMLDoc'. Default is 'true'.
-     * @return array|HTMLDoc|HTMLNode If the given code represents HTML document 
+     * @return array|HeadNode|HTMLDoc|HTMLNode If the given code represents HTML document 
      * and the parameter <b>$asHTMLDocObj</b> is set to 'true', an object of type 
      * 'HTMLDoc' is returned. If the given code has multiple top level nodes 
      * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
@@ -658,7 +703,7 @@ class HTMLNode implements Countable, Iterator {
             if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
                 $retVal = new HTMLDoc();
                 $retVal->getHeadNode()->removeAllChildNodes();
-
+                $retVal->getBody()->removeAttributes();
                 for ($x = 0 ; $x < count($nodesArr) ; $x++) {
                     if ($nodesArr[$x][$TN] == 'html') {
                         $htmlNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
@@ -668,37 +713,28 @@ class HTMLNode implements Countable, Iterator {
 
                             if ($child->getNodeName() == 'head') {
                                 $retVal->setHeadNode($child);
-                            } else {
-                                if ($child->getNodeName() == 'body') {
-                                    for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
-                                        $node = $child->children()->get($z);
-                                        $retVal->addChild($node);
-                                    }
+                            } else if ($child->getNodeName() == 'body') {
+                                for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
+                                    $node = $child->children()->get($z);
+                                    $retVal->addChild($node);
                                 }
                             }
                         }
-                    } else {
-                        if ($nodesArr[$x][$TN] != 'head') {
-                            $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
-                            $retVal->setHeadNode($headNode);
-                        }
+                    } else if ($nodesArr[$x][$TN] != 'head') {
+                        $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
+                        $retVal->setHeadNode($headNode);
                     }
                 }
-            } else {
-                if (count($nodesArr) != 1) {
-                    $retVal = [];
+            } else if (count($nodesArr) != 1) {
+                $retVal = [];
 
-                    foreach ($nodesArr as $node) {
-                        $asHtmlNode = self::_fromHTMLTextHelper_00($node);
-                        $retVal[] = $asHtmlNode;
-                    }
-                } else {
-                    if (count($nodesArr) == 1) {
-                        return self::_fromHTMLTextHelper_00($nodesArr[0]);
-                    }
+                foreach ($nodesArr as $node) {
+                    $asHtmlNode = self::_fromHTMLTextHelper_00($node);
+                    $retVal[] = $asHtmlNode;
                 }
+            } else if (count($nodesArr) == 1) {
+                return self::_fromHTMLTextHelper_00($nodesArr[0]);
             }
-
             return $retVal;
         }
 
@@ -1496,6 +1532,15 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $this;
+    }
+    /**
+     * Removes all attributes from the node.
+     * This method will simply re-initialize the array that holds all 
+     * the attributes.
+     * @since 1.8.4
+     */
+    public function removeAttributes() {
+        $this->attributes = [];
     }
     /**
      * Removes a direct child node.
