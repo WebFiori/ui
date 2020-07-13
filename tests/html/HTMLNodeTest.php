@@ -416,6 +416,16 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testVoidNode00() {
+        $node = new HTMLNode();
+        $node->setIsVoidNode(true);
+        $this->assertEquals('<div>', $node->toHTML());
+        $node->setIsVoidNode(false);
+        $this->assertEquals('<div></div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_00() {
         $htmlTxt = '<!doctype html>';
         $val = HTMLNode::fromHTMLText($htmlTxt);
@@ -1175,7 +1185,6 @@ and open the template in the editor.
                 . 'This is a div'
                 . '</div>';
         $htmlArr = HTMLNode::htmlAsArray($html);
-        var_dump($htmlArr);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1236,7 +1245,6 @@ and open the template in the editor.
                 . 'This is a div'
                 . '</div>';
         $htmlArr = HTMLNode::htmlAsArray($html);
-        var_dump($htmlArr);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,

@@ -187,7 +187,7 @@ class HTMLNode implements Countable, Iterator {
      * @var boolean
      * @since 1.0 
      */
-    private $requireClose;
+    private $notVoid;
     /**
      * A variable to indicate the number of tabs used (e.g. 1 = 4 spaces 2 = 8).
      * @var int
@@ -237,7 +237,7 @@ class HTMLNode implements Countable, Iterator {
 
         if ($nameUpper == self::T_NODE || $nameUpper == self::C_NODE) {
             $this->name = $nameUpper;
-            $this->requireClose = false;
+            $this->setIsVoidNode(true);
         } else {
             $this->name = strtolower(trim($name));
 
@@ -247,11 +247,11 @@ class HTMLNode implements Countable, Iterator {
         }
 
         if ($this->isTextNode() === true || $this->isComment()) {
-            $this->requireClose = false;
+            $this->setIsVoidNode(true);
         } else if (in_array($this->name, self::VOID_TAGS)) {
-            $this->requireClose = false;
+            $this->setIsVoidNode(true);
         } else {
-            $this->requireClose = true;
+            $this->setIsVoidNode(false);
             $this->childrenList = new LinkedList();
         }
         $this->attributes = [];
@@ -264,17 +264,18 @@ class HTMLNode implements Countable, Iterator {
      * component.
      * @param string $htmlTemplatePath The location of the file that 
      * will have the component. It can be of any type (HTML, XML, ...).
-     * @param array $slotsValsArr An array that contains variables values. A variable in 
-     * the component is a string which is enclosed between two curly braces (such as {{name}}. 
-     * This array must be associative. The indices of the array are variables names 
-     * and values of the indices are variables values. For example, if we 
-     * have a variable with the name {{ user-name }}, then the array can have the 
-     * index 'user-name' with the value of the variable.
-     * @return HeadNode|HTMLDoc|HTMLNode If the given component represents HTML document,
+     * @param array $slotsValsArr An array that contains slots values. A slot in 
+     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
+     * This array must be associative. The indices of the array are slots names 
+     * and values of the indices are slots values. For example, if we 
+     * have a slot with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the slot.
+     * @return HeadNode|HTMLDoc|HTMLNode|array If the given component represents HTML document,
      *  an object of type 'HTMLDoc' is returned. If the given component 
      * represents &lt;head&gt; node, the method will return an object of type 
      * 'HeadNode'. Other than that, the method will return an object of type 
-     * 'HTMLNode'.
+     * 'HTMLNode'. If the file has more than one node in the root, the method 
+     * will return an array that contains objects of type 'HTMLNode'.
      * @throws TemplateNotFoundException If the file that the component is 
      * loaded from does not exist.
      * @since 1.8.4
@@ -284,8 +285,7 @@ class HTMLNode implements Countable, Iterator {
             throw new TemplateNotFoundException('No file was found at "'.$htmlTemplatePath.'".');
         }
         $templateCode = self::_setComponentVars($slotsValsArr, file_get_contents($htmlTemplatePath));
-        $asObj = self::fromHTMLText($templateCode);
-        return $asObj;
+        return self::fromHTMLText($templateCode);
     }
     private static function _setComponentVars($varsArr, $component) {
         if (gettype($varsArr) == 'array') {
@@ -1722,6 +1722,18 @@ class HTMLNode implements Countable, Iterator {
         $this->isFormated = $bool === true;
     }
     /**
+     * Make the node a void node or not.
+     * A void node is a node which does not require closing tag. The developer 
+     * does not have to set the node type to void or not since this is done 
+     * automatically. For custom made elements, this might be required.
+     * @param boolean $bool If the developer would like to make the 
+     * node a void node, then he must pass true.
+     * @since 1.8.4
+     */
+    public function setIsVoidNode($bool) {
+        $this->notVoid = $bool === false;
+    }
+    /**
      * Sets the value of the attribute 'name' of the node.
      * @param string $val The value to set.
      * @return HTMLNode The method will return the instance that this 
@@ -1762,7 +1774,7 @@ class HTMLNode implements Countable, Iterator {
                 if ($this->mustClose() && $reqClose !== true) {
                     if ($this->childrenCount() == 0) {
                         $this->name = $lName;
-                        $this->requireClose = false;
+                        $this->setIsVoidNode(true);
 
                         return true;
                     }
@@ -2689,24 +2701,24 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.4
      */
     private function _validateAttrName($name) {
-        $len = strlen($name);
+        $nameLen = strlen($name);
 
-        if ($len > 0) {
-            for ($x = 0 ; $x < $len ; $x++) {
-                $char = $name[$x];
+        if ($nameLen > 0) {
+            for ($x = 0 ; $x < $nameLen ; $x++) {
+                $charAtX = $name[$x];
 
-                if ($x == 0 && (($char >= '0' && $char <= '9') || $char == '-')) {
+                if ($x == 0 && (($charAtX >= '0' && $charAtX <= '9') || $charAtX == '-')) {
                     return false;
                 }
 
-                if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
-                        || $char == '-' 
-                        || $char == ':' 
-                        || $char == '@' 
-                        || $char == '.' 
-                        || $char == '#'
-                        || $char == '['
-                        || $char == ']')) {
+                if (!(($charAtX <= 'z' && $charAtX >= 'a') || ($charAtX >= '0' && $charAtX <= '9') 
+                        || $charAtX == '-' 
+                        || $charAtX == ':' 
+                        || $charAtX == '@' 
+                        || $charAtX == '.' 
+                        || $charAtX == '#'
+                        || $charAtX == '['
+                        || $charAtX == ']')) {
                     return false;
                 }
             }
@@ -2764,6 +2776,6 @@ class HTMLNode implements Countable, Iterator {
      * @deprecated since version 1.7.4
      */
     private function mustClose() {
-        return $this->requireClose;
+        return $this->notVoid;
     }
 }

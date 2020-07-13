@@ -116,11 +116,11 @@ class PNode extends HTMLNode {
                     $css .= 'color:'.$options['color'].';';
                 }
 
-                if (isset($options['bold']) && $options['bold'] == true) {
+                if (isset($options['bold']) && $options['bold'] === true) {
                     $css .= 'font-weight:bold;';
                 }
 
-                if (isset($options['italic']) && $options['italic'] == true) {
+                if (isset($options['italic']) && $options['italic'] === true) {
                     $css .= 'font-style:italic;';
                 }
 
@@ -128,7 +128,7 @@ class PNode extends HTMLNode {
                     $linkNode = new Anchor($options['href'], $textNode->getText(), '_blank');
                 }
 
-                if (isset($options['em']) && $options['em'] == true) {
+                if (isset($options['em']) && $options['em'] === true) {
                     $emNode = new HTMLNode('em');
 
                     if ($linkNode != null) {
@@ -157,7 +157,7 @@ class PNode extends HTMLNode {
                     }
                 }
 
-                if (isset($options['new-line']) && $options['new-line'] == true) {
+                if (isset($options['new-line']) && $options['new-line'] === true) {
                     $this->addLineBreak();
                 }
             } else {

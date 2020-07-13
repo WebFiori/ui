@@ -131,7 +131,7 @@ class HTMLDoc {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {
-            return $this->body->addChild($node);
+            return $this->body->addChild($node, $attributes, $chainOnParent);
 
         }
         throw new InvalidNodeNameException('A child with name "'.$name.' is not allowed as a chile of the element "body".');
