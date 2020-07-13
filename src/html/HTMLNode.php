@@ -264,7 +264,7 @@ class HTMLNode implements Countable, Iterator {
      * component.
      * @param string $htmlTemplatePath The location of the file that 
      * will have the component. It can be of any type (HTML, XML, ...).
-     * @param array $varsArr An array that contains variables values. A variable in 
+     * @param array $slotsValsArr An array that contains variables values. A variable in 
      * the component is a string which is enclosed between two curly braces (such as {{name}}. 
      * This array must be associative. The indices of the array are variables names 
      * and values of the indices are variables values. For example, if we 
@@ -279,11 +279,11 @@ class HTMLNode implements Countable, Iterator {
      * loaded from does not exist.
      * @since 1.8.4
      */
-    public static function loadComponent($htmlTemplatePath, $varsArr = []) {
+    public static function loadComponent($htmlTemplatePath, $slotsValsArr = []) {
         if (!file_exists($htmlTemplatePath)) {
             throw new TemplateNotFoundException('No file was found at "'.$htmlTemplatePath.'".');
         }
-        $templateCode = self::_setComponentVars($varsArr, file_get_contents($htmlTemplatePath));
+        $templateCode = self::_setComponentVars($slotsValsArr, file_get_contents($htmlTemplatePath));
         $asObj = self::fromHTMLText($templateCode);
         return $asObj;
     }
