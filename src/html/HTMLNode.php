@@ -287,20 +287,61 @@ class HTMLNode implements Countable, Iterator {
         $templateCode = self::_setComponentVars($slotsValsArr, file_get_contents($htmlTemplatePath));
         return self::fromHTMLText($templateCode);
     }
+    /**
+     * Loads HTML-like component and make it a child of current node.
+     * This method can be used to load any component that uses HTML syntax 
+     * into an object and make it a child of the instance at which the method is 
+     * called in.
+     * @param string $path The location of the file that 
+     * will have the HTML component.
+     * @param array $slotsVals An array that contains slots values. A slot in 
+     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
+     * This array must be associative. The indices of the array are slots names 
+     * and values of the indices are slots values. The values of the slots can be 
+     * also sub-array that contains more values. For example, if we 
+     * have a slot with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the slot.
+     * @throws TemplateNotFoundException If the file that the component is 
+     * loaded from does not exist.
+     * @since 1.8.4
+     */
+    public function component($path, $slotsVals) {
+        $loaded = self::loadComponent($path, $slotsVals);
+        if (gettype($loaded) == 'array') {
+            foreach ($loaded as $node) {
+                $this->addChild($node);
+            }
+        } else {
+            $this->addChild($loaded);
+        }
+    }
     private static function _setComponentVars($varsArr, $component) {
         if (gettype($varsArr) == 'array') {
             $variables = [];
-            preg_match_all('/{{([\:\/\-\\\,\.a-zA-Z0-9\s])*}}/', $component, $variables);
-            foreach ($varsArr as $name => $value) {
-                foreach ($variables[0] as $varName) {
-                    $trimmed = trim($varName, '{{}} ');
-                    if ($trimmed == $name) {
-                        $component = preg_replace('/'.$varName.'/', htmlspecialchars($value), $component);
+            preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
+            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
+        }
+        return $component;
+    }
+    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
+        
+        foreach ($slotsValsArr as $slotName => $slotVal) {
+            
+            if (gettype($slotVal) == 'array') {
+                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
+            } else {
+                
+                foreach ($allSlots as $slotNameFromComponent) {
+                    $trimmed = trim($slotNameFromComponent, '{{}}');
+                    
+                    if ($trimmed == $slotName) {
+                        //$component = preg_replace('/'.$slotNameFromComponent.'/', htmlspecialchars($slotVal), $component);
+                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
                     }
                 }
             }
         }
-        return $component;
+        return $component; 
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
@@ -1136,7 +1177,7 @@ class HTMLNode implements Countable, Iterator {
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
                     if (isset($nodesNames[$nodesNamesIndex][1])) {
-                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][1]);
+                        $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex][1];
                         if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
                             unset($nodesNames[$nodesNamesIndex][$BT]);
                         }
@@ -1209,7 +1250,7 @@ class HTMLNode implements Countable, Iterator {
                                 $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
                             $nodesNamesIndex++;
                             $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                            $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex - 1][$BT]);
+                            $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex - 1][$BT];
                             unset($nodesNames[$nodesNamesIndex - 1][$BT]);
                         }
                         $nodesNamesIndex++;
@@ -1221,7 +1262,7 @@ class HTMLNode implements Countable, Iterator {
                     } else {
                         //Text Node?
                         $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                        $nodesNames[$nodesNamesIndex][$BT] = trim($nodesNames[$nodesNamesIndex][0]);
+                        $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex][0];
                         unset($nodesNames[$nodesNamesIndex][0]);
                         $nodesNamesIndex++;
                     }
