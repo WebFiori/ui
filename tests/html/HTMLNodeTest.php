@@ -908,7 +908,7 @@ and open the template in the editor.
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
         $this->assertEquals(count($array[1]['children']),1);
-        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'Testing');
+        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'   Testing  ');
         $this->assertEquals(count($array[1]['children'][0]['children']),3);
     }
     /**
@@ -1017,7 +1017,7 @@ and open the template in the editor.
         $this->assertEquals('#TEXT',$test->getChild(2)->getNodeName());
         $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
         $this->assertEquals('br',$test->getChild(3)->getNodeName());
-        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(4)->getText());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: ',$test->getChild(4)->getText());
         $this->assertEquals('a',$test->getChild(5)->getNodeName());
         $this->assertEquals('br',$test->getChild(6)->getNodeName());
         $this->assertEquals('#TEXT',$test->getChild(7)->getNodeName());
@@ -1046,7 +1046,7 @@ and open the template in the editor.
         $this->assertEquals('br',$test->getChild(3)->getNodeName());
         $this->assertEquals('#COMMENT',$test->getChild(4)->getNodeName());
         $this->assertEquals('A Comment',$test->getChild(4)->getText());
-        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(5)->getText());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: ',$test->getChild(5)->getText());
         $this->assertEquals('a',$test->getChild(6)->getNodeName());
         $this->assertEquals('br',$test->getChild(7)->getNodeName());
         $this->assertEquals('#TEXT',$test->getChild(8)->getNodeName());
@@ -1070,7 +1070,7 @@ and open the template in the editor.
         $htmlArr = HTMLNode::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#TEXT',
-            'body-text' => 'This is a text.'
+            'body-text' => 'This is a text. '
         ],[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1078,7 +1078,7 @@ and open the template in the editor.
             'children' => [
                 [
                     'tag-name' => '#TEXT',
-                    'body-text' => 'This is a div',
+                    'body-text' => ' This is a div',
                 ]
             ]
         ]],$htmlArr);
@@ -1087,7 +1087,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_15() {
-        $html = '<div> This is a div</div>This is a text.';
+        $html = '<div>This is a div</div>This is a text.';
         $htmlArr = HTMLNode::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
@@ -1117,7 +1117,7 @@ and open the template in the editor.
             'children' => [
                 [
                     'tag-name' => '#TEXT',
-                    'body-text' => 'This is a div',
+                    'body-text' => ' This is a div',
                 ],
                 [
                     'tag-name' => 'div',
@@ -1140,7 +1140,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_17() {
-        $html = '<div> '
+        $html = '<div>'
                 . 'This is a div'
                 . '<div>With Sub Div</div>'
                 . 'A Text After Div'
@@ -1181,7 +1181,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_18() {
-        $html = "<div :bind=\"{{ok ? 'YES' : 'NO' }}\"> "
+        $html = "<div :bind=\"{{ok ? 'YES' : 'NO' }}\">"
                 . 'This is a div'
                 . '</div>';
         $htmlArr = HTMLNode::htmlAsArray($html);
@@ -1204,7 +1204,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_19() {
-        $html = '<div class="first-class second-class third"> '
+        $html = '<div class="first-class second-class third">'
                 . 'This is a div'
                 . '</div>';
         $htmlArr = HTMLNode::htmlAsArray($html);
@@ -1241,8 +1241,8 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_21() {
-        $html = '<div :bind=\'{{ok ? "YES" : "NO" }}\'> '
-                . 'This is a div'
+        $html = '<div :bind=\'{{ok ? "YES" : "NO" }}\'>'
+                . ' This is a div'
                 . '</div>';
         $htmlArr = HTMLNode::htmlAsArray($html);
         $this->assertEquals([[
@@ -1254,7 +1254,7 @@ and open the template in the editor.
             'children' => [
                 [
                     'tag-name' => '#TEXT',
-                    'body-text' => 'This is a div',
+                    'body-text' => ' This is a div',
                 ]
             ]
         ]],$htmlArr);
@@ -1566,6 +1566,15 @@ and open the template in the editor.
         $node->setAttribute('placeholder','This is "NOT" funny.');
         $this->assertEquals('This is "NOT" funny.',$node->getAttribute('placeholder'));
         $this->assertEquals('<div placeholder="This is \"NOT\" funny."></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testSetTitle00() {
+        $node = new HTMLNode();
+        $node->setTitle('Title attr');
+        $this->assertEquals('Title attr',$node->getTitle());
+        $this->assertEquals('Title attr',$node->getAttribute('title'));
     }
     /**
      * @test
