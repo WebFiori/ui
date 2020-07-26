@@ -1249,13 +1249,102 @@ and open the template in the editor.
             'tag-name' => 'div',
             'is-void-tag' => false,
             'attributes' => [
-                ':bind' => "{{ok ? 'YES' : 'NO' }}"
+                ':bind' => '{{ok ? \'YES\' : \'NO\' }}'
             ],
             'children' => [
                 [
                     'tag-name' => '#TEXT',
                     'body-text' => ' This is a div',
                 ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_22() {
+        $html = '<v-row>
+    <v-col cols= "12" md="6" lg="4">
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            :label="languageVars.general.action.search"
+            single-line
+            hide-details
+          >
+        </v-text-field>
+		  "Hello world!"
+    </v-col>
+    <v-col cols="12" md="12" lg="12">
+        <v-data-table 
+            :search="search" 
+            :headers=\'headers\'
+            :items="exceed Requests"
+            :loading="loading",
+				v-if="loading == true",
+				v-if="Math.random() > 0.5",
+				v-if="loginType === \'username\'"
+            dense :footer-props="{
+                showFirstLastPage: true,
+                firstIcon: \'mdi-arrow-collapse-left\',
+                lastIcon: \'mdi-arrow-collapse-right\',
+					 
+                prevIcon: \'mdi-minus\',
+                nextIcon: \'mdi-plus\'
+              }">
+            <template v-slot:item.createdOn="props">
+                <v-chip  color="red" dark>{{ item.createdOn }}</v-chip>
+            </template>
+        </v-data-table>
+    </v-col>
+</v-row>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        // TODO: Fix test
+        $this->assertEquals([[
+            'tag-name' => 'v-row',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => 'v-col',
+                    'is-void-tag' => false,
+                    'attributes' => [
+                        'cols'=> "12",
+                        'md'=>"6",
+                        'lg'=>"4"
+                    ],
+                    'children' => [
+                        [
+                            'tag-name' => 'v-text-field',
+                            'is-void-tag' => false,
+                            'attributes' => [
+                                
+                            ]
+                        ],
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => 'Hello world!'
+                        ]
+                    ]
+                ],
+                [
+                    'tag-name' => 'v-col',
+                    'is-void-tag' => false,
+                    'attributes' => [
+                        'cols'=> "12",
+                        'md'=>"12",
+                        'lg'=>"12"
+                    ],
+                    'children' => [
+                        [
+                            'tag-name' => 'v-data-table',
+                            'is-void-tag' => false,
+                            'attributes' => [
+                                
+                            ]
+                        ]
+                    ]
+                ],
             ]
         ]],$htmlArr);
     }
