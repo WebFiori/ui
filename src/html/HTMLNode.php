@@ -315,6 +315,42 @@ class HTMLNode implements Countable, Iterator {
             $this->addChild($loaded);
         }
     }
+    /**
+     * Replace all attributes values in HTML string with a hash.
+     * This method is a helper method which is used to clear any characters which 
+     * are in attribute name that might cause the parsing process to fail.
+     * @param string $htmlStr The string that contains HTML code.
+     * @return array The method will return an associative array with two indices. 
+     * The first one has the key 'replacements' and the second one has the key 
+     * 'html-string'. The first one will have an associative array that contains 
+     * a sub associative array. The keys of the array are hashes computed from 
+     * attribute value and the value of the index is the actual attribute value.
+     * The second index will contain HTML string with all attributes values replaced 
+     * with the hashes.
+     */
+    private static function _replceAttrsVals($htmlStr) {
+        $attrsArr = [];
+        preg_match_all('/"[\t-!#-~]+"|""/', $htmlStr, $attrsArr);
+        $tempValsArr = [];
+        foreach ($attrsArr[0] as $value) {
+            $trimmed = trim($value,'"');
+            $key = hash('sha256', $trimmed);
+            $tempValsArr[$key] = $trimmed;
+            $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
+        }
+        $attrsArr2 = [];
+        preg_match_all('/\'[\t-&(-~]+\'|\'\'/', $htmlStr, $attrsArr2);
+        foreach ($attrsArr2[0] as $value) {
+            $trimmed = trim($value,"'");
+            $key = hash('sha256', $trimmed);
+            $tempValsArr[$key] = $trimmed;
+            $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
+        }
+        return [
+            'replacements' => $tempValsArr,
+            'html-string' => $htmlStr
+        ];
+    }
     private static function _setComponentVars($varsArr, $component) {
         if (gettype($varsArr) == 'array') {
             $variables = [];
@@ -1162,7 +1198,8 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.4
      */
     public static function htmlAsArray($text) {
-        $trimmed = trim($text);
+        $cleanedHtmlArr = self::_replceAttrsVals(trim($text));
+        $trimmed = $cleanedHtmlArr['html-string'];
         $BT = 'body-text';
         $TN = 'tag-name';
 
@@ -1238,7 +1275,7 @@ class HTMLNode implements Countable, Iterator {
                             $attributesStrLen = strlen($nodesNames[$nodesNamesIndex][0]);
 
                             if ($attributesStrLen != 0) {
-                                $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0]);
+                                $nodesNames[$nodesNamesIndex]['attributes'] = self::_parseAttributes($nodesNames[$nodesNamesIndex][0], $cleanedHtmlArr['replacements']);
                             } else {
                                 $nodesNames[$nodesNamesIndex]['attributes'] = [];
                             }
@@ -2146,6 +2183,12 @@ class HTMLNode implements Countable, Iterator {
 
         return '';
     }
+    private function _getActualVal($hashedValsArr, $hashVal) {
+        if (isset($hashedValsArr[$hashVal])) {
+            return $hashedValsArr[$hashVal];
+        }
+        return $hashVal;
+    }
     /**
      * Creates an object of type HTMLNode given its properties as an associative 
      * array.
@@ -2160,7 +2203,7 @@ class HTMLNode implements Countable, Iterator {
      * </ul>
      * @return HTMLNode
      */
-    private static function _fromHTMLTextHelper_00($nodeArr) {
+    private static function _fromHTMLTextHelper_00($nodeArr, $attrsArr = []) {
         $TN = 'tag-name';
         $BT = 'body-text';
 
@@ -2394,7 +2437,7 @@ class HTMLNode implements Countable, Iterator {
      * of the attributes.
      * @since 1.7.4
      */
-    private static function _parseAttributes($attrsStr) {
+    private static function _parseAttributes($attrsStr, $replacementsArr) {
         $inSingleQouted = false;
         $inDoubleQueted = false;
         $isEqualFound = false;
@@ -2471,10 +2514,22 @@ class HTMLNode implements Countable, Iterator {
         while ($queue->peek()) {
             $current = $queue->dequeue();
             $next = $queue->peek();
-
+            if (isset($replacementsArr[$current])) {
+                $current = $replacementsArr[$current];
+            }
             if ($next == '=') {
                 $queue->dequeue();
-                $retVal[strtolower($current)] = $queue->dequeue();
+                $val = $queue->dequeue();
+                if (isset($replacementsArr[$val])) {
+                    $retVal[strtolower($current)] = $replacementsArr[$val];
+                    foreach ($replacementsArr as $hash => $valueOfHash) {
+                        $replacement = "'".trim($valueOfHash,'"')."'";
+                        $retVal[strtolower($current)] = str_replace('"'.$hash.'"', $replacement, $retVal[strtolower($current)]);
+                    }
+                } else {
+                    $retVal[strtolower($current)] = $val;
+                }
+                
             } else {
                 $retVal[strtolower($current)] = '';
             }
