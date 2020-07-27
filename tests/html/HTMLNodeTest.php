@@ -1273,7 +1273,6 @@ and open the template in the editor.
                 . '"Hello world!"'
                 . '</v-col></v-row>';
         $htmlArr = HTMLNode::htmlAsArray($html);
-        var_dump($htmlArr);
         // TODO: Fix test
         $this->assertEquals([[
             'tag-name' => 'v-row',
@@ -1303,7 +1302,7 @@ and open the template in the editor.
                         ],
                         [
                             'tag-name' => '#TEXT',
-                            'body-text' => 'Hello world!'
+                            'body-text' => '"Hello world!"'
                         ]
                     ]
                 ],
@@ -1319,6 +1318,89 @@ and open the template in the editor.
         $this->assertEquals([[
             'tag-name' => '#TEXT',
             'body-text' => '"Good"'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_24() {
+        $html = "'Good' Boy ";
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => "'Good' Boy "
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_25() {
+        $html = '<!--"Good"-->';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#COMMENT',
+            'body-text' => '"Good"'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_26() {
+        $html = "<!--'Good' Boy -->";
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#COMMENT',
+            'body-text' => "'Good' Boy "
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_27() {
+        $html = '<v-row>'
+                . '<v-col cols= "12" md="6" lg="4">'
+                . '<v-table >'
+                . '<v-template v-if="{hello:\'good\',super:\'hero\'}"></v-template>'
+                . '</v-table>'
+                . '</v-col></v-row>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        // TODO: Fix test
+        $this->assertEquals([[
+            'tag-name' => 'v-row',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => 'v-col',
+                    'is-void-tag' => false,
+                    'attributes' => [
+                        'cols'=> "12",
+                        'md'=>"6",
+                        'lg'=>"4"
+                    ],
+                    'children' => [
+                        [
+                            'tag-name' => 'v-table',
+                            'is-void-tag' => false,
+                            'attributes' => [
+
+                            ],
+                            'children'=>[
+                                [
+                                    'tag-name' => 'v-template',
+                                    'is-void-tag' => false,
+                                    'attributes' => [
+                                        'v-if' => '{hello:\'good\',super:\'hero\'}'
+                                    ],
+                                    'children' => [
+                                        
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ]
         ]],$htmlArr);
     }
     /**
