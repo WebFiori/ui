@@ -329,28 +329,25 @@ class HTMLNode implements Countable, Iterator {
      * with the hashes.
      */
     private static function _replceAttrsVals($htmlStr) {
+        //For double quts
         $attrsArr = [];
         preg_match_all('/"[\t-!#-~]+"|""/', $htmlStr, $attrsArr);
         $tempValsArr = [];
         foreach ($attrsArr[0] as $value) {
             $trimmed = trim($value,'"');
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = [
-                'value' => $trimmed,
-                'single-quotes' => false
-            ];
+            $tempValsArr[$key] = $trimmed;
             $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
         }
+        
+        //For single quts
         $attrsArr2 = [];
         preg_match_all('/\'[\t-&(-~]+\'|\'\'/', $htmlStr, $attrsArr2);
         foreach ($attrsArr2[0] as $value) {
             $trimmed = trim($value,"'");
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = [
-                'value' => $trimmed,
-                'single-quotes' => true
-            ];
-            $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
+            $tempValsArr[$key] = $trimmed;
+            $htmlStr = str_replace($value, "'".$key."'", $htmlStr);
         }
         return [
             'replacements' => $tempValsArr,
@@ -1204,7 +1201,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.4
      */
     public static function htmlAsArray($text) {
-        $cleanedHtmlArr = self::_replceAttrsVals(trim($text));
+        $cleanedHtmlArr = self::_replceAttrsVals($text);
         $trimmed = $cleanedHtmlArr['html-string'];
         $BT = 'body-text';
         $TN = 'tag-name';
@@ -1220,7 +1217,7 @@ class HTMLNode implements Countable, Iterator {
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
                     if (isset($nodesNames[$nodesNamesIndex][1])) {
-                        $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][1], 'text');
+                        $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][1]);
                         if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
                             unset($nodesNames[$nodesNamesIndex][$BT]);
                         }
@@ -1250,11 +1247,11 @@ class HTMLNode implements Countable, Iterator {
                             if (isset($nodesNames[$nodesNamesIndex][$BT])) {
                                 //a text node after a comment node.
                                 $nodesNames[$nodesNamesIndex + 1] = [
-                                    $BT => self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][$BT], 'text'),
+                                    $BT => self::_getTextActualValue($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][$BT]),
                                     $TN => self::T_NODE
                                 ];
                             }
-                            $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], trim($nodesNames[$nodesNamesIndex][0],"!--"), 'text');
+                            $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], trim($nodesNames[$nodesNamesIndex][0],"!--"));
                         } else {
                             //Check extracted name.
                             $nodeName = strtolower($nodeName);
@@ -1293,7 +1290,7 @@ class HTMLNode implements Countable, Iterator {
                                 $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
                             $nodesNamesIndex++;
                             $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                            $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex - 1][$BT], 'text');
+                            $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex - 1][$BT]);
                             unset($nodesNames[$nodesNamesIndex - 1][$BT]);
                         }
                         $nodesNamesIndex++;
@@ -1305,7 +1302,7 @@ class HTMLNode implements Countable, Iterator {
                     } else {
                         //Text Node?
                         $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                        $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][0], 'text');
+                        $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][0]);
                         unset($nodesNames[$nodesNamesIndex][0]);
                         $nodesNamesIndex++;
                     }
@@ -2189,18 +2186,10 @@ class HTMLNode implements Countable, Iterator {
 
         return '';
     }
-    private static function _getActualVal($hashedValsArr, $hashVal, $type = '') {
-        $trimmed = trim(trim($hashVal,"'"),'"');
-        if (isset($hashedValsArr[$trimmed])) {
-            if ($type == 'text') {
-                if ($hashedValsArr[$trimmed]['single-quotes']) {
-                    return "'".$hashedValsArr[$trimmed]['value']."'";
-                } else {
-                    return '"'.$hashedValsArr[$trimmed]['value'].'"';
-                }
-            } else {
-                return $hashedValsArr[$trimmed]['value'];
-            }
+    private static function _getTextActualValue($hashedValsArr, $hashVal) {
+        //If text, it means that we have a text node or a comment node with a quted text.
+        foreach ($hashedValsArr as $hash => $val) {
+            $hashVal = str_replace($hash, $val, $hashVal);
         }
         return $hashVal;
     }
@@ -2538,7 +2527,7 @@ class HTMLNode implements Countable, Iterator {
                 if (isset($replacementsArr[$val])) {
                     $retVal[strtolower($current)] = $replacementsArr[$val];
                     foreach ($replacementsArr as $hash => $valueOfHash) {
-                        $replacement = "'".trim($valueOfHash['value'],'"')."'";
+                        $replacement = "'".trim($valueOfHash,'"')."'";
                         $retVal[strtolower($current)] = str_replace('"'.$hash.'"', $replacement, $retVal[strtolower($current)]);
                     }
                 } else {
