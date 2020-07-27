@@ -935,7 +935,7 @@ and open the template in the editor.
         $this->assertEquals(2,count($array[1]['children']));
         $this->assertEquals(4,count($array[2]['children']));
         $this->assertEquals('#COMMENT',$array[1]['children'][0]['tag-name']);
-        $this->assertEquals('A Comment.',$array[1]['children'][0]['body-text']);
+        $this->assertEquals('       A Comment.       ',$array[1]['children'][0]['body-text']);
     }
     /**
      * @test
@@ -1045,7 +1045,7 @@ and open the template in the editor.
         $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
         $this->assertEquals('br',$test->getChild(3)->getNodeName());
         $this->assertEquals('#COMMENT',$test->getChild(4)->getNodeName());
-        $this->assertEquals('A Comment',$test->getChild(4)->getText());
+        $this->assertEquals('A Comment    ',$test->getChild(4)->getText());
         $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: ',$test->getChild(5)->getText());
         $this->assertEquals('a',$test->getChild(6)->getNodeName());
         $this->assertEquals('br',$test->getChild(7)->getNodeName());
@@ -1263,42 +1263,17 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_22() {
-        $html = '<v-row>
-    <v-col cols= "12" md="6" lg="4">
-        <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            :label="languageVars.general.action.search"
-            single-line
-            hide-details
-          >
-        </v-text-field>
-		  "Hello world!"
-    </v-col>
-    <v-col cols="12" md="12" lg="12">
-        <v-data-table 
-            :search="search" 
-            :headers=\'headers\'
-            :items="exceed Requests"
-            :loading="loading",
-				v-if="loading == true",
-				v-if="Math.random() > 0.5",
-				v-if="loginType === \'username\'"
-            dense :footer-props="{
-                showFirstLastPage: true,
-                firstIcon: \'mdi-arrow-collapse-left\',
-                lastIcon: \'mdi-arrow-collapse-right\',
-					 
-                prevIcon: \'mdi-minus\',
-                nextIcon: \'mdi-plus\'
-              }">
-            <template v-slot:item.createdOn="props">
-                <v-chip  color="red" dark>{{ item.createdOn }}</v-chip>
-            </template>
-        </v-data-table>
-    </v-col>
-</v-row>';
+        $html = '<v-row>'
+                . '<v-col cols= "12" md="6" lg="4">'
+                . '<v-text-field v-model="search" '
+                . 'append-icon="mdi-magnify"'
+                . ':label="languageVars.general.action.search"'
+                . 'single-line hide-details>'
+                . '</v-text-field>'
+                . '"Hello world!"'
+                . '</v-col></v-row>';
         $htmlArr = HTMLNode::htmlAsArray($html);
+        var_dump($htmlArr);
         // TODO: Fix test
         $this->assertEquals([[
             'tag-name' => 'v-row',
@@ -1318,8 +1293,13 @@ and open the template in the editor.
                             'tag-name' => 'v-text-field',
                             'is-void-tag' => false,
                             'attributes' => [
-                                
-                            ]
+                                'v-model' => "search",
+                                'append-icon' => "mdi-magnify",
+                                ':label' => "languageVars.general.action.search",
+                                'single-line' => '',
+                                'hide-details' => ''
+                            ],
+                            'children'=>[]
                         ],
                         [
                             'tag-name' => '#TEXT',
@@ -1327,25 +1307,18 @@ and open the template in the editor.
                         ]
                     ]
                 ],
-                [
-                    'tag-name' => 'v-col',
-                    'is-void-tag' => false,
-                    'attributes' => [
-                        'cols'=> "12",
-                        'md'=>"12",
-                        'lg'=>"12"
-                    ],
-                    'children' => [
-                        [
-                            'tag-name' => 'v-data-table',
-                            'is-void-tag' => false,
-                            'attributes' => [
-                                
-                            ]
-                        ]
-                    ]
-                ],
             ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_23() {
+        $html = '"Good"';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => '"Good"'
         ]],$htmlArr);
     }
     /**

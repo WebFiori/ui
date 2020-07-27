@@ -335,7 +335,10 @@ class HTMLNode implements Countable, Iterator {
         foreach ($attrsArr[0] as $value) {
             $trimmed = trim($value,'"');
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
+            $tempValsArr[$key] = [
+                'value' => $trimmed,
+                'single-quotes' => false
+            ];
             $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
         }
         $attrsArr2 = [];
@@ -343,7 +346,10 @@ class HTMLNode implements Countable, Iterator {
         foreach ($attrsArr2[0] as $value) {
             $trimmed = trim($value,"'");
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
+            $tempValsArr[$key] = [
+                'value' => $trimmed,
+                'single-quotes' => true
+            ];
             $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
         }
         return [
@@ -1214,7 +1220,7 @@ class HTMLNode implements Countable, Iterator {
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
                     if (isset($nodesNames[$nodesNamesIndex][1])) {
-                        $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex][1];
+                        $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][1], 'text');
                         if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
                             unset($nodesNames[$nodesNamesIndex][$BT]);
                         }
@@ -1244,15 +1250,15 @@ class HTMLNode implements Countable, Iterator {
                             if (isset($nodesNames[$nodesNamesIndex][$BT])) {
                                 //a text node after a comment node.
                                 $nodesNames[$nodesNamesIndex + 1] = [
-                                    $BT => $nodesNames[$nodesNamesIndex][$BT],
+                                    $BT => self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][$BT], 'text'),
                                     $TN => self::T_NODE
                                 ];
                             }
-                            $nodesNames[$nodesNamesIndex][$BT] = trim(trim($nodesNames[$nodesNamesIndex][0],"!--"));
+                            $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], trim($nodesNames[$nodesNamesIndex][0],"!--"), 'text');
                         } else {
                             //Check extracted name.
                             $nodeName = strtolower($nodeName);
-                            $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
+                            $nodesNames[$nodesNamesIndex][$TN] = trim($nodeName);
                             $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
 
                             if ($nodeName[0] == '/') {
@@ -1287,7 +1293,7 @@ class HTMLNode implements Countable, Iterator {
                                 $nodesNames[$nodesNamesIndex][$TN] != self::C_NODE) {
                             $nodesNamesIndex++;
                             $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                            $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex - 1][$BT];
+                            $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex - 1][$BT], 'text');
                             unset($nodesNames[$nodesNamesIndex - 1][$BT]);
                         }
                         $nodesNamesIndex++;
@@ -1299,7 +1305,7 @@ class HTMLNode implements Countable, Iterator {
                     } else {
                         //Text Node?
                         $nodesNames[$nodesNamesIndex][$TN] = self::T_NODE;
-                        $nodesNames[$nodesNamesIndex][$BT] = $nodesNames[$nodesNamesIndex][0];
+                        $nodesNames[$nodesNamesIndex][$BT] = self::_getActualVal($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][0], 'text');
                         unset($nodesNames[$nodesNamesIndex][0]);
                         $nodesNamesIndex++;
                     }
@@ -2183,9 +2189,18 @@ class HTMLNode implements Countable, Iterator {
 
         return '';
     }
-    private function _getActualVal($hashedValsArr, $hashVal) {
-        if (isset($hashedValsArr[$hashVal])) {
-            return $hashedValsArr[$hashVal];
+    private static function _getActualVal($hashedValsArr, $hashVal, $type = '') {
+        $trimmed = trim(trim($hashVal,"'"),'"');
+        if (isset($hashedValsArr[$trimmed])) {
+            if ($type == 'text') {
+                if ($hashedValsArr[$trimmed]['single-quotes']) {
+                    return "'".$hashedValsArr[$trimmed]['value']."'";
+                } else {
+                    return '"'.$hashedValsArr[$trimmed]['value'].'"';
+                }
+            } else {
+                return $hashedValsArr[$trimmed]['value'];
+            }
         }
         return $hashVal;
     }
@@ -2523,7 +2538,7 @@ class HTMLNode implements Countable, Iterator {
                 if (isset($replacementsArr[$val])) {
                     $retVal[strtolower($current)] = $replacementsArr[$val];
                     foreach ($replacementsArr as $hash => $valueOfHash) {
-                        $replacement = "'".trim($valueOfHash,'"')."'";
+                        $replacement = "'".trim($valueOfHash['value'],'"')."'";
                         $retVal[strtolower($current)] = str_replace('"'.$hash.'"', $replacement, $retVal[strtolower($current)]);
                     }
                 } else {
