@@ -2813,6 +2813,7 @@ class HTMLNode implements Countable, Iterator {
 
                 if (!(($charAtX <= 'z' && $charAtX >= 'a') || ($charAtX >= '0' && $charAtX <= '9') 
                         || $charAtX == '-' 
+                        || $charAtX == '_' 
                         || $charAtX == ':' 
                         || $charAtX == '@' 
                         || $charAtX == '.' 
