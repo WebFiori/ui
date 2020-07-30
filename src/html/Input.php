@@ -28,11 +28,13 @@ namespace phpStructs\html;
  * A class that represents any input element.
  *
  * @author Ibrahim
+ * 
  * @version 1.0.2
  */
 class Input extends HTMLNode {
     /**
      * An array of supported input modes.
+     * 
      * The array contains the following values:
      * <ul>
      * <li>none</li>
@@ -44,11 +46,13 @@ class Input extends HTMLNode {
      * <li>email</li>
      * <li>url</li>
      * </ul>
+     * 
      * @since 1.0
      */
     const INPUT_MODES = ['none','text','decimal','numeric','tel','search','email','url'];
     /**
      * An array of supported input types.
+     * 
      * This array has the following values:
      * <ul>
      * <li>text</li>
@@ -73,6 +77,7 @@ class Input extends HTMLNode {
      * <li>textarea</li>
      * <li>radio</li>
      * </ul>
+     * 
      * @since 1.0
      */
     const INPUT_TYPES = ['text','date','password','submit','checkbox','email','url','tel',
@@ -80,9 +85,11 @@ class Input extends HTMLNode {
         'select','textarea','radio'];
     /**
      * Creates new instance of the class.
+     * 
      * @param string $type The type of the input element. If the 
      * given type is not in the array Input::INPUT_TYPES, 'text' 
      * will be used by default.
+     * 
      * @since 1.0
      */
     public function __construct($type = 'text') {
@@ -103,24 +110,43 @@ class Input extends HTMLNode {
     }
     /**
      * Adds new child node.
+     * 
      * The node will be added only if the type of the node is 
      * &lt;select&gt; and the given node is of type &lt;option&gt; or 
      * &lt;optgroup&gt;. Also, if the input type is &lt;textarea&gt; and 
-     * the given node is a text node, it will be added.
-     * @param HTMLNode $node The node that will be added.
+     * the given node is a text node, it will be added. 
+     * 
+     * @param HTMLNode|string $node The node that will be added. If a text is given 
+     * and the node is of type &lt;textarea&gt;, The text will be added to the 
+     * body of the text area. If input type is &lt;select&gt;, then new option 
+     * will be added with the same label of the given text.
+     * 
      * @param array $attrs An optional array of attributes which will be set in 
      * the newly added child.
+     * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
      * to the body of the node. Default value is true.
+     * 
      * @return HTMLNode If the parameter <code>$useChaining</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. If no child is added, the method will return null.
+     * 
      * @since 1.0.1
      */
     public function addChild($node, $attrs = [], $chainOnParent = true) {
+        if (gettype($node) == 'string') {
+            $temp = $node;
+            if ($this->getNodeName() == 'select') {
+                $node = new HTMLNode('option');
+                $node->setAttribute('value', $temp)->text($temp);
+            } else if ($this->getNodeName() == 'textarea') {
+                $node = new HTMLNode('#text');
+                $node->setText($temp);
+            }
+        }
         if ($node instanceof HTMLNode) {
             if ($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
                     $node->getNodeName() == 'optgroup')) {
@@ -132,6 +158,7 @@ class Input extends HTMLNode {
     }
     /**
      * Adds an option to the input element which has the type 'select'.
+     * 
      * @param array $options An associative array that contains select options. 
      * The array must have at least the following indices:
      * <ul>
@@ -145,8 +172,10 @@ class Input extends HTMLNode {
      * of attributes which will be set for the option. The key will act as the 
      * attribute name and the value of the key will act as the value of the 
      * attribute.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0.1
      */
     public function addOption($options = []) {
@@ -167,7 +196,9 @@ class Input extends HTMLNode {
     }
     /**
      * Adds multiple options at once to an input element of type 'select'.
+     * 
      * @param array $arrayOfOpt An associative array of options. 
+     * 
      * The key will act as the 'value' attribute and 
      * the value of the key will act as the label for the option. Also, 
      * it is possible that the value of the key is a sub-associative array that 
@@ -179,8 +210,10 @@ class Input extends HTMLNode {
      * attribute name and the value of the key will act as the value of the 
      * attribute.</li>
      * </ul>
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0.1
      */
     public function addOptions($arrayOfOpt) {
@@ -206,6 +239,7 @@ class Input extends HTMLNode {
     }
     /**
      * Adds an 'optgroup' child element.
+     * 
      * @param array $optionsGroupArr An associative array that contains 
      * group info. The array must have the following indices:
      * <ul>
@@ -223,6 +257,7 @@ class Input extends HTMLNode {
      * attribute name and the value of the key will act as the value of the 
      * attribute.</li></li>
      * </ul>
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
      * @since 1.0.1
@@ -264,8 +299,10 @@ class Input extends HTMLNode {
     }
     /**
      * Returns the value of the attribute 'type'.
+     * 
      * @return string|null The value of the attribute 'type'. For 'textarea' and 
      * select, this method will return null.
+     * 
      * @since 1.0
      */
     public function getType() {
@@ -273,10 +310,13 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'inputmode'.
+     * 
      * @param string $mode The value to set. It must be a value from the array 
      * Input::INPUT_MODES.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setInputMode($mode) {
@@ -290,11 +330,14 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'list'
+     * 
      * @param string $listId The ID of the element that will be acting 
      * as pre-defined list of elements. It cannot be set for hidden, file, 
      * checkbox, textarea, select and radio input types.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setList($listId) {
@@ -311,9 +354,12 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'max'.
+     * 
      * @param string $max The value to set.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setMax($max) {
@@ -321,26 +367,34 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'maxlength'.
+     * 
      * @param string $length The value to set. The attribute value can be set only 
      * for text, email, search, tel and url input types.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setMaxLength($length) {
-        $iType = $this->getType();
+        if ($length >= 1) {
+            $iType = $this->getType();
 
-        if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
-            $this->setAttribute('maxlength', $length);
+            if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
+                $this->setAttribute('maxlength', $length);
+            }
         }
 
         return $this;
     }
     /**
      * Sets the value of the attribute 'min'.
+     * 
      * @param string $min The value to set.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setMin($min) {
@@ -348,25 +402,34 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'minlength'.
+     * 
      * @param string $length The value to set. The attribute value can be set only 
      * for text, email, search, tel and url input types.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setMinLength($length) {
-        $iType = $this->getType();
+        
+        if ($length >= 0) {
+            $iType = $this->getType();
 
-        if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
-            $this->setAttribute('minlength', $length);
+            if ($iType == 'text' || $iType == 'email' || $iType == 'search' || $iType == 'tel' || $iType == 'url') {
+                $this->setAttribute('minlength', $length);
+            }
         }
 
         return $this;
     }
     /**
      * A method that does nothing.
+     * 
      * @param string $name
+     * 
      * @return boolean The method will always return false.
+     * 
      * @since 1.0.2
      */
     public function setNodeName($name) {
@@ -374,6 +437,7 @@ class Input extends HTMLNode {
     }
     /**
      * Sets a placeholder text for the input element if it supports it.
+     * 
      * A placeholder can be set for the following input types:
      * <ul>
      * <li>text</li>
@@ -387,6 +451,7 @@ class Input extends HTMLNode {
      * @param string|null $text The value to set. The attribute can be 
      * set only if the type of the input is text or password or number. If null 
      * is given, the attribute will be unset If it was set.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
      */
@@ -412,14 +477,17 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'type'.
+     * 
      * @param string $type The type of the input element. If the 
      * given type is not in the array Input::INPUT_TYPES, The 
      * method will not update the type.
      * It can be only a value from the array Input::INPUT_TYPES. Also, if 
      * the input type is 'textarea' or 'select', this attribute will never 
      * be set using this method.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setType($type) {
@@ -437,9 +505,12 @@ class Input extends HTMLNode {
     }
     /**
      * Sets the value of the attribute 'value'
+     * 
      * @param string $text The value to set.
+     * 
      * @return Input The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setValue($text) {
