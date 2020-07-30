@@ -26,6 +26,7 @@ namespace phpStructs\html;
 
 /**
  * A class that can be used to display code snippits in good looking way.
+ * 
  * The class has a set of nodes which defines the following attributes of a 
  * code block:
  * <ul>
@@ -44,7 +45,9 @@ namespace phpStructs\html;
  * <li>code-display: An area that contains pre element which wraps a code element.</li>
  * <li>code: The container that contains the code.</li>
  * </ul>
+ * 
  * @author Ibrahim
+ * 
  * @version 1.0.3
  */
 class CodeSnippet extends HTMLNode {
@@ -93,9 +96,12 @@ class CodeSnippet extends HTMLNode {
     private $titleNode;
     /**
      * Creates new instance of the class.
+     * 
      * @param string $title The title of the snippit. This will appear at the top 
      * of the element. It can be something like 'PHP Code' or 'Java Code'.
+     * 
      * @param string $code The code that will be displayed by the snippit.
+     * 
      * @since 1.0
      */
     public function __construct($title = 'Code Snippit', $code = null) {
@@ -176,8 +182,10 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Adds new line of code to the code snippit.
+     * 
      * @param string $codeAsTxt The code line. It does not have to include "\n" 
      * character as the method will append it automatically to the string.
+     * 
      * @since 1.0.1
      */
     public function addCodeLine($codeAsTxt) {
@@ -189,7 +197,9 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Returns the node that contains the code that will be shown by the snippit.
+     * 
      * @return HTMLNode The node that contains the code that will be shown by the snippit.
+     * 
      * @since 1.0.3
      */
     public function getCodeElement() {
@@ -197,7 +207,9 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Returns the original text which represents the code.
+     * 
      * @return string The original text that represents the code.
+     * 
      * @since 1.0.2
      */
     public function getOriginalCode() {
@@ -205,8 +217,10 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Returns the original code title as supplied for the method CodeSnippit::setTitle().
+     * 
      * @return string The original code title as supplied for the method 
      * CodeSnippit::setTitle().
+     * 
      * @since 1.0.2
      */
     public function getOriginalTitle() {
@@ -214,8 +228,10 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Returns the title of the code snippit.
+     * 
      * @return string The title of the code snippit. Note that The title which 
      * will be returned by this method will have HTML special characters escaped.
+     * 
      * @since 1.0.2
      */
     public function getTitle() {
@@ -223,8 +239,10 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Sets the code that will be displayed by the snippit block.
+     * 
      * @param string $code The code. Note that to make the code appears in 
      * multi-lines, it must be included between double quotation marks.
+     * 
      * @since 1.0
      */
     public function setCode($code) {
@@ -244,10 +262,13 @@ class CodeSnippet extends HTMLNode {
     }
     /**
      * Sets the title of the snippit.
+     * 
      * This can be used to specify the language the code represents (e.g. 
-     * 'Java Code' or 'HTMLCode'. The title will appear at the top of the snippit 
+     * 'Java Code' or 'HTML Code'. The title will appear at the top of the snippit 
      * block.
+     * 
      * @param string $title The title of the snippit.
+     * 
      * @since 1.0
      */
     public function setTitle($title) {

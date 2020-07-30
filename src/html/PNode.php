@@ -42,12 +42,17 @@ class PNode extends HTMLNode {
     }
     /**
      * Adds new child node.
+     * 
      * @param HTMLNode $node The node that will be added. The paragraph element 
      * can only accept the addition of in-line HTML elements.
+     * 
      * @param boolean $useChaining Not used.
+     * 
      * @param array $attrs A set of attributes to set for the child.
+     * 
      * @return PNode The method will always return the same instance at 
      * which the method is called on.
+     * 
      * @since 1.0
      */
     public function addChild($node, $attrs = [], $useChaining = true) {
@@ -60,16 +65,10 @@ class PNode extends HTMLNode {
         return $this;
     }
     /**
-     * Adds a 'br' element to the body of the paragraph.
-     * @since 1.0
-     */
-    public function addLineBreak() {
-        $br = new Br();
-        $this->addChild($br);
-    }
-    /**
      * Appends new text to the body of the paragraph.
+     * 
      * @param string $text The text that will be added.
+     * 
      * @param array $options An array that contains a key value pairs 
      * of text options. The supported options are:
      * <ul>
@@ -88,6 +87,7 @@ class PNode extends HTMLNode {
      * <li><b>abbr-def:</b> NOT USED.</li>
      * 
      * </ul>
+     * 
      * @since 1.0
      */
     public function addText($text,$options = [
@@ -168,6 +168,7 @@ class PNode extends HTMLNode {
     }
     /**
      * Clears the text of the paragraph.
+     * 
      * @since 1.1
      */
     public function clear() {

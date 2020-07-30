@@ -41,14 +41,18 @@ class JsCode extends HTMLNode {
     }
     /**
      * A method that does nothing.
+     * 
      * @param type $node
+     * 
      * @since 1.0
      */
     public function addChild($node, $attrs = [], $useChaining = true) {
     }
     /**
      * Adds new line of JS code into the body.
+     * 
      * @param string $jsCode JavaScript code.
+     * 
      * @since 1.0
      */
     public function addCode($jsCode) {
@@ -56,11 +60,14 @@ class JsCode extends HTMLNode {
     }
     /**
      * Sets a value for an attribute.
+     * 
      * @param string $name The name of the attribute. If the attribute does not 
      * exist, it will be created. If already exists, its value will be updated. 
      * If the attribute name is 'type', nothing will happen, 
      * the attribute will never be created.
+     * 
      * @param string $val The value of the attribute. Default is empty string.
+     * 
      * @since 1.0
      */
     public function setAttribute($name,$val = '') {
@@ -70,43 +77,56 @@ class JsCode extends HTMLNode {
     }
     /**
      * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $val
      */
     public function setClassName($val,$val2 = true) {
     }
     /**
-     * * A method that does nothing.
+     * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $val
      */
     public function setName($val) {
     }
     /**
      * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $val
      */
     public function setTabIndex($val) {
     }
     /**
      * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $text
+     * 
      * @param type $esc Description
      */
     public function setText($text,$esc = true) {
     }
     /**
      * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $val
      */
     public function setTitle($val) {
     }
     /**
      * A method that does nothing.
+     * 
      * @since 1.0
+     * 
      * @param type $val
      */
     public function setWritingDir($val) {

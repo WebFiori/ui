@@ -27,32 +27,40 @@ namespace phpStructs\html;
 
 use phpStructs\LinkedList;
 /**
- * A class that represents HTML document. The created document is HTML 5 compatible (
- * DOCTYPE html). Also, the document will have the following features by default: 
+ * A class that represents HTML document. 
+ * 
+ * The created document is HTML 5 compatible (DOCTYPE html). Also, the document 
+ * will have the following features by default: 
  * <ul>
  * <li>A Head node with meta charset = 'utf-8' and view port = 'width=device-width, initial-scale=1.0'.</li>
  * <li>A body node.</li>
  * </ul>
  *
  * @author Ibrahim
+ * 
  * @version 1.4.1
  */
 class HTMLDoc {
     /**
      * A constant that represents new line character
+     * 
      * @since 1.3
      */
     const NL = "\n";
     /**
      * The body tag of the document
+     * 
      * @var HTMLNode 
+     * 
      * @since 1.0
      */
     private $body;
 
     /**
      * The whole document as HTML string.
+     * 
      * @var string
+     * 
      * @since 1.0 
      */
     private $document;
@@ -64,7 +72,9 @@ class HTMLDoc {
     private $headNode;
     /**
      * The parent HTML Node.
+     * 
      * @var HTMLNode
+     * 
      * @since 1.2 
      */
     private $htmlNode;
@@ -76,6 +86,7 @@ class HTMLDoc {
     private $nl = "\n";
     /**
      * Constructs a new HTML document.
+     * 
      * The document that will be generated will look like the following by 
      * default:
      * <pre>
@@ -102,6 +113,7 @@ class HTMLDoc {
     }
     /**
      * Returns a string of HTML code that represents the document.
+     * 
      * @return string A string of HTML code that represents the document.
      */
     public function __toString() {
@@ -109,22 +121,27 @@ class HTMLDoc {
     }
     /**
      * Appends new node to the body of the document.
+     * 
      * @param HTMLNode|string $node The node that will be added. 
      * It can be an instance of 'HTMLNode' or tag name. It will be added 
      * only if the name of the node is not 'html', 'head' or body.
      * @param array $attributes An optional array of attributes which will be set in 
      * the newly added child.
+     * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
      * to the body of the parent or child. Default value is true. It means the 
      * chaining will happen at parent level.
+     * 
      * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the 'body' HTML Node. If set to false, it will 
      * return the newly added child.
+     * 
      * @throws InvalidNodeNameException The method will throw this exception if 
      * node name is given and the name is not valid.
+     * 
      * @since 1.0
      */
     public function addChild($node, $attributes = [], $chainOnParent = true) {
@@ -138,6 +155,7 @@ class HTMLDoc {
     }
     /**
      * Returns the document as readable HTML code wrapped inside 'pre' element.
+     * 
      * @param array $formattingOptions An associative array which contains 
      * an options for formatting the code. The available options are:
      * <ul>
@@ -158,7 +176,9 @@ class HTMLDoc {
      * <li><b>lt-gt-color</b>: Less than and greater than color.</li>
      * <li><b>node-name-color</b>: Node name color.</li>
      * </ul>
+     * 
      * @return string The document as readable HTML code wrapped inside 'pre' element.
+     * 
      * @since 1.4
      */
     public function asCode($formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
@@ -166,7 +186,9 @@ class HTMLDoc {
     }
     /**
      * Returns the node that represents the body of the document.
+     * 
      * @return HTMLNode The node that represents the body.
+     * 
      * @since 1.2
      */
     public function getBody() {
@@ -174,9 +196,12 @@ class HTMLDoc {
     }
     /**
      * Returns a child node given its ID.
+     * 
      * @param string $id The ID of the child.
+     * 
      * @return null|HTMLNode The method returns an object of type HTMLNode. 
      * if found. If no node has the given ID, the method will return null.
+     * 
      * @since 1.2
      */
     public function getChildByID($id) {
@@ -185,9 +210,12 @@ class HTMLDoc {
     /**
      * Returns a linked list that contains all children which has the given tag 
      * value.
+     * 
      * @param string $val The value of the tag (such as 'div' or 'input').
+     * 
      * @return LinkedList A linked list that contains all children which has the given tag 
      * value. 
+     * 
      * @since 1.2
      */
     public function getChildrenByTag($val) {
@@ -202,8 +230,11 @@ class HTMLDoc {
     }
     /**
      * Returns the node that represents the root of the document.
+     * 
      * The root node of the document is the node which has the name 'html'.
+     * 
      * @return HTMLNode an object of type HTMLNode.
+     * 
      * @since 1.4.1
      */
     public function getDocumentRoot() {
@@ -211,7 +242,9 @@ class HTMLDoc {
     }
     /**
      * Returns the node that represents the 'head' node.
+     * 
      * @return HeadNode The node that represents the 'head' node.
+     * 
      * @since 1.2
      */
     public function getHeadNode() {
@@ -219,8 +252,10 @@ class HTMLDoc {
     }
     /**
      * Returns the language of the document.
+     * 
      * @return string A two characters language code. If the language is 
      * not set, the method will return empty string.
+     * 
      * @since 1.0
      */
     public function getLanguage() {
@@ -232,10 +267,13 @@ class HTMLDoc {
     }
     /**
      * Removes a child node from the document.
+     * 
      * @param HTMLNode $node The node that will be removed. If the given 
      * node name is 'body' or 'head', The node will never be removed.
+     * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
+     * 
      * @since 1.4
      */
     public function removeChild($node) {
@@ -247,14 +285,19 @@ class HTMLDoc {
     }
     /**
      * Saves the document to .html file.
+     * 
      * @param string $path The location where the content will be written to 
      * (e.g. 'C:\user\html\pages'). 
      * must be non empty string.
+     * 
      * @param string $fileName The name of the file (such as 'index'). Must be non empty string.
+     * 
      * @param boolean $wellFormatted If set to true, The generated file will be 
      * well formatted (readable by humans).
+     * 
      * @return boolean The method will return true if the file is successfully created. 
      * False if not. Default is true.
+     * 
      * @since 1.0
      */
     public function saveToHTMLFile($path,$fileName,$wellFormatted = true) {
@@ -276,9 +319,12 @@ class HTMLDoc {
     }
     /**
      * Updates the head node that is used by the document.
+     * 
      * @param HeadNode $node The node to set.
+     * 
      * @return boolean If head node is set, the method will return true. 
      * if it is not set, the method will return false.
+     * 
      * @since 1.0
      */
     public function setHeadNode($node) {
@@ -292,12 +338,15 @@ class HTMLDoc {
     }
     /**
      * Sets the language of the document.
+     * 
      * @param string|null $lang A two characters language code. If the given string is 
      * empty or its length does not equal to 2, language won't be set. If null 
      * is given, then the attribute will be removed if it was set.
+     * 
      * @return boolean If the attribute 'lang' of the document is set, or 
      * removed, the method will return true. Note that the method will always 
      * return true if null is given. Other than that, it will return false.
+     * 
      * @since 1.0
      */
     public function setLanguage($lang) {
@@ -318,11 +367,14 @@ class HTMLDoc {
     }
     /**
      * Returns HTML string that represents the document.
+     * 
      * @param boolean $formatted If set to true, The generated HTML code will be 
      * well formatted. Default is true. Note that this attribute will take 
      * effect only if the formatting option is not set using the method 
      * HTMLNode::setIsFormatted().
+     * 
      * @return string HTML string that represents the document.
+     * 
      * @since 1.0
      */
     public function toHTML($formatted = true) {

@@ -1113,8 +1113,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the last added child.
+     * 
      * @return HTMLNode The child will be returned as an object of type 'HTMLNode'. 
      * If the node has no children, the method will return null.
+     * 
      * @since 1.8.2
      */
     public function getLastChild() {
@@ -1126,8 +1128,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the attribute 'name' of the element.
+     * 
      * @return string|null If the attribute 'name' is set, the method will return 
      * its value. If not set, the method will return null.
+     * 
      * @since 1.7.9
      */
     public function getName() {
@@ -1135,9 +1139,11 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the name of the node.
+     * 
      * @return string The name of the node. If the node is a text node, the 
      * method will return the value '#TEXT'. If the node is a comment node, the 
      * method will return the value '#COMMENT'.
+     * 
      * @since 1.0
      */
     public function getNodeName() {
@@ -1145,7 +1151,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the original text which was set in the body of the node.
+     * 
      * This only applies to text nodes and comment nodes.
+     * 
      * @return string The original text without any modifications.
      */
     public function getOriginalText() {
@@ -1153,8 +1161,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the parent node.
+     * 
      * @return HTMLNode|null An object of type HTMLNode if the node 
      * has a parent. If the node has no parent, the method will return null.
+     * 
      * @since 1.2
      */
     public function getParent() {
@@ -1162,10 +1172,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns an array that contains in-line CSS declarations.
+     * 
      * If the attribute is not set, the array will be empty.
+     * 
      * @return array An associative array of CSS declarations. The keys of the array will 
      * be the names of CSS Properties and the values will be the values of 
      * the attributes (e.g. 'color'=>'white').
+     * 
      * @since 1.0
      */
     public function getStyle() {
@@ -1198,11 +1211,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the text that this node represents.
+     * 
      * @return string If the node is a text node or a comment node, 
      * the method will return the text in the body of the node. If not, 
      * the method will return empty string. Note that if the node represents 
      * a text node and HTML entities where escaped while setting its text, the 
      * returned value will have HTML entities escaped.
+     * 
      * @since 1.0
      */
     public function getText() {
@@ -1214,10 +1229,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the text that this node represents.
+     * 
      * The method will return a string which has HTML entities unescaped.
+     * 
      * @return string If the node is a text node, 
      * the method will return the text in the body of the node. If not, 
      * the method will return empty string.
+     * 
      * @since 1.7.5
      */
     public function getTextUnescaped() {
@@ -1243,8 +1261,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the attribute 'title' of the element.
+     * 
      * @return string|null If the attribute 'title' is set, the method will return 
      * its value. If not set, the method will return null.
+     * 
      * @since 1.7.9
      */
     public function getTitle() {
@@ -1252,8 +1272,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the attribute 'dir' of the element.
+     * 
      * @return string|null If the attribute 'dir' is set, the method will return 
      * its value. If not set, the method will return null.
+     * 
      * @since 1.7.9
      */
     public function getWritingDir() {
@@ -1261,11 +1283,15 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Checks if the node has a given attribute or not.
+     * 
      * Note that if the node is a text node or a comment node, it will 
      * always return false.
+     * 
      * @param string $attrName The name of the attribute. It can be in upper case 
      * or lower case.
+     * 
      * @return boolean true if the attribute is set.
+     * 
      * @since 1.1
      */
     public function hasAttribute($attrName) {
@@ -1279,10 +1305,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Checks if a given node is a direct child of the instance.
+     * 
      * @param HTMLNode $node The node that will be checked.
+     * 
      * @return boolean true is returned if the node is a child 
      * of the instance. false if not. Also if the current instance is a 
      * text node or a comment node, the function will always return false.
+     * 
      * @since 1.2
      */
     public function hasChild($node) {
@@ -1307,9 +1336,12 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Converts a string of HTML code to an array that looks like a tree of 
      * HTML elements.
+     * 
      * This method parses text based on the specifications which are found in 
      * https://html.spec.whatwg.org/multipage/syntax.html#start-tags
+     * 
      * @param string $text HTML code.
+     * 
      * @return array An indexed array. Each index will contain parsed element 
      * information. For example, if the given code is as follows:<br/>
      * <pre>
@@ -1353,6 +1385,7 @@ class HTMLNode implements Countable, Iterator {
      * &nbsp;&nbsp;)
      * )
      * </pre>
+     * 
      * @since 1.7.4
      */
     public static function htmlAsArray($text) {
@@ -1472,11 +1505,15 @@ class HTMLNode implements Countable, Iterator {
         return [];
     }
     /**
+     * 
      * Adds an image element (&lt;img&gt;) to the body of the node.
+     * 
      * @param array $attributes An optional array of attributes that will be set in 
      * the image element.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function img($attributes = []) {
@@ -1488,15 +1525,20 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Adds new input (&lt;input&gt;, &lt;select&gt; or &lt;textarea&gt;) 
      * element as a child to the body of the node.
+     * 
      * The method will create an object of type 'Input' and add it as a child.
+     * 
      * @param string $inputType The type of the input element. The values of 
      * this parameter must be taken from the array Input::INPUT_TYPES. Default 
      * value is 'text'.
+     * 
      * @param type $attributes An optional array that contains attributes to 
      * set for the input. If the array contains the attribute 'type', it will 
      * be ignored.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function input($inputType = 'text', $attributes = []) {
@@ -1511,6 +1553,7 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Insert new HTML element at specific position.
+     * 
      * @param HTMLNode $el The new element that will be inserted. It is possible 
      * to insert child elements to the element if the following conditions are 
      * met:
@@ -1520,10 +1563,13 @@ class HTMLNode implements Countable, Iterator {
      * <li>The note is not a void node.</li>
      * <li>The note is not it self. (making a node as a child of it self)</li>
      * </ul>
+     * 
      * @param int $position The position at which the element will be added. 
      * it must be a value between 0 and <code>HTMLNode::childrenCount()</code> inclusive.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.7.9
      */
     public function insert($el,$position) {
@@ -1539,8 +1585,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Checks if the given node represents a comment or not.
+     * 
      * @return boolean The method will return true if the given 
      * node is a comment.
+     * 
      * @since 1.5
      */
     public function isComment() {
@@ -1548,12 +1596,15 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the property $isFormatted.
+     * 
      * The property is used to control how the HTML code that will be generated 
      * will look like. If set to true, the code will be user-readable. If set to 
      * false, it will be compact and the load size will be come less since no 
      * new line characters or spaces will be added in the code.
+     * 
      * @return boolean|null If the property is set, the method will return 
      * its value. If not set, the method will return null.
+     * 
      * @since 1.7.2
      */
     public function isFormatted() {
@@ -1561,7 +1612,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Checks if the node is a text node or not.
+     * 
      * @return boolean true if the node is a text node. false otherwise.
+     * 
      * @since 1.0
      */
     public function isTextNode() {
@@ -1569,14 +1622,17 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the value of the property $useOriginalTxt.
+     * 
      * The property is used when parsing text nodes. If it is set to true, 
      * the text that will be in the body of the node will be the exact text 
      * which was set using the method HTMLNode::setText() (The value which will be 
      * returned by the method HTMLNode::getOriginalText()). If it is set to 
      * false, then the text which is in the body of the node will be the 
      * value which is returned by the method HTMLNode::getText().
+     * 
      * @return boolean True if original text will be used in the body of the 
      * text node. False if not. Default is false.
+     * 
      * @since 1.7.6
      */
     public function isUseOriginalText() {
@@ -1584,7 +1640,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Checks if the given node is a void node.
+     * 
      * A void node is a node which cannot have child nodes in its body.
+     * 
      * @return boolean If the node is a void node, the method will return true. 
      * False if not. Note that text nodes and comment nodes are considered as void tags.
      */
@@ -1593,11 +1651,14 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the current node in the iterator.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return HTMLNode An object of type 'HTMLNode' or null if the node 
      * has no children is empty or the iterator is finished.
+     * 
      * @since 1.4.3 
      */
     public function key() {
@@ -1605,14 +1666,19 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds new label (&lt;label&gt;) element to the body of the node.
+     * 
      * The method will create an object of type 'Label' and add it as a 
      * child to the body.
+     * 
      * @param string|array $body The body of the label. It can be a simple 
      * text or it can be an object of type 'HTMLNode'.
+     * 
      * @param array $attributes An optional array that contains attributes to 
      * set for the label.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function label($body, $attributes = []) {
@@ -1623,14 +1689,19 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a list item element (&lt;li&gt;) to the body of the node.
+     * 
      * The method will add the node as an object of type 'ListItem'.
      * Note that it will be added only if the node is of type 'ul' or 'li'.
+     * 
      * @param HTMLNode|string $itemBody The body of the list item. It can be a simple 
      * text or an object of type 'HTMLNode'.
+     * 
      * @param array $attributes An optional array of attributes that will be set in 
      * the list item element.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function li($itemBody, $attributes = []) {
@@ -1650,11 +1721,14 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns the next element in the iterator.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return HTMLNode The next element in the iterator. If the iterator is 
      * finished or the list is empty, the method will return null.
+     * 
      * @since 1.4.3 
      */
     public function next() {
@@ -1662,17 +1736,22 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a list (&lt;ol&gt;) to the body of the node. 
+     * 
      * The method will create an object of type 'UnorderedList' and add it as 
      * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
      * added.
+     * 
      * @param array $items An array that contains list items. They can be a simple text, 
      * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
      * list item is a text, the item will be added without placing HTML entities in 
      * the text if the text has HTMLCode.
+     * 
      * @param array $attributes An optional array of attributes to set for the 
      * list.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function ol($items = [], $attributes = []) {
@@ -1687,8 +1766,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns a string that represents the opening part of the node.
+     * 
      * @return string A string that represents the opening part of the node. 
      * if the node is a text node or a comment node, the returned value will be an empty string.
+     * 
      * @since 1.0
      */
     public function open() {
@@ -1742,8 +1823,11 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Removes all child nodes.
+     * 
      * @return HTMLNode The method will return the instance that this 
+     * 
      * method is called on.
+     * 
      * @since 1.0
      */
     public function removeAllChildNodes() {
@@ -1755,9 +1839,12 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Removes an attribute from the node given its name.
+     * 
      * @param string $name The name of the attribute.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.0
      */
     public function removeAttribute($name) {
@@ -1773,8 +1860,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Removes all attributes from the node.
+     * 
      * This method will simply re-initialize the array that holds all 
      * the attributes.
+     * 
      * @since 1.8.4
      */
     public function removeAttributes() {
@@ -1782,9 +1871,12 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Removes a direct child node.
+     * 
      * @param HTMLNode $node The node that will be removed.
+     * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
+     * 
      * @since 1.2
      */
     public function removeChild($node) {
@@ -1800,9 +1892,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Replace a direct child node with a new one.
+     * 
      * @param HTMLNode $oldNode The old node. It must be a child of the instance.
+     * 
      * @param HTMLNode $replacement The replacement node.
+     * 
      * @return boolean true is returned if the node replaced. false if not.
+     * 
      * @since 1.2
      */
     public function replaceChild($oldNode,$replacement) {
@@ -1815,9 +1911,11 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Return iterator pointer to the first element in the list.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @since 1.4.3 
      */
     public function rewind() {
@@ -1825,18 +1923,24 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a section (&lt;section&gt;) as a child element.
+     * 
      * This method will create a section element with a heading element in its 
      * body.
      * Note that if the title of the contains HTML entities, they will be not escaped 
      * and will be treated as HTML code.
+     * 
      * @param string|HTMLNode $title The title that will be set in the heading tag. 
      * This also can be an object of type 'HTMLNode'.
+     * 
      * @param int $headingLvl Heading level. It can be a value between 1 
      * and 6 inclusive. Default value is 1.
+     * 
      * @param array $attributes An optional array of attributes that will be set in 
      * the section element.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function section($title, $headingLvl = 1, $attributes = []) {
@@ -1856,14 +1960,18 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets a value for an attribute.
+     * 
      * @param string $name The name of the attribute. If the attribute does not 
      * exist, it will be created. If already exists, its value will be updated. 
      * Note that if the node type is text node, the attribute will never be created.
+     * 
      * @param string|null $val The value of the attribute. Default is null. Note 
      * that if the value has any extra spaces, they will be trimmed. Also, if 
      * the given value is null, the attribute will be set with no value.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.0
      */
     public function setAttribute($name,$val = null) {
@@ -1898,13 +2006,16 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets multiple attributes at once.
+     * 
      * @param array $attrsArr An associative array that has attributes names 
      * and values. The indices will represents 
      * attributes names and the value of each index represents the values of 
      * the attributes. If the given array has elements without keys, they 
      * will be added without values.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.7.9
      */
     public function setAttributes($attrsArr) {
@@ -1922,13 +2033,17 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'class' of the node.
+     * 
      * @param string $val The name of the class.
+     * 
      * @param boolean $override If this parameter is set to false and the node 
      * has a class already set, the given class name will be appended to the 
      * existing one. Default is true which means the attribute will be set as 
      * new.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setClassName($val,$override = true) {
@@ -1942,9 +2057,12 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'id' of the node.
+     * 
      * @param string $idVal The value to set.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setID($idVal) {
@@ -1952,8 +2070,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the property $isFormatted.
+     * 
      * @param boolean $bool true to make the document that will be generated 
      * from the node user-readable. false to make it compact.
+     * 
      * @since 1.7.2
      */
     public function setIsFormatted($bool) {
@@ -1961,11 +2081,14 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Make the node a void node or not.
+     * 
      * A void node is a node which does not require closing tag. The developer 
      * does not have to set the node type to void or not since this is done 
      * automatically. For custom made elements, this might be required.
+     * 
      * @param boolean $bool If the developer would like to make the 
      * node a void node, then he must pass true.
+     * 
      * @since 1.8.4
      */
     public function setIsVoidNode($bool) {
@@ -1973,9 +2096,12 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'name' of the node.
+     * 
      * @param string $val The value to set.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setName($val) {
@@ -1983,13 +2109,17 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Updates the name of the node.
+     * 
      * If the node type is a text or a comment, 
      * developer can only switch between the two types. If the node type is of 
      * another type and has child nodes, type will be changed only if the given 
      * node name is not a void node. If the node is a void node and it has no 
      * children, it will switch without problems.
+     * 
      * @param string $name The new name.
+     * 
      * @return boolean The method will return true if the type is updated.
+     * 
      * @since 1.7
      */
     public function setNodeName($name) {
@@ -2028,11 +2158,14 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'style' of the node.
+     * 
      * @param array $cssStyles An associative array of CSS declarations. The keys of the array should 
      * be the names of CSS Properties and the values should be the values of 
      * the attributes (e.g. 'color'=>'white').
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.7.1
      */
     public function setStyle($cssStyles) {
@@ -2057,6 +2190,7 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'tabindex' of the node.
+     * 
      * @param int $val The value to set. From MDN: An integer attribute indicating if 
      * the element can take input focus. It can takes several values: 
      * <ul>
@@ -2070,8 +2204,10 @@ class HTMLNode implements Countable, Iterator {
      * tabindex. If several elements share the same tabindex, their relative 
      * order follows their relative positions in the document.</li>
      * </ul>
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setTabIndex($val) {
@@ -2079,16 +2215,21 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the property $text.
+     * 
      * Note that if the type of the node is comment, the method will replace 
      * '&lt;!--' and '--&gt;' with ' --' and '-- ' if it was found in the given text.
+     * 
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
+     * 
      * @param boolean $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true. Ignored in case the node type is comment.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.0
      */
     public function setText($text,$escHtmlEntities = true) {
@@ -2115,12 +2256,15 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'title' of the node.
+     * 
      * @param string $val The value to set. From MDN: Contains a 
      * text representing advisory information related to the element 
      * it belongs to. Such information can typically, but not necessarily, 
      * be presented to the user as a tooltip.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setTitle($val) {
@@ -2128,13 +2272,16 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the property $useOriginalTxt.
+     * 
      * The property is used when parsing text nodes. If it is set to true, 
      * the text that will be in the body of the node will be the exact text 
      * which was set using the method HTMLNode::setText() (The value which will be 
      * returned by the method HTMLNode::getOriginalText()). If it is set to 
      * false, then the text which is in the body of the node will be the 
      * value which is returned by the method HTMLNode::getText().
+     * 
      * @param boolean $boolean True or false.
+     * 
      * @since 1.7.6
      */
     public function setUseOriginal($boolean) {
@@ -2144,9 +2291,12 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Sets the value of the attribute 'dir' of the node.
+     * 
      * @param string $val The value to set. It can be 'ltr' or 'rtl'.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.2
      */
     public function setWritingDir($val) {
@@ -2160,10 +2310,13 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a table node (&lt;table&gt;) to the body of the node.
+     * 
      * @param array $attributes An optional array of attributes to set 
      * on the child.
+     * 
      * @return HTMLNode The method will return the instance at which 
      * the method is called on.
+     * 
      * @since 1.8.3
      */
     public function table($attributes) {
@@ -2172,15 +2325,20 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a text node as a child.
+     * 
      * The text node will be added to the body of the node only 
      * if it is not a void node.
+     * 
      * @param string $txt The text that will be in the node.
+     * 
      * @param boolean $escEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function text($txt, $escEntities = true) {
@@ -2188,12 +2346,16 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Returns HTML string that represents the node as a whole.
+     * 
      * @param boolean $formatted Set to true to return a well formatted 
      * HTML document (has new lines and indentations). Note that the size of 
      * generated node will increase if this one is set to true. Default is false.
+     * 
      * @param int $initTab Initial tab count (indentation). Used in case of the document is 
      * well formatted. This number represents the size of code indentation.
+     * 
      * @return string HTML string that represents the node.
+     * 
      * @since 1.0
      */
     public function toHTML($formatted = false,$initTab = 0) {
@@ -2226,12 +2388,16 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Adds a row (&lt;tr&gt;) to the body of the node.
+     * 
      * The method will create the row as an object of type 'TableRow'.
      * Note that the row will be added only if the node name is 'tbody' or 'table'.
+     * 
      * @param array $attributes An optional array of attributes to set for the 
      * row.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
+     * 
      * @since 1.8.3
      */
     public function tr($attributes = []) {

@@ -34,6 +34,7 @@ use phpStructs\LinkedList;
 class HeadNode extends HTMLNode {
     /**
      * An array that contains the names of allowed child tags.
+     * 
      * The array has the following values:
      * <ul>
      * <li>base</li>
@@ -45,6 +46,7 @@ class HeadNode extends HTMLNode {
      * <li>#COMMENT</li>
      * <li>style</li>
      * </ul>
+     * 
      * @since 1.1.4
      */
     const ALLOWED_CHILDREN = [
@@ -53,42 +55,55 @@ class HeadNode extends HTMLNode {
     ];
     /**
      * A node that represents the tag 'base'.
+     * 
      * @var HTMLNode
+     * 
      * @since 1.0 
      */
     private $baseNode;
     /**
      * The canonical URL of the page.
+     * 
      * @var HTMLNode
+     * 
      * @since 1.0 
      */
     private $canonical;
     /**
      * A meta note that contains the attribute 'charset' of the document.
+     * 
      * @var HTMLNode
+     * 
      * @since 1.1.4 
      */
     private $metaCharset;
     /**
      * The text node that will hold the title of the page.
+     * 
      * @var HTMLNode
+     * 
      * @since 1.0 
      */
     private $titleNode;
     /**
      * Creates new HTML node that represents head tag of HTML document.
+     * 
      * Note that by default, the node will have the following nodes in 
      * its body:
      * <ul>
      * <li>A meta tag with "name"="viewport" and "content"="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"</li>
      * <li>A title tag.</li>
      * </ul>
+     * 
      * @param string $title The value to set for the node 'title'. Default 
      * is 'Default'. 
+     * 
      * @param string $canonical The value to set for the link node 
      * with attribute = 'canonical'. Default is empty string.
+     * 
      * @param string $base The value to set for the node 'base'. Default 
      * is empty string.
+     * 
      * @since 1.0
      */
     public function __construct($title = 'Default',$canonical = '',$base = '') {
@@ -110,14 +125,19 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Adds new alternate tag to the header.
+     * 
      * @param string $url The link to the alternate page. Must be non-empty string.
+     * 
      * @param string $lang The language of the page. Must be non-empty string.
+     * 
      * @param array $otherAttrs An associative array of additional attributes 
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. Default is empty array.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function addAlternate($url,$lang,$otherAttrs = []) {
@@ -155,6 +175,7 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Adds new child node.
+     * 
      * @param HTMLNode $node The node that will be added. The node will be added 
      * only if the following conditions are met:
      * <ul>
@@ -165,11 +186,14 @@ class HeadNode extends HTMLNode {
      * <li>It is a '#COMMENT' node.</li>
      * </ul>
      * Other than that, the node will be not added.
+     * 
      * @param array $attrs Not used.
+     * 
      * @param boolean $chainOnParent Not used.
      * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function addChild($node, $attrs = [], $chainOnParent = true) {
@@ -207,17 +231,21 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Adds new CSS source file.
+     * 
      * @param string $href The link to the file. Must be non empty string. It is 
      * possible to append query string to the end of the link.
+     * 
      * @param $otherAttrs An associative array of additional attributes 
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. Default is empty array.
+     * 
      * @param boolean $preventCaching If set to true, a string in the form '?cv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to prevent caching. 
      * Default is true. 'cv' = CSS Version.
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function addCSS($href, $otherAttrs = [], $preventCaching = true) {
@@ -260,18 +288,23 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Adds new JavsScript source file.
+     * 
      * @param string $loc The location of the file. Must be non-empty string. It 
      * can have query string at the end.
+     * 
      * @param $otherAttrs An associative array of additional attributes 
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. Default is empty array.
+     * 
      * @param boolean $preventCaching If set to true, a string in the form '?jv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to prevent caching. 
      * 'jv' = JavaScript Version.
      * Default is true.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function addJs($loc, $otherAttrs = [],$preventCaching = true) {
@@ -319,13 +352,18 @@ class HeadNode extends HTMLNode {
      * Adds new 'link' node.
      * Note that if the 'rel' attribute value is 'canonical' or 'alternate', no node will be 
      * created.
+     * 
      * @param string $rel The value of the attribute 'rel'.
+     * 
      * @param string $href The value of the attribute 'href'.
+     * 
      * @param array $otherAttrs An associative array of keys and values. 
      * The keys will be used as an attribute and the key value will be used 
      * as attribute value.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.1
      */
     public function addLink($rel,$href,$otherAttrs = []) {
@@ -367,14 +405,19 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Adds new meta tag.
+     * 
      * @param string $name The value of the property 'name'. Must be non empty 
      * string.
+     * 
      * @param string $content The value of the property 'content'.
+     * 
      * @param boolean $override A boolean attribute. If a meta node was found 
      * which has the given name and this attribute is set to true, 
      * the content of the meta will be overridden by the passed value. 
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function addMeta($name,$content,$override = false) {
@@ -414,7 +457,9 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns a linked list of all alternate nodes that was added to the header.
+     * 
      * @return LinkedList
+     * 
      * @since 1.0
      */
     public function getAlternates() {
@@ -436,7 +481,9 @@ class HeadNode extends HTMLNode {
     /**
      * Returns a node that represents the tag 'base'.
      * Note that the base note has a fixed position in the head node which is 0.
+     * 
      * @return HTMLNode A node that represents the tag 'base'.
+     * 
      * @since 1.0
      */
     public function getBaseNode() {
@@ -444,8 +491,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns the value of the attribute 'href' of the node 'base'.
+     * 
      * @return string|null The value of the attribute 'href' of the node 'base'. 
      * if the value of the base URL is not set, the method will return null.
+     * 
      * @since 1.1.3
      */
     public function getBaseURL() {
@@ -453,8 +502,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns the canonical URL if set.
+     * 
      * @return string|null The canonical URL if set. If the URL is not set, 
      * the method will return null.
+     * 
      * @since 1.0
      */
     public function getCanonical() {
@@ -462,8 +513,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns an object of type HTMLNode that represents the canonical URL.
+     * 
      * @return HTMLNode|null If the canonical URL is set, the method will return 
      * an object of type HTMLNode. If not set, the method will return null.
+     * 
      * @since 1.1.3
      */
     public function getCanonicalNode() {
@@ -472,8 +525,10 @@ class HeadNode extends HTMLNode {
     /**
      * Returns the value of the attribute 'charset' of the meta tag that is used 
      * to specify character set of the document.
+     * 
      * @return string|null A string such as 'UTF-8'. If character set is not 
      * set, the method will return null.
+     * 
      * @since 1.1.4
      */
     public function getCharSet() {
@@ -482,9 +537,12 @@ class HeadNode extends HTMLNode {
     /**
      * Returns an object of type HTMLNode that represents the meta tag which 
      * has the attribute 'charset'.
+     * 
      * Note that the node that represents charset of the will always have a 
      * position between 0 and 2 in the body of the head node.
+     * 
      * @return HTMLNode An object of type HTMLNode.
+     * 
      * @since 1.1.4
      */
     public function getCharsetNode() {
@@ -492,8 +550,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns a linked list of all link tags that link to a CSS file.
+     * 
      * @return LinkedList A linked list of all link tags that link to a CSS file. If 
      * the node has no CSS link tags, the method will return an empty list.
+     * 
      * @since 1.0
      */
     public function getCSSNodes() {
@@ -514,8 +574,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns a linked list of all script tags that link to a JS file.
+     * 
      * @return LinkedList A linked list of all script tags with type = "text/javascript". 
      * If the node has no such nodes, the list will be empty.
+     * 
      * @since 1.0
      */
     public function getJSNodes() {
@@ -536,8 +598,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns a linked list of all link tags which has the name 'link'.
+     * 
      * @return LinkedList A linked list of all link tags which has the name 'link'.
      * the node has no link tags, the method will return an empty list.
+     * 
      * @since 1.1.6
      */
     public function getLinkNodes() {
@@ -545,12 +609,15 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns HTML node that represents a meta tag.
+     * 
      * @param string $name The value of the attribute 'name' of the meta 
      * tag. Note that if the meta node that you would like to get is 
      * the tag which has the attribute 'charset', then the passed attribute 
      * must have the value 'charset'.
+     * 
      * @return HTMLNode|null If a meta tag which has the given name was found, 
      * It will be returned. If no meta node was found, null is returned.
+     * 
      * @since 1.1.2
      */
     public function getMeta($name) {
@@ -572,8 +639,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns a linked list of all meta tags.
+     * 
      * @return LinkedList A linked list of all meta tags. If the node 
      * has no meta nodes, the list will be empty.
+     * 
      * @since 1.0
      */
     public function getMetaNodes() {
@@ -594,8 +663,10 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Returns the text that was set for the note 'title'.
+     * 
      * @return string The text that was set for the note 'title'. If it was not 
      * set, the method will return empty string.
+     * 
      * @since 1.1.3
      */
     public function getTitle() {
@@ -605,8 +676,10 @@ class HeadNode extends HTMLNode {
      * Returns an object of type HTMLNode that represents the title node.
      * Note that the title node will be always in position 0 or 1 in the 
      * body of the head node.
+     * 
      * @return HTMLNode The method will return 
      * an object of type HTMLNode that represents title node.
+     * 
      * @since 1.1.3
      */
     public function getTitleNode() {
@@ -614,14 +687,18 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Checks if a CSS node with specific 'href' does exist or not.
+     * 
      * Note that the method will not check for query string in the passed 
      * value. It will simply ignore it.
+     * 
      * @param string $loc The value of the attribute 'href' of 
      * the CSS node.
+     * 
      * @return boolean If a link node with the given 'href' value does 
      * exist, the method will return true. Other than that, the method 
      * will return false.
-     * 1.1.5
+     * 
+     * @since 1.1.5
      */
     public function hasCss($loc) {
         $trimmedLoc = trim($loc);
@@ -647,14 +724,18 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Checks if a JavaScript node with specific 'src' value does exist or not.
+     * 
      * Note that the method will not check for query string in the passed 
      * value. It will simply ignore it.
+     * 
      * @param string $src The value of the attribute 'src' of 
      * the script node.
+     * 
      * @return boolean If a JavaScript node with the given 'src' value does 
      * exist, the method will return true. Other than that, the method 
      * will return false.
-     * 1.1.5
+     * 
+     * @since 1.1.5
      */
     public function hasJs($src) {
         $trimmedLoc = trim($src);
@@ -679,11 +760,14 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Checks if a meta tag which has the given name exist or not.
+     * 
      * @param string $name The value of the attribute 'name' of the meta 
      * tag. If the developer would like to check for the existence of the 
      * node which has the attribute 'charset', he can pass the value 'charset'.
+     * 
      * @return boolean If a meta tag which has the given name was found, 
      * true is returned. false otherwise.
+     * 
      * @since 1.1.2
      */
     public function hasMeta($name) {
@@ -706,11 +790,14 @@ class HeadNode extends HTMLNode {
 
     /**
      * Sets the value of the attribute 'href' for the 'base' tag.
+     * 
      * @param string|null $url The value to set. The base URL will be updated 
      * only if the given parameter is a string and it is not empty. If null is 
      * given, the node will be removed from the body of the head tag.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setBase($url) {
@@ -737,14 +824,18 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Sets the canonical URL.
+     * 
      * Note that the canonical URL will be set only if the given string is not 
      * empty. Also, the node will always have a 
      * position between 0 and 3 in the body of the head node.
+     * 
      * @param string|null $link The URL to set. If null is given, the link node 
      * which represents the canonical URL will be removed from the body of the 
      * head tag.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setCanonical($link) {
@@ -785,11 +876,14 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Set the value of the meta tag which has the attribute 'charset'.
+     * 
      * @param string|null $charset The character set that will be used to 
      * render the document (such as 'UTF-8' or 'ISO-8859-8'. If null is 
      * given, the node will be removed from the head body. 
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.1.4
      */
     public function setCharSet($charset) {
@@ -821,11 +915,14 @@ class HeadNode extends HTMLNode {
     }
     /**
      * Sets the text value of the node 'title'.
+     * 
      * @param string|null $title The title to set. It must be non-empty string in 
      * order to set. If null is given, 'title' node will be omitted from the 
      * body of the 'head' tag.
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.0
      */
     public function setTitle($title) {

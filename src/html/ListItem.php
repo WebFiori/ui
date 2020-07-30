@@ -28,27 +28,38 @@ namespace phpStructs\html;
  * A class that represents List Item node.
  *
  * @author Ibrahim
+ * 
  * @version 1.1.1
  */
 class ListItem extends HTMLNode {
     /**
      * Constructs new list item
+     * 
+     * @param string|HTMLNode $listItemBody An optional body for the list item. 
+     * It can be a string or an instance of the class HTMLNode. Default is null.
+     * 
      * @since 1.0
      */
-    public function __construct() {
+    public function __construct($listItemBody = null) {
         parent::__construct('li');
+        $this->addChild($listItemBody);
     }
     /**
      * Adds a sub list to the body of the list item.
+     * 
      * @param array $listItems An array that holds all list items which 
      * will be in the body of the list. It can contain text items or it can have 
      * objects of type 'ListItem'.
+     * 
      * @param string $type The type of the sub list. It can be 'ul' or 'ol'. 
      * Default is 'ul'.
+     * 
      * @param array $attrs An optional associative array of attributes which 
      * will be set for the list.
+     * 
      * @return ListItem The method will return the instance at which the method 
      * is called on.
+     * 
      * @since 1.1.1
      */
     public function addList($listItems,$type = 'ul',$attrs = []) {
