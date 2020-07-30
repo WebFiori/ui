@@ -121,6 +121,122 @@ class InputTest extends TestCase {
                 .'</select>',$input->toHTML());
     }
     /**
+     * @test
+     */
+    public function addChildTest00() {
+        $input = new Input('select');
+        $input->addChild('Hello');
+        $this->assertEquals(1, $input->childrenCount());
+        $o = $input->getChild(0);
+        $this->assertEquals('option', $o->getNodeName());
+        $this->assertEquals('Hello', $o->getAttribute('value'));
+        $this->assertEquals('Hello', $o->getChild(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function addChildTest01() {
+        $input = new Input('select');
+        $input->addChild('Hello', [
+            'value' => '0X',
+            'class' => 'select-option'
+        ]);
+        $this->assertEquals(1, $input->childrenCount());
+        $o = $input->getChild(0);
+        $this->assertEquals('option', $o->getNodeName());
+        $this->assertEquals('0X', $o->getAttribute('value'));
+        $this->assertEquals('select-option', $o->getClassName());
+        $this->assertEquals('Hello', $o->getChild(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function addChildTest02() {
+        $input = new Input('select');
+        $option = new \phpStructs\html\HTMLNode('option');
+        $option->setAttribute('value','hello');
+        $option->text('Hello');
+        $option->text('World');
+        $input->addChild($option);
+        $this->assertEquals(1, $input->childrenCount());
+        $o = $input->getChild(0);
+        $this->assertEquals('option', $o->getNodeName());
+        $this->assertEquals('hello', $o->getAttribute('value'));
+        $this->assertEquals('HelloWorld', $o->getChild(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function addChildTest03() {
+        $input = new Input('select');
+        $optionsGroup = new \phpStructs\html\HTMLNode('optgroup');
+        $input->addChild($optionsGroup);
+        $this->assertEquals(1, $input->childrenCount());
+        $o = $input->getChild(0);
+        $this->assertEquals('optgroup', $o->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild04() {
+        $input = new Input('textarea');
+        $this->assertEquals(0, $input->childrenCount());
+        $input->addChild('Hello World!');
+        $this->assertEquals(1, $input->childrenCount());
+        $node = $input->getLastChild();
+        $this->assertEquals('#TEXT', $node->getNodeName());
+        $this->assertEquals('Hello World!', $node->getText());
+        $input->addChild($node);
+        $this->assertEquals('Hello World!Hello World!', $node->getText());
+    }
+    /**
+     * 
+     * @test
+     */
+    public function testSetInputMode00() {
+        $input = new \phpStructs\html\Input();
+        $input->setInputMode('decimal');
+        $this->assertEquals('decimal', $input->getAttribute('inputmode'));
+        $input->setInputMode('xyz');
+        $this->assertEquals('decimal', $input->getAttribute('inputmode'));
+    }
+    /**
+     * @test
+     */
+    public function testSetMax() {
+        $input = new \phpStructs\html\Input('number');
+        $input->setMax(44);
+        $this->assertEquals(44, $input->getAttribute('max'));
+    }
+    /**
+     * @test
+     */
+    public function testSetMin() {
+        $input = new \phpStructs\html\Input('number');
+        $input->setMin(44);
+        $this->assertEquals(44, $input->getAttribute('min'));
+    }
+    /**
+     * @test
+     */
+    public function testSetMaxLength() {
+        $input = new \phpStructs\html\Input();
+        $input->setMaxLength(44);
+        $this->assertEquals(44, $input->getAttribute('maxlength'));
+        $input->setMaxLength(-3);
+        $this->assertEquals(44, $input->getAttribute('maxlength'));
+    }
+    /**
+     * @test
+     */
+    public function testSetMinLength() {
+        $input = new \phpStructs\html\Input();
+        $input->setMinLength(44);
+        $this->assertEquals(44, $input->getAttribute('minlength'));
+        $input->setMinLength(-3);
+        $this->assertEquals(44, $input->getAttribute('minlength'));
+    }
+    /**
      * 
      * @test
      */
