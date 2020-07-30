@@ -34,44 +34,57 @@ use Iterator;
 class LinkedList extends DataStruct implements Iterator {
     /**
      * The first node in the list.
+     * 
      * @var Node
+     * 
      * @since 1.0 
      */
     private $head;
     /**
      * A node which is used for iterator related methods.
+     * 
      * @var Node
+     * 
      * @since 1.4.3 
      */
     private $iteratorEl;
     /**
      * The maximum number of elements the list can have.
+     * 
      * @var int 
+     * 
      * @since 1.4.1
      */
     private $maxEls;
     /**
      * A null guard for the methods that return null reference.
+     * 
      * @since 1.4
      */
     private $null;
     /**
      * The number of elements in the node.
+     * 
      * @var int
+     * 
      * @since 1.0 
      */
     private $size;
     /**
      * The last node in the list.
+     * 
      * @var Node 
+     * 
      * @since 1.0
      */
     private $tail;
     /**
      * Creates new instance of the class.
+     * 
      * @param int $max The maximum number of elements that the list can hold. 
      * If 0 or a negative number is given, the list will be able to hold 
      * unlimited number of elements.
+     * 
      */
     public function __construct($max = 0) {
         $this->null = null;
@@ -87,9 +100,11 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the element at the specified index.
+     * 
      * @return mixed The element at the specified index. If the list 
      * is empty or the given index is out of list bounds, The method will 
      * return null.
+     * 
      * @since 1.1
      */
     public function &get($index) {
@@ -117,11 +132,15 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Removes a specific element from the list.
+     * 
      * The method will remove the first occurrence of the element if it is 
      * repeated. Note that the method use strict comparison to check for equality.
+     * 
      * @param mixed $val The element that will be removed.
+     * 
      * @return mixed The method will return The element after removal if the given element 
      * is removed. Other than that, the method will return null.
+     * 
      * @since 1.0
      */
     public function &removeElement(&$val) {
@@ -143,8 +162,10 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Removes the last element in the list.
+     * 
      * @return mixed If the list has elements, the last element is returned. 
      * If the list is empty, the method will return null.
+     * 
      * @since 1.0
      */
     public function &removeLast() {
@@ -170,8 +191,10 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Removes the first element in the list.
+     * 
      * @return mixed If the list has elements, the first element is returned. 
      * If the list is empty, the method will return null.
+     * 
      * @since 1.0
      */
     public function &removeFirst() {
@@ -194,12 +217,16 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Removes an element given its index.
+     * 
      * If the given index is in the range [0, LinkedList::size() - 1] 
      * the element at the given index is returned. If the list is empty or the given 
      * index is out of the range, the method will return null. Also the 
      * method will return null if the given index is not an integer.
+     * 
      * @param int $index The index of the element.
+     * 
      * @return mixed The element that was removed. null if no element is removed.
+     * 
      * @since 1.0
      */
     public function &remove($index) {
@@ -232,8 +259,10 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the first element that was added to the list.
+     * 
      * @return mixed The first element that was added to the list. If the list 
      * is empty, The method will return null.
+     * 
      * @since 1.1
      */
     public function &getFirst() {
@@ -246,8 +275,10 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the last element that was added to the list.
+     * 
      * @return mixed The last element that was added to the list. If the list 
      * is empty, The method will return null.
+     * 
      * @since 1.1
      */
     public function &getLast() {
@@ -263,10 +294,13 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Adds new element to the list.
+     * 
      * @param mixed $el The element that will be added. It can be of any type.
+     * 
      * @return boolean true if the element is added. The method will return 
      * false only if the list accepts a limited number of elements and that 
      * number has been reached.
+     * 
      * @since 1.0
      */
     public function add(&$el) {
@@ -300,6 +334,7 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Removes all of the elements from the list.
+     * 
      * @since 1.1
      */
     public function clear() {
@@ -309,11 +344,15 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Checks if a given element is in the list or not.
+     * 
      * Note that the method uses strict equality operator '===' to check 
      * for element existence.
+     * 
      * @param mixed $el The element that will be checked.
+     * 
      * @return boolean true if the element is on the list. Other than that, 
      * the method will return false.
+     * 
      * @since 1.0
      */
     public function contains(&$el) {
@@ -336,9 +375,12 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the number of times a given element has appeared on the list.
+     * 
      * @param mixed $el The element that will be counted.
+     * 
      * @return int The number of times the element has appeared on the list. If 
      * the element does not exist, 0 is returned.
+     * 
      * @since 1.0
      */
     public function countElement(&$el) {
@@ -361,10 +403,13 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the element that the iterator is currently is pointing to.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return mixed The element that the iterator is currently is pointing to.
+     * 
      * @since 1.4.3 
      */
     public function current() {
@@ -376,12 +421,16 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the index of an element.
+     * 
      * Note that the method is using strict comparison operator to search (===). 
      * The method will return the index of the first match it found if the list 
      * contain the same element more than once.
+     * 
      * @param mixed $el The element to search for.
+     * 
      * @return int The index of the element if found. If the list does not contain 
      * the element or is empty, the method will return -1.
+     * 
      * @since 1.2
      */
     public function indexOf($el) {
@@ -410,6 +459,7 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Insert new element in the middle of the list.
+     * 
      * The method will try to insert new element at the given position. If the 
      * position is index 0, the element will be inserted at the start of the 
      * list. If the position equals to the number of elements in the list, then the 
@@ -422,8 +472,11 @@ class LinkedList extends DataStruct implements Iterator {
      * </ul>
      * Note that the element at the specified index will be moved to the 
      * next position and the new element will replace it.
+     * 
      * @param mixed $el The new element that will be inserted.
+     * 
      * @param int $position The index at which the element will be inserted in.
+     * 
      * @return boolean If the element is inserted, the method will return true. 
      * If not, the method will return false.
      */
@@ -469,14 +522,17 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Sort the elements of the list using insertion sort algorithm.
+     * 
      * @param boolean $ascending If set to true, list elements 
      * will be sorted in ascending order (From lower to higher). Else, 
      * they will be sorted in descending order (From higher to lower). Default is 
      * true.
+     * 
      * @return boolean The method will return true if list 
      * elements have been sorted. The only cases that the method 
      * will return false is when the list has an object which does 
      * not implement the interface Comparable or it has a mix of objects and primitive types.
+     * 
      * @since 1.3
      */
     public function insertionSort($ascending = true) {
@@ -531,11 +587,14 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the current node in the iterator.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return Node|null An object of type 'Node' or null if the list is empty or 
      * the iterator is finished.
+     * 
      * @since 1.4.3 
      */
     public function key() {
@@ -543,10 +602,12 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the number of maximum elements the list can hold.
+     * 
      * @return int If the maximum number of elements was set to 0 or a 
      * negative number, the method will return -1 which indicates 
      * that the list can have any number of elements. Other than that, 
      * the method will return the maximum number of elements.
+     * 
      * @since 1.4.1
      */
     public function max() {
@@ -558,11 +619,14 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the next element in the iterator.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return mixed|null The next element in the iterator. If the iterator is 
      * finished or the list is empty, the method will return null.
+     * 
      * @since 1.4.3 
      */
     public function next() {
@@ -576,10 +640,14 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Replace an element with new one.
+     * 
      * @param mixed $oldEl The element that will be replaced.
+     * 
      * @param mixed $newEl The element that will replace the old one.
+     * 
      * @return boolean The method will return true if replaced. 
      * if the element is not replaced, the method will return false.
+     * 
      * @since 1.2
      */
     public function replace(&$oldEl,&$newEl) {
@@ -608,9 +676,11 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Return iterator pointer to the first element in the list.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @since 1.4.3 
      */
     public function rewind() {
@@ -618,7 +688,9 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns the number of elements in the list.
+     * 
      * @return int The number of elements in the list.
+     * 
      * @since 1.0
      */
     public function size() {
@@ -626,7 +698,9 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Returns an array that contains the elements of the list.
+     * 
      * @return array An array that contains the elements of the list.
+     * 
      * @since 1.3
      */
     public function toArray() {
@@ -648,11 +722,14 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Checks if the iterator has more elements or not.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return boolean If there is a next element, the method 
      * will return true. False otherwise.
+     * 
      * @since 1.4.3 
      */
     public function valid() {
@@ -713,7 +790,9 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Reduce the size of the list.
+     * 
      * called after removing an element.
+     * 
      * @since 1.3
      */
     private function _reduceSize() {
@@ -723,7 +802,9 @@ class LinkedList extends DataStruct implements Iterator {
     }
     /**
      * Checks if the list can hold more elements or not.
+     * 
      * @return boolean true if the list can hold more elements.
+     * 
      * @since 1.4.1
      */
     private function validateSize() {

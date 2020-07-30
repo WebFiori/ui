@@ -63,6 +63,7 @@ class Stack extends DataStruct {
     private $tail;
     /**
      * Constructs a new instance of the class.
+     * 
      * @param int $max The maximum number of elements the stack can hold. 
      * if a negative number is given or 0, the stack will have unlimited number 
      * of elements. Also if the given value is not an integer, the maximum will be set 
@@ -82,9 +83,12 @@ class Stack extends DataStruct {
     }
     /**
      * Returns the element that exist on the top of the stack.
+     * 
      * This method will return the last element that was added to the stack.
+     * 
      * @return mixed The element at the top. If the stack is empty, the method 
      * will return null.
+     * 
      * @since 1.0
      */
     public function &peek() {
@@ -98,9 +102,12 @@ class Stack extends DataStruct {
     }
     /**
      * Removes an element from the top of the stack.
+     * 
      * The method will remove the last element that was added to the stack.
+     * 
      * @return mixed The element after removal from the stack. If the stack is 
      * empty, the method will return null.
+     * 
      * @since 1.0
      */
     public function &pop() {
@@ -131,10 +138,12 @@ class Stack extends DataStruct {
     }
     /**
      * Returns the number of maximum elements the stack can hold.
+     * 
      * @return int If the maximum number of elements was set to 0 or a 
      * negative number, the method will return -1 which indicates that 
      * the stack can have infinite number of elements. Other than that, 
      * the method will return the maximum number of elements.
+     * 
      * @since 1.0
      */
     public function max() {
@@ -146,12 +155,15 @@ class Stack extends DataStruct {
     }
     /**
      * Adds new element to the top of the stack.
+     * 
      * @param mixed $el The element that will be added. If it is null, the 
      * method will not add it.
+     * 
      * @return boolean The method will return true if the element is added. 
      * The method will return false only in two cases, If the maximum 
      * number of elements is reached and trying to add new one or the given element 
      * is null.
+     * 
      * @since 1.0
      */
     public function add(&$el) {
@@ -159,12 +171,15 @@ class Stack extends DataStruct {
     }
     /**
      * Adds new element to the top of the stack.
+     * 
      * @param mixed $el The element that will be added. If it is null, the 
      * method will not add it.
+     * 
      * @return boolean The method will return true if the element is added. 
      * The method will return false only in two cases, If the maximum 
      * number of elements is reached and trying to add new one or the given element 
      * is null.
+     * 
      * @since 1.0
      */
     public function push($el) {
@@ -195,7 +210,9 @@ class Stack extends DataStruct {
 
     /**
      * Returns the number of elements in the stack.
+     * 
      * @return int The number of elements in the stack.
+     * 
      * @since 1.0
      */
     public function size() {
@@ -204,7 +221,9 @@ class Stack extends DataStruct {
 
     /**
      * Returns an indexed array that contains the elements of the stack.
+     * 
      * @return array An indexed array that contains the elements of the stack.
+     * 
      * @since 1.1.2
      */
     public function toArray() {
@@ -228,7 +247,9 @@ class Stack extends DataStruct {
     }
     /**
      * Checks if the stack can hold more elements or not.
+     * 
      * @return boolean true if the stack can hold more elements.
+     * 
      * @since 1.0
      */
     private function validateSize() {

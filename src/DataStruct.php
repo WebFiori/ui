@@ -34,6 +34,7 @@ use Countable;
 abstract class DataStruct implements Countable {
     /**
      * Returns a string that represents the data structure and its element.
+     * 
      * @return string A string that represents the data structure and its element.
      */
     public function __toString() {
@@ -61,16 +62,22 @@ abstract class DataStruct implements Countable {
     }
     /**
      * Adds new element to the data structure.
+     * 
      * @param mixed $el The element that will be added. It can be of any type.
+     * 
      * @return boolean The method should be implemented in a way that it returns 
      * true if the element is added and returns false otherwise.
+     * 
      * @since 1.0
      */
     public abstract function add(&$el);
     /**
      * Returns the number of elements in the data structure.
+     * 
      * This one is similar to calling the method "DataStruct::<a href="#size">size()</a>".
+     * 
      * @return int Number of elements in the data structure.
+     * 
      * @since 1.0
      */
     public function count() {
@@ -78,13 +85,17 @@ abstract class DataStruct implements Countable {
     }
     /**
      * Returns the number of elements in the data structure.
+     * 
      * @return int The number of elements in the data structure.
+     * 
      * @since 1.0
      */
     public abstract function size();
     /**
      * Returns an array that contains the elements of the data structure.
+     * 
      * @return array An array that contains the elements of the data structure.
+     * 
      * @since 1.0
      */
     public abstract function toArray();
