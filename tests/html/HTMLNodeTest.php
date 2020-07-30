@@ -1565,13 +1565,9 @@ and open the template in the editor.
     public function testIterator00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello #0');
-        $node->addTextNode('Hello #1');
-        $index = 0;
+        $node->addTextNode(' Hello #1');
 
-        foreach ($node as $child) {
-            $this->assertEquals('Hello #'.$index,$child->getText());
-            $index++;
-        }
+        $this->assertEquals('Hello #0 Hello #1',$node->getLastChild()->getText());
     }
     /**
      * @test
@@ -1967,8 +1963,8 @@ and open the template in the editor.
         $node->setID('container');
         $node->addTextNode('Hello World!.');
         $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
-        $node->addTextNode('Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+        $node->addTextNode(' Another Text node.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -1978,27 +1974,27 @@ and open the template in the editor.
         $node->setID('container');
         $node->addTextNode('Hello World!.');
         $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
-        $node->addTextNode('Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+        $node->addTextNode(' Another Text node.');
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n    <p>\n        "
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n    <p>\n        "
                 ."I'm a paragraph.\n    </p>\n</div>\n",$node->toHTML(true));
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n</div>\n",$node->toHTML(true));
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true));
-        $this->assertEquals("    <div id=\"container\">\n        Hello World!.\n        Another Text node.\n"
+        $this->assertEquals("    <div id=\"container\">\n        Hello World!. Another Text node.\n"
                 ."        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
         $node->setIsFormatted(true);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
+        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
     }
 
