@@ -102,6 +102,70 @@ class HTMLNodeTest extends TestCase {
     }
     /**
      * @test
+     * 
+     */
+    public function testAddChild02() {
+        $node = new HTMLNode();
+        $node->hr();
+        $this->assertEquals('hr', $node->getLastChild()->getNodeName());
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild03() {
+        $node = new HTMLNode();
+        $node->input('number',['type'=>'text']);
+        $this->assertEquals('input', $node->getLastChild()->getNodeName());
+        $this->assertEquals('number', $node->getLastChild()->getAttribute('type'));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild04() {
+        $node = new HTMLNode();
+        for($x = 0 ; $x < 3 ; $x++) {
+            $node->paragraph('Paragraph #'.$x);
+        }
+        $index = 0;
+        foreach ($node as $child) {
+            $this->assertEquals('Paragraph #'.$index,$child->getChild(0)->getText());
+            $index++;
+        }
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild05() {
+        $node = new HTMLNode();
+        $subNode = new HTMLNode('a');
+        $subNode->text('Link');
+        $liObj = new \phpStructs\html\ListItem();
+        $liObj->text('List Item Obj');
+        $node->ul([
+            'Simple Text',
+            $liObj,
+            $subNode
+        ]);
+        $this->assertEquals(3,$node->getChild(0)->childrenCount());
+        $this->assertEquals('Simple Text',$node->getChild(0)->getChild(0)->getChild(0)->getText());
+        $this->assertEquals('List Item Obj',$node->getChild(0)->getChild(1)->getChild(0)->getText());
+        $this->assertTrue($node->getChild(0)->getChild(2)->getChild(0) instanceof HTMLNode);
+        $this->assertEquals('a', $node->getChild(0)->getChild(2)->getChild(0)->getNodeName());
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild06() {
+        $node = new HTMLNode();
+        $node->paragraph(new HTMLNode('a'));
+        $this->assertEquals('a',$node->getChild(0)->getChild(0)->getNodeName());
+    }
+    /**
+     * @test
      */
     public function testAddTextNode00() {
         $node = new HTMLNode();
@@ -147,7 +211,14 @@ class HTMLNodeTest extends TestCase {
      */
     public function testAsCode00() {
         $node = new HTMLNode();
-        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33);"
+                . " color:gray\">\n<span style=\"color:rgb(204,225,70)\">"
+                . "&lt;</span><span style=\"color:rgb(204,225,70)\">"
+                . "div</span><span style=\"color:rgb(204,225,70)\">"
+                . "&gt;</span>\n<span style=\"color:rgb(204,225,70)\">"
+                . "&lt;/</span><span style=\"color:rgb(204,225,70)\">"
+                . "div</span><span style=\"color:rgb(204,225,70)\">"
+                . "&gt;</span>\n</pre>",$node->asCode());
     }
     /**
      * @test
@@ -278,7 +349,7 @@ class HTMLNodeTest extends TestCase {
                 ->tr()
                 ->cell()
                 ->section('This is a section.', 3)
-                ->paragraph('A super paragraph.','',['class' => 'sup-pr']);
+                ->paragraph('A super paragraph.',['class' => 'sup-pr']);
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('a', $node->getChild(0)->getNodeName());
         $this->assertEquals('#COMMENT', $node->getChild(1)->getNodeName());
@@ -596,6 +667,40 @@ and open the template in the editor.
         $this->assertEquals('UTF-8',$val->getHeadNode()->getCharSet());
         $el = $val->getChildByID('textarea-input');
         $this->assertEquals('Type something...',$el->getAttributeValue('placeholder'));
+    }
+    /**
+     * @test
+     */
+    public function testGetLastChild00() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getLastChild());
+        $node->br();
+        $this->assertEquals('br', $node->getLastChild()->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testGetLastChild01() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getLastChild());
+        $node->text('Hello')
+                ->paragraph('Great Paragraph')
+                ->anchor('A link', [
+                    'href'=>'https://example.com',
+                    'id'=>'example-node-link',
+                    'tabindex' => 3
+                    ]);
+        $this->assertEquals('a', $node->getLastChild()->getNodeName());
+        $this->assertEquals('https://example.com', $node->getLastChild()->getAttribute('href'));
+        $this->assertEquals('example-node-link', $node->getLastChild()->getID());
+        $this->assertEquals(3, $node->getLastChild()->getTabIndex());
+        $node->removeLastChild();
+        $this->assertEquals('p', $node->getLastChild()->getNodeName());
+        $node->removeLastChild();
+        $this->assertEquals('#TEXT', $node->getLastChild()->getNodeName());
+        $node->removeLastChild();
+        $this->assertNull($node->getLastChild());
+        $this->assertNull($node->removeLastChild());
     }
     /**
      * @test
@@ -1403,6 +1508,7 @@ and open the template in the editor.
             ]
         ]],$htmlArr);
     }
+    
     /**
      * @test
      */
