@@ -1,5 +1,5 @@
 # phpStructs
-A set of classes that provide basic data structures for php in addition to helper classes for creating HTML documents.
+A set of classes that provide basic data structures for php in addition to basic templating engine that helps in creating HTML documents.
 
 <p align="center">
   <a href="https://travis-ci.org/usernane/phpStructs">
@@ -15,9 +15,6 @@ A set of classes that provide basic data structures for php in addition to helpe
       <img src="https://img.shields.io/github/release/usernane/phpStructs.svg?label=latest" />
   </a>
   <img src="https://img.shields.io/packagist/dt/webfiori/php-structs?color=light-green">
-  <a href="https://paypal.me/IbrahimBinAlshikh">
-    <img src="https://img.shields.io/endpoint.svg?url=https://webfiori.com/x/apis/shields-get-dontate-badget">
-  </a>
 </p>
 
 ## API Docs
@@ -27,6 +24,7 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 - Supports basic data structures including LinkedList, Stack and Queue.
 - Ability to create custom HTML UI Elements.
 - Create and modify DOM through PHP.
+- Provides a basic templating engine.
 
 ## Supported PHP Versions
 The library support all versions starting from version 5.6 up to version 7.4.
@@ -139,3 +137,5 @@ The output of the above PHP code will be the following HTML code.
     </body>
 </html>
 ```
+## License
+The library islicensed under MIT license.
