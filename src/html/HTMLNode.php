@@ -216,6 +216,7 @@ class HTMLNode implements Countable, Iterator {
     private $useOriginalTxt;
     /**
      * Constructs a new instance of the class.
+     * 
      * @param string $name The name of the node (such as 'div').  If 
      * we want to create a comment node, the name should be '#comment'. If 
      * we want to create a text node, the name should be '#text'. If this parameter is 
@@ -228,10 +229,13 @@ class HTMLNode implements Countable, Iterator {
      * <li>Can only have the following characters in its name: [A-Z], [a-z], 
      * [0-9] and '-'.</li>
      * <ul>
+     * 
+     * @param $attrs An optional array that contains node attributes.
+     * 
      * @throws Exception The method will throw an exception if given node 
      * name is not valid.
      */
-    public function __construct($name = 'div') {
+    public function __construct($name = 'div', $attrs = []) {
         $this->null = null;
         $nameUpper = strtoupper(trim($name));
 
@@ -256,6 +260,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $this->attributes = [];
         $this->useOriginalTxt = false;
+        $this->setAttributes($attrs);
     }
     /**
      * Removes the last child on the node.
@@ -458,9 +463,23 @@ class HTMLNode implements Countable, Iterator {
 
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
-            $toAdd->setAttributes($attrs);
-            $toAdd->_setParent($this);
-            $this->childrenList->add($toAdd);
+            
+            if ($toAdd->getNodeName() == '#TEXT') {
+                //If trying to add text node and last child is a text node,
+                //Add the text to the last node instead of addig new instance.
+                $lastChild = $this->getLastChild();
+                
+                if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
+                    $lastChild->setText($lastChild->getText().$toAdd->getText());
+                } else {
+                    $toAdd->_setParent($this);
+                    $this->childrenList->add($toAdd);
+                }
+            } else {
+                $toAdd->setAttributes($attrs);
+                $toAdd->_setParent($this);
+                $this->childrenList->add($toAdd);
+            }
         } 
         $chain = $chainOnParent === true;
 
@@ -507,7 +526,9 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addTextNode($text,$escHtmlEntities = true) {
+        
         if ($this->mustClose()) {
+            
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
 
