@@ -56,10 +56,8 @@ class PNode extends HTMLNode {
      * @since 1.0
      */
     public function addChild($node, $attrs = [], $useChaining = true) {
-        if ($node instanceof HTMLNode) {
-            if (in_array($node->getNodeName(), PNode::ALLOWED_CHILDS) || $node->isTextNode()) {
-                parent::addChild($node, $attrs);
-            }
+        if ($node instanceof HTMLNode && (in_array($node->getNodeName(), PNode::ALLOWED_CHILDS) || $node->isTextNode())) {
+            parent::addChild($node, $attrs);
         }
 
         return $this;

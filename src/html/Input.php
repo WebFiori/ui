@@ -148,10 +148,8 @@ class Input extends HTMLNode {
             }
         }
         if ($node instanceof HTMLNode) {
-            if ($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
-                    $node->getNodeName() == 'optgroup')) {
-                return parent::addChild($node, $attrs, $chainOnParent);
-            } else if ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT') {
+            if (($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
+                    $node->getNodeName() == 'optgroup')) || ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT')) {
                 return parent::addChild($node, $attrs, $chainOnParent);
             }
         }

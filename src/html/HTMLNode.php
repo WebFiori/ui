@@ -405,7 +405,6 @@ class HTMLNode implements Countable, Iterator {
                     $trimmed = trim($slotNameFromComponent, '{{ }}');
                     
                     if ($trimmed == $slotName) {
-                        //$component = preg_replace('/'.$slotNameFromComponent.'/', htmlspecialchars($slotVal), $component);
                         $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
                     }
                 }
@@ -2530,7 +2529,7 @@ class HTMLNode implements Countable, Iterator {
      * </ul>
      * @return HTMLNode
      */
-    private static function _fromHTMLTextHelper_00($nodeArr, $attrsArr = []) {
+    private static function _fromHTMLTextHelper_00($nodeArr) {
         $TN = 'tag-name';
         $BT = 'body-text';
 
