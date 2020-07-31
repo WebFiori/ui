@@ -981,7 +981,7 @@ class HeadNode extends HTMLNode {
      * @param HTMLNode $node
      */
     private function _cssJsInsertHelper($node, $otherAttrs) {
-        if ($node->getName() == 'link') {
+        if ($node->getNodeName() == 'link') {
             $notAllowed = [
                 'rel','href'
             ];
