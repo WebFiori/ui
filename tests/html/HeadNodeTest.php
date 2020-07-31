@@ -291,6 +291,36 @@ class HeadNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddCss03() {
+        $node = new HeadNode();
+        $node->addCSS('https://example.com/css1', [
+            'reloaded','async' => 'false','data-action'
+        ], '1.1.1');
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="stylesheet" href="https://example.com/css1?cv=1.1.1" reloaded async="false" data-action>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddCss04() {
+        $node = new HeadNode();
+        $node->addCSS('https://example.com/css1?hello=world', [
+            'reloaded','async' => 'false','data-action'
+        ], '1.1.1');
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="stylesheet" href="https://example.com/css1?hello=world&cv=1.1.1" reloaded async="false" data-action>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testAddJs00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getJSNodes()->size());
@@ -353,6 +383,9 @@ class HeadNodeTest extends TestCase {
                 .'<script type="text/javascript" src="https://example.com/js3" async=""></script>'
                 .'</head>',$node->toHTML());
     }
+    /**
+     * @test
+     */
     public function testAddJs03() {
         $node = new HeadNode();
         $node->addJs('https://example.com/js3?', ['async','ok' => 'yes'], false);
@@ -360,6 +393,30 @@ class HeadNodeTest extends TestCase {
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
                 .'<script type="text/javascript" src="https://example.com/js3" async ok="yes"></script>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddJs04() {
+        $node = new HeadNode();
+        $node->addJs('https://example.com/js3', ['async','ok' => 'yes'], '1.1.1');
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js3?jv=1.1.1" async ok="yes"></script>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddJs05() {
+        $node = new HeadNode();
+        $node->addJs('https://example.com/js3?hello=world', ['async','ok' => 'yes'], '1.1.1');
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -373,6 +430,23 @@ class HeadNodeTest extends TestCase {
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
                 .'<link rel="extra" href="https://example.com" async data-access="remote" hello>'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testAddLink01() {
+        $node = new HeadNode();
+        $node->addLink('extra', 'https://example.com', ['async','data-access' => 'remote','hello']);
+        $node->addJs('https://example.com/js','',false);
+        $node->addLink('extra', 'https://example.com/222');
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel="extra" href="https://example.com" async data-access="remote" hello>'
+                .'<link rel="extra" href="https://example.com/222">'
+                .'<script type="text/javascript" src="https://example.com/js"></script>'
                 .'</head>',$node->toHTML());
     }
     /**
