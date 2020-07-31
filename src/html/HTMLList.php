@@ -77,6 +77,7 @@ class HTMLList extends HTMLNode {
             } else {
                 $li->text($listItemBody);
             }
+
             return parent::addChild($li, $attrs, $chainOnParent);
         }
     }

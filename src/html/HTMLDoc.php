@@ -149,7 +149,6 @@ class HTMLDoc {
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {
             return $this->body->addChild($node, $attributes, $chainOnParent);
-
         }
         throw new InvalidNodeNameException('A child with name "'.$name.' is not allowed as a chile of the element "body".');
     }

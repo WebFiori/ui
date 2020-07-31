@@ -267,6 +267,7 @@ class HeadNode extends HTMLNode {
             $tag->setAttribute('rel','stylesheet');
             $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
             $revType = gettype($revesion);
+
             if ($revType == 'string') {
                 if (strlen($queryString) != 0) {
                     $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$revesion);
@@ -288,7 +289,6 @@ class HeadNode extends HTMLNode {
                 } else {
                     $tag->setAttribute('href', $trimmedHref);
                 }
-
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
@@ -333,8 +333,9 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            
+
             $revType = gettype($revesion);
+
             if ($revType == 'string') {
                 if (strlen($queryString) == 0) {
                     $tag->setAttribute('src', $trimmedLoc.'?jv='.$revesion);
@@ -360,7 +361,6 @@ class HeadNode extends HTMLNode {
                         $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
                     }
                 }
-
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
@@ -468,7 +468,6 @@ class HeadNode extends HTMLNode {
                 } else {
                     $this->addChild($meta);
                 }
-
             }
         }
 
@@ -829,7 +828,6 @@ class HeadNode extends HTMLNode {
         $trimmedUrl = trim($url.'');
 
         if (strlen($trimmedUrl) != 0) {
-
             if (!$this->hasChild($this->baseNode)) {
                 parent::insert($this->baseNode,0);
             }
@@ -864,7 +862,6 @@ class HeadNode extends HTMLNode {
         $trimmedLink = trim($link.'');
 
         if (strlen($trimmedLink) != 0) {
-
             if (!$this->hasChild($this->canonical)) {
                 $position = 3;
 
@@ -947,7 +944,6 @@ class HeadNode extends HTMLNode {
         $trimmedTitle = trim($title);
 
         if (strlen($trimmedTitle) != 0) {
-
             if (!$this->hasChild($this->titleNode)) {
                 $position = 1;
 

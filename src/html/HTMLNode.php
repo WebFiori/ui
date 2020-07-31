@@ -168,6 +168,13 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.3
      */
     private $nodesStack;
+    /**
+     * A boolean value. If set to true, The node must be closed while building 
+     * the document.
+     * @var boolean
+     * @since 1.0 
+     */
+    private $notVoid;
 
     /**
      * The original text of a text node.
@@ -181,13 +188,6 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2 
      */
     private $parentNode;
-    /**
-     * A boolean value. If set to true, The node must be closed while building 
-     * the document.
-     * @var boolean
-     * @since 1.0 
-     */
-    private $notVoid;
     /**
      * A variable to indicate the number of tabs used (e.g. 1 = 4 spaces 2 = 8).
      * @var int
@@ -263,156 +263,6 @@ class HTMLNode implements Countable, Iterator {
         $this->setAttributes($attrs);
     }
     /**
-     * Removes the last child on the node.
-     * 
-     * @return HTMLNode|null If a node is removed, the method will return it as 
-     * an object of type 'HTMLNode'. Other than that, the method will return null.
-     * 
-     * @since 1.8.4
-     */
-    public function removeLastChild() {
-        return $this->removeChild($this->getLastChild());
-    }
-    /**
-     * Loads HTML-like component.
-     * 
-     * This method can be used to load any component that uses HTML or XML syntax 
-     * into an object. The method can return many types depending on the loaded 
-     * component.
-     * 
-     * @param string $htmlTemplatePath The location of the file that 
-     * will have the component. It can be of any type (HTML, XML, ...).
-     * 
-     * @param array $slotsValsArr An array that contains slots values. A slot in 
-     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
-     * This array must be associative. The indices of the array are slots names 
-     * and values of the indices are slots values. For example, if we 
-     * have a slot with the name {{ user-name }}, then the array can have the 
-     * index 'user-name' with the value of the slot.
-     * 
-     * @return HeadNode|HTMLDoc|HTMLNode|array If the given component represents HTML document,
-     *  an object of type 'HTMLDoc' is returned. If the given component 
-     * represents &lt;head&gt; node, the method will return an object of type 
-     * 'HeadNode'. Other than that, the method will return an object of type 
-     * 'HTMLNode'. If the file has more than one node in the root, the method 
-     * will return an array that contains objects of type 'HTMLNode'.
-     * 
-     * @throws TemplateNotFoundException If the file that the component is 
-     * loaded from does not exist.
-     * 
-     * @since 1.8.4
-     */
-    public static function loadComponent($htmlTemplatePath, $slotsValsArr = []) {
-        if (!file_exists($htmlTemplatePath)) {
-            throw new TemplateNotFoundException('No file was found at "'.$htmlTemplatePath.'".');
-        }
-        $templateCode = self::_setComponentVars($slotsValsArr, file_get_contents($htmlTemplatePath));
-        return self::fromHTMLText($templateCode);
-    }
-    /**
-     * Loads HTML-like component and make it a child of current node.
-     * 
-     * This method can be used to load any component that uses HTML syntax 
-     * into an object and make it a child of the instance at which the method is 
-     * called in. If the component file contains more than one node as a root note, 
-     * all nodes will be added as children.
-     * 
-     * @param string $path The location of the file that 
-     * will have the HTML component.
-     * 
-     * @param array $slotsVals An array that contains slots values. A slot in 
-     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
-     * This array must be associative. The indices of the array are slots names 
-     * and values of the indices are slots values. The values of the slots can be 
-     * also sub-array that contains more values. For example, if we 
-     * have a slot with the name {{ user-name }}, then the array can have the 
-     * index 'user-name' with the value of the slot.
-     * 
-     * @throws TemplateNotFoundException If the file that the component is 
-     * loaded from does not exist.
-     * 
-     * @since 1.8.4
-     */
-    public function component($path, $slotsVals) {
-        $loaded = self::loadComponent($path, $slotsVals);
-        if (gettype($loaded) == 'array') {
-            foreach ($loaded as $node) {
-                $this->addChild($node);
-            }
-        } else {
-            $this->addChild($loaded);
-        }
-    }
-    /**
-     * Replace all attributes values in HTML string with a hash.
-     * 
-     * This method is a helper method which is used to clear any characters which 
-     * are in attribute name that might cause the parsing process to fail.
-     * 
-     * @param string $htmlStr The string that contains HTML code.
-     * 
-     * @return array The method will return an associative array with two indices. 
-     * The first one has the key 'replacements' and the second one has the key 
-     * 'html-string'. The first one will have an associative array that contains 
-     * a sub associative array. The keys of the array are hashes computed from 
-     * attribute value and the value of the index is the actual attribute value.
-     * The second index will contain HTML string with all attributes values replaced 
-     * with the hashes.
-     */
-    private static function _replceAttrsVals($htmlStr) {
-        //For double quts
-        $attrsArr = [];
-        preg_match_all('/"[\t-!#-~]+"|""/', $htmlStr, $attrsArr);
-        $tempValsArr = [];
-        foreach ($attrsArr[0] as $value) {
-            $trimmed = trim($value,'"');
-            $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
-            $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
-        }
-        
-        //For single quts
-        $attrsArr2 = [];
-        preg_match_all('/\'[\t-&(-~]+\'|\'\'/', $htmlStr, $attrsArr2);
-        foreach ($attrsArr2[0] as $value) {
-            $trimmed = trim($value,"'");
-            $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
-            $htmlStr = str_replace($value, "'".$key."'", $htmlStr);
-        }
-        return [
-            'replacements' => $tempValsArr,
-            'html-string' => $htmlStr
-        ];
-    }
-    private static function _setComponentVars($varsArr, $component) {
-        if (gettype($varsArr) == 'array') {
-            $variables = [];
-            preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
-            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
-        }
-        return $component;
-    }
-    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
-        
-        foreach ($slotsValsArr as $slotName => $slotVal) {
-            
-            if (gettype($slotVal) == 'array') {
-                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
-            } else {
-                
-                foreach ($allSlots as $slotNameFromComponent) {
-                    $trimmed = trim($slotNameFromComponent, '{{ }}');
-                    
-                    if ($trimmed == $slotName) {
-                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
-                    }
-                }
-            }
-        }
-        return $component; 
-    }
-    /**
      * Returns non-formatted HTML string that represents the node as a whole.
      * 
      * @return string HTML string that represents the node as a whole.
@@ -462,12 +312,11 @@ class HTMLNode implements Countable, Iterator {
 
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
-            
             if ($toAdd->getNodeName() == '#TEXT') {
                 //If trying to add text node and last child is a text node,
                 //Add the text to the last node instead of addig new instance.
                 $lastChild = $this->getLastChild();
-                
+
                 if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
                     $lastChild->setText($lastChild->getText().$toAdd->getText());
                 } else {
@@ -525,9 +374,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addTextNode($text,$escHtmlEntities = true) {
-        
         if ($this->mustClose()) {
-            
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
 
@@ -577,6 +424,7 @@ class HTMLNode implements Countable, Iterator {
         foreach ($this as $child) {
             $child->setClassName($cName,$override);
         }
+
         return $this;
     }
     /**
@@ -783,6 +631,41 @@ class HTMLNode implements Countable, Iterator {
         return $this->addCommentNode($txt);
     }
     /**
+     * Loads HTML-like component and make it a child of current node.
+     * 
+     * This method can be used to load any component that uses HTML syntax 
+     * into an object and make it a child of the instance at which the method is 
+     * called in. If the component file contains more than one node as a root note, 
+     * all nodes will be added as children.
+     * 
+     * @param string $path The location of the file that 
+     * will have the HTML component.
+     * 
+     * @param array $slotsVals An array that contains slots values. A slot in 
+     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
+     * This array must be associative. The indices of the array are slots names 
+     * and values of the indices are slots values. The values of the slots can be 
+     * also sub-array that contains more values. For example, if we 
+     * have a slot with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the slot.
+     * 
+     * @throws TemplateNotFoundException If the file that the component is 
+     * loaded from does not exist.
+     * 
+     * @since 1.8.4
+     */
+    public function component($path, $slotsVals) {
+        $loaded = self::loadComponent($path, $slotsVals);
+
+        if (gettype($loaded) == 'array') {
+            foreach ($loaded as $node) {
+                $this->addChild($node);
+            }
+        } else {
+            $this->addChild($loaded);
+        }
+    }
+    /**
      * Returns the number of child nodes attached to the node.
      * 
      * If the node is a text node, a comment node or a void node, 
@@ -905,6 +788,7 @@ class HTMLNode implements Countable, Iterator {
                 $retVal = new HTMLDoc();
                 $retVal->getHeadNode()->removeAllChildNodes();
                 $retVal->getBody()->removeAttributes();
+
                 for ($x = 0 ; $x < count($nodesArr) ; $x++) {
                     if ($nodesArr[$x][$TN] == 'html') {
                         $htmlNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
@@ -936,6 +820,7 @@ class HTMLNode implements Countable, Iterator {
             } else if (count($nodesArr) == 1) {
                 return self::_fromHTMLTextHelper_00($nodesArr[0]);
             }
+
             return $retVal;
         }
 
@@ -1403,8 +1288,10 @@ class HTMLNode implements Countable, Iterator {
 
                 if (strlen(trim($node)) != 0) {
                     $nodesNames[$nodesNamesIndex] = explode('>', $node);
+
                     if (isset($nodesNames[$nodesNamesIndex][1])) {
                         $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], $nodesNames[$nodesNamesIndex][1]);
+
                         if (strlen($nodesNames[$nodesNamesIndex][$BT]) == 0) {
                             unset($nodesNames[$nodesNamesIndex][$BT]);
                         }
@@ -1412,7 +1299,7 @@ class HTMLNode implements Countable, Iterator {
                         $nodeName = '';
                         //Node signature is of the form 'div attr="val" empty'
                         $nodeSignatureLen = strlen($nodesNames[$nodesNamesIndex][0]);
-                        
+
                         //Extract node name from the signature.
                         for ($y = 0 ; $y < $nodeSignatureLen ; $y++) {
                             $char = $nodesNames[$nodesNamesIndex][0][$y];
@@ -1423,7 +1310,7 @@ class HTMLNode implements Countable, Iterator {
                                 $nodeName .= $char;
                             }
                         }
-                        
+
                         if ((isset($nodeName[0]) && $nodeName[0] == '!') && (
                                 isset($nodeName[1]) && $nodeName[1] == '-') && 
                                 (isset($nodeName[2]) && $nodeName[2] == '-')) {
@@ -1450,7 +1337,7 @@ class HTMLNode implements Countable, Iterator {
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
                             } else {
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
-                                
+
                                 if (in_array($nodeName, self::VOID_TAGS)) {
                                     $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
                                 } else if ($nodeName == '!doctype') {
@@ -1493,7 +1380,6 @@ class HTMLNode implements Countable, Iterator {
                         unset($nodesNames[$nodesNamesIndex][0]);
                         $nodesNamesIndex++;
                     }
-                    
                 }
             }
             $x = 0;
@@ -1719,6 +1605,43 @@ class HTMLNode implements Countable, Iterator {
         return $this;
     }
     /**
+     * Loads HTML-like component.
+     * 
+     * This method can be used to load any component that uses HTML or XML syntax 
+     * into an object. The method can return many types depending on the loaded 
+     * component.
+     * 
+     * @param string $htmlTemplatePath The location of the file that 
+     * will have the component. It can be of any type (HTML, XML, ...).
+     * 
+     * @param array $slotsValsArr An array that contains slots values. A slot in 
+     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
+     * This array must be associative. The indices of the array are slots names 
+     * and values of the indices are slots values. For example, if we 
+     * have a slot with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the slot.
+     * 
+     * @return HeadNode|HTMLDoc|HTMLNode|array If the given component represents HTML document,
+     *  an object of type 'HTMLDoc' is returned. If the given component 
+     * represents &lt;head&gt; node, the method will return an object of type 
+     * 'HeadNode'. Other than that, the method will return an object of type 
+     * 'HTMLNode'. If the file has more than one node in the root, the method 
+     * will return an array that contains objects of type 'HTMLNode'.
+     * 
+     * @throws TemplateNotFoundException If the file that the component is 
+     * loaded from does not exist.
+     * 
+     * @since 1.8.4
+     */
+    public static function loadComponent($htmlTemplatePath, $slotsValsArr = []) {
+        if (!file_exists($htmlTemplatePath)) {
+            throw new TemplateNotFoundException('No file was found at "'.$htmlTemplatePath.'".');
+        }
+        $templateCode = self::_setComponentVars($slotsValsArr, file_get_contents($htmlTemplatePath));
+
+        return self::fromHTMLText($templateCode);
+    }
+    /**
      * Returns the next element in the iterator.
      * 
      * This method is only used if the list is used in a 'foreach' loop. 
@@ -1890,6 +1813,17 @@ class HTMLNode implements Countable, Iterator {
         }
     }
     /**
+     * Removes the last child on the node.
+     * 
+     * @return HTMLNode|null If a node is removed, the method will return it as 
+     * an object of type 'HTMLNode'. Other than that, the method will return null.
+     * 
+     * @since 1.8.4
+     */
+    public function removeLastChild() {
+        return $this->removeChild($this->getLastChild());
+    }
+    /**
      * Replace a direct child node with a new one.
      * 
      * @param HTMLNode $oldNode The old node. It must be a child of the instance.
@@ -1997,7 +1931,6 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $this->attributes[$lower] = $trimmedVal;
                 }
-
             }
         }
 
@@ -2250,7 +2183,7 @@ class HTMLNode implements Countable, Iterator {
             }
             $this->text = $text;
         }
-        
+
         return $this;
     }
     /**
@@ -2320,6 +2253,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function table($attributes) {
         $node = new HTMLNode('table');
+
         return $this->addChild($node, $attributes);
     }
     /**
@@ -2724,6 +2658,14 @@ class HTMLNode implements Countable, Iterator {
             return $tab;
         }
     }
+    private static function _getTextActualValue($hashedValsArr, $hashVal) {
+        //If text, it means that we have a text node or a comment node with a quted text.
+        foreach ($hashedValsArr as $hash => $val) {
+            $hashVal = str_replace($hash, $val, $hashVal);
+        }
+
+        return $hashVal;
+    }
     /**
      * 
      * @param array $FO Formatting options.
@@ -2840,14 +2782,18 @@ class HTMLNode implements Countable, Iterator {
         while ($queue->peek()) {
             $current = $queue->dequeue();
             $next = $queue->peek();
+
             if (isset($replacementsArr[$current])) {
                 $current = $replacementsArr[$current];
             }
+
             if ($next == '=') {
                 $queue->dequeue();
                 $val = $queue->dequeue();
+
                 if (isset($replacementsArr[$val])) {
                     $retVal[strtolower($current)] = $replacementsArr[$val];
+
                     foreach ($replacementsArr as $hash => $valueOfHash) {
                         $replacement = "'".trim($valueOfHash,'"')."'";
                         $retVal[strtolower($current)] = str_replace('"'.$hash.'"', $replacement, $retVal[strtolower($current)]);
@@ -2855,7 +2801,6 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $retVal[strtolower($current)] = $val;
                 }
-                
             } else {
                 $retVal[strtolower($current)] = '';
             }
@@ -3031,6 +2976,60 @@ class HTMLNode implements Countable, Iterator {
         }
     }
     /**
+     * Replace all attributes values in HTML string with a hash.
+     * 
+     * This method is a helper method which is used to clear any characters which 
+     * are in attribute name that might cause the parsing process to fail.
+     * 
+     * @param string $htmlStr The string that contains HTML code.
+     * 
+     * @return array The method will return an associative array with two indices. 
+     * The first one has the key 'replacements' and the second one has the key 
+     * 'html-string'. The first one will have an associative array that contains 
+     * a sub associative array. The keys of the array are hashes computed from 
+     * attribute value and the value of the index is the actual attribute value.
+     * The second index will contain HTML string with all attributes values replaced 
+     * with the hashes.
+     */
+    private static function _replceAttrsVals($htmlStr) {
+        //For double quts
+        $attrsArr = [];
+        preg_match_all('/"[\t-!#-~]+"|""/', $htmlStr, $attrsArr);
+        $tempValsArr = [];
+
+        foreach ($attrsArr[0] as $value) {
+            $trimmed = trim($value,'"');
+            $key = hash('sha256', $trimmed);
+            $tempValsArr[$key] = $trimmed;
+            $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
+        }
+
+        //For single quts
+        $attrsArr2 = [];
+        preg_match_all('/\'[\t-&(-~]+\'|\'\'/', $htmlStr, $attrsArr2);
+
+        foreach ($attrsArr2[0] as $value) {
+            $trimmed = trim($value,"'");
+            $key = hash('sha256', $trimmed);
+            $tempValsArr[$key] = $trimmed;
+            $htmlStr = str_replace($value, "'".$key."'", $htmlStr);
+        }
+
+        return [
+            'replacements' => $tempValsArr,
+            'html-string' => $htmlStr
+        ];
+    }
+    private static function _setComponentVars($varsArr, $component) {
+        if (gettype($varsArr) == 'array') {
+            $variables = [];
+            preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
+            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
+        }
+
+        return $component;
+    }
+    /**
      * 
      * @param HTMLNode $node
      * @since 1.2
@@ -3063,49 +3062,6 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $retVal;
-    }
-    /**
-     * Validate formatting options.
-     * @param array $FO An array of formatting options
-     * @return array An array of formatting options
-     * @since 1.5
-     */
-    private function _validateFormatAttributes($FO) {
-        $defaultFormat = self::DEFAULT_CODE_FORMAT;
-
-        if (gettype($FO) == 'array') {
-            foreach ($defaultFormat as $key => $value) {
-                if (!isset($FO[$key])) {
-                    $FO[$key] = $value;
-                }
-            }
-
-            foreach ($defaultFormat['colors'] as $key => $value) {
-                if (!isset($FO['colors'][$key])) {
-                    $FO['colors'][$key] = $value;
-                }
-            }
-        } else {
-            return $defaultFormat;
-        }
-        //tab spaces count validation
-        if (gettype($FO['tab-spaces']) == 'integer') {
-            if ($FO['tab-spaces'] < 0) {
-                $FO['tab-spaces'] = 0;
-            } else if ($FO['tab-spaces'] > 8) {
-                $FO['tab-spaces'] = 8;
-            }
-        } else {
-            $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
-        }
-        //initial tab validation
-        if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
-            $FO['initial-tab'] = 0;
-        } else {
-            $FO['initial-tab'] = self::DEFAULT_CODE_FORMAT['initial-tab'];
-        }
-
-        return $FO;
     }
     /**
      * Validates the name of the node.
@@ -3152,6 +3108,51 @@ class HTMLNode implements Countable, Iterator {
         return false;
     }
     /**
+     * Validate formatting options.
+     * @param array $FO An array of formatting options
+     * @return array An array of formatting options
+     * @since 1.5
+     */
+    private function _validateFormatAttributes($FO) {
+        $defaultFormat = self::DEFAULT_CODE_FORMAT;
+
+        if (gettype($FO) == 'array') {
+            foreach ($defaultFormat as $key => $value) {
+                if (!isset($FO[$key])) {
+                    $FO[$key] = $value;
+                }
+            }
+
+            foreach ($defaultFormat['colors'] as $key => $value) {
+                if (!isset($FO['colors'][$key])) {
+                    $FO['colors'][$key] = $value;
+                }
+            }
+        } else {
+            return $defaultFormat;
+        }
+        //tab spaces count validation
+        if (gettype($FO['tab-spaces']) == 'integer') {
+            if ($FO['tab-spaces'] < 0) {
+                $FO['tab-spaces'] = 0;
+            } else {
+                if ($FO['tab-spaces'] > 8) {
+                    $FO['tab-spaces'] = 8;
+                }
+            }
+        } else {
+            $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
+        }
+        //initial tab validation
+        if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
+            $FO['initial-tab'] = 0;
+        } else {
+            $FO['initial-tab'] = self::DEFAULT_CODE_FORMAT['initial-tab'];
+        }
+
+        return $FO;
+    }
+    /**
      * Validates the name of the node.
      * @param string $name The name of the node in lower case.
      * @return boolean If the name is valid, the method will return true. If 
@@ -3180,7 +3181,7 @@ class HTMLNode implements Countable, Iterator {
                 if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
                         || $char == '-' 
                         || $char == ':' 
-                        || $char == '.' )) {
+                        || $char == '.')) {
                     return false;
                 }
             }
@@ -3200,5 +3201,22 @@ class HTMLNode implements Countable, Iterator {
      */
     private function mustClose() {
         return $this->notVoid;
+    }
+    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
+        foreach ($slotsValsArr as $slotName => $slotVal) {
+            if (gettype($slotVal) == 'array') {
+                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
+            } else {
+                foreach ($allSlots as $slotNameFromComponent) {
+                    $trimmed = trim($slotNameFromComponent, '{{ }}');
+
+                    if ($trimmed == $slotName) {
+                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
+                    }
+                }
+            }
+        }
+
+        return $component;
     }
 }

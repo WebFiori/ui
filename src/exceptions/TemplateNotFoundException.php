@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 namespace phpStructs\html;
+
 use Exception;
 /**
  * An exception which is thrown to indicate that a component file was not found.

@@ -139,6 +139,7 @@ class Input extends HTMLNode {
     public function addChild($node, $attrs = [], $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $temp = $node;
+
             if ($this->getNodeName() == 'select') {
                 $node = new HTMLNode('option');
                 $node->setAttribute('value', $temp)->text($temp);
@@ -147,6 +148,7 @@ class Input extends HTMLNode {
                 $node->setText($temp);
             }
         }
+
         if ($node instanceof HTMLNode) {
             if (($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
                     $node->getNodeName() == 'optgroup')) || ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT')) {
@@ -410,7 +412,6 @@ class Input extends HTMLNode {
      * @since 1.0
      */
     public function setMinLength($length) {
-        
         if ($length >= 0) {
             $iType = $this->getType();
 
