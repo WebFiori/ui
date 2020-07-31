@@ -947,10 +947,6 @@ class HeadNode extends HTMLNode {
         $trimmedTitle = trim($title);
 
         if (strlen($trimmedTitle) != 0) {
-            if ($this->titleNode == null) {
-                $this->titleNode = new HTMLNode('title');
-                $this->titleNode->addChild(self::createTextNode($trimmedTitle));
-            }
 
             if (!$this->hasChild($this->titleNode)) {
                 $position = 1;
@@ -989,7 +985,7 @@ class HeadNode extends HTMLNode {
      * @param HTMLNode $node
      */
     private function _cssJsInsertHelper($node, $otherAttrs) {
-        if ($node->getName() == 'style') {
+        if ($node->getName() == 'link') {
             $notAllowed = [
                 'rel','href'
             ];
