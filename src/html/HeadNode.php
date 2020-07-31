@@ -241,7 +241,7 @@ class HeadNode extends HTMLNode {
      * have attribute name if its empty attribute. Default is empty array.
      * 
      * @param boolean|string $revesion If set to true, a string in the form '?cv=xxxxxxxxxx' will 
-     * be appended to the 'href' attribute value. It is used to prevent caching. 
+     * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
      * This one can be also a string that represents the version of CSS file.
      * Default is true. 'cv' = CSS Version. 
      * @return HeadNote The method will return the instance at which the method 
@@ -289,8 +289,8 @@ class HeadNode extends HTMLNode {
                     $tag->setAttribute('href', $trimmedHref);
                 }
 
-                $this->_cssJsInsertHelper($tag, $otherAttrs);
             }
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
 
         return $this;
@@ -307,7 +307,7 @@ class HeadNode extends HTMLNode {
      * have attribute name if its empty attribute. Default is empty array.
      * 
      * @param boolean|string $revesion If set to true, a string in the form '?jv=xxxxxxxxxx' will 
-     * be appended to the 'href' attribute value. It is used to prevent caching. 
+     * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
      * This also can be a string that represents the version of the file.
      * 'jv' = JavaScript Version.
      * Default is true.
@@ -361,8 +361,8 @@ class HeadNode extends HTMLNode {
                     }
                 }
 
-                $this->_cssJsInsertHelper($tag, $otherAttrs);
             }
+            $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
 
         return $this;
@@ -867,10 +867,6 @@ class HeadNode extends HTMLNode {
         $trimmedLink = trim($link.'');
 
         if (strlen($trimmedLink) != 0) {
-            if ($this->canonical == null) {
-                $this->canonical = new HTMLNode('link');
-                $this->canonical->setAttribute('rel', 'canonical');
-            }
 
             if (!$this->hasChild($this->canonical)) {
                 $position = 3;
