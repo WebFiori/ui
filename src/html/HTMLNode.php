@@ -2442,13 +2442,6 @@ class HTMLNode implements Countable, Iterator {
 
         return '';
     }
-    private static function _getTextActualValue($hashedValsArr, $hashVal) {
-        //If text, it means that we have a text node or a comment node with a quted text.
-        foreach ($hashedValsArr as $hash => $val) {
-            $hashVal = str_replace($hash, $val, $hashVal);
-        }
-        return $hashVal;
-    }
     /**
      * Creates an object of type HTMLNode given its properties as an associative 
      * array.
