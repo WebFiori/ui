@@ -138,4 +138,4 @@ The output of the above PHP code will be the following HTML code.
 </html>
 ```
 ## License
-The library islicensed under MIT license.
+The library is licensed under MIT license.
