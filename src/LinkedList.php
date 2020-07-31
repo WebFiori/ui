@@ -566,7 +566,11 @@ class LinkedList extends DataStruct implements Iterator {
                 return false;
             }
         }
-
+        $this->_insertionSortHelper($ascending, $array);
+        
+        return true;
+    }
+    private function _insertionSortHelper($ascending, $array) {
         while ($this->size() != 0) {
             $this->remove(0);
         }
@@ -582,8 +586,6 @@ class LinkedList extends DataStruct implements Iterator {
                 $this->add($array[$x]);
             }
         }
-
-        return true;
     }
     /**
      * Returns the current node in the iterator.

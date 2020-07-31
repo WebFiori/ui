@@ -149,11 +149,9 @@ class Input extends HTMLNode {
             }
         }
 
-        if ($node instanceof HTMLNode) {
-            if (($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
-                    $node->getNodeName() == 'optgroup')) || ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT')) {
-                return parent::addChild($node, $attrs, $chainOnParent);
-            }
+        if ($node instanceof HTMLNode && (($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
+                    $node->getNodeName() == 'optgroup')) || ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT'))) {
+            return parent::addChild($node, $attrs, $chainOnParent);
         }
     }
     /**
@@ -273,29 +271,32 @@ class Input extends HTMLNode {
                 }
             }
 
-            foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
-                if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
-                    $o = new HTMLNode('option');
-                    $o->setAttribute('value', $value);
-                    $o->addTextNode($labelOrOptions['label'],false);
-
-                    if (isset($labelOrOptions['attributes'])) {
-                        foreach ($labelOrOptions['attributes'] as $attr => $v) {
-                            $o->setAttribute($attr, $v);
-                        }
-                    }
-                    $optGroup->addChild($o);
-                } else {
-                    $o = new HTMLNode('option');
-                    $o->setAttribute('value', $value);
-                    $o->addTextNode($labelOrOptions,false);
-                    $optGroup->addChild($o);
-                }
-            }
+            $this->_addOptionsToGroup($optionsGroupArr, $optGroup);
             $this->addChild($optGroup);
         }
 
         return $this;
+    }
+    private function _addOptionsToGroup($optionsGroupArr, $optGroup) {
+        foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
+            if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
+                $o = new HTMLNode('option');
+                $o->setAttribute('value', $value);
+                $o->addTextNode($labelOrOptions['label'],false);
+
+                if (isset($labelOrOptions['attributes'])) {
+                    foreach ($labelOrOptions['attributes'] as $attr => $v) {
+                        $o->setAttribute($attr, $v);
+                    }
+                }
+                $optGroup->addChild($o);
+            } else {
+                $o = new HTMLNode('option');
+                $o->setAttribute('value', $value);
+                $o->addTextNode($labelOrOptions,false);
+                $optGroup->addChild($o);
+            }
+        }
     }
     /**
      * Returns the value of the attribute 'type'.
