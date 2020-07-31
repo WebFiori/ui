@@ -829,9 +829,6 @@ class HeadNode extends HTMLNode {
         $trimmedUrl = trim($url.'');
 
         if (strlen($trimmedUrl) != 0) {
-            if ($this->baseNode == null) {
-                $this->baseNode = new HTMLNode('base');
-            }
 
             if (!$this->hasChild($this->baseNode)) {
                 parent::insert($this->baseNode,0);
