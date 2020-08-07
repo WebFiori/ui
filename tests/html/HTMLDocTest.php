@@ -16,6 +16,45 @@ class HTMLDocTest extends TestCase {
     /**
      * @test
      */
+    public function testgetChildrenByAttrVal00() {
+        $doc = new HTMLDoc();
+        $doc->addChild('a', [
+            'href' => 'https://webfiori.com'
+        ]);
+        $list = $doc->getChildrenByAttributeValue('href', 'https://webfiori.com');
+        $this->assertEquals(1, $list->size());
+        $this->assertEquals('a', $list->get(0)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testgetChildrenByAttrVal01() {
+        $doc = new HTMLDoc();
+        for ($x = 0 ; $x < 3 ; $x++) {
+            $doc->addChild('ul', [
+                'id' => 'list-'.$x
+            ], false)->addChild('li', [
+                'id' => 'list-'.$x.'-item-1',
+                'class' => 'list-item'
+            ])->addChild('li', [
+                'id' => 'list-'.$x.'-item-2',
+                'class' => 'list-item'
+            ], false)->text('Some Text');
+            
+        }
+        $list1 = $doc->getChildrenByAttributeValue('class', 'list-item');
+        $this->assertEquals(6, $list1->size());
+        $this->assertEquals('list-0-item-1', $list1->get(0)->getAttribute('id'));
+        $this->assertEquals('list-0-item-2', $list1->get(1)->getAttribute('id'));
+        $this->assertEquals('list-2-item-2', $list1->get(5)->getAttribute('id'));
+        $list2 = $doc->getChildrenByAttributeValue('id', 'list-0');
+        $this->assertEquals(1, $list2->size());
+        $this->assertEquals('ul', $list2->get(0)->getNodeName());
+        $this->assertEquals(2, $list2->get(0)->childrenCount());
+    }
+    /**
+     * @test
+     */
     public function testAddChild00() {
         $this->expectException('Exception');
         $doc = new HTMLDoc();

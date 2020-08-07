@@ -38,7 +38,7 @@ use phpStructs\LinkedList;
  *
  * @author Ibrahim
  * 
- * @version 1.4.1
+ * @version 1.4.2
  */
 class HTMLDoc {
     /**
@@ -205,6 +205,43 @@ class HTMLDoc {
      */
     public function getChildByID($id) {
         return $this->getDocumentRoot()->getChildByID($id);
+    }
+    /**
+     * Returns a list that contains a set of elements at which they have specific 
+     * attribute value.
+     * 
+     * @param string $attrName The name of the attribute such as 'class' or 'href'.
+     * 
+     * @param string $attrVal The value of the attribute.
+     * 
+     * @return LinkedList The method will return an object of type 'LinkedList' 
+     * that contains all matched nodes.
+     * 
+     * @since 1.4.2
+     */
+    public function getChildrenByAttributeValue($attrName, $attrVal) {
+        $list = new LinkedList();
+        $trimmedAttrName = trim($attrName);
+        $trimmedVal = trim($attrVal);
+        $this->_getChildrenByAttributeValue($trimmedAttrName, $trimmedVal, $list, $this->getDocumentRoot());
+        return $list;
+    }
+    /**
+     * 
+     * @param type $attr
+     * @param type $val
+     * @param LinkedList $list
+     * @param HTMLNode $el
+     */
+    private function _getChildrenByAttributeValue($attr, $val, $list, $el) {
+        if($el->getAttribute($attr) == $val) {
+            $list->add($el);
+        }
+        if ($el->children() !== null){
+            foreach ($el->children() as $child) {
+                $this->_getChildrenByAttributeValue($attr, $val, $list, $child);
+            }
+        }
     }
     /**
      * Returns a linked list that contains all children which has the given tag 
