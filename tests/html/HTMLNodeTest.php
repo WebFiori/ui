@@ -1700,6 +1700,25 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testRemoveChild09() {
+        $node = new HTMLNode();
+        $node->text('Hello')->paragraph('Super Paragraph', ['id'=>'p-1'])
+                ->div(['id'=>'empty-div'])->section('Hello Sec', 1, [
+                    'id' => 'my-sec'
+                ]);
+        $this->assertEquals(4, $node->childrenCount());
+        $node->removeChild('empty-div');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<div>'
+                . 'Hello'
+                . '<p id="p-1">'
+                . 'Super Paragraph</p>'
+                . '<section id="my-sec"><h1>Hello Sec</h1></section>'
+                . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testSetAttribute00() {
         $node = new HTMLNode();
         $node->setAttribute('   dir');

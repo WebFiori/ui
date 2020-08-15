@@ -304,8 +304,8 @@ class HTMLDoc {
     /**
      * Removes a child node from the document.
      * 
-     * @param HTMLNode $node The node that will be removed. If the given 
-     * node name is 'body' or 'head', The node will never be removed.
+     * @param HTMLNode|string $node The node that will be removed.  This also 
+     * can be the value of the attribute ID of the node that will be removed.
      * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
@@ -315,6 +315,11 @@ class HTMLDoc {
     public function removeChild($node) {
         if ($node instanceof HTMLNode && $node !== $this->body && $node !== $this->headNode) {
             return $this->_removeChild($this->getDocumentRoot(), $node);
+        } else if (gettype($node) == 'string') {
+            $toRemove = $this->getDocumentRoot()->getChildByID($node);
+            if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
+                return $this->_removeChild($this->getDocumentRoot(), $toRemove);
+            }
         }
 
         return null;

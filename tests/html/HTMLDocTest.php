@@ -245,6 +245,25 @@ class HTMLDocTest extends TestCase {
     /**
      * @test
      */
+    public function testRemoveChild02() {
+        $doc = new HTMLDoc();
+        $ch00 = new HTMLNode();
+        $ch01 = new HTMLNode('input');
+        $ch02 = new HTMLNode();
+        $ch03 = new HTMLNode('input');
+        $ch03->setID('my-input');
+        $doc->addChild($ch00);
+        $doc->addChild($ch01);
+        $doc->addChild($ch02);
+        $doc->addChild($ch03);
+        $this->assertEquals(4,$doc->getBody()->childrenCount());
+        $removed = $doc->removeChild('my-input');
+        $this->assertEquals(3,$doc->getBody()->childrenCount());
+        $this->assertTrue($removed === $ch03);
+    }
+    /**
+     * @test
+     */
     public function testSaveToFile00() {
         $doc = new HTMLDoc();
         $this->assertFalse($doc->saveToHTMLFile('',''));

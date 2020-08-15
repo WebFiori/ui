@@ -318,7 +318,7 @@ class HTMLNode implements Countable, Iterator {
                 $lastChild = $this->getLastChild();
 
                 if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
-                    $lastChild->setText($lastChild->getText().$toAdd->getText());
+                    $lastChild->setText($lastChild->getText().$toAdd->getText(), $toAdd->getOriginalText() != $toAdd->getText());
                 } else {
                     $toAdd->_setParent($this);
                     $this->childrenList->add($toAdd);
@@ -1794,7 +1794,8 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Removes a direct child node.
      * 
-     * @param HTMLNode $node The node that will be removed.
+     * @param HTMLNode|string $node The node that will be removed. This also can 
+     * be the ID of the child that will be removed.
      * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
@@ -1802,13 +1803,15 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function removeChild($node) {
-        if ($this->mustClose() && $node instanceof HTMLNode) {
-            $child = $this->children()->removeElement($node);
-
-            if ($child instanceof HTMLNode) {
-                $child->_setParent(null);
-
-                return $child;
+        if ($this->mustClose()) {
+            
+            if ($node instanceof HTMLNode) {
+                $child = $this->children()->removeElement($node);
+                return $this->_removeChHelper($child);
+            } else if (gettype($node) == 'string') {
+                $toRemove = $this->getChildByID($node);
+                $child = $this->children()->removeElement($toRemove);
+                return $this->_removeChHelper($child);
             }
         }
     }
@@ -2966,6 +2969,14 @@ class HTMLNode implements Countable, Iterator {
     private function _reduceTab() {
         if ($this->tabCount > 0) {
             $this->tabCount -= 1;
+        }
+    }
+    private function _removeChHelper($node) {
+        
+        if ($node instanceof HTMLNode) {
+            $node->_setParent(null);
+
+            return $node;
         }
     }
     /**
