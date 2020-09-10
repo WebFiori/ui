@@ -27,9 +27,9 @@ namespace phpStructs\html;
 use Countable;
 use Exception;
 use Iterator;
-use phpStructs\LinkedList;
-use phpStructs\Queue;
-use phpStructs\Stack;
+use webfiori\collections\LinkedList;
+use webfiori\collections\Queue;
+use webfiori\collections\Stack;
 /**
  * A class that represents HTML element.
  *

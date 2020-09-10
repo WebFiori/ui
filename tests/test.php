@@ -39,12 +39,12 @@ if (explode($DS, $rootDirTrimmed)[0] == 'home') {
 }
 define('ROOT', $rootDir);
 //echo 'Root Directory: \''.$rootDir.'\'.'."\n";
-require_once $rootDir.'src'.$DS.'Node.php';
-require_once $rootDir.'src'.$DS.'DataStruct.php';
-require_once $rootDir.'src'.$DS.'LinkedList.php';
-require_once $rootDir.'src'.$DS.'Stack.php';
-require_once $rootDir.'src'.$DS.'Queue.php';
-require_once $rootDir.'src'.$DS.'Comparable.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Node.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'AbstractCollection.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'LinkedList.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Stack.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Queue.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Comparable.php';
 //HTML classes
 require_once $rootDir.'src'.$DS.'exceptions'.$DS.'InvalidNodeNameException.php';
 require_once $rootDir.'src'.$DS.'exceptions'.$DS.'TemplateNotFoundException.php';
@@ -65,4 +65,3 @@ require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
 require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
 
-require_once $rootDir.'tests'.$DS.'AnyObject.php';

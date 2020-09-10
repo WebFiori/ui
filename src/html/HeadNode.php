@@ -24,7 +24,7 @@
  */
 namespace phpStructs\html;
 
-use phpStructs\LinkedList;
+use webfiori\collections\LinkedList;
 /**
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *

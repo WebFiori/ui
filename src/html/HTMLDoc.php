@@ -25,7 +25,7 @@
  */
 namespace phpStructs\html;
 
-use phpStructs\LinkedList;
+use webfiori\collections\LinkedList;
 /**
  * A class that represents HTML document. 
  * 

@@ -2,7 +2,8 @@
     "name": "webfiori/php-structs",
     "description": "A library that provide basic data structures for PHP in addition to creating well-formatted HTML documents.",
     "require": {
-        "php": ">=5.6"
+        "php": ">=5.6",
+        "webfiori/collections":"1.0"
     },
     "keywords": [
         "library",
