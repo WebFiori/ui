@@ -7,9 +7,9 @@
  */
 
 namespace phpStructs\tests;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\HeadNode;
-use phpStructs\html\HTMLDoc;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\HeadNode;
+use webfiori\ui\HTMLDoc;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of TestLoadTemplate
@@ -70,6 +70,13 @@ class LoadTemplateTest extends TestCase {
         $this->assertEquals('The username of the user.', $headerRow->getChild(0)->getChild(0)->getText());
         $this->assertEquals('The email of the user.', $headerRow->getChild(1)->getChild(0)->getText());
         $this->assertEquals('{{account status}}', $headerRow->getChild(2)->getChild(0)->getText());
+    }
+    /**
+     * @test
+     */
+    public function test04() {
+        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'super-00.html');
+        $this->assertEquals('object', gettype($node));
     }
     /**
      * @test
