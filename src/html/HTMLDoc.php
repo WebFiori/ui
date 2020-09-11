@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2018 Ibrahim, WebFiori UI Package
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace phpStructs\html;
+namespace webfiori\ui;
 
 use webfiori\collections\LinkedList;
+use webfiori\ui\exceptions\InvalidNodeNameException;
 /**
  * A class that represents HTML document. 
  * 

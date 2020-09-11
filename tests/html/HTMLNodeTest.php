@@ -24,9 +24,11 @@
  */
 namespace phpStructs\tests\html;
 
-use phpStructs\html\Anchor;
-use phpStructs\html\HTMLDoc;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\Anchor;
+use webfiori\ui\HTMLDoc;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\ListItem;
+use webfiori\ui\Label;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of HTMLNodeTest
@@ -142,7 +144,7 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode();
         $subNode = new HTMLNode('a');
         $subNode->text('Link');
-        $liObj = new \phpStructs\html\ListItem();
+        $liObj = new ListItem();
         $liObj->text('List Item Obj');
         $node->ul([
             'Simple Text',
@@ -301,8 +303,8 @@ class HTMLNodeTest extends TestCase {
           ->ul([
               'Hello', 'World'
           ])->ol([
-              'Good', 'Girl', new \phpStructs\html\Label('Test With Node'), 
-              new \phpStructs\html\ListItem()
+              'Good', 'Girl', new Label('Test With Node'), 
+              new ListItem()
           ])
                 ->anchor(null, ['class'=>'imag-link'])->getChild(3)->img(['src'=>'Test','alt'=>'Test']);
           $this->assertEquals(4, $node->childrenCount());

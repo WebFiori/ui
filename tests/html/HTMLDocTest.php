@@ -1,10 +1,8 @@
 <?php
 namespace phpStructs\tests\html;
 
-namespace phpStructs\tests\html;
-
-use phpStructs\html\HTMLDoc;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\HTMLDoc;
+use webfiori\ui\HTMLNode;
 use PHPUnit\Framework\TestCase;
 use phpStructs\html\InvalidNodeNameException;
 /**

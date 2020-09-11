@@ -1,9 +1,8 @@
 <?php
 namespace phpStructs\tests\html;
 
-namespace phpStructs\tests\html;
-
-use phpStructs\html\Input;
+use webfiori\ui\Input;
+use webfiori\ui\HTMLNode;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of InputTest
@@ -153,7 +152,7 @@ class InputTest extends TestCase {
      */
     public function addChildTest02() {
         $input = new Input('select');
-        $option = new \phpStructs\html\HTMLNode('option');
+        $option = new HTMLNode('option');
         $option->setAttribute('value','hello');
         $option->text('Hello');
         $option->text('World');
@@ -169,7 +168,7 @@ class InputTest extends TestCase {
      */
     public function addChildTest03() {
         $input = new Input('select');
-        $optionsGroup = new \phpStructs\html\HTMLNode('optgroup');
+        $optionsGroup = new HTMLNode('optgroup');
         $input->addChild($optionsGroup);
         $this->assertEquals(1, $input->childrenCount());
         $o = $input->getChild(0);
@@ -194,7 +193,7 @@ class InputTest extends TestCase {
      * @test
      */
     public function testSetInputMode00() {
-        $input = new \phpStructs\html\Input();
+        $input = new Input();
         $input->setInputMode('decimal');
         $this->assertEquals('decimal', $input->getAttribute('inputmode'));
         $input->setInputMode('xyz');
@@ -204,7 +203,7 @@ class InputTest extends TestCase {
      * @test
      */
     public function testSetMax() {
-        $input = new \phpStructs\html\Input('number');
+        $input = new Input('number');
         $input->setMax(44);
         $this->assertEquals(44, $input->getAttribute('max'));
     }
@@ -212,7 +211,7 @@ class InputTest extends TestCase {
      * @test
      */
     public function testSetMin() {
-        $input = new \phpStructs\html\Input('number');
+        $input = new Input('number');
         $input->setMin(44);
         $this->assertEquals(44, $input->getAttribute('min'));
     }
@@ -220,7 +219,7 @@ class InputTest extends TestCase {
      * @test
      */
     public function testSetMaxLength() {
-        $input = new \phpStructs\html\Input();
+        $input = new Input();
         $input->setMaxLength(44);
         $this->assertEquals(44, $input->getAttribute('maxlength'));
         $input->setMaxLength(-3);
@@ -230,7 +229,7 @@ class InputTest extends TestCase {
      * @test
      */
     public function testSetMinLength() {
-        $input = new \phpStructs\html\Input();
+        $input = new Input();
         $input->setMinLength(44);
         $this->assertEquals(44, $input->getAttribute('minlength'));
         $input->setMinLength(-3);

@@ -1,8 +1,8 @@
 <?php
 namespace phpStructs\tests\html;
 
-use phpStructs\html\HeadNode;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\HeadNode;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of HeadNodeTest
