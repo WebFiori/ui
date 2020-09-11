@@ -1,4 +1,4 @@
-# phpStructs
+# WebFiori UI Package
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
