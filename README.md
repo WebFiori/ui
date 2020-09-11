@@ -1,5 +1,5 @@
 # phpStructs
-A set of classes that provide basic data structures for php in addition to basic templating engine that helps in creating HTML documents.
+A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
   <a href="https://travis-ci.org/usernane/phpStructs">
@@ -18,10 +18,9 @@ A set of classes that provide basic data structures for php in addition to basic
 </p>
 
 ## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/phpStructs .
+This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/webfiori/ui .
 
 ## Features
-- Supports basic data structures including LinkedList, Stack and Queue.
 - Ability to create custom HTML UI Elements.
 - Create and modify DOM through PHP.
 - Provides a basic templating engine.
@@ -30,9 +29,9 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 The library support all versions starting from version 5.6 up to version 7.4.
   
 ## Usage
-The very basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/phpStructs/html/HTMLDoc">HTMLDoc</a> represent HTML 5 document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
+The very basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
 ``` php
-use phpStructs\html\HTMLDoc;
+use webfiori\ui\HTMLDoc;
 
 $doc = new HTMLDoc();
 $doc->getBody()->addTextNode('Hello World!');
@@ -58,7 +57,7 @@ The output of this code is HTML 5 document. The structure of the document will b
 To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/phpStructs/html">here</a>. The following code shows a code which is used to create a basic login form.
 
 ``` php
-use phpStructs\html\HTMLDoc;
+use webfiori\ui\HTMLDoc;
 
 //Create new instance of "HTMLDoc".
 $doc = new HTMLDoc();
