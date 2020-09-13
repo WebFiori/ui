@@ -2,7 +2,7 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://travis-ci.org/usernane/phpStructs">
+  <a href="https://travis-ci.org/usernane/webfiori-ui">
     <img src="https://travis-ci.org/usernane/phpStructs.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/usernane/phpStructs">
