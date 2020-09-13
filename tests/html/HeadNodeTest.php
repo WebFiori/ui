@@ -438,7 +438,7 @@ class HeadNodeTest extends TestCase {
     public function testAddLink01() {
         $node = new HeadNode();
         $node->addLink('extra', 'https://example.com', ['async','data-access' => 'remote','hello']);
-        $node->addJs('https://example.com/js','',false);
+        $node->addJs('https://example.com/js',[],false);
         $node->addLink('extra', 'https://example.com/222');
         $this->assertEquals(''
                 .'<head>'
