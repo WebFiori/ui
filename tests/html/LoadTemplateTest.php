@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace phpStructs\tests;
+namespace webfiori\ui\test;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLDoc;

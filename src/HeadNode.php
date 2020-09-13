@@ -140,7 +140,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addAlternate($url,$lang,$otherAttrs = []) {
+    public function addAlternate($url, $lang, array $otherAttrs = []) {
         $trimmedUrl = trim($url);
         $trimmedLang = trim($lang);
 
@@ -196,7 +196,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, array $attrs = [], $chainOnParent = true) {
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
@@ -249,7 +249,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addCSS($href, $otherAttrs = [], $revesion = true) {
+    public function addCSS($href, array $otherAttrs = [], $revesion = true) {
         $trimmedHref = trim($href);
         $splitted = explode('?', $trimmedHref);
 
@@ -317,7 +317,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addJs($loc, $otherAttrs = [],$revesion = true) {
+    public function addJs($loc, array $otherAttrs = [], $revesion = true) {
         $trimmedLoc = trim($loc);
         $splitted = explode('?', $trimmedLoc);
 
@@ -385,7 +385,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1
      */
-    public function addLink($rel,$href,$otherAttrs = []) {
+    public function addLink($rel, $href, array $otherAttrs = []) {
         $trimmedRel = trim(strtolower($rel));
         $trimmedHref = trim($href);
 
@@ -439,7 +439,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addMeta($name,$content,$override = false) {
+    public function addMeta($name, $content, $override = false) {
         $trimmedName = trim(strtolower($name.''));
 
         if (strlen($trimmedName) != 0) {

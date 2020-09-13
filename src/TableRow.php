@@ -60,7 +60,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addCell($cellContent,$type = 'td',$escEntities = false,$attrs = []) {
+    public function addCell($cellContent, $type = 'td',$escEntities = false, array $attrs = []) {
         if ($cellContent instanceof TableCell) {
             $cellContent->setAttributes($attrs);
             $this->addChild($cellContent);
@@ -101,7 +101,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, array $attrs = [], $chainOnParent = true) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
         }

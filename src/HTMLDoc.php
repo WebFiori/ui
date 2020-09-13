@@ -145,7 +145,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attributes = [], $chainOnParent = true) {
+    public function addChild($node, array $attributes = [], $chainOnParent = true) {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {
@@ -181,7 +181,7 @@ class HTMLDoc {
      * 
      * @since 1.4
      */
-    public function asCode($formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
+    public function asCode(array $formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
         return $this->getDocumentRoot()->asCode($formattingOptions);
     }
     /**
@@ -234,7 +234,7 @@ class HTMLDoc {
      * @param LinkedList $list
      * @param HTMLNode $el
      */
-    private function _getChildrenByAttributeValue($attr, $val, $list, $el) {
+    private function _getChildrenByAttributeValue($attr, $val, LinkedList $list, HTMLNode $el) {
         if($el->getAttribute($attr) == $val) {
             $list->add($el);
         }

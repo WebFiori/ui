@@ -46,7 +46,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $useChaining = true) {
+    public function addChild($node, array $attrs = [], $useChaining = true) {
     }
     /**
      * Adds new line of JS code into the body.
@@ -70,7 +70,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setAttribute($name,$val = '') {
+    public function setAttribute($name, $val = '') {
         if ($name != 'type') {
             parent::setAttribute($name, $val);
         }
@@ -82,7 +82,7 @@ class JsCode extends HTMLNode {
      * 
      * @param type $val
      */
-    public function setClassName($val,$val2 = true) {
+    public function setClassName($val, $val2 = true) {
     }
     /**
      * A method that does nothing.
@@ -111,7 +111,7 @@ class JsCode extends HTMLNode {
      * 
      * @param type $esc Description
      */
-    public function setText($text,$esc = true) {
+    public function setText($text, $esc = true) {
     }
     /**
      * A method that does nothing.

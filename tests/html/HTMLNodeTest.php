@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2019 Ibrahim BinAlshikh, phpStructs.
+ * Copyright (c) 2019 Ibrahim BinAlshikh, WebFiori UI.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace phpStructs\tests\html;
+namespace webfiori\ui\test;
 
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLDoc;
@@ -30,12 +30,14 @@ use webfiori\ui\HTMLNode;
 use webfiori\ui\ListItem;
 use webfiori\ui\Label;
 use PHPUnit\Framework\TestCase;
+use webfiori\ui\exceptions\InvalidNodeNameException;
 /**
  * Description of HTMLNodeTest
  *
  * @author Eng.Ibrahim
  */
 class HTMLNodeTest extends TestCase {
+    
     /**
      * @test
      */
@@ -485,6 +487,22 @@ class HTMLNodeTest extends TestCase {
         $nodeName = '-not-valid';
         $this->expectExceptionMessage('Invalid node name: \''.$nodeName.'\'.');
         $node = new HTMLNode($nodeName);
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testConstructor08() {
+        $this->expectException('webfiori\ui\exceptions\InvalidNodeNameException');
+        $node = new HTMLNode('.xyz');
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testConstructor09() {
+        $this->expectException('webfiori\ui\exceptions\InvalidNodeNameException');
+        $node = new HTMLNode(':xyz');
     }
     /**
      * @test

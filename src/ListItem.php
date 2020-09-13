@@ -62,7 +62,7 @@ class ListItem extends HTMLNode {
      * 
      * @since 1.1.1
      */
-    public function addList($listItems,$type = 'ul',$attrs = []) {
+    public function addList(array $listItems, $type = 'ul', array $attrs = []) {
         $lType = strtolower(trim($type));
 
         if ($lType == 'ol') {
