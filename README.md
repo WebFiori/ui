@@ -2,11 +2,11 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://travis-ci.org/usernane/phpStructs">
-    <img src="https://travis-ci.org/usernane/phpStructs.svg?branch=master">
+  <a href="https://travis-ci.org/usernane/webfiori-ui">
+    <img src="https://travis-ci.org/usernane/webfiori-ui.svg?branch=master">
   </a>
-  <a href="https://codecov.io/gh/usernane/phpStructs">
-    <img src="https://codecov.io/gh/usernane/phpStructs/branch/master/graph/badge.svg" />
+  <a href="https://codecov.io/gh/usernane/webfiori-ui">
+    <img src="https://codecov.io/gh/usernane/webfiori-ui/branch/master/graph/badge.svg" />
   </a>
   <a href="https://sonarcloud.io/dashboard?id=usernane_phpStructs">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=usernane_phpStructs&metric=alert_status" />
