@@ -1,6 +1,6 @@
 {
-    "name": "webfiori/php-structs",
-    "description": "A library that provide basic data structures for PHP in addition to creating well-formatted HTML documents.",
+    "name": "webfiori/ui",
+    "description": "A library that provides basic utilities for creating HTML documents.",
     "require": {
         "php": ">=5.6",
         "webfiori/collections":"1.0"
@@ -9,7 +9,8 @@
         "library",
         "webfiori",
         "html",
-        "code"
+        "code",
+        "dom"
     ],
     "require-dev": {
         "phpunit/phpunit": "^5"
