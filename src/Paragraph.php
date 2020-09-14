@@ -30,7 +30,7 @@ namespace webfiori\ui;
  * @author Ibrahim
  * @version 1.1
  */
-class PNode extends HTMLNode {
+class Paragraph extends HTMLNode {
     const ALLOWED_CHILDS = ['a','b','br','abbr','dfn','i','em','span','img',
         'big','small','kbd','samp','code','script'];
     /**
@@ -50,17 +50,17 @@ class PNode extends HTMLNode {
      * 
      * @param array $attrs A set of attributes to set for the child.
      * 
-     * @return PNode The method will always return the same instance at 
+     * @return Paragraph The method will always return the same instance at 
      * which the method is called on.
      * 
      * @since 1.0
      */
     public function addChild($node, array $attrs = [], $useChaining = true) {
         if ($node instanceof HTMLNode) {
-            if (in_array($node->getNodeName(), PNode::ALLOWED_CHILDS) || $node->isTextNode()) {
+            if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDS) || $node->isTextNode()) {
                 parent::addChild($node, $attrs);
             }
-        } else if (in_array($node, PNode::ALLOWED_CHILDS)) {
+        } else if (in_array($node, Paragraph::ALLOWED_CHILDS)) {
             $newNode = new HTMLNode($node);
             parent::addChild($newNode);
         }
