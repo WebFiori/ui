@@ -51,7 +51,7 @@ require_once $rootDir.'src'.$DS.'exceptions'.$DS.'TemplateNotFoundException.php'
 require_once $rootDir.'src'.$DS.'HTMLNode.php';
 require_once $rootDir.'src'.$DS.'Br.php';
 require_once $rootDir.'src'.$DS.'HeadNode.php';
-require_once $rootDir.'src'.$DS.'PNode.php';
+require_once $rootDir.'src'.$DS.'Paragraph.php';
 require_once $rootDir.'src'.$DS.'HTMLDoc.php';
 require_once $rootDir.'src'.$DS.'CodeSnippet.php';
 require_once $rootDir.'src'.$DS.'Input.php';
