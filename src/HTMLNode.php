@@ -1726,7 +1726,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.3
      */
     public function paragraph($body = null, array $attributes = [], $escEntities = true) {
-        $paragraph = new PNode();
+        $paragraph = new Paragraph();
 
         if ($body instanceof HTMLNode) {
             $paragraph->addChild($body);
@@ -2657,9 +2657,13 @@ class HTMLNode implements Countable, Iterator {
                     .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>';
 
             foreach ($this->getAttributes() as $attr => $val) {
-                $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
+                if ($val !== null) {
+                    $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span> '
                         .'<span style="color:'.$FO['colors']['operator-color'].'">=</span> '
                         .'<span style="color:'.$FO['colors']['attribute-value-color'].'">"'.$val.'"</span>';
+                } else {
+                    $retVal .= ' <span style="color:'.$FO['colors']['attribute-color'].'">'.$attr.'</span>';
+                }
             }
             $retVal .= '<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
         } else if (!$this->isTextNode() && !$this->isComment()) {
