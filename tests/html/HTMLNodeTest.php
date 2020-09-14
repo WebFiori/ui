@@ -170,6 +170,48 @@ class HTMLNodeTest extends TestCase {
     }
     /**
      * @test
+     * 
+     */
+    public function testAddChild07() {
+        $node = new HTMLNode('#text');
+        $temp = new HTMLNode();
+        $node->addChild($temp);
+        $this->assertFalse($node->hasChild($temp));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild08() {
+        $node = new HTMLNode('#comment');
+        $temp = new HTMLNode();
+        $node->addChild($temp);
+        $this->assertFalse($node->hasChild($temp));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild09() {
+        $node = new HTMLNode();
+        $node->setAttributes([
+            'class' => 'hello',
+            'disabled'
+        ]);
+        $node->table();
+        foreach ($node as $child) {
+            $this->assertEquals('table',$child->getNodeName());
+        }
+        $this->assertEquals("&lt;div class = \"hello\" disabled&gt;\n"
+                . "    &lt;table&gt;\n"
+                . "    &lt;/table&gt;\n"
+                . "&lt;/div&gt;\n", $node->asCode([
+            'with-colors' => false,
+            'use-pre' => false
+        ]));
+    }
+    /**
+     * @test
      */
     public function testAddTextNode00() {
         $node = new HTMLNode();
@@ -1851,6 +1893,17 @@ and open the template in the editor.
         $node->setAttribute('placeholder','This is "NOT" funny.');
         $this->assertEquals('This is "NOT" funny.',$node->getAttribute('placeholder'));
         $this->assertEquals('<div placeholder="This is \"NOT\" funny."></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute10() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getName());
+        $node->setName(' hello ');
+        $this->assertEquals('hello',$node->getName());
+        $node->removeAttribute('name');
+        $this->assertNull($node->getName());
     }
     /**
      * @test

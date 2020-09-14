@@ -604,14 +604,12 @@ class HTMLNode implements Countable, Iterator {
     public function codeSnippit($title, $code, array $attributes = []) {
         $snippit = new CodeSnippet($title, $code);
 
-        if (gettype($attributes) == 'array') {
-            if (isset($attributes['class'])) {
-                unset($attributes['class']);
-            }
+        if (isset($attributes['class'])) {
+            unset($attributes['class']);
+        }
 
-            if (isset($attributes['style'])) {
-                unset($attributes['style']);
-            }
+        if (isset($attributes['style'])) {
+            unset($attributes['style']);
         }
         $snippit->setAttributes($attributes);
 
@@ -2235,7 +2233,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.8.3
      */
-    public function table(array $attributes) {
+    public function table(array $attributes = []) {
         $node = new HTMLNode('table');
 
         return $this->addChild($node, $attributes);
@@ -2670,7 +2668,11 @@ class HTMLNode implements Countable, Iterator {
             $retVal .= '&lt;'.$this->getNodeName();
 
             foreach ($this->getAttributes() as $attr => $val) {
-                $retVal .= ' '.$attr.' = "'.$val.'"';
+                if ($val !== null) {
+                    $retVal .= ' '.$attr.' = "'.$val.'"';
+                } else {
+                    $retVal .= ' '.$attr;
+                }
             }
             $retVal .= '&gt;';
         }
