@@ -11,8 +11,8 @@ A set of classes that provide basic web pages creation utilities in addition to 
   <a href="https://sonarcloud.io/dashboard?id=usernane_phpStructs">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=usernane_phpStructs&metric=alert_status" />
   </a>
-  <a href="https://github.com/usernane/phpStructs/releases">
-      <img src="https://img.shields.io/github/release/usernane/phpStructs.svg?label=latest" />
+  <a href="https://github.com/usernane/webfiori-ui/releases">
+      <img src="https://img.shields.io/github/release/usernane/webfiori-ui.svg?label=latest" />
   </a>
   <img src="https://img.shields.io/packagist/dt/webfiori/php-structs?color=light-green">
 </p>
@@ -29,6 +29,8 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 The library support all versions starting from version 5.6 up to version 7.4.
   
 ## Usage
+For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
+
 The very basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
 ``` php
 use webfiori\ui\HTMLDoc;
@@ -48,7 +50,7 @@ The output of this code is HTML 5 document. The structure of the document will b
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   </head>
-  <body itemscope="" itemtype="http://schema.org/WebPage">
+  <body itemscope itemtype="http://schema.org/WebPage">
     Hello World!
   </body>
 </html>
