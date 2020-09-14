@@ -90,7 +90,7 @@ class CodeSnippet extends HTMLNode {
     private $pre;
     /**
      *
-     * @var PNode
+     * @var Paragraph
      * @since 1.0 
      */
     private $titleNode;
@@ -128,7 +128,7 @@ class CodeSnippet extends HTMLNode {
                 'border' => '1px dotted black;'
             ]
         );
-        $this->titleNode = new PNode();
+        $this->titleNode = new Paragraph();
         $this->titleNode->addText('Code');
         $this->titleNode->setClassName('snippit-title');
         $this->titleNode->setStyle(
