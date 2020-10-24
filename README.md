@@ -3,10 +3,10 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 <p align="center">
   <a href="https://travis-ci.com/github/WebFiori/ui">
-    <img src="https://travis-ci.com/WebFiori/ui.svg?branch=main">
+    <img src="https://travis-ci.com/WebFiori/ui.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
-    <img src="https://codecov.io/gh/WebFiori/ui/branch/main/graph/badge.svg" />
+    <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
   </a>
   <a href="https://sonarcloud.io/dashboard?id=WebFiori_ui">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=WebFiori_ui&metric=alert_status" />
