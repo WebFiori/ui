@@ -2,19 +2,21 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://travis-ci.org/usernane/webfiori-ui">
-    <img src="https://travis-ci.org/usernane/webfiori-ui.svg?branch=master">
+  <a href="https://travis-ci.com/github/WebFiori/ui">
+    <img src="https://travis-ci.com/WebFiori/ui.svg?branch=master">
   </a>
-  <a href="https://codecov.io/gh/usernane/webfiori-ui">
-    <img src="https://codecov.io/gh/usernane/webfiori-ui/branch/master/graph/badge.svg" />
+  <a href="https://codecov.io/gh/WebFiori/ui">
+    <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
   </a>
-  <a href="https://sonarcloud.io/dashboard?id=usernane_phpStructs">
-      <img src="https://sonarcloud.io/api/project_badges/measure?project=usernane_phpStructs&metric=alert_status" />
+  <a href="https://sonarcloud.io/dashboard?id=WebFiori_ui">
+      <img src="https://sonarcloud.io/api/project_badges/measure?project=WebFiori_ui&metric=alert_status" />
   </a>
-  <a href="https://github.com/usernane/webfiori-ui/releases">
-      <img src="https://img.shields.io/github/release/usernane/webfiori-ui.svg?label=latest" />
+  <a href="https://github.com/WebFiori/ui/releases">
+      <img src="https://img.shields.io/github/release/WebFiori/ui.svg?label=latest" />
   </a>
-  <img src="https://img.shields.io/packagist/dt/webfiori/php-structs?color=light-green">
+  <a href="https://packagist.org/packages/webfiori/ui">
+      <img src="https://img.shields.io/packagist/dt/webfiori/ui?color=light-green">
+  </a>
 </p>
 
 ## API Docs
