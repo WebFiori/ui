@@ -6,7 +6,7 @@ php:
     - 7.4
 addons:
     sonarcloud:
-        organization: "usernane"
+        organization: "webfiori"
         token:
             secure: QAO2+ZEPHxGFcCSgxMegZw6pKAnoVCAJCP0U3HYhtkCet6RsX183ewBpLbJVXd2Z53+4na6xxNr8xOefqsGUhpPQtDmjMzf+CBZdv6R0q/M4mESIp78h0jxxFZptdnWKeLRCmYGBMhVyvoaquhFYjBfzfZHwJbBPwZ6mh/z6pa0CpLv3WGoHBNqWV2u92144aro40s7lZfybePvXHo4AYyjGhZtiQILwkVESY25pXy8VwOtJ3+aEVOYbqfh8bWm8JuaGGMsPggxrND3qdsWU2z6RAIVdhC6M3Po2vYcqHJxhY3lDJxW2V3sMJ86Lt5XRIyY9z5WYScwOPMChehkGtgpvrDl8AKRYwmt2Ntr+d1EybxrtpYnaQt/EwHePWx9gAM6in0zW7vv5ijNi8323L1vt8i9Ht/lpOP66LPSHIK9Q4P6LbH3itoByXl69wPYkmMybEPxVEWJgrh0u6+cegg+sXeVcZ+zGNmZKXydP1Ib77j02JrwRPzO/0P3aZJqS/XxJYlKtrO9QEQMTgRZGPi7eh3EySYDvbhtYO599KcPKSyHmv+MfoLQDf5L1yRw5q9uDZZjhrtFF9NJik0FhnNdSKy34H7Jz3FToR1H6JQ2ntmdaJB8FQinCSGztunloKEuCdKrkl9uSbbDUna30flj4WUvaSBpHVtZZqDeJWzg=
 
