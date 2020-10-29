@@ -90,7 +90,7 @@ class HTMLList extends HTMLNode {
         } else {
             $li = new ListItem();
 
-            if ($listItemBody instanceof HTMLNode) {
+            if ($node instanceof HTMLNode) {
                 $li->addChild($listItemBody);
             } else {
                 $li->text($listItemBody);
