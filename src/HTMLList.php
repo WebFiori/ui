@@ -90,10 +90,10 @@ class HTMLList extends HTMLNode {
         } else {
             $li = new ListItem();
 
-            if ($listItemBody instanceof HTMLNode) {
-                $li->addChild($listItemBody);
+            if ($node instanceof HTMLNode) {
+                $li->addChild($node);
             } else {
-                $li->text($listItemBody);
+                $li->text($node);
             }
 
             return parent::addChild($li, $attrs, $chainOnParent);
