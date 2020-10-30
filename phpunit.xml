@@ -8,6 +8,7 @@
             <file>./src/HeadNode.php</file>
             <file>./src/HTMLDoc.php</file>
             <file>./src/Input.php</file>
+            <file>./src/HTMLTable.php</file>
         </whitelist>
     </filter>
     <logging>

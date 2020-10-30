@@ -1908,6 +1908,32 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testSetStyle00() {
+        $node = new HTMLNode();
+        $this->assertEquals([], $node->getStyle());
+        $node->setStyle(['border' => '1px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['font-family' => 'arial']);
+        $this->assertEquals(['border' => '1px solid', 'font-family' => 'arial'], $node->getStyle());
+        return $node;
+    }
+    /**
+     * @test
+     */
+    public function testSetStyle01() {
+        $node = new HTMLNode();
+        $this->assertEquals([], $node->getStyle());
+        $node->setStyle(['border' => '1px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['border' => '10px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['border' => '10px solid'], true);
+        $this->assertEquals(['border' => '10px solid'], $node->getStyle());
+        return $node;
+    }
+    /**
+     * @test
+     */
     public function testSetTitle00() {
         $node = new HTMLNode();
         $node->setTitle('Title attr');

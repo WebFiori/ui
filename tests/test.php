@@ -64,4 +64,5 @@ require_once $rootDir.'src'.$DS.'OrderedList.php';
 require_once $rootDir.'src'.$DS.'ListItem.php';
 require_once $rootDir.'src'.$DS.'TableCell.php';
 require_once $rootDir.'src'.$DS.'TableRow.php';
+require_once $rootDir.'src'.$DS.'HTMLTable.php';
 

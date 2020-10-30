@@ -2087,25 +2087,40 @@ class HTMLNode implements Countable, Iterator {
      * be the names of CSS Properties and the values should be the values of 
      * the attributes (e.g. 'color'=>'white').
      * 
+     * @param boolean $override If this value is set to true and a style is already 
+     * set, then the old style will be overridden by the given style. Default is 
+     * false.
+     * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
      * @since 1.7.1
      */
-    public function setStyle(array $cssStyles) {
-        $styleStr = '';
-
+    public function setStyle(array $cssStyles, $override = false) {
+        $ovrride = $override === true;
+        
+        if (!$ovrride) {
+            $styleArr = $this->getStyle();
+        } else {
+            $styleArr = [];
+        }
+        
         foreach ($cssStyles as $key => $val) {
             $trimmedKey = trim($key);
             $trimmedVal = trim($val);
-
-            if ($this->_validateAttrName($trimmedKey) && strlen($trimmedVal) != 0) {
-                $styleStr .= $trimmedKey.':'.$trimmedVal.';';
+            if (($ovrride && isset($styleArr[$trimmedKey])) || !isset($styleArr[$trimmedKey])) {
+                $styleArr[$trimmedKey] = $trimmedVal;
             }
         }
-
-        if (strlen($styleStr) != 0) {
-            $this->attributes['style'] = $styleStr;
+        
+        $array = [];
+        
+        foreach ($styleArr as $prop => $val) {
+            $array[] = $prop.':'.$val;
+        }
+        
+        if (count($array) != 0) {
+            $this->attributes['style'] = implode(';', $array).';';
         }
 
         return $this;
