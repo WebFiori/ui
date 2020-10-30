@@ -23,7 +23,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 namespace webfiori\ui;
 
 use InvalidArgumentException;
@@ -41,14 +40,14 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0 
      */
-    private $rows;
+    private $cols;
     /**
      *
      * @var int
      * 
      * @since 1.0 
      */
-    private $cols;
+    private $rows;
     /**
      * Creates new instance of the class.
      * 
@@ -69,14 +68,119 @@ class HTMLTable extends HTMLNode {
         $this->setStyle([
             'border-collapse' => 'collapse'
         ]);
-        
+
         for ($x = 0 ; $x < $this->rows() ; $x++) {
             $row = new TableRow();
+
             for ($y = 0 ; $y < $this->cols() ; $y++) {
                 $row->addCell('');
             }
             $this->addRow($row);
         }
+    }
+    /**
+     * Adds a new column to the table.
+     * 
+     * @param array $data The data that will be added.
+     * 
+     * @since 1.0
+     */
+    public function addColumn(array $data = []) {
+        for ($x = 0 ; $x < $this->rows() ; $x++) {
+            if (isset($data[$x])) {
+                $this->getRow($x)->addCell($data[$x]);
+            } else {
+                $this->getRow($x)->addCell('');
+            }
+        }
+    }
+    /**
+     * Adds a new row to the body of the table.
+     * 
+     * @param TableRow|array $arrOrRowObj This can be an object that represents 
+     * the row or an indexed array that contains row data. 
+     */
+    public function addRow($arrOrRowObj) {
+        if ($arrOrRowObj instanceof TableRow) {
+            $this->addChild($arrOrRowObj);
+        } else {
+            if (gettype($arrOrRowObj) == 'array') {
+                $row = new TableRow();
+
+                for ($x = 0 ; $x < $this->cols() ; $x++) {
+                    if (isset($arrOrRowObj[$x])) {
+                        $row->addCell($arrOrRowObj[$x]);
+                    } else {
+                        $row->addCell('');
+                    }
+                }
+                $this->addChild($row);
+            }
+        }
+    }
+    /**
+     * Returns number of columns in the table.
+     * 
+     * @return int Number of columns in the table.
+     * 
+     * @since 1.0
+     */
+    public function cols() {
+        return $this->cols;
+    }
+    /**
+     * Returns a row given its number.
+     * 
+     * @param int $rowIndex Row number starting from 0.
+     * 
+     * @return TableRow|null If the row exist, the method will return it as an 
+     * object. If not exist, the method will return null.
+     * 
+     * @since 1.0
+     */
+    public function getRow($rowIndex) {
+        return $this->getChild($rowIndex);
+    }
+    /**
+     * Returns the value of the cell given its location.
+     * 
+     * @param int $rowIndex Row index starting from 0.
+     * 
+     * @param int $colIndex Column index starting from 0.
+     * 
+     * @return HTMLNode|string If the cell only contains text, the method will 
+     * return a string that represent the value. If the cell contains HTML 
+     * element, it is returned as an object. If cell does not exist, the method 
+     * will return null.
+     * 
+     * @since 1.0
+     */
+    public function getValue($rowIndex, $colIndex) {
+        $row = $this->getRow($rowIndex);
+
+        if ($row !== null) {
+            $cell = $row->getCell($colIndex);
+
+            if ($cell != null) {
+                $ch = $cell->getChild(0);
+
+                if ($ch->getName() == '#TEXT') {
+                    return $ch->getText();
+                }
+
+                return $ch;
+            }
+        }
+    }
+    /**
+     * Returns number of rows in the table.
+     * 
+     * @return int Number of rows in the table.
+     * 
+     * @since 1.0
+     */
+    public function rows() {
+        return $this->rows;
     }
     /**
      * Sets the value of a specific cell in the table.
@@ -97,112 +201,17 @@ class HTMLTable extends HTMLNode {
             if ($colIndex < $this->cols() && $colIndex >= 0) {
                 $cell = $this->getChild($rowIndex)->getChild($colIndex);
                 $cell->removeAllChildNodes();
+
                 if ($value instanceof HTMLNode) {
                     $cell->addChild($value);
                 } else {
                     $cell->text($value);
                 }
+
                 return;
             }
             throw new InvalidArgumentException("Column index must be less than ".$this->cols().' and greater than -1.');
         }
         throw new InvalidArgumentException("Row index must be less than ".$this->rows().' and greater than -1.');
-    }
-    /**
-     * Returns number of columns in the table.
-     * 
-     * @return int Number of columns in the table.
-     * 
-     * @since 1.0
-     */
-    public function cols() {
-        return $this->cols;
-    }
-    /**
-     * Returns number of rows in the table.
-     * 
-     * @return int Number of rows in the table.
-     * 
-     * @since 1.0
-     */
-    public function rows() {
-        return $this->rows;
-    }
-    /**
-     * Returns a row given its number.
-     * 
-     * @param int $rowIndex Row number starting from 0.
-     * 
-     * @return TableRow|null If the row exist, the method will return it as an 
-     * object. If not exist, the method will return null.
-     * 
-     * @since 1.0
-     */
-    public function getRow($rowIndex) {
-        return $this->getChild($rowIndex);
-    }
-    /**
-     * Adds a new column to the table.
-     * 
-     * @param array $data The data that will be added.
-     * 
-     * @since 1.0
-     */
-    public function addColumn(array $data = []) {
-        for ($x = 0 ; $x < $this->rows() ; $x++) {
-            if (isset($data[$x])) {
-                $this->getRow($x)->addCell($data[$x]);
-            } else {
-                $this->getRow($x)->addCell('');
-            }
-        }
-    }
-    /**
-     * Returns the value of the cell given its location.
-     * 
-     * @param int $rowIndex Row index starting from 0.
-     * 
-     * @param int $colIndex Column index starting from 0.
-     * 
-     * @return HTMLNode|string If the cell only contains text, the method will 
-     * return a string that represent the value. If the cell contains HTML 
-     * element, it is returned as an object. If cell does not exist, the method 
-     * will return null.
-     * 
-     * @since 1.0
-     */
-    public function getValue($rowIndex, $colIndex) {
-        $row = $this->getRow($rowIndex);
-        if ($row !== null) {
-            $cell = $row->getCell($colIndex);
-            if ($cell != null) {
-                $ch = $cell->getChild(0);
-                if ($ch->getName() == '#TEXT') {
-                    return $ch->getText();
-                }
-                return $ch;
-            }
-        }
-    }
-    /**
-     * Adds a new row to the body of the table.
-     * 
-     * @param TableRow|array $arrOrRowObj This can be an object that represents 
-     * the row or an indexed array that contains row data. 
-     */
-    public function addRow($arrOrRowObj) {
-        if ($arrOrRowObj instanceof TableRow) {
-            $this->addChild($arrOrRowObj);
-        } else if (gettype($arrOrRowObj) == 'array') {
-            $row = new TableRow();
-            for ($x = 0 ; $x < $this->cols() ; $x++) {
-                if (isset($arrOrRowObj[$x])) {
-                    $row->addCell($arrOrRowObj[$x]);
-                } else {
-                    $row->addCell('');
-                }
-            }
-            $this->addChild($row);
-        }
     }
 }
