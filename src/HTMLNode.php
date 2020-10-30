@@ -2120,7 +2120,7 @@ class HTMLNode implements Countable, Iterator {
         }
         
         if (count($array) != 0) {
-            $this->attributes['style'] = implode(';', $array);
+            $this->attributes['style'] = implode(';', $array).';';
         }
 
         return $this;
