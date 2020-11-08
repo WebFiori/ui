@@ -237,7 +237,7 @@ class HTMLNode implements Countable, Iterator {
      * @throws InvalidNodeNameException The method will throw an exception if given node 
      * name is not valid.
      */
-    public function __construct($name = 'div', $attrs = []) {
+    public function __construct($name = 'div', array $attrs = []) {
         $this->null = null;
         $nameUpper = strtoupper(trim($name));
 
