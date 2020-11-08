@@ -161,7 +161,7 @@ class Paragraph extends HTMLNode {
                 }
 
                 if (isset($options['new-line']) && $options['new-line'] === true) {
-                    $this->addLineBreak();
+                    $this->br();
                 }
             } else {
                 $textNode = self::createTextNode($text,true);
