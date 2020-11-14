@@ -3,7 +3,7 @@
     "description": "A library that provides basic utilities for creating HTML documents.",
     "require": {
         "php": ">=5.6",
-        "webfiori/collections":"1.0"
+        "webfiori/collections":"1.0.1"
     },
     "keywords": [
         "library",
