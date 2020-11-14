@@ -1903,7 +1903,9 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setAttribute($name, $val = null) {
         $trimmedName = trim($name);
-        $trimmedVal = trim($val);
+        if (gettype($val) != 'array') {
+            $trimmedVal = trim($val);
+        }
 
         if (!$this->isTextNode() && !$this->isComment() && strlen($trimmedName) != 0) {
             $lower = strtolower($trimmedName);
