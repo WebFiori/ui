@@ -85,7 +85,7 @@ echo $doc;
 
 The output of the code would be similar to the following image.
 
-<img src="https://webfiori.com/assets/images/login-form.png">
+<img src="https://webfiori.com/assets/images/login-form.PNG">
 
 ## Loading HTML Files
 Another way to have your HTML rendered as object of type HTMLDoc is to create your document fully in HTML and add slots within its body and set the values of the slots in your PHP code. For example, let's assume that we have HTML file with the following markup:
