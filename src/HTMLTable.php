@@ -31,7 +31,7 @@ use InvalidArgumentException;
  *
  * @author Ibrahim
  * 
- * @since 1.0
+ * @since 1.0.1
  */
 class HTMLTable extends HTMLNode {
     /**
@@ -103,19 +103,37 @@ class HTMLTable extends HTMLNode {
     public function addRow($arrOrRowObj) {
         if ($arrOrRowObj instanceof TableRow) {
             $this->addChild($arrOrRowObj);
-        } else {
-            if (gettype($arrOrRowObj) == 'array') {
-                $row = new TableRow();
+        } else if (gettype($arrOrRowObj) == 'array') {
+            $row = new TableRow();
 
-                for ($x = 0 ; $x < $this->cols() ; $x++) {
-                    if (isset($arrOrRowObj[$x])) {
-                        $row->addCell($arrOrRowObj[$x]);
-                    } else {
-                        $row->addCell('');
-                    }
+            for ($x = 0 ; $x < $this->cols() ; $x++) {
+                if (isset($arrOrRowObj[$x])) {
+                    $row->addCell($arrOrRowObj[$x]);
+                } else {
+                    $row->addCell('');
                 }
-                $this->addChild($row);
             }
+            $this->addChild($row);
+        }
+    }
+    /**
+     * Returns a table cell given its indices.
+     * 
+     * @param int $rowIndex Row index starting from zero.
+     * 
+     * @param int $colIndex Column index starting from zero.
+     * 
+     * @return TableCell|null If a cell at given location exist, it is returned as 
+     * an object. Other than that, the method will return null.
+     * 
+     * @since 1.0.1
+     */
+    public function getCell($rowIndex, $colIndex) {
+        $row = $this->getRow($rowIndex);
+
+        if ($row !== null) {
+            
+            return $row->getCell($colIndex);
         }
     }
     /**
