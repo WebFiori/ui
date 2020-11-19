@@ -243,13 +243,13 @@ class HeadNode extends HTMLNode {
      * @param boolean|string $revesion If set to true, a string in the form '?cv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
      * This one can be also a string that represents the version of CSS file.
-     * Default is true. 'cv' = CSS Version. 
+     * Default is false. 'cv' = CSS Version. 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addCSS($href, array $otherAttrs = [], $revesion = true) {
+    public function addCSS($href, array $otherAttrs = [], $revesion = false) {
         $trimmedHref = trim($href);
         $splitted = explode('?', $trimmedHref);
 
@@ -310,14 +310,14 @@ class HeadNode extends HTMLNode {
      * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
      * This also can be a string that represents the version of the file.
      * 'jv' = JavaScript Version.
-     * Default is true.
+     * Default is false.
      * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addJs($loc, array $otherAttrs = [], $revesion = true) {
+    public function addJs($loc, array $otherAttrs = [], $revesion = false) {
         $trimmedLoc = trim($loc);
         $splitted = explode('?', $trimmedLoc);
 
