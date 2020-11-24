@@ -1787,7 +1787,8 @@ class HTMLNode implements Countable, Iterator {
      * Removes a direct child node.
      * 
      * @param HTMLNode|string $nodeInstOrId The node that will be removed. This also can 
-     * be the ID of the child that will be removed.
+     * be the ID of the child that will be removed. In addition to that, this can 
+     * be the index of the element that will be removed starting from 0.
      * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
@@ -1804,6 +1805,8 @@ class HTMLNode implements Countable, Iterator {
                 $toRemove = $this->getChildByID($nodeInstOrId);
                 $child = $this->children()->removeElement($toRemove);
                 return $this->_removeChHelper($child);
+            } else if (gettype($nodeInstOrId) == 'integer') {
+                return $this->children()->remove($nodeInstOrId);
             }
         }
     }
