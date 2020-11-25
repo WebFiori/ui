@@ -276,21 +276,19 @@ class HeadNode extends HTMLNode {
                 } else {
                     $tag->setAttribute('href', $trimmedHref.'?cv='.$revision);
                 }
-            } else {
-                if ($revision === true) {
-                    //used to prevent caching 
-                    $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
+            } else if ($revision === true) {
+                //used to prevent caching 
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
-                    if (strlen($queryString) != 0) {
-                        $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
-                    } else {
-                        $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
-                    }
-                } else if (strlen($queryString) != 0) {
-                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
+                if (strlen($queryString) != 0) {
+                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
                 } else {
-                    $tag->setAttribute('href', $trimmedHref);
+                    $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
                 }
+            } else if (strlen($queryString) != 0) {
+                $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
+            } else {
+                $tag->setAttribute('href', $trimmedHref);
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
@@ -344,25 +342,21 @@ class HeadNode extends HTMLNode {
                 } else {
                     $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$revision);
                 }
-            } else {
-                if ($revision === true) {
-                    //used to prevent caching 
-                    //php 5.6 does not support random_int
-                    $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
-                    $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
+            } else if ($revision === true) {
+                //used to prevent caching 
+                //php 5.6 does not support random_int
+                $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
-                    if (strlen($queryString) == 0) {
-                        $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
-                    } else {
-                        $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$version);
-                    }
+                if (strlen($queryString) == 0) {
+                    $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
                 } else {
-                    if (strlen($queryString) == 0) {
-                        $tag->setAttribute('src', $trimmedLoc);
-                    } else {
-                        $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
-                    }
+                    $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$version);
                 }
+            } else if (strlen($queryString) == 0) {
+                $tag->setAttribute('src', $trimmedLoc);
+            } else {
+                $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
