@@ -119,12 +119,12 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddCcc02() {
         $node = new HeadNode();
-        $node->addCSS('https://example.com/css1?hello=true', [], false);
-        $node->addCSS('https://example.com/css2 ? hello=true', [], false);
+        $node->addCSS('https://example.com/css1?hello=true');
+        $node->addCSS('https://example.com/css2 ? hello=true');
         $this->assertEquals(2, $node->getCSSNodes()->size());
-        $node->addCSS('?hello=true', [], false);
-        $node->addCSS('https://example.com/?hello=true?', [], false);
-        $node->addCSS('https://example.com/css3?', ['async' => ''], false);
+        $node->addCSS('?hello=true');
+        $node->addCSS('https://example.com/?hello=true?');
+        $node->addCSS('https://example.com/css3?', ['async' => '']);
         $this->assertEquals(3, $node->getCSSNodes()->size());
         $this->assertEquals(''
                 .'<head>'
@@ -261,13 +261,23 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddCss01() {
         $node = new HeadNode();
-        $node->addCSS('https://example.com/css1?hello=true', [], true)
-             ->addCSS('https://example.com/css2 ? hello=true', [], true);
+        $node->addCSS('https://example.com/css1?hello=true', [
+            'revision' => true
+        ])
+             ->addCSS('https://example.com/css2 ? hello=true', [
+                 'revision' => true
+             ]);
         $this->assertEquals(2, $node->getCSSNodes()->size());
-        $node->addCSS('?hello=true', [], true);
-        $node->addCSS('https://example.com/?hello=true?', [], true);
+        $node->addCSS('?hello=true', [
+            'revision' => true
+        ]);
+        $node->addCSS('https://example.com/?hello=true?', [
+            'revision' => true
+        ]);
         $this->assertEquals(2, $node->getCSSNodes()->size());
-        $node->addCSS('https://example.com/css3?', [], true);
+        $node->addCSS('https://example.com/css3?', [
+            'revision' => true
+        ]);
         $this->assertEquals(3, $node->getCSSNodes()->size());
 
         return $node;
@@ -280,7 +290,7 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $node->addCSS('https://example.com/css1', [
             'reloaded','async' => 'false','data-action'
-        ], false);
+        ]);
         $this->assertEquals(''
                 .'<head>'
                 .'<title>Default</title>'
@@ -294,8 +304,8 @@ class HeadNodeTest extends TestCase {
     public function testAddCss03() {
         $node = new HeadNode();
         $node->addCSS('https://example.com/css1', [
-            'reloaded','async' => 'false','data-action'
-        ], '1.1.1');
+            'reloaded','async' => 'false','data-action','revision' => '1.1.1'
+        ]);
         $this->assertEquals(''
                 .'<head>'
                 .'<title>Default</title>'
@@ -309,8 +319,8 @@ class HeadNodeTest extends TestCase {
     public function testAddCss04() {
         $node = new HeadNode();
         $node->addCSS('https://example.com/css1?hello=world', [
-            'reloaded','async' => 'false','data-action'
-        ], '1.1.1');
+            'reloaded','async' => 'false','data-action', 'revision' => '1.1.1'
+        ]);
         $this->assertEquals(''
                 .'<head>'
                 .'<title>Default</title>'
@@ -354,26 +364,34 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs01() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js1?hello=true', [], true);
-        $node->addJs('https://example.com/js2 ? hello=true', [], true);
+        $node->addJs('https://example.com/js1?hello=true', [
+            'revision' => true
+        ]);
+        $node->addJs('https://example.com/js2 ? hello=true', [
+            'revision' => true
+        ]);
         $this->assertEquals(2, $node->getJSNodes()->size());
         $node->addJs('?hello=true', [], true);
-        $node->addJs('https://example.com/?hello=true??', [], true);
+        $node->addJs('https://example.com/?hello=true??', [
+            'revision' => true
+        ]);
         $this->assertEquals(2, $node->getJSNodes()->size());
-        $node->addJs('https://example.com/js3?', [], true);
+        $node->addJs('https://example.com/js3?', [
+            'revision' => true
+        ]);
         $this->assertEquals(3, $node->getJSNodes()->size());
 
         return $node;
     }
     public function testAddJs02() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js1?hello=true', [], false);
-        $node->addJs('https://example.com/js2 ? hello=true', [], false);
+        $node->addJs('https://example.com/js1?hello=true');
+        $node->addJs('https://example.com/js2 ? hello=true');
         $this->assertEquals(2, $node->getJSNodes()->size());
         $node->addJs('?hello=true', [], true);
-        $node->addJs('https://example.com/?hello=true??', [], false);
+        $node->addJs('https://example.com/?hello=true??');
         $this->assertEquals(2, $node->getJSNodes()->size());
-        $node->addJs('https://example.com/js3?', ['async' => ''], false);
+        $node->addJs('https://example.com/js3?', ['async' => '']);
         $this->assertEquals(3, $node->getJSNodes()->size());
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
@@ -388,7 +406,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs03() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js3?', ['async','ok' => 'yes'], false);
+        $node->addJs('https://example.com/js3?', ['async','ok' => 'yes']);
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
@@ -400,7 +418,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs04() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js3', ['async','ok' => 'yes'], '1.1.1');
+        $node->addJs('https://example.com/js3', ['async','ok' => 'yes', 'revision' => '1.1.1']);
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
@@ -412,7 +430,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs05() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js3?hello=world', ['async','ok' => 'yes'], '1.1.1');
+        $node->addJs('https://example.com/js3?hello=world', ['async','ok' => 'yes', 'revision' => '1.1.1'],);
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
@@ -438,7 +456,7 @@ class HeadNodeTest extends TestCase {
     public function testAddLink01() {
         $node = new HeadNode();
         $node->addLink('extra', 'https://example.com', ['async','data-access' => 'remote','hello']);
-        $node->addJs('https://example.com/js',[],false);
+        $node->addJs('https://example.com/js');
         $node->addLink('extra', 'https://example.com/222');
         $this->assertEquals(''
                 .'<head>'
