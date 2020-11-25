@@ -84,7 +84,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, array $attrs = [], $chainOnParent = true) {
         if ($node instanceof ListItem) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else {
