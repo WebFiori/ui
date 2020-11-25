@@ -430,7 +430,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddJs05() {
         $node = new HeadNode();
-        $node->addJs('https://example.com/js3?hello=world', ['async','ok' => 'yes', 'revision' => '1.1.1'],);
+        $node->addJs('https://example.com/js3?hello=world', ['async','ok' => 'yes', 'revision' => '1.1.1']);
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
