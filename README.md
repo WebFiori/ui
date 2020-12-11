@@ -2,8 +2,8 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://travis-ci.com/github/WebFiori/ui">
-    <img src="https://travis-ci.com/WebFiori/ui.svg?branch=master">
+  <a href="https://github.com/WebFiori/ui/actions">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207,8/badge.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
