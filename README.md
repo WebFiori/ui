@@ -28,7 +28,7 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 - Provides a basic templating engine.
 
 ## Supported PHP Versions
-The library support all versions starting from version 5.6 up to version 7.4.
+The library support all versions starting from version 5.6 up to version 8.
   
 ## Usage
 For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
