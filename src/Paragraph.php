@@ -35,10 +35,14 @@ class Paragraph extends HTMLNode {
         'big','small','kbd','samp','code','script'];
     /**
      * Creates new paragraph node.
+     * 
+     * @param string $text An optional paragraph text.
+     * 
      * @since 1.0
      */
-    public function __construct() {
+    public function __construct($text = '') {
         parent::__construct('p');
+        $this->addText($text);
     }
     /**
      * Adds new child node.
