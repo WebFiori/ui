@@ -27,7 +27,7 @@ namespace webfiori\ui;
 
 /**
  * A class which can be used to represent a group of radio buttons inserted 
- * inside a div element.
+ * inside a &lt;fieldset&gt; element.
  *
  * Each radio button alongside its label are placed in one div element.
  * 
@@ -47,7 +47,7 @@ class RadioGroup extends HTMLNode {
     /**
      * An element that represents the label of the group.
      * 
-     * @var Paragraph
+     * @var HTMLNode
      * 
      * @since 1.0 
      */
@@ -63,14 +63,15 @@ class RadioGroup extends HTMLNode {
      * @since 1.0
      */
     public function __construct($groupLabel, $groupName, array $labels = []) {
-        parent::__construct();
+        parent::__construct('fieldset');
         $groupNameT = trim($groupName);
 
         if (strlen($groupNameT) == 0) {
             $groupNameT = 'radio-group';
         }
         $this->gName = $groupNameT;
-        $this->groupLbl = new Paragraph($groupLabel);
+        $this->groupLbl = new HTMLNode('legend');
+        $this->groupLbl->text($groupLabel);
         $this->addChild($this->groupLbl);
         $this->addButtons($labels);
     }
@@ -176,6 +177,6 @@ class RadioGroup extends HTMLNode {
      */
     public function setLabel($lbl) {
         $this->groupLbl->removeAllChildNodes();
-        $this->groupLbl->addText($lbl);
+        $this->groupLbl->text($lbl);
     }
 }
