@@ -38,6 +38,14 @@ namespace webfiori\ui;
  */
 class RadioGroup extends HTMLNode {
     /**
+     * An element that represents the label of the group.
+     * 
+     * @var Paragraph
+     * 
+     * @since 1.0 
+     */
+    private $groupLbl;
+    /**
      * The value of the attribute 'name' of all buttons.
      * 
      * @var string
@@ -55,7 +63,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($groupName, array $labels = []) {
+    public function __construct($groupLabel, $groupName, array $labels = []) {
         parent::__construct();
         $groupNameT = trim($groupName);
         
@@ -63,6 +71,8 @@ class RadioGroup extends HTMLNode {
             $groupNameT = 'radio-group';
         }
         $this->gName = $groupNameT;
+        $this->groupLbl = new Paragraph($groupLabel);
+        $this->addChild($this->groupLbl);
         $this->addButtons($labels);
     }
     /**
@@ -79,6 +89,17 @@ class RadioGroup extends HTMLNode {
         }
     }
     /**
+     * Sets the label that will appear at the top of the group.
+     * 
+     * @param string $lbl Label text.
+     * 
+     * @since 1.0
+     */
+    public function setLabel($lbl) {
+        $this->groupLbl->removeAllChildNodes();
+        $this->groupLbl->addText($lbl);
+    }
+    /**
      * Adds new radio button to the group.
      * 
      * @param string $label A label for the radio button.
@@ -93,11 +114,12 @@ class RadioGroup extends HTMLNode {
         $trimmedLbl = trim($label);
         
         if (strlen($trimmedLbl) == 0) {
-            $trimmedLbl = 'Radio '.$this->childrenCount();
+            $trimmedLbl = 'Radio '.($this->childrenCount() - 1);
         }
         $attrs['name'] = $this->getGroupName();
+        
         if (!isset($attrs['id'])) {
-            $attrs['id'] = $this->getGroupName().'-radio-'.$this->childrenCount();
+            $attrs['id'] = $this->getGroupName().'-radio-'.($this->childrenCount() - 1);
         }
         $this->div();
         $this->getLastChild()->input('radio', $attrs)->label($trimmedLbl, [
@@ -117,7 +139,7 @@ class RadioGroup extends HTMLNode {
      * @since 1.0
      */
     public function getRadioLabel($index) {
-        $div = $this->getChild($index);
+        $div = $this->getChild($index + 1);
         
         if ($div !== null) {
             $label = $div->getChild(1);
@@ -138,7 +160,7 @@ class RadioGroup extends HTMLNode {
      * @since 1.0
      */
     public function getRadio($index) {
-        $div = $this->getChild($index);
+        $div = $this->getChild($index + 1);
         
         if ($div !== null) {
             $radio = $div->getChild(0);
