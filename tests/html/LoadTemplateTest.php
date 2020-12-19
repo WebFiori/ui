@@ -116,7 +116,7 @@ class LoadTemplateTest extends TestCase {
     public function testHeadTemplate03() {
         $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-02.html', [
             'title' => 'This is page title.',
-            'This is the description of the page.'
+            'description'=>'This is the description of the page.'
         ]);
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(4, $node->childrenCount());
