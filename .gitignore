@@ -6,3 +6,4 @@ cs-fixer.phar
 .phpunit.result.cache
 clover.xml
 composer.lock
+php-cs-fixer-v2.phar

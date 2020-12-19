@@ -23,7 +23,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 namespace webfiori\ui;
 
 /**
@@ -38,14 +37,6 @@ namespace webfiori\ui;
  */
 class RadioGroup extends HTMLNode {
     /**
-     * An element that represents the label of the group.
-     * 
-     * @var Paragraph
-     * 
-     * @since 1.0 
-     */
-    private $groupLbl;
-    /**
      * The value of the attribute 'name' of all buttons.
      * 
      * @var string
@@ -53,6 +44,14 @@ class RadioGroup extends HTMLNode {
      * @since 1.0 
      */
     private $gName;
+    /**
+     * An element that represents the label of the group.
+     * 
+     * @var Paragraph
+     * 
+     * @since 1.0 
+     */
+    private $groupLbl;
     /**
      * Creates new instance of the class.
      * 
@@ -66,7 +65,7 @@ class RadioGroup extends HTMLNode {
     public function __construct($groupLabel, $groupName, array $labels = []) {
         parent::__construct();
         $groupNameT = trim($groupName);
-        
+
         if (strlen($groupNameT) == 0) {
             $groupNameT = 'radio-group';
         }
@@ -74,30 +73,6 @@ class RadioGroup extends HTMLNode {
         $this->groupLbl = new Paragraph($groupLabel);
         $this->addChild($this->groupLbl);
         $this->addButtons($labels);
-    }
-    /**
-     * Adds multiple radio buttons.
-     * 
-     * @param array $labelsArr An array that contains radio buttons labels.
-     * 
-     * @since 1.0
-     */
-    public function addButtons(array $labelsArr) {
-        
-        foreach ($labelsArr as $lbl) {
-            $this->addButton($lbl);
-        }
-    }
-    /**
-     * Sets the label that will appear at the top of the group.
-     * 
-     * @param string $lbl Label text.
-     * 
-     * @since 1.0
-     */
-    public function setLabel($lbl) {
-        $this->groupLbl->removeAllChildNodes();
-        $this->groupLbl->addText($lbl);
     }
     /**
      * Adds new radio button to the group.
@@ -112,12 +87,12 @@ class RadioGroup extends HTMLNode {
      */
     public function addButton($label, array $attrs = []) {
         $trimmedLbl = trim($label);
-        
+
         if (strlen($trimmedLbl) == 0) {
             $trimmedLbl = 'Radio '.($this->childrenCount() - 1);
         }
         $attrs['name'] = $this->getGroupName();
-        
+
         if (!isset($attrs['id'])) {
             $attrs['id'] = $this->getGroupName().'-radio-'.($this->childrenCount() - 1);
         }
@@ -125,29 +100,30 @@ class RadioGroup extends HTMLNode {
         $this->getLastChild()->input('radio', $attrs)->label($trimmedLbl, [
             'for' => $attrs['id']
         ]);
-        
+
         return $this;
     }
     /**
-     * Returns a radio button label given radio button index.
+     * Adds multiple radio buttons.
      * 
-     * @param int $index The index of the radio button starting from 0.
-     * 
-     * @return Label|null The method will return an object of type 'Label' if 
-     * the radio button exist. Null if not.
+     * @param array $labelsArr An array that contains radio buttons labels.
      * 
      * @since 1.0
      */
-    public function getRadioLabel($index) {
-        $div = $this->getChild($index + 1);
-        
-        if ($div !== null) {
-            $label = $div->getChild(1);
-            
-            if ($label !== null) {
-                return $label;
-            }
+    public function addButtons(array $labelsArr) {
+        foreach ($labelsArr as $lbl) {
+            $this->addButton($lbl);
         }
+    }
+    /**
+     * Returns the value of the attribute 'name' of all radio buttons.
+     * 
+     * @return string the value of the attribute 'name' of all radio buttons.
+     * 
+     * @since 1.0
+     */
+    public function getGroupName() {
+        return $this->gName;
     }
     /**
      * Returns a radio button given its index.
@@ -161,23 +137,45 @@ class RadioGroup extends HTMLNode {
      */
     public function getRadio($index) {
         $div = $this->getChild($index + 1);
-        
+
         if ($div !== null) {
             $radio = $div->getChild(0);
-            
+
             if ($radio !== null) {
                 return $radio;
             }
         }
     }
     /**
-     * Returns the value of the attribute 'name' of all radio buttons.
+     * Returns a radio button label given radio button index.
      * 
-     * @return string the value of the attribute 'name' of all radio buttons.
+     * @param int $index The index of the radio button starting from 0.
+     * 
+     * @return Label|null The method will return an object of type 'Label' if 
+     * the radio button exist. Null if not.
      * 
      * @since 1.0
      */
-    public function getGroupName() {
-        return $this->gName;
+    public function getRadioLabel($index) {
+        $div = $this->getChild($index + 1);
+
+        if ($div !== null) {
+            $label = $div->getChild(1);
+
+            if ($label !== null) {
+                return $label;
+            }
+        }
+    }
+    /**
+     * Sets the label that will appear at the top of the group.
+     * 
+     * @param string $lbl Label text.
+     * 
+     * @since 1.0
+     */
+    public function setLabel($lbl) {
+        $this->groupLbl->removeAllChildNodes();
+        $this->groupLbl->addText($lbl);
     }
 }

@@ -225,24 +225,8 @@ class HTMLDoc {
         $trimmedAttrName = trim($attrName);
         $trimmedVal = trim($attrVal);
         $this->_getChildrenByAttributeValue($trimmedAttrName, $trimmedVal, $list, $this->getDocumentRoot());
+
         return $list;
-    }
-    /**
-     * 
-     * @param type $attr
-     * @param type $val
-     * @param LinkedList $list
-     * @param HTMLNode $el
-     */
-    private function _getChildrenByAttributeValue($attr, $val, LinkedList $list, HTMLNode $el) {
-        if($el->getAttribute($attr) == $val) {
-            $list->add($el);
-        }
-        if ($el->children() !== null){
-            foreach ($el->children() as $child) {
-                $this->_getChildrenByAttributeValue($attr, $val, $list, $child);
-            }
-        }
     }
     /**
      * Returns a linked list that contains all children which has the given tag 
@@ -429,6 +413,24 @@ class HTMLDoc {
         $this->document .= $this->getDocumentRoot()->toHTML($formatted);
 
         return $this->document;
+    }
+    /**
+     * 
+     * @param type $attr
+     * @param type $val
+     * @param LinkedList $list
+     * @param HTMLNode $el
+     */
+    private function _getChildrenByAttributeValue($attr, $val, LinkedList $list, HTMLNode $el) {
+        if ($el->getAttribute($attr) == $val) {
+            $list->add($el);
+        }
+
+        if ($el->children() !== null) {
+            foreach ($el->children() as $child) {
+                $this->_getChildrenByAttributeValue($attr, $val, $list, $child);
+            }
+        }
     }
     /**
      * 

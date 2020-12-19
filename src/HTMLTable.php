@@ -95,43 +95,6 @@ class HTMLTable extends HTMLNode {
         }
     }
     /**
-     * Removes a row given its index.
-     * 
-     * @param int $rowIndex The index of the row.
-     * 
-     * @return TableRow|null If the row is removed, the method will return 
-     * an object that represents the removed row. Other than that, the method 
-     * will return null.
-     * 
-     * @since 1.0.2
-     */
-    public function removeRow($rowIndex) {
-        return $this->removeChild($rowIndex);
-    }
-    /**
-     * Removes a column from the table given column index.
-     * 
-     * @param int $colIndex The index of the column.
-     * 
-     * @return array The method will return an array that holds objects that 
-     * represents the cells of the column. If no column was removed, the array 
-     * will be empty.
-     * 
-     * @since 1.0.2
-     */
-    public function removeCol($colIndex) {
-        $colCells = [];
-        
-        if ($colIndex < $this->cols()) {
-            
-            foreach ($this as $row) {
-                $colCells[] = $row->children()->remove($colIndex);
-            }
-        }
-        
-        return $colCells;
-    }
-    /**
      * Adds a new row to the body of the table.
      * 
      * @param TableRow|array $arrOrRowObj This can be an object that represents 
@@ -154,6 +117,16 @@ class HTMLTable extends HTMLNode {
         }
     }
     /**
+     * Returns number of columns in the table.
+     * 
+     * @return int Number of columns in the table.
+     * 
+     * @since 1.0
+     */
+    public function cols() {
+        return $this->cols;
+    }
+    /**
      * Returns a table cell given its indices.
      * 
      * @param int $rowIndex Row index starting from zero.
@@ -169,19 +142,8 @@ class HTMLTable extends HTMLNode {
         $row = $this->getRow($rowIndex);
 
         if ($row !== null) {
-            
             return $row->getCell($colIndex);
         }
-    }
-    /**
-     * Returns number of columns in the table.
-     * 
-     * @return int Number of columns in the table.
-     * 
-     * @since 1.0
-     */
-    public function cols() {
-        return $this->cols;
     }
     /**
      * Returns a row given its number.
@@ -226,6 +188,42 @@ class HTMLTable extends HTMLNode {
                 return $ch;
             }
         }
+    }
+    /**
+     * Removes a column from the table given column index.
+     * 
+     * @param int $colIndex The index of the column.
+     * 
+     * @return array The method will return an array that holds objects that 
+     * represents the cells of the column. If no column was removed, the array 
+     * will be empty.
+     * 
+     * @since 1.0.2
+     */
+    public function removeCol($colIndex) {
+        $colCells = [];
+
+        if ($colIndex < $this->cols()) {
+            foreach ($this as $row) {
+                $colCells[] = $row->children()->remove($colIndex);
+            }
+        }
+
+        return $colCells;
+    }
+    /**
+     * Removes a row given its index.
+     * 
+     * @param int $rowIndex The index of the row.
+     * 
+     * @return TableRow|null If the row is removed, the method will return 
+     * an object that represents the removed row. Other than that, the method 
+     * will return null.
+     * 
+     * @since 1.0.2
+     */
+    public function removeRow($rowIndex) {
+        return $this->removeChild($rowIndex);
     }
     /**
      * Returns number of rows in the table.
