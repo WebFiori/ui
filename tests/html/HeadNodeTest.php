@@ -228,6 +228,15 @@ class HeadNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddChild08() {
+        $node = new HeadNode();
+        $this->assertNull($node->addChild('div', [], false));
+        $this->assertTrue($node === $node->addChild('div'));
+        $this->assertEquals('script', $node->addChild('script', [], false)->getNodeName());
+    }
+    /**
+     * @test
+     */
     public function testAddCss00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getCSSNodes()->size());
