@@ -1906,7 +1906,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setAttribute($name, $val = null) {
         $trimmedName = trim($name);
-        if (gettype($val) != 'array') {
+        if (gettype($val) == 'string') {
             $trimmedVal = trim($val);
         }
 
@@ -1927,7 +1927,7 @@ class HTMLNode implements Countable, Iterator {
                     }
                 } else if ($val === null) {
                     $this->attributes[$lower] = null;
-                } else {
+                } else if (gettype($val) == 'string'){
                     $this->attributes[$lower] = $trimmedVal;
                 }
             }
