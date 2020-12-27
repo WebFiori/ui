@@ -1908,6 +1908,21 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testSetAttribute11() {
+        $node = new HTMLNode('div',[
+            'false' => false,
+            'true' => true,
+            'int' => 33,
+            'double' => 5.7
+        ]);
+        $this->assertEquals('true', $node->getAttribute('true'));
+        $this->assertEquals('false', $node->getAttribute('false'));
+        $this->assertEquals(33, $node->getAttribute('int'));
+        $this->assertEquals(5.7, $node->getAttribute('double'));
+    }
+    /**
+     * @test
+     */
     public function testSetStyle00() {
         $node = new HTMLNode();
         $this->assertEquals([], $node->getStyle());
