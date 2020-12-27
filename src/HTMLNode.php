@@ -1906,6 +1906,8 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setAttribute($name, $val = null) {
         $trimmedName = trim($name);
+        $attrValType = gettype($val);
+        
         if (gettype($val) == 'string') {
             $trimmedVal = trim($val);
         }
@@ -1927,8 +1929,12 @@ class HTMLNode implements Countable, Iterator {
                     }
                 } else if ($val === null) {
                     $this->attributes[$lower] = null;
-                } else if (gettype($val) == 'string'){
+                } else if ($attrValType == 'string'){
                     $this->attributes[$lower] = $trimmedVal;
+                } else if (in_array($attrValType, ['double', 'integer'])) {
+                    $this->attributes[$lower] = $val;
+                } else if ($attrValType == 'boolean') {
+                    $this->attributes[$lower] = $val === true ? 'true' : 'false';
                 }
             }
         }
