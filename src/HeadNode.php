@@ -238,7 +238,7 @@ class HeadNode extends HTMLNode {
 
             if (!$this->hasMeta($node->getAttributeValue('name'))) {
                 parent::addChild($node);
-                $retVal = $node;
+        $retVal = $node;
             }
         } else if ($nodeName == 'base' || $nodeName == 'title') {
             return $this;
@@ -247,13 +247,12 @@ class HeadNode extends HTMLNode {
 
             if ($relVal != 'canonical') {
                 parent::addChild($node);
-                $relVal = $node;
+        $relVal = $node;
             }
         } else {
             parent::addChild($node);
-            $relVal = $node;
         }
-        
+
         return $node;
     }
     /**
@@ -265,21 +264,23 @@ class HeadNode extends HTMLNode {
      * @param $otherAttrs An associative array of additional attributes 
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
-     * have attribute name if its empty attribute. Default is empty array.
-     * 
-     * @param boolean|string $revesion If set to true, a string in the form '?cv=xxxxxxxxxx' will 
+     * have attribute name if its empty attribute. One special attribute is 
+     * 'revision'. If this attribute is set to true, a string in the form '?cv=xxxxxxxxxx' will 
      * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
      * This one can be also a string that represents the version of CSS file.
-     * Default is true. 'cv' = CSS Version. 
+     * Default is false. 'cv' = CSS Version. Default is empty array. 
+     * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addCSS($href, array $otherAttrs = [], $revesion = true) {
+    public function addCSS($href, array $otherAttrs = []) {
         $trimmedHref = trim($href);
         $splitted = explode('?', $trimmedHref);
-
+        $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
+        unset($otherAttrs['revision']);
+        
         if (count($splitted) == 2) {
             $trimmedHref = trim($splitted[0]);
             $queryString = trim($splitted[1]);
@@ -293,29 +294,27 @@ class HeadNode extends HTMLNode {
             $tag = new HTMLNode('link');
             $tag->setAttribute('rel','stylesheet');
             $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
-            $revType = gettype($revesion);
+            $revType = gettype($revision);
 
             if ($revType == 'string') {
                 if (strlen($queryString) != 0) {
-                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$revesion);
+                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$revision);
                 } else {
-                    $tag->setAttribute('href', $trimmedHref.'?cv='.$revesion);
+                    $tag->setAttribute('href', $trimmedHref.'?cv='.$revision);
                 }
-            } else {
-                if ($revesion === true) {
-                    //used to prevent caching 
-                    $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
+            } else if ($revision === true) {
+                //used to prevent caching 
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
-                    if (strlen($queryString) != 0) {
-                        $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
-                    } else {
-                        $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
-                    }
-                } else if (strlen($queryString) != 0) {
-                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
+                if (strlen($queryString) != 0) {
+                    $tag->setAttribute('href', $trimmedHref.'?'.$queryString.'&cv='.$version);
                 } else {
-                    $tag->setAttribute('href', $trimmedHref);
+                    $tag->setAttribute('href', $trimmedHref.'?cv='.$version);
                 }
+            } else if (strlen($queryString) != 0) {
+                $tag->setAttribute('href', $trimmedHref.'?'.$queryString);
+            } else {
+                $tag->setAttribute('href', $trimmedHref);
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
@@ -331,23 +330,23 @@ class HeadNode extends HTMLNode {
      * @param $otherAttrs An associative array of additional attributes 
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
-     * have attribute name if its empty attribute. Default is empty array.
-     * 
-     * @param boolean|string $revesion If set to true, a string in the form '?jv=xxxxxxxxxx' will 
-     * be appended to the 'href' attribute value. It is used to invalidate browser cache. 
+     * have attribute name if its empty attribute. One special attribute is 
+     * 'revision'. If the attribute is set to true, a string in the form '?jv=xxxxxxxxxx' will 
+     * be appended to the 'src' attribute value. It is used to invalidate browser cache. 
      * This also can be a string that represents the version of the file.
-     * 'jv' = JavaScript Version.
-     * Default is true.
+     * 'jv' = JavaScript Version. Default is empty array.
      * 
      * @return HeadNote The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addJs($loc, array $otherAttrs = [], $revesion = true) {
+    public function addJs($loc, array $otherAttrs = []) {
         $trimmedLoc = trim($loc);
         $splitted = explode('?', $trimmedLoc);
-
+        $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
+        unset($otherAttrs['revision']);
+        
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
             $queryString = trim($splitted[1]);
@@ -360,34 +359,30 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-
-            $revType = gettype($revesion);
+            
+            $revType = gettype($revision);
 
             if ($revType == 'string') {
                 if (strlen($queryString) == 0) {
-                    $tag->setAttribute('src', $trimmedLoc.'?jv='.$revesion);
+                    $tag->setAttribute('src', $trimmedLoc.'?jv='.$revision);
                 } else {
-                    $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$revesion);
+                    $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$revision);
                 }
-            } else {
-                if ($revesion === true) {
-                    //used to prevent caching 
-                    //php 5.6 does not support random_int
-                    $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
-                    $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
+            } else if ($revision === true) {
+                //used to prevent caching 
+                //php 5.6 does not support random_int
+                $randFunc = function_exists('random_int') ? 'random_int' : 'rand';
+                $version = substr(hash('sha256', time() + $randFunc(0, 10000)), $randFunc(0,10),10);
 
-                    if (strlen($queryString) == 0) {
-                        $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
-                    } else {
-                        $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$version);
-                    }
+                if (strlen($queryString) == 0) {
+                    $tag->setAttribute('src', $trimmedLoc.'?jv='.$version);
                 } else {
-                    if (strlen($queryString) == 0) {
-                        $tag->setAttribute('src', $trimmedLoc);
-                    } else {
-                        $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
-                    }
+                    $tag->setAttribute('src', $trimmedLoc.'?'.$queryString.'&jv='.$version);
                 }
+            } else if (strlen($queryString) == 0) {
+                $tag->setAttribute('src', $trimmedLoc);
+            } else {
+                $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
             }
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
