@@ -81,6 +81,53 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testBuild00() {
+        $node = new HTMLNode();
+        $node->build([
+            [
+                'name' => 'p'
+            ],
+            [
+                'name' => 'input'
+            ],
+            new HTMLNode()
+        ]);
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('p', $node->getChild(0)->getNodeName());
+        $this->assertEquals('input', $node->getChild(1)->getNodeName());
+        $this->assertEquals('div', $node->getChild(2)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testBuild01() {
+        $node = new HTMLNode();
+        $node->build([
+            [
+                'name' => 'p',
+                'children' => [
+                    [
+                        'name' => '#text',
+                        'text' => 'Hello World'
+                    ],
+                    [
+                        'name' => '#comment',
+                        'text' => 'A Comment'
+                    ],
+                    new Anchor('', '')
+                ]
+            ]
+        ]);
+        $this->assertEquals(1, $node->childrenCount());
+        $this->assertEquals('#TEXT', $node->getChild(0)->getChild(0)->getNodeName());
+        $this->assertEquals('Hello World', $node->getChild(0)->getChild(0)->getText());
+        $this->assertEquals('#COMMENT', $node->getChild(0)->getChild(1)->getNodeName());
+        $this->assertEquals('A Comment', $node->getChild(0)->getChild(1)->getText());
+        $this->assertEquals('a', $node->getChild(0)->getChild(2)->getNodeName());
+    }
+    /**
+     * @test
+     */
     public function testAddChild00() {
         $node = new HTMLNode();
         $node->addChild('p')
