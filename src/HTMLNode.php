@@ -36,7 +36,7 @@ use webfiori\ui\exceptions\TemplateNotFoundException;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.8.4
+ * @version 1.8.5
  */
 class HTMLNode implements Countable, Iterator {
     /**
@@ -507,6 +507,60 @@ class HTMLNode implements Countable, Iterator {
      */
     public function br() {
         return $this->addChild(new Br());
+    }
+    /**
+     * Build the body of the node using an array.
+     * 
+     * @param array $arrOfChildren The array can hold objects of type 
+     * HTMLNode or can hold sub associative arrays. 
+     * each array will hold one child information. Each array can have the following 
+     * options:
+     * 
+     * <ul>
+     * <li><b>name</b>: The name of the child such as 'div'.</li>
+     * <li><b>attributes</b>: A sub associative array that holds the attributes of the child.</li>
+     * <li><b>is-void</b>: A boolean which can be set to true if the child 
+     * represents a void node.</li>
+     * <li><b>text</b>: This index is used if node type is #TEXT or #COMMENT. It 
+     * represents the text that will appear in the body of the node</li>
+     * <li><b>children</b>: An array that holds arrays that represents the children of 
+     * the child. The arrays can have same structure.</li>
+     * </ul>
+     * 
+     * @since 1.8.5
+     */
+    public function build(array $arrOfChildren) {
+        foreach ($arrOfChildren as $child) {
+            if ($child instanceof HTMLNode) {
+                $this->addChild($child);
+            } else if (gettype($child) == 'array') {
+                $this->addChild($this->_childArr($child));
+            }
+        }
+    }
+    private function _childArr(array $arr) {
+        $name = isset($arr['name']) ? $arr['name'] : 'div';
+        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
+        $node = new HTMLNode($name, $attrs);
+        $isVoid = isset($arr['is-void']) ? $arr['is-void'] === true : false;
+        $node->setIsVoidNode($isVoid);
+        
+        if ($node->isComment() || $node->isTextNode()) {
+            $text = isset($arr['text']) ? $arr['text'] : '';
+            $node->setText($text);
+        }
+        
+        if (!$isVoid && isset($arr['children']) && gettype($arr['children']) == 'array') {
+            foreach ($arr['children'] as $chArr) {
+                if ($chArr instanceof HTMLNode) {
+                    $node->addChild($chArr);
+                } else {
+                    $node->addChild($this->_childArr($chArr));
+                }
+            }
+        }
+        
+        return $node;
     }
     /**
      * Adds a cell (&lt;td&gt; or &lt;th&gt;) to the body of the node.
