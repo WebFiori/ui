@@ -1970,6 +1970,34 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testSetAttribute12() {
+        $node = new HTMLNode('div',[
+            'False' => false,
+            'trUe' => true,
+            'iNt' => 33,
+            'douBle' => 5.7,
+            'StYle' => [
+                'color' => 'red'
+            ]
+        ]);
+        $this->assertEquals('true', $node->getAttribute('true'));
+        $this->assertEquals('false', $node->getAttribute('false'));
+        $this->assertEquals(33, $node->getAttribute('int'));
+        $this->assertEquals(5.7, $node->getAttribute('double'));
+        $this->assertEquals('color:red;', $node->getAttribute('style'));
+    }
+    /**
+     * 
+     */
+    public function testSetAttribute13() {
+        $node = new HTMLNode('div',[
+            'StYle' => 'background-color:red;color:blue;'
+        ]);
+        $this->assertEquals('background-color:red;color:blue;', $node->getAttribute('style'));
+    }
+    /**
+     * @test
+     */
     public function testSetStyle00() {
         $node = new HTMLNode();
         $this->assertEquals([], $node->getStyle());

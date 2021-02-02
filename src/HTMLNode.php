@@ -1973,7 +1973,7 @@ class HTMLNode implements Countable, Iterator {
             if ($isValid) {
                 if ($lower == 'dir') {
                     return $this->setWritingDir($val);
-                } else if ($trimmedName == 'style') {
+                } else if ($lower == 'style') {
                     if (gettype($val) == 'array') {
                         return $this->setStyle($val);
                     } else {
