@@ -351,7 +351,7 @@ class HTMLNodeTest extends TestCase {
         $this->assertEquals('tr', $node->getChild(1)->getNodeName());
         $this->assertEquals('<table>'
                 . '<tr class="header-row"><th>User ID</th><th>Username</th><th>Email</th><th>Pass Code</th></tr>'
-                . '<tr><td><a href="https://example.com" target="_self">12345</a></td><td>WarriorVX</td><td>'
+                . '<tr><td><a href=https://example.com target=_self>12345</a></td><td>WarriorVX</td><td>'
                 . 'ibrahim@example.com</td><td>6677</td></tr>'
                 . '</table>', $node->toHTML());
         
@@ -374,12 +374,12 @@ class HTMLNodeTest extends TestCase {
                 'value' => 'Login'
             ]);
         $this->assertEquals('<div>'
-                . '<form method="post" action="my-action" enctype="multipart/form-data">'
+                . '<form method=post action="my-action" enctype="multipart/form-data">'
                 . '<label style="font-weight:bold;">Username:</label><br>'
-                . '<input type="text" placeholder="Enter Your Username Or Email"><br>'
+                . '<input type=text placeholder="Enter Your Username Or Email"><br>'
                 . '<label style="font-weight:bold;">Password:</label><br>'
-                . '<input type="password"><br>'
-                . '<input type="submit" value="Login">'
+                . '<input type=password><br>'
+                . '<input type=submit value=Login>'
                 . '</form>'
                 . '</div>', $node->toHTML());
     }
@@ -402,7 +402,7 @@ class HTMLNodeTest extends TestCase {
           $this->assertEquals('<div><div itemscope @onclick></div>'
                   . '<ul><li>Hello</li><li>World</li></ul>'
                   . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
-                  . '<a href target="_self" class="imag-link"><img src="Test" alt="Test"></a>'
+                  . '<a href target=_self class="imag-link"><img src=Test alt=Test></a>'
                   . '</div>', $node->toHTML());
     }
     /**
@@ -701,8 +701,17 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testFromHTML_12() {
+        $htmlTxt = '<base href=https://example.com/>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLNode);
+        $this->assertEquals('https://example.com/',$val->getAttribute('href'));
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_10() {
-        $htmlTxt = '<html><head><base other="" href="https://example.com/"><meta charset="utf-8"><title>This is a test document.</title><link rel="text/css" href="https://example.com/"></head><body>'
+        $htmlTxt = '<html><head><base other="" href=https://example.com/><meta charset="utf-8"><title>This is a test document.</title><link rel=text/css href=https://example.com/></head><body>'
                 .'<input type = text ID="input-el-1">';
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
@@ -727,20 +736,20 @@ and open the template in the editor.
     <head>
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel ="canonical" href="https://example.com/pages/home">
+        <meta name=viewport content="width=device-width, initial-scale=1.0">
+        <link rel =canonical href=https://example.com/pages/home>
         <!--Comment-->
-        <base href="https://example.com">
-        <link rel="stylesheet" HREf="https://example.com/my-css-1.css">
-        <link rel="StyleSheet" hRef="https://example.com/my-css-2.css">
-        <link Rel="stylesheet" href="https://example.com/my-css-3.css">
-        <script Type="text/javaScript" src="https://example.com/my-js-1.js">
+        <base href=https://example.com>
+        <link rel=stylesheet HREf=https://example.com/my-css-1.css>
+        <link rel=StyleSheet hRef=https://example.com/my-css-2.css>
+        <link Rel=stylesheet href=https://example.com/my-css-3.css>
+        <script Type=text/javaScript src=https://example.com/my-js-1.js>
             window.onload = function(){
                 
             }
         </script>
-        <Script type="text/javaScript" src="https://example.com/my-js-2.js"></script>
-        <LINK rel="alternate" hreflang="EN" href="https://example.com/pages/home?lang=en">
+        <Script type=text/javaScript src=https://example.com/my-js-2.js></script>
+        <LINK rel=alternate hreflang=EN href=https://example.com/pages/home?lang=en>
     </head>
     <body>
         <Div>
@@ -748,16 +757,16 @@ and open the template in the editor.
             <textarea placeholder="Type something..." id="textarea-input"></textarea>
         </div>
         <input type=text id="input-1">
-        <input type="text" id="input-2">
-        <input type= "text" id="input-3">
+        <input type=text id="input-2">
+        <input type= text id="input-3">
         <input type= text id="input-4">
         <input type ="text" id="input-5">
         <input type =text id="input-6">
         <input disabled type=checkbox id="input-7">
-        <input type="checkbox" disabled id="input-8">
+        <input type=checkbox disabled id="input-8">
         <input type  = "checkbox"  id="input-9"   disabled>
         <input type= checkbox id="input-10">
-        <input type =  "checkbox" disabled id="input-11">
+        <input type =  checkbox disabled id="input-11">
         <input disabled type =         checkbox  checked id=    "input-12">
         <input disabled type =checkbox id=    "input-13" checked>
         <input type =       checkbox disabled checked id     =    "input-14">
@@ -1170,9 +1179,9 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_08() {
-        $htmlText = '<html lang="AR"><head><meta charset = "utf-8">'
+        $htmlText = '<html lang=AR><head><meta charset = "utf-8">'
                 .'<title>An HTMLDoc</title></head>'
-                .'<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
+                .'<body itemscope="" itemtype=http://schema.org/WebPage><div><input   data=   myDataEl     type="text"   '
                 .'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked></div></body></html>';
         $array = HTMLNode::htmlAsArray($htmlText);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
@@ -1220,7 +1229,7 @@ and open the template in the editor.
                 .'- Added exctra column to the users table to store mobile number.'
                 .'<br>'
                 .'- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: '
-                .'<a href="https://alyaseenagri.com/crm/view-employees" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
+                .'<a href=https://alyaseenagri.com/crm/view-employees target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
                 .'<br>'
                 .'- Applied the update to the system.</td>', false);
         $this->assertEquals('td',$test->getNodeName());
@@ -1478,7 +1487,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_22() {
         $html = '<v-row>'
-                . '<v-col cols= "12" md="6" lg="4">'
+                . '<v-col cols= "12" md="6" lg=4>'
                 . '<v-text-field v-model="search" '
                 . 'append-icon="mdi-magnify"'
                 . ':label="languageVars.general.action.search"'
@@ -1734,7 +1743,7 @@ and open the template in the editor.
         $el00 = new HTMLNode('p');
         $el00->setID('paragraph');
         $node->addChild($el00);
-        $this->assertEquals('<div><p id="paragraph"></p></div>',$node->toHTML());
+        $this->assertEquals('<div><p id=paragraph></p></div>',$node->toHTML());
         $p = $node->getChildByID('paragraph');
         $r = $node->removeChild($p);
         $this->assertTrue($p === $r);
@@ -1930,7 +1939,7 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setAttribute(':disabled',"hell");
         $this->assertEquals('hell',$node->getAttribute(':disabled'));
-        $this->assertEquals('<div :disabled="hell"></div>',$node->toHTML());
+        $this->assertEquals('<div :disabled=hell></div>',$node->toHTML());
     }
     /**
      * @test
@@ -2111,7 +2120,7 @@ and open the template in the editor.
     public function testToHTML01() {
         $node = new HTMLNode();
         $node->setID('container');
-        $this->assertEquals('<div id="container"></div>',$node->toHTML());
+        $this->assertEquals('<div id=container></div>',$node->toHTML());
     }
     /**
      * @test
@@ -2120,9 +2129,9 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals('<div id="container">Hello World!.</div>',$node->toHTML());
+        $this->assertEquals('<div id=container>Hello World!.</div>',$node->toHTML());
         $node->addTextNode('Another Text node.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node->toHTML());
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.</div>',$node->toHTML());
     }
     /**
      * @test
@@ -2131,20 +2140,20 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals('<div id="container">Hello World!.</div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.</div>',$node.'');
         $node->addTextNode('Another Text node.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.</div>',$node);
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.<p>I\'m a paragraph.</p></div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.<p>I\'m a paragraph.</p></div>',$node);
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.'
                 .'<p>I\'m a paragraph.<img alt="Alternate Text"></p></div>',$node);
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.'
                 .'<p>I\'m a paragraph.<img alt="Alternate Text"></p><!--This is '
                 .'a simple comment.--></div>',$node);
     }
@@ -2161,7 +2170,7 @@ and open the template in the editor.
     public function testToHTML05() {
         $node = new HTMLNode();
         $node->setID('container');
-        $this->assertEquals("<div id=\"container\">\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\n</div>\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -2170,9 +2179,9 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\n    Hello World!.\n</div>\n",$node->toHTML(true));
         $node->addTextNode(' Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -2181,28 +2190,28 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\n    Hello World!.\n</div>\n",$node->toHTML(true));
         $node->addTextNode(' Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n    <p>\n        "
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n    <p>\n        "
                 ."I'm a paragraph.\n    </p>\n</div>\n",$node->toHTML(true));
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n</div>\n",$node->toHTML(true));
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true));
-        $this->assertEquals("    <div id=\"container\">\n        Hello World!. Another Text node.\n"
+        $this->assertEquals("    <div id=container>\n        Hello World!. Another Text node.\n"
                 ."        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
         $node->setIsFormatted(true);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!. Another Text node.\n"
+        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
                 ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
     }
 

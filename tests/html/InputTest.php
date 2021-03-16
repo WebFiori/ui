@@ -65,9 +65,9 @@ class InputTest extends TestCase {
         $input = new Input('select');
         $input->addOptions(['Option 0','Option 1', 'Option 2']);
         $this->assertEquals('<select>'
-                .'<option value="0">Option 0</option>'
-                .'<option value="1">Option 1</option>'
-                .'<option value="2">Option 2</option>'
+                .'<option value=0>Option 0</option>'
+                .'<option value=1>Option 1</option>'
+                .'<option value=2>Option 2</option>'
                 .'</select>',$input->toHTML());
     }
     /**
@@ -82,11 +82,11 @@ class InputTest extends TestCase {
             ]
         ], 'nice' => 'Nice']);
         $this->assertEquals('<select>'
-                .'<option value="0">Option 0</option>'
-                .'<option value="1">Option 1</option>'
-                .'<option value="2">Option 2</option>'
+                .'<option value=0>Option 0</option>'
+                .'<option value=1>Option 1</option>'
+                .'<option value=2>Option 2</option>'
                 .'<option value="a-00" selected="">Hello World</option>'
-                .'<option value="nice">Nice</option>'
+                .'<option value=nice>Nice</option>'
                 .'</select>',$input->toHTML());
     }
     /**

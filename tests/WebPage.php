@@ -3,12 +3,8 @@ require 'test.php';
 /**
  * Use this file to test how any element may appear in web browser.
  */
-$table = new webfiori\ui\HTMLTable(50, 15);
-$number = 0;
-for($x = 0 ; $x < $table->rows() ; $x++) {
-    for ($y = 0 ; $y < $table->cols() ; $y++) {
-        $number++;
-        $table->setValue($x, $y, $number);
-    }
-}
-echo $table;
+$radioGroup = new \webfiori\ui\RadioGroup('Choose a number:', 'number', [
+    'One', 'Two', 'Three', 'Four'
+]);
+$radioGroup->getRadio(1)->setAttribute('checked');
+echo $radioGroup;
