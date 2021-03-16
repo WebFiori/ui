@@ -1754,7 +1754,7 @@ class HTMLNode implements Countable, Iterator {
                     if ($valType == "integer" || $valType == 'double') {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
-                        if (strpos($val, '"') === false && strpos($val, ' ') === false && strpos($val, '-') === false) {
+                        if ($val != '' && strpos($val, '"') === false && strpos($val, ' ') === false && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
                             $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
@@ -2847,6 +2847,9 @@ class HTMLNode implements Countable, Iterator {
         $trimmed = trim($str);
 
         if (strlen($trimmed) != 0) {
+            if ($isEqualFound && !$inSingleQouted && !$inDoubleQueted) {
+                $queue->enqueue('=');
+            }
             $queue->enqueue($trimmed);
         }
         $retVal = [];
