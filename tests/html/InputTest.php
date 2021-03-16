@@ -111,11 +111,11 @@ class InputTest extends TestCase {
         $input->addOptionsGroup($optionsGroup);
         $this->assertEquals('<select>'
                 .'<optgroup label="Options Group 00" id="my-options-group">'
-                .'<option value="0">Option 0</option>'
-                .'<option value="1">Option 1</option>'
-                .'<option value="2">Option 2</option>'
+                .'<option value=0>Option 0</option>'
+                .'<option value=1>Option 1</option>'
+                .'<option value=2>Option 2</option>'
                 .'<option value="a-00" selected="">Hello World</option>'
-                .'<option value="nice">Nice</option>'
+                .'<option value=nice>Nice</option>'
                 .'</optgroup>'
                 .'</select>',$input->toHTML());
     }
@@ -286,7 +286,7 @@ class InputTest extends TestCase {
     public function testSetPlaceHolder00() {
         $input = new Input('text');
         $input->setPlaceholder('Hello');
-        $this->assertEquals('<input type="text" placeholder="Hello">',$input->toHTML());
+        $this->assertEquals('<input type=text placeholder=Hello>',$input->toHTML());
     }
     /**
      * @test
@@ -294,7 +294,7 @@ class InputTest extends TestCase {
     public function testSetPlaceHolder01() {
         $input = new Input('password');
         $input->setPlaceholder('Type in your password here.');
-        $this->assertEquals('<input type="password" placeholder="Type in your password here.">',$input->toHTML());
+        $this->assertEquals('<input type=password placeholder="Type in your password here.">',$input->toHTML());
     }
     /**
      * @test
@@ -312,7 +312,7 @@ class InputTest extends TestCase {
     public function testSetPlaceHolder03() {
         $input = new Input('date');
         $input->setPlaceholder('Enter your suggestions here.',$input->toHTML());
-        $this->assertEquals('<input type="date">',$input->toHTML());
+        $this->assertEquals('<input type=date>',$input->toHTML());
     }
     /**
      * @test
