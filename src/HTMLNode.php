@@ -1750,7 +1750,16 @@ class HTMLNode implements Countable, Iterator {
                 if ($val === null) {
                     $retVal .= ' '.$attr;
                 } else {
-                    $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                    $valType = gettype($val);
+                    if ($valType == "integer" || $valType == 'double') {
+                        $retVal .= ' '.$attr.'='.$val;
+                    } else {
+                        if (strpos($val, '"') === false && strpos($val, ' ') === false && strpos($val, '-') === false) {
+                            $retVal .= ' '.$attr.'='.$val;
+                        } else {
+                            $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                        }
+                    }
                 }
             }
             $retVal .= '>';
