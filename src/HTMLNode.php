@@ -286,9 +286,10 @@ class HTMLNode implements Countable, Iterator {
      * <li>The node is not it self. (making a node as a child of it self)</li>
      * </ul>
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
+     * @param array|boolean $attrsOrChain An optional array of attributes which will be set in 
      * the newly added child. Applicable only if the newly added node is not 
-     * a text or a comment node.
+     * a text or a comment node. Also, this can be used as boolean value to 
+     * act as last method parameter (the $chainOnParent)
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -306,7 +307,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrsOrChain = [], $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $toAdd = new HTMLNode($node);
         } else {
@@ -327,7 +328,12 @@ class HTMLNode implements Countable, Iterator {
                     $this->childrenList->add($toAdd);
                 }
             } else {
-                $toAdd->setAttributes($attrs);
+                $sType = gettype($attrsOrChain);
+                if ($sType == 'array') {
+                    $toAdd->setAttributes($attrsOrChain);
+                } else if ($sType == 'boolean') {
+                    $chainOnParent = $attrsOrChain === true;
+                }
                 $toAdd->_setParent($this);
                 $this->childrenList->add($toAdd);
             }

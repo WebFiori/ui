@@ -260,6 +260,30 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddChild10() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', false);
+        $this->assertEquals('v-row', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild11() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', false, true);
+        $this->assertEquals('v-row', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild12() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', true, false);
+        $this->assertEquals('div', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
     public function testAddTextNode00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello World!');
