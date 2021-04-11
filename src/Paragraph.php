@@ -50,16 +50,17 @@ class Paragraph extends HTMLNode {
      * @param HTMLNode $node The node that will be added. The paragraph element 
      * can only accept the addition of in-line HTML elements.
      * 
-     * @param boolean $useChaining Not used.
+     * @param array|boolean $attrs Not used if boolean is given. If an array is given, it 
+     * will act as properties for the newly added node.
      * 
-     * @param array $attrs A set of attributes to set for the child.
+     * @param array $chainOnParent Not used.
      * 
      * @return Paragraph The method will always return the same instance at 
      * which the method is called on.
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $useChaining = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof HTMLNode) {
             if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDS) || $node->isTextNode()) {
                 parent::addChild($node, $attrs);

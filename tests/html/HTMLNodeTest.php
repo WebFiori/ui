@@ -1650,7 +1650,42 @@ and open the template in the editor.
             ]
         ]],$htmlArr);
     }
-    
+    /**
+     * @test
+     */
+    public function testAsArray_28() {
+        $txt = '<p><br/>  Text  <br/>'
+                . '</p>'
+                . 'More Text.';
+        $array = HTMLNode::htmlAsArray($txt);
+        $this->assertEquals([
+            [
+                'tag-name' => 'p',
+                'is-void-tag' => false,
+                'attributes' => [],
+                'children' => [
+                    [
+                        'tag-name' => 'br',
+                        'is-void-tag' => true,
+                        'attributes' => [],
+                    ],
+                    [
+                        'tag-name' => '#TEXT',
+                        'body-text' => '  Text  '
+                    ],
+                    [
+                        'tag-name' => 'br',
+                        'is-void-tag' => true,
+                        'attributes' => [],
+                    ],
+                ]
+            ],
+            [
+                'tag-name' => '#TEXT',
+                'body-text' => "More Text."
+            ], 
+        ], $array);
+    }
     /**
      * @test
      */

@@ -65,7 +65,7 @@ class HTMLList extends HTMLNode {
      * class 'HTMLNode' or a string that represents the 
      * content of the list item that will be added.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
      * the newly added list item.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
@@ -84,7 +84,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof ListItem) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else {

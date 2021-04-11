@@ -1380,16 +1380,20 @@ class HTMLNode implements Countable, Iterator {
                             $nodesNames[$nodesNamesIndex][$BT] = self::_getTextActualValue($cleanedHtmlArr['replacements'], trim($nodesNames[$nodesNamesIndex][0],"!--"));
                         } else {
                             //Check extracted name.
-                            $nodeName = strtolower($nodeName);
-                            $nodesNames[$nodesNamesIndex][$TN] = trim($nodeName);
+                            $nodeName = strtolower(trim($nodeName));
+                            $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
                             $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
 
                             if ($nodeName[0] == '/') {
                                 //If the node name has /, then its a closing tag (e.g. /div)
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
                             } else {
+                                //Void tag such as <br/>
+                                $nodeName = trim($nodeName,'/');
+                                
+                                $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
-
+                                
                                 if (in_array($nodeName, self::VOID_TAGS)) {
                                     $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
                                 } else if ($nodeName == '!doctype') {

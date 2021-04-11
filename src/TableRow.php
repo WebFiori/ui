@@ -85,8 +85,9 @@ class TableRow extends HTMLNode {
      * 
      * @param TableCell $node New table cell.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * the newly added child. This also can act as last method parameter if it 
+     * is given as boolean.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -101,7 +102,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
         }

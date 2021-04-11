@@ -121,8 +121,9 @@ class Input extends HTMLNode {
      * body of the text area. If input type is &lt;select&gt;, then new option 
      * will be added with the same label of the given text.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * the newly added child. Also, this argument can work as last method argument 
+     * if a boolean is given.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -136,7 +137,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $temp = $node;
 
