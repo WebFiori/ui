@@ -731,6 +731,49 @@ class HTMLNodeTest extends TestCase {
         $this->assertTrue($val instanceof HTMLNode);
         $this->assertEquals('https://example.com/',$val->getAttribute('href'));
     }
+    public function testFromHTML_13() {
+        $html = '<h3>Object Does not Implement <code>JsonI</code></h3>
+<p>Assuming that we would like to add an instance of the following class to an instance of <code>Json</code>:</p>
+<pre><code class="language-php">class Employee {
+    private $fName;
+    private $lName;
+    private $salary;
+    public function __construct($fName, $lName, $salary) {
+        $this->fName = $fName;
+        $this->lName = $lName;
+        $this->salary = $salary;
+    }
+    public function getFullName() {
+        return $this->getFirstName().\' \'.$this->getLastName();
+    }
+    public function salary() {
+        return $this->salary;
+    }
+}</code></pre>
+<p>Also, assuming that we add the object as follows:</p>
+<pre><code class="language-php">$jsonObj = new Json();
+
+$jsonObj->addObject("obj", new Employee("Ibrahim", "BinAlshikh", 7200));
+</code></pre>
+<p>The JSON output that will be created will be similar to the following:</p>
+<pre><code class="language-json">{
+    "obj": {
+        "FirstName": "Ibrahim",
+        "LastName": "BinAlshikh",
+        "FullName": "Ibrahim BinAlshikh"
+    }
+}</code></pre>';
+        $val = HTMLNode::fromHTMLText($html);
+        $this->assertEquals('h3', $val[0]->getNodeName());
+        $this->assertEquals('#TEXT', $val[0]->getChild(0)->getNodeName());
+        $this->assertEquals('code', $val[0]->getChild(1)->getNodeName());
+        $this->assertEquals('p', $val[1]->getNodeName());
+        $this->assertEquals('#TEXT', $val[1]->getChild(0)->getNodeName());
+        $this->assertEquals('pre', $val[2]->getNodeName());
+        $this->assertEquals('code', $val[2]->getChild(0)->getNodeName());
+        $this->assertEquals('p', $val[3]->getNodeName());
+        $this->assertEquals('pre', $val[4]->getNodeName());
+    }
     /**
      * @test
      */

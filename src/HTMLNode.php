@@ -295,8 +295,8 @@ class HTMLNode implements Countable, Iterator {
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
-     * to the body of the parent or child. Default value is true. It means the 
-     * chaining will happen at parent level.
+     * to the body of the parent or child. Default value is false. It means the 
+     * chaining will happen at child level.
      * 
      * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
@@ -307,7 +307,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrsOrChain = [], $chainOnParent = true) {
+    public function addChild($node, $attrsOrChain = [], $chainOnParent = false) {
         if (gettype($node) == 'string') {
             $toAdd = new HTMLNode($node);
         } else {
@@ -354,7 +354,8 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $text The text that will be in the node.
      * 
-     * @return HTMLNode The method will return the same instance.
+     * @return HTMLNode The method will return the same instance at which the 
+     * method is called on.
      * 
      * @since 1.6
      */
@@ -382,7 +383,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.6
      */
-    public function addTextNode($text,$escHtmlEntities = true) {
+    public function addTextNode($text, $escHtmlEntities = true) {
         if ($this->mustClose()) {
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
@@ -512,7 +513,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.3
      */
     public function br() {
-        return $this->addChild(new Br());
+        return $this->addChild(new Br(), true);
     }
     /**
      * Build the body of the node using an array.
@@ -656,8 +657,8 @@ class HTMLNode implements Countable, Iterator {
      * parent element in the object. Note that if the array has the 
      * attribute 'class' or the attribute 'style', they will be ignored.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return CodeSnippet The method will return the instance which was added
+     * to the parent.
      * 
      * @since 1.8.3
      */
@@ -772,7 +773,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function createTextNode($nodeText,$escHtmlEntities = true) {
         $text = new HTMLNode(self::TEXT_NODE);
-        $text->setText($nodeText,$escHtmlEntities);
+        $text->setText($nodeText, $escHtmlEntities);
 
         return $text;
     }
@@ -796,8 +797,8 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes that will be set in 
      * the div element.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return HTMLNode The method will return the instance which was added to 
+     * the body of the instance that the method is called on.
      * 
      * @since 1.8.3
      */
@@ -810,8 +811,8 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes that will be set in 
      * the form element.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return HTMLNode The method will return the instance which was added to 
+     * the body of the instance that the method is called on.
      * 
      * @since 1.8.3
      */
@@ -1266,7 +1267,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.3
      */
     public function hr() {
-        return $this->addChild(new HTMLNode('hr'));
+        return $this->addChild(new HTMLNode('hr'), true);
     }
 
     /**
@@ -1452,14 +1453,13 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes that will be set in 
      * the image element.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return HTMLNode The method will return the instance which was added to 
+     * the body of the instance that the method is called on.
      * 
      * @since 1.8.3
      */
     public function img(array $attributes = []) {
-        $img = new HTMLNode('img');
-        $img->setAttributes($attributes);
+        $img = new HTMLNode('img', $attributes);
 
         return $this->addChild($img);
     }
@@ -1477,8 +1477,8 @@ class HTMLNode implements Countable, Iterator {
      * set for the input. If the array contains the attribute 'type', it will 
      * be ignored.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return HTMLNode The method will return the instance which was added to 
+     * the body of the instance that the method is called on.
      * 
      * @since 1.8.3
      */
@@ -1617,8 +1617,7 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array that contains attributes to 
      * set for the label.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return Label The method will return the newly added label.
      * 
      * @since 1.8.3
      */
@@ -1727,20 +1726,18 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes to set for the 
      * list.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return OrderedList|null If no list was added, the method will return null. 
+     * If the list is added, it is returned as an object.
      * 
      * @since 1.8.3
      */
     public function ol(array $items = [], array $attributes = []) {
-        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'ol') {
             $list = new OrderedList($items, false);
             $list->setAttributes($attributes);
 
-            $this->addChild($list);
+            return $this->addChild($list);
         }
-
-        return $this;
     }
     /**
      * Returns a string that represents the opening part of the node.
@@ -1793,6 +1790,8 @@ class HTMLNode implements Countable, Iterator {
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
+     * 
+     * @return Paragraph The method will return the added paragraph as an object.
      * 
      * @since 1.8.3
      */
@@ -1941,8 +1940,8 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes that will be set in 
      * the section element.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return HTMLNode The method will return an object that represents the added
+     * section.
      * 
      * @since 1.8.3
      */
@@ -1956,8 +1955,8 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $heading->text($title, false);
         }
-        $section = new HTMLNode('section');
-        $section->setAttributes($attributes)->addChild($heading);
+        $section = new HTMLNode('section', $attributes);
+        $section->addChild($heading);
 
         return $this->addChild($section);
     }
@@ -2327,8 +2326,7 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes to set 
      * on the child.
      * 
-     * @return HTMLNode The method will return the instance at which 
-     * the method is called on.
+     * @return HTMLNode The method will return the newly added instance.
      * 
      * @since 1.8.3
      */
@@ -2409,8 +2407,8 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes to set for the 
      * row.
      * 
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * @return TableRow|null If the row is added, the method will return it as 
+     * an object. If no row is added, the method will return null.
      * 
      * @since 1.8.3
      */
@@ -2418,43 +2416,46 @@ class HTMLNode implements Countable, Iterator {
         if ($this->getNodeName() == 'tbody' || $this->getNodeName() == 'table') {
             $row = new TableRow();
             $row->setAttributes($attributes);
-            $this->addChild($row);
+            return $this->addChild($row);
         }
-
-        return $this;
     }
     /**
      * Adds a list (&lt;ul&gt;) to the body of the node. 
      * The method will create an object of type 'UnorderedList' and add it as 
      * a child. Note that if the node of type 'ul' or 'ol', nothing will be 
      * added.
+     * 
      * @param array $items An array that contains list items. They can be a simple text, 
      * objects of type 'ListItem' or object of type 'HTMLNode'. Note that if the 
      * list item is a text, the item will be added without placing HTML entities in 
      * the text if the text has HTMLCode.
+     * 
      * @param array $attributes An optional array of attributes to set for the 
      * list.
-     * @return HTMLNode The method will return the instance that this 
-     * method is called on.
+     * 
+     * @return UnorderedList|null If no list was added, the method will return null. 
+     * If the list is added, it is returned as an object.
+     * 
      * @since 1.8.3
      */
     public function ul(array $items = [], array $attributes = []) {
-        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'li') {
+        if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'ol') {
             $list = new UnorderedList($items, false);
             $list->setAttributes($attributes);
 
             $this->addChild($list);
         }
-
-        return $this;
     }
     /**
      * Checks if the iterator has more elements or not.
+     * 
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
+     * 
      * @return boolean If there is a next element, the method 
      * will return true. False otherwise.
+     * 
      * @since 1.7.9
      */
     public function valid() {
@@ -2462,6 +2463,7 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Increase tab size by 1.
+     * 
      * @since 1.0
      */
     private function _addTab() {
@@ -2469,11 +2471,16 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * Build an associative array that represents parsed HTML string.
+     * 
      * @param array $parsedNodesArr An array that contains the parsed HTML 
      * elements.
+     * 
      * @param int $x The current element index.
+     * 
      * @param int $nodesCount Number of parsed nodes.
+     * 
      * @return array
+     * 
      * @since 1.7.4
      */
     private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {

@@ -32,6 +32,9 @@ namespace webfiori\ui;
  * @version 1.0.2
  */
 class TableRow extends HTMLNode {
+    /**
+     * Creates new instance of the row.
+     */
     public function __construct() {
         parent::__construct('tr');
     }
@@ -83,7 +86,8 @@ class TableRow extends HTMLNode {
      * The node will be added only if its an instance of the class 
      * 'TableCell'.
      * 
-     * @param TableCell $node New table cell.
+     * @param TableCell|string $node New table cell. This also can be a string 
+     * such as 'td' or 'th'.
      * 
      * @param array|boolean $attrs An optional array of attributes which will be set in 
      * the newly added child. This also can act as last method parameter if it 
@@ -98,13 +102,16 @@ class TableRow extends HTMLNode {
      * @return TableCell|TableRow|null If the parameter <code>$useChaining</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. If the given parameter is not 
-     * an instance of 'TableCell', the method will return null.
+     * an instance of 'TableCell' or a string that does not represents a 
+     * table cell, the method will return null.
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = false) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
+        } else if ($node == 'td' || $node == 'th') {
+            return parent::addChild(new TableCell($node), $attrs, $chainOnParent);
         }
     }
     /**

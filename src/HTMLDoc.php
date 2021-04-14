@@ -145,7 +145,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attributes = [], $chainOnParent = true) {
+    public function addChild($node, array $attributes = [], $chainOnParent = false) {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {

@@ -206,6 +206,7 @@ class HeadNode extends HTMLNode {
      */
     public function addChild($node, $attrs = [], $chainOnParent = true) {
         $retVal = null;
+        
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
@@ -219,9 +220,11 @@ class HeadNode extends HTMLNode {
             }
         }
         $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
+        
         if (!$cOnParent) {
             return $retVal;
         }
+        
         return $this;
     }
     private function _addChildHelper(HTMLNode $node) {
