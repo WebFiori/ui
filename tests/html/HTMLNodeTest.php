@@ -130,10 +130,10 @@ class HTMLNodeTest extends TestCase {
      */
     public function testAddChild00() {
         $node = new HTMLNode();
-        $node->addChild('p')
-                ->addChild('div')
-                ->addChild('p')
-                ->addChild('img',[], false)
+        $node->addChild('p', true)
+                ->addChild('div', true)
+                ->addChild('p', true)
+                ->addChild('img')
                 ->setAttribute('src', 'ok');
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('p', $node->getChild(0)->getNodeName());
@@ -356,19 +356,15 @@ class HTMLNodeTest extends TestCase {
      */
     public function testChaining00() {
         $node = new HTMLNode('table');
-        $node->tr(['class' => 'header-row'])
-                ->getChild(0)
-                ->cell('User ID', 'th')
-                ->cell('Username', 'th')
-                ->cell('Email', 'th')
-                ->cell('Pass Code', 'th')
-                ->getParent()
-                ->tr()
-                ->getChild(1)
-                ->cell(new Anchor('https://example.com', '12345'))
-                ->cell('WarriorVX')
-                ->cell('ibrahim@example.com')
-                ->cell('6677');
+        $node->tr([
+            'User ID','Username','Email','Pass Code'
+        ],['class' => 'header-row'], true);
+        $node->tr([
+            new Anchor('https://example.com', '12345'),
+            'WarriorVX',
+            'ibrahim@example.com',
+            '6677'
+        ]);
         
         $this->assertEquals(2, $node->childrenCount());
         $this->assertEquals('tr', $node->getChild(0)->getNodeName());
@@ -389,11 +385,15 @@ class HTMLNodeTest extends TestCase {
             'method' => 'post',
             'action' => 'my-action',
             'enctype' => 'multipart/form-data'
-        ])->getChild(0)
+        ])
             ->label('Username:', ['style' => 'font-weight:bold'])
+            ->getParent()
             ->br()->input('text', ['placeholder' => 'Enter Your Username Or Email'])
+            ->getParent()
             ->br()->label('Password:', ['style' => 'font-weight:bold'])
+            ->getParent()
             ->br()->input('password')
+            ->getParent()
             ->br()->input('submit', [
                 'value' => 'Login'
             ]);
@@ -420,10 +420,18 @@ class HTMLNodeTest extends TestCase {
           ])->ol([
               'Good', 'Girl', new Label('Test With Node'), 
               new ListItem()
-          ])
-                ->anchor(null, ['class'=>'imag-link'])->getChild(3)->img(['src'=>'Test','alt'=>'Test']);
-          $this->assertEquals(4, $node->childrenCount());
-          $this->assertEquals('<div><div itemscope @onclick></div>'
+          ]);
+        $node->getChild(0)
+        ->anchor(new HTMLNode('img', [
+            'src'=>'Test',
+            'alt'=>'Test',
+            'class'=>'imag-link'
+        ]));
+          $this->assertEquals(1, $node->childrenCount());
+          $subNode = $node->getChild(0);
+          $this->assertEquals('div', $subNode->getNodeName());
+         
+          $this->assertEquals('<div itemscope @onclick>'
                   . '<ul><li>Hello</li><li>World</li></ul>'
                   . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
                   . '<a href target=_self class="imag-link"><img src=Test alt=Test></a>'
@@ -463,9 +471,9 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode();
         $node->anchor('Hello', ['href' => 'https://example.com'])
                 ->comment('A random comment in the middle.')
-                ->tr()
-                ->cell()
-                ->section('This is a section.', 3)
+                ->tr();
+        $node->cell();
+        $node->section('This is a section.', 3)
                 ->paragraph('A super paragraph.',['class' => 'sup-pr']);
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('a', $node->getChild(0)->getNodeName());
@@ -480,6 +488,7 @@ class HTMLNodeTest extends TestCase {
     public function testCount00() {
         $node = new HTMLNode();
         $node->section('Hello')
+                ->getParent()
                 ->br()
                 ->codeSnippit('PHP Code', "")
                 ->text('Random Text')
@@ -1922,8 +1931,11 @@ and open the template in the editor.
      */
     public function testRemoveChild09() {
         $node = new HTMLNode();
-        $node->text('Hello')->paragraph('Super Paragraph', ['id'=>'p-1'])
-                ->div(['id'=>'empty-div'])->section('Hello Sec', 1, [
+        $node->text('Hello')
+               ->paragraph('Super Paragraph', ['id'=>'p-1'])
+               ->div(['id'=>'empty-div'])
+               ->getParent()
+               ->section('Hello Sec', 1, [
                     'id' => 'my-sec'
                 ]);
         $this->assertEquals(4, $node->childrenCount());

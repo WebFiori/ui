@@ -31,13 +31,13 @@ class HTMLDocTest extends TestCase {
         for ($x = 0 ; $x < 3 ; $x++) {
             $doc->addChild('ul', [
                 'id' => 'list-'.$x
-            ], false)->addChild('li', [
+            ])->addChild('li', [
                 'id' => 'list-'.$x.'-item-1',
                 'class' => 'list-item'
-            ])->addChild('li', [
+            ], true)->addChild('li', [
                 'id' => 'list-'.$x.'-item-2',
                 'class' => 'list-item'
-            ], false)->text('Some Text');
+            ])->text('Some Text');
             
         }
         $list1 = $doc->getChildrenByAttributeValue('class', 'list-item');
@@ -48,7 +48,8 @@ class HTMLDocTest extends TestCase {
         $list2 = $doc->getChildrenByAttributeValue('id', 'list-0');
         $this->assertEquals(1, $list2->size());
         $this->assertEquals('ul', $list2->get(0)->getNodeName());
-        $this->assertEquals(2, $list2->get(0)->childrenCount());
+        $ul = $list2->get(0);
+        $this->assertEquals(2, $ul->childrenCount());
     }
     /**
      * @test
