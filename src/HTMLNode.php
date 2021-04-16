@@ -1476,7 +1476,7 @@ class HTMLNode implements Countable, Iterator {
      * this parameter must be taken from the array Input::INPUT_TYPES. Default 
      * value is 'text'.
      * 
-     * @param type $attributes An optional array that contains attributes to 
+     * @param array $attributes An optional array that contains attributes to 
      * set for the input. If the array contains the attribute 'type', it will 
      * be ignored.
      * 
@@ -1738,8 +1738,9 @@ class HTMLNode implements Countable, Iterator {
         if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'ol') {
             $list = new OrderedList($items, false);
             $list->setAttributes($attributes);
-
+            $this->addChild($list);
         }
+        
         return $this;
     }
     /**

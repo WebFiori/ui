@@ -37,21 +37,8 @@ class Br extends HTMLNode {
     /**
      * A method that does nothing.
      * 
-     * @param type $param
-     * 
      * @since 1.0
      */
     public function addChild($param, $attrs = [], $chainOnParent = true) {
-    }
-    /**
-     * A method that does nothing.
-     * 
-     * @param type $param
-     * 
-     * @param type $param2
-     * 
-     * @since 1.0
-     */
-    public function setAttribute($param,$param2 = '') {
     }
 }

@@ -425,17 +425,18 @@ class HTMLNodeTest extends TestCase {
         ->anchor(new HTMLNode('img', [
             'src'=>'Test',
             'alt'=>'Test',
+        ]), [
             'class'=>'imag-link'
-        ]));
+        ]);
           $this->assertEquals(1, $node->childrenCount());
           $subNode = $node->getChild(0);
           $this->assertEquals('div', $subNode->getNodeName());
          
-          $this->assertEquals('<div itemscope @onclick>'
+          $this->assertEquals('<div><div itemscope @onclick>'
                   . '<ul><li>Hello</li><li>World</li></ul>'
                   . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
                   . '<a href target=_self class="imag-link"><img src=Test alt=Test></a>'
-                  . '</div>', $node->toHTML());
+                  . '</div></div>', $node->toHTML());
     }
     /**
      * @test
@@ -474,6 +475,7 @@ class HTMLNodeTest extends TestCase {
                 ->tr();
         $node->cell();
         $node->section('This is a section.', 3)
+                ->getParent()
                 ->paragraph('A super paragraph.',['class' => 'sup-pr']);
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('a', $node->getChild(0)->getNodeName());

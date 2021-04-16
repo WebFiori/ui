@@ -42,8 +42,6 @@ class JsCode extends HTMLNode {
     /**
      * A method that does nothing.
      * 
-     * @param type $node
-     * 
      * @since 1.0
      */
     public function addChild($node, $attrs = [], $useChaining = true) {
@@ -79,8 +77,6 @@ class JsCode extends HTMLNode {
      * A method that does nothing.
      * 
      * @since 1.0
-     * 
-     * @param type $val
      */
     public function setClassName($val, $val2 = true) {
     }
@@ -88,8 +84,6 @@ class JsCode extends HTMLNode {
      * A method that does nothing.
      * 
      * @since 1.0
-     * 
-     * @param type $val
      */
     public function setName($val) {
     }
@@ -97,8 +91,6 @@ class JsCode extends HTMLNode {
      * A method that does nothing.
      * 
      * @since 1.0
-     * 
-     * @param type $val
      */
     public function setTabIndex($val) {
     }
@@ -107,9 +99,6 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      * 
-     * @param type $text
-     * 
-     * @param type $esc Description
      */
     public function setText($text, $esc = true) {
     }
@@ -118,7 +107,6 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      * 
-     * @param type $val
      */
     public function setTitle($val) {
     }
@@ -127,7 +115,6 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      * 
-     * @param type $val
      */
     public function setWritingDir($val) {
     }
