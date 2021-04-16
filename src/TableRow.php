@@ -39,52 +39,6 @@ class TableRow extends HTMLNode {
         parent::__construct('tr');
     }
     /**
-     * Adds a data to the row.
-     * 
-     * This method works as follows, if the parent element of the row is of 
-     * type 'HTMLTable', the method will remove all data which is currently 
-     * set. After that, it checks the number of columns of the 
-     * parent and add elements based on that. If the elements are less, the 
-     * remaining cells will be filled with the string '-'. If the array 
-     * elements are more, the extra ones are stripped. If the parent is not 
-     * of type 'HTMLTable', the data will be added without size check.
-     * 
-     * @param array $data An array that holds the data as strings or objects 
-     * of type 'HTMLNode'.
-     * 
-     * @param boolean $headerData If set to true, the method will add the 
-     * data in a 'th' cell instead of 'td' cell. Default is false.
-     * 
-     * @since 1.0.3
-     */
-    public function setData(array $data, $headerData = false) {
-        $parent = $this->getParent();
-        $this->removeAllChildNodes();
-        $cellType = $headerData === true ? 'th' : 'td';
-        
-        if ($parent instanceof HTMLTable) {
-            $index = 0;
-            $elsCount = count($data);
-            
-            while ($this->childrenCount() < $parent->cols()) {
-                if ($index < $elsCount) {
-                    $this->addCell($data[$index], $cellType);
-                    $index++;
-                } else {
-                    $this->addCell('-', $cellType, true, [
-                        'style' => [
-                            'text-align' => 'center'
-                        ]
-                    ]);
-                }
-            }
-        } else {
-            foreach ($data as $el) {
-                $this->addCell($el, $cellType);
-            }
-        }
-    }
-    /**
      * Adds new cell to the row.
      * 
      * @param string|TableCell|HTMLNode $cellContent The text of cell body. It can have HTML. 
@@ -173,5 +127,51 @@ class TableRow extends HTMLNode {
      */
     public function getCell($index) {
         return $this->children()->get($index);
+    }
+    /**
+     * Adds a data to the row.
+     * 
+     * This method works as follows, if the parent element of the row is of 
+     * type 'HTMLTable', the method will remove all data which is currently 
+     * set. After that, it checks the number of columns of the 
+     * parent and add elements based on that. If the elements are less, the 
+     * remaining cells will be filled with the string '-'. If the array 
+     * elements are more, the extra ones are stripped. If the parent is not 
+     * of type 'HTMLTable', the data will be added without size check.
+     * 
+     * @param array $data An array that holds the data as strings or objects 
+     * of type 'HTMLNode'.
+     * 
+     * @param boolean $headerData If set to true, the method will add the 
+     * data in a 'th' cell instead of 'td' cell. Default is false.
+     * 
+     * @since 1.0.3
+     */
+    public function setData(array $data, $headerData = false) {
+        $parent = $this->getParent();
+        $this->removeAllChildNodes();
+        $cellType = $headerData === true ? 'th' : 'td';
+
+        if ($parent instanceof HTMLTable) {
+            $index = 0;
+            $elsCount = count($data);
+
+            while ($this->childrenCount() < $parent->cols()) {
+                if ($index < $elsCount) {
+                    $this->addCell($data[$index], $cellType);
+                    $index++;
+                } else {
+                    $this->addCell('-', $cellType, true, [
+                        'style' => [
+                            'text-align' => 'center'
+                        ]
+                    ]);
+                }
+            }
+        } else {
+            foreach ($data as $el) {
+                $this->addCell($el, $cellType);
+            }
+        }
     }
 }

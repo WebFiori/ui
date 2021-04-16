@@ -329,6 +329,7 @@ class HTMLNode implements Countable, Iterator {
                 }
             } else {
                 $sType = gettype($attrsOrChain);
+
                 if ($sType == 'array') {
                     $toAdd->setAttributes($attrsOrChain);
                 } else if ($sType == 'boolean') {
@@ -414,7 +415,7 @@ class HTMLNode implements Countable, Iterator {
         $anchor = new Anchor($href, $body);
         $anchor->setAttributes($attributes);
         $this->addChild($anchor);
-        
+
         return $this;
     }
     /**
@@ -515,6 +516,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function br() {
         $this->addChild(new Br());
+
         return $this;
     }
     /**
@@ -676,7 +678,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $snippit->setAttributes($attributes);
         $this->addChild($snippit);
-        
+
         return $this;
     }
     /**
@@ -1394,10 +1396,10 @@ class HTMLNode implements Countable, Iterator {
                             } else {
                                 //Void tag such as <br/>
                                 $nodeName = trim($nodeName,'/');
-                                
+
                                 $nodesNames[$nodesNamesIndex][$TN] = $nodeName;
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = false;
-                                
+
                                 if (in_array($nodeName, self::VOID_TAGS)) {
                                     $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
                                 } else if ($nodeName == '!doctype') {
@@ -1659,7 +1661,7 @@ class HTMLNode implements Countable, Iterator {
             $item->setAttributes($attributes);
             $this->addChild($item);
         }
-            
+
         return $this;
     }
     /**
@@ -1740,7 +1742,7 @@ class HTMLNode implements Countable, Iterator {
             $list->setAttributes($attributes);
             $this->addChild($list);
         }
-        
+
         return $this;
     }
     /**
@@ -1762,6 +1764,7 @@ class HTMLNode implements Countable, Iterator {
                     $retVal .= ' '.$attr;
                 } else {
                     $valType = gettype($val);
+
                     if ($valType == "integer" || $valType == 'double') {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
@@ -1810,7 +1813,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $paragraph->setAttributes($attributes);
         $this->addChild($paragraph);
-        
+
         return $this;
     }
     /**
@@ -1875,9 +1878,9 @@ class HTMLNode implements Countable, Iterator {
      */
     public function removeChild($nodeInstOrId) {
         if ($this->mustClose()) {
-            
             if ($nodeInstOrId instanceof HTMLNode) {
                 $child = $this->children()->removeElement($nodeInstOrId);
+
                 return $this->_removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'string') {
                 $toRemove = $this->getChildByID($nodeInstOrId);
@@ -1985,7 +1988,7 @@ class HTMLNode implements Countable, Iterator {
     public function setAttribute($name, $val = null) {
         $trimmedName = trim($name);
         $attrValType = gettype($val);
-        
+
         if (gettype($val) == 'string') {
             $trimmedVal = trim($val);
         }
@@ -2187,27 +2190,28 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setStyle(array $cssStyles, $override = false) {
         $ovrride = $override === true;
-        
+
         if (!$ovrride) {
             $styleArr = $this->getStyle();
         } else {
             $styleArr = [];
         }
-        
+
         foreach ($cssStyles as $key => $val) {
             $trimmedKey = trim($key);
             $trimmedVal = trim($val);
+
             if (($ovrride && isset($styleArr[$trimmedKey])) || !isset($styleArr[$trimmedKey])) {
                 $styleArr[$trimmedKey] = $trimmedVal;
             }
         }
-        
+
         $array = [];
-        
+
         foreach ($styleArr as $prop => $val) {
             $array[] = $prop.':'.$val;
         }
-        
+
         if (count($array) != 0) {
             $this->attributes['style'] = implode(';', $array).';';
         }
@@ -2431,7 +2435,7 @@ class HTMLNode implements Countable, Iterator {
             $row->setData($data, $headerRow);
             $this->addChild($row);
         }
-        
+
         return $this;
     }
     /**
@@ -2460,7 +2464,7 @@ class HTMLNode implements Countable, Iterator {
 
             $this->addChild($list);
         }
-        
+
         return $this;
     }
     /**
@@ -3085,7 +3089,6 @@ class HTMLNode implements Countable, Iterator {
         }
     }
     private function _removeChHelper($node) {
-        
         if ($node instanceof HTMLNode) {
             $node->_setParent(null);
 

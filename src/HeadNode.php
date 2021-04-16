@@ -227,35 +227,6 @@ class HeadNode extends HTMLNode {
         
         return $this;
     }
-    private function _addChildHelper(HTMLNode $node) {
-        $nodeName = $node->getNodeName();
-        $retVal = null;
-        
-        if ($nodeName == 'meta') {
-            $nodeAttrs = $node->getAttributes();
-
-            foreach ($nodeAttrs as $attr => $val) {
-                if (strtolower($attr) == 'charset') {
-                    return $this;
-                }
-            }
-
-            if (!$this->hasMeta($node->getAttributeValue('name'))) {
-                parent::addChild($node);
-                $retVal = $node;
-            }
-        } else if ($nodeName == 'base' || $nodeName == 'title') {
-            return $this;
-        } else if ($nodeName == 'link') {
-            $relVal = $node->getAttribute('rel');
-
-            if ($relVal != 'canonical') {
-                parent::addChild($node);
-        $relVal = $node;
-            }
-        } else {
-            parent::addChild($node);
-        }
 
         return $node;
     }
@@ -1001,6 +972,42 @@ class HeadNode extends HTMLNode {
                 }
             }
         }
+    }
+    private function _addChildHelper(HTMLNode $node) {
+        $nodeName = $node->getNodeName();
+        $retVal = null;
+
+        if ($nodeName == 'meta') {
+            $nodeAttrs = $node->getAttributes();
+
+            foreach ($nodeAttrs as $attr => $val) {
+                if (strtolower($attr) == 'charset') {
+                    return $this;
+                }
+            }
+
+            if (!$this->hasMeta($node->getAttributeValue('name'))) {
+                parent::addChild($node);
+                $retVal = $node;
+            }
+        } else {
+            if ($nodeName == 'base' || $nodeName == 'title') {
+                return $this;
+            } else {
+                if ($nodeName == 'link') {
+                    $relVal = $node->getAttribute('rel');
+
+                    if ($relVal != 'canonical') {
+                        parent::addChild($node);
+                        $relVal = $node;
+                    }
+                } else {
+                    parent::addChild($node);
+                }
+            }
+        }
+
+        return $node;
     }
     /**
      * 
