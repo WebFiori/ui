@@ -227,9 +227,6 @@ class HeadNode extends HTMLNode {
         
         return $this;
     }
-
-        return $node;
-    }
     /**
      * Adds new CSS source file.
      * 
