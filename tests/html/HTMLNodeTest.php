@@ -284,6 +284,22 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddChild13() {
+        $node = new HTMLNode();
+        $x = $node->addChild(null, true);
+        $this->assertSame($x, $node);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild14() {
+        $node = new HTMLNode();
+        $x = $node->addChild(null);
+        $this->assertNull($x);
+    }
+    /**
+     * @test
+     */
     public function testAddTextNode00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello World!');

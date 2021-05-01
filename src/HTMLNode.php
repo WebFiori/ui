@@ -313,7 +313,8 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $toAdd = $node;
         }
-
+        $sType = gettype($attrsOrChain);
+        
         if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
             if ($toAdd->getNodeName() == '#TEXT') {
@@ -328,18 +329,16 @@ class HTMLNode implements Countable, Iterator {
                     $this->childrenList->add($toAdd);
                 }
             } else {
-                $sType = gettype($attrsOrChain);
-
+                
                 if ($sType == 'array') {
                     $toAdd->setAttributes($attrsOrChain);
-                } else if ($sType == 'boolean') {
-                    $chainOnParent = $attrsOrChain === true;
                 }
+                
                 $toAdd->_setParent($this);
                 $this->childrenList->add($toAdd);
             }
         } 
-        $chain = $chainOnParent === true;
+        $chain = $sType == 'boolean' ? $attrsOrChain === true : $chainOnParent === true;
 
         if ($chain) {
             return $this;
