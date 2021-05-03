@@ -67,25 +67,27 @@ use webfiori\ui\HTMLDoc;
 $doc = new HTMLDoc();
 
 // Build a login form.
-$doc->getBody()->text('Login to System')
-        ->hr()
-        ->form(['method' => 'post', 'actiion' => 'https://example.com/login'])
-        ->label('Username:')
-        ->br()
-        ->input('text', ['placeholder'=>'You can use your email address.', 'style' => 'width:250px'])
-        ->br()
-        ->label('Password:')
-        ->br()
-        ->input('password', ['placeholder' => 'Type in your password here.', 'style' => 'width:250px'])
-        ->br()
-        ->input('submit', ['value' => 'Login']);
+$body = $doc->getBody();
+$body->text('Login to System')->hr();
+
+$form = $body->form(['method' => 'post', 'actiion' => 'https://example.com/login']);
+
+$form->label('Username:');
+$form->br();
+$form->input('text', ['placeholder'=>'You can use your email address.', 'style' => 'width:250px']);
+$form->br();
+$form->label('Password:');
+$form->br();
+$form->input('password', ['placeholder' => 'Type in your password here.', 'style' => 'width:250px']);
+$form->br();
+$form->input('submit', ['value' => 'Login']);
 
 echo $doc;
 ```
 
 The output of the code would be similar to the following image.
 
-<img src="https://webfiori.com/assets/images/login-form.PNG">
+<img src="tests/images/login-form.png">
 
 ## Loading HTML Files
 Another way to have your HTML rendered as object of type HTMLDoc is to create your document fully in HTML and add slots within its body and set the values of the slots in your PHP code. For example, let's assume that we have HTML file with the following markup:
