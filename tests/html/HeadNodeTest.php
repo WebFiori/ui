@@ -70,6 +70,20 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
+     */
+    public function testQuotedAttribute00() {
+        $n = new HTMLNode('div', [
+            'one' => 'not-one',
+            'two' => 'yes_two'
+        ]);
+        $this->assertEquals('<div one="not-one" two=yes_two></div>', $n.'');
+        $n->setIsQuotedAttribute(true);
+        $this->assertEquals('<div one="not-one" two="yes_two"></div>', $n.'');
+        $n->setIsQuotedAttribute(false);
+        $this->assertEquals('<div one="not-one" two=yes_two></div>', $n.'');
+    }
+    /**
+     * @test
      * @depends testAddMeta02
      * @param HeadNode $headNode D
      */
@@ -111,7 +125,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=alternate hreflang=en href=https://example.com/en async data-x="o-my-god">'
+                .'<link rel=alternate hreflang=en href="https://example.com/en" async data-x="o-my-god">'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -130,9 +144,9 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href=https://example.com/css1?hello=true>'
-                .'<link rel=stylesheet href=https://example.com/css2?hello=true>'
-                .'<link rel=stylesheet href=https://example.com/css3 async="">'
+                .'<link rel=stylesheet href="https://example.com/css1?hello=true">'
+                .'<link rel=stylesheet href="https://example.com/css2?hello=true">'
+                .'<link rel=stylesheet href="https://example.com/css3" async="">'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -304,7 +318,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href=https://example.com/css1 reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1" reloaded async=false data-action>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -319,7 +333,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href=https://example.com/css1?cv=1.1.1 reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1?cv=1.1.1" reloaded async=false data-action>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -334,7 +348,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href=https://example.com/css1?hello=world&cv=1.1.1 reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1?hello=world&cv=1.1.1" reloaded async=false data-action>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -405,9 +419,9 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type=text/javascript src=https://example.com/js1?hello=true></script>'
-                .'<script type=text/javascript src=https://example.com/js2?hello=true></script>'
-                .'<script type=text/javascript src=https://example.com/js3 async=""></script>'
+                .'<script type="text/javascript" src="https://example.com/js1?hello=true"></script>'
+                .'<script type="text/javascript" src="https://example.com/js2?hello=true"></script>'
+                .'<script type="text/javascript" src="https://example.com/js3" async=""></script>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -419,7 +433,7 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type=text/javascript src=https://example.com/js3 async ok=yes></script>'
+                .'<script type="text/javascript" src="https://example.com/js3" async ok=yes></script>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -431,7 +445,7 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type=text/javascript src=https://example.com/js3?jv=1.1.1 async ok=yes></script>'
+                .'<script type="text/javascript" src="https://example.com/js3?jv=1.1.1" async ok=yes></script>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -443,7 +457,14 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type=text/javascript src=https://example.com/js3?hello=world&jv=1.1.1 async ok=yes></script>'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok=yes></script>'
+                .'</head>',$node->toHTML());
+        $node->setIsQuotedAttribute(true);
+        $this->assertTrue($node->isQuotedAttribute());
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -456,7 +477,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=extra href=https://example.com async data-access=remote hello>'
+                .'<link rel=extra href="https://example.com" async data-access=remote hello>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -471,9 +492,9 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=extra href=https://example.com async data-access=remote hello>'
-                .'<link rel=extra href=https://example.com/222>'
-                .'<script type=text/javascript src=https://example.com/js></script>'
+                .'<link rel=extra href="https://example.com" async data-access=remote hello>'
+                .'<link rel=extra href="https://example.com/222">'
+                .'<script type="text/javascript" src="https://example.com/js"></script>'
                 .'</head>',$node->toHTML());
     }
     /**

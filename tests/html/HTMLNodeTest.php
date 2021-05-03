@@ -296,6 +296,7 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode();
         $x = $node->addChild(null);
         $this->assertNull($x);
+        $this->assertEquals('v-row', $x->getNodeName());
     }
     /**
      * @test
@@ -387,7 +388,7 @@ class HTMLNodeTest extends TestCase {
         $this->assertEquals('tr', $node->getChild(1)->getNodeName());
         $this->assertEquals('<table>'
                 . '<tr class="header-row"><th>User ID</th><th>Username</th><th>Email</th><th>Pass Code</th></tr>'
-                . '<tr><td><a href=https://example.com target=_self>12345</a></td><td>WarriorVX</td><td>'
+                . '<tr><td><a href="https://example.com" target=_self>12345</a></td><td>WarriorVX</td><td>'
                 . 'ibrahim@example.com</td><td>6677</td></tr>'
                 . '</table>', $node->toHTML());
         
