@@ -3209,7 +3209,9 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     private function _setParent($node) {
-        $this->setIsQuotedAttribute($node->isQuotedAttribute());
+        if ($node !== null) {
+            $this->setIsQuotedAttribute($node->isQuotedAttribute());
+        }
         $this->parentNode = $node;
     }
     /**
