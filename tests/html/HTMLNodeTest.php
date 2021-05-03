@@ -296,6 +296,7 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode();
         $x = $node->addChild(null);
         $this->assertNull($x);
+        $x = $node->addChild('v-row');
         $this->assertEquals('v-row', $x->getNodeName());
     }
     /**
