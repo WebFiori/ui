@@ -249,10 +249,10 @@ class HTMLNodeTest extends TestCase {
         foreach ($node as $child) {
             $this->assertEquals('table',$child->getNodeName());
         }
-        $this->assertEquals("&lt;div class = \"hello\" disabled&gt;\n"
-                . "    &lt;table&gt;\n"
-                . "    &lt;/table&gt;\n"
-                . "&lt;/div&gt;\n", $node->asCode([
+        $this->assertEquals("&lt;div class = \"hello\" disabled&gt;\r\n"
+                . "    &lt;table&gt;\r\n"
+                . "    &lt;/table&gt;\r\n"
+                . "&lt;/div&gt;\r\n", $node->asCode([
             'with-colors' => false,
             'use-pre' => false
         ]));
@@ -347,13 +347,13 @@ class HTMLNodeTest extends TestCase {
     public function testAsCode00() {
         $node = new HTMLNode();
         $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33);"
-                . " color:gray\">\n<span style=\"color:rgb(204,225,70)\">"
+                . " color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">"
                 . "&lt;</span><span style=\"color:rgb(204,225,70)\">"
                 . "div</span><span style=\"color:rgb(204,225,70)\">"
-                . "&gt;</span>\n<span style=\"color:rgb(204,225,70)\">"
+                . "&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">"
                 . "&lt;/</span><span style=\"color:rgb(204,225,70)\">"
                 . "div</span><span style=\"color:rgb(204,225,70)\">"
-                . "&gt;</span>\n</pre>",$node->asCode());
+                . "&gt;</span>\r\n</pre>",$node->asCode());
     }
     /**
      * @test
@@ -367,7 +367,7 @@ class HTMLNodeTest extends TestCase {
         $child00->setWritingDir('ltr');
         $node->addChild($child00);
         $this->assertTrue(true);
-        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n</pre>",$node->asCode());
     }
     /**
      * @test
@@ -2296,7 +2296,7 @@ and open the template in the editor.
      */
     public function testToHTML04() {
         $node = new HTMLNode();
-        $this->assertEquals("<div>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div>\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -2304,7 +2304,7 @@ and open the template in the editor.
     public function testToHTML05() {
         $node = new HTMLNode();
         $node->setID('container');
-        $this->assertEquals("<div id=container>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -2313,9 +2313,9 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=container>\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!.\r\n</div>\r\n",$node->toHTML(true));
         $node->addTextNode(' Another Text node.');
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -2324,29 +2324,29 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=container>\n    Hello World!.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!.\r\n</div>\r\n",$node->toHTML(true));
         $node->addTextNode(' Another Text node.');
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n</div>\r\n",$node->toHTML(true));
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n    <p>\n        "
-                ."I'm a paragraph.\n    </p>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n    <p>\r\n        "
+                ."I'm a paragraph.\r\n    </p>\r\n</div>\r\n",$node->toHTML(true));
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n</div>\r\n",$node->toHTML(true));
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true));
-        $this->assertEquals("    <div id=container>\n        Hello World!. Another Text node.\n"
-                ."        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML(true));
+        $this->assertEquals("    <div id=container>\r\n        Hello World!. Another Text node.\r\n"
+                ."        <p>\r\n            I'm a paragraph.\r\n            <img alt=\"Alternate Text\">\r\n        </p>\r\n        <!--This is a simple comment.-->\r\n    </div>\r\n",$node->toHTML(true,1));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML(true,-1));
         $node->setIsFormatted(true);
-        $this->assertEquals("<div id=container>\n    Hello World!. Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML());
     }
 
     /**
@@ -2369,7 +2369,7 @@ and open the template in the editor.
         $child05 = new HTMLNode('ul');
         $node->addChild($child05);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
-        $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div>\r\n    <div>\r\n        <textarea></textarea>\r\n        <code></code>\r\n    </div>\r\n    <pre></pre>\r\n    <p>\r\n    </p>\r\n    <img>\r\n    <ul>\r\n    </ul>\r\n</div>\r\n",$node->toHTML(true));
         $node->setIsFormatted(false);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
     }
