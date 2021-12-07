@@ -109,7 +109,7 @@ class HTMLDocTest extends TestCase {
      */
 //    public function testAsCode00() {
 //        $doc = new HTMLDoc();
-//        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">!DOCTYPE html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n            Default\n        <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">meta</span> <span style=\"color:rgb(0,124,0)\">name</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">viewport</span> <span style=\"color:rgb(0,124,0)\">content</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">body</span> <span style=\"color:rgb(0,124,0)\">itemscope</span> <span style=\"color:rgb(0,124,0)\">itemtype</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"\"http://schema.org/WebPage\"\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">body</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$doc->asCode());
+//        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">!DOCTYPE html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n            Default\r\n        <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">meta</span> <span style=\"color:rgb(0,124,0)\">name</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">viewport</span> <span style=\"color:rgb(0,124,0)\">content</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">body</span> <span style=\"color:rgb(0,124,0)\">itemscope</span> <span style=\"color:rgb(0,124,0)\">itemtype</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"\"http://schema.org/WebPage\"\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">body</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n</pre>",$doc->asCode());
 //    }
     /**
      * @test
@@ -131,17 +131,17 @@ class HTMLDocTest extends TestCase {
                 .""
                 ."",$doc.'');
         $this->assertEquals(""
-                ."<!DOCTYPE html>\n"
-                ."<html>\n"
-                ."    <head>\n"
-                ."        <title>\n"
-                ."            Default\n"
-                ."        </title>\n"
-                ."        <meta name=viewport content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n"
-                ."    </head>\n"
-                ."    <body itemscope itemtype=\"http://schema.org/WebPage\">\n"
-                ."    </body>\n"
-                ."</html>\n"
+                ."<!DOCTYPE html>\r\n"
+                ."<html>\r\n"
+                ."    <head>\r\n"
+                ."        <title>\r\n"
+                ."            Default\r\n"
+                ."        </title>\r\n"
+                ."        <meta name=viewport content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\r\n"
+                ."    </head>\r\n"
+                ."    <body itemscope itemtype=\"http://schema.org/WebPage\">\r\n"
+                ."    </body>\r\n"
+                ."</html>\r\n"
                 .""
                 ."",$doc->toHTML());
     }
