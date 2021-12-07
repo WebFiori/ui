@@ -47,7 +47,7 @@ class HTMLDoc {
      * 
      * @since 1.3
      */
-    const NL = "\n";
+    const NL = "\r\n";
     /**
      * The body tag of the document
      * 
