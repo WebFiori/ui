@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2019 Ibrahim BinAlshikh, phpStructs.
+ * Copyright (c) 2019 Ibrahim BinAlshikh, WebFiori UI.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace phpStructs\tests\html;
+namespace webfiori\ui\test;
 
-use phpStructs\html\HTMLDoc;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\Anchor;
+use webfiori\ui\HTMLDoc;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\ListItem;
+use webfiori\ui\Label;
 use PHPUnit\Framework\TestCase;
+use webfiori\ui\exceptions\InvalidNodeNameException;
 /**
  * Description of HTMLNodeTest
  *
  * @author Eng.Ibrahim
  */
 class HTMLNodeTest extends TestCase {
+    
     /**
      * @test
      */
@@ -72,6 +77,227 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode('img');
         $node->addCommentNode('Hello World!');
         $this->assertEquals(0,$node->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testBuild00() {
+        $node = new HTMLNode();
+        $node->build([
+            [
+                'name' => 'p'
+            ],
+            [
+                'name' => 'input'
+            ],
+            new HTMLNode()
+        ]);
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('p', $node->getChild(0)->getNodeName());
+        $this->assertEquals('input', $node->getChild(1)->getNodeName());
+        $this->assertEquals('div', $node->getChild(2)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testBuild01() {
+        $node = new HTMLNode();
+        $node->build([
+            [
+                'name' => 'p',
+                'children' => [
+                    [
+                        'name' => '#text',
+                        'text' => 'Hello World'
+                    ],
+                    [
+                        'name' => '#comment',
+                        'text' => 'A Comment'
+                    ],
+                    new Anchor('', '')
+                ]
+            ]
+        ]);
+        $this->assertEquals(1, $node->childrenCount());
+        $this->assertEquals('#TEXT', $node->getChild(0)->getChild(0)->getNodeName());
+        $this->assertEquals('Hello World', $node->getChild(0)->getChild(0)->getText());
+        $this->assertEquals('#COMMENT', $node->getChild(0)->getChild(1)->getNodeName());
+        $this->assertEquals('A Comment', $node->getChild(0)->getChild(1)->getText());
+        $this->assertEquals('a', $node->getChild(0)->getChild(2)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild00() {
+        $node = new HTMLNode();
+        $node->addChild('p', true)
+                ->addChild('div', true)
+                ->addChild('p', true)
+                ->addChild('img')
+                ->setAttribute('src', 'ok');
+        $this->assertEquals(4, $node->childrenCount());
+        $this->assertEquals('p', $node->getChild(0)->getNodeName());
+        $this->assertEquals('div', $node->getChild(1)->getNodeName());
+        $this->assertEquals('p', $node->getChild(2)->getNodeName());
+        $this->assertEquals('img', $node->getChild(3)->getNodeName());
+        $this->assertEquals('ok', $node->getChild(3)->getAttribute('src'));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild01() {
+        $this->expectException('Exception');
+        $node = new HTMLNode();
+        $node->addChild('invalid name');
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild02() {
+        $node = new HTMLNode();
+        $node->hr();
+        $this->assertEquals('hr', $node->getLastChild()->getNodeName());
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild03() {
+        $node = new HTMLNode();
+        $node->input('number',['type'=>'text']);
+        $this->assertEquals('input', $node->getLastChild()->getNodeName());
+        $this->assertEquals('number', $node->getLastChild()->getAttribute('type'));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild04() {
+        $node = new HTMLNode();
+        for($x = 0 ; $x < 3 ; $x++) {
+            $node->paragraph('Paragraph #'.$x);
+        }
+        $index = 0;
+        foreach ($node as $child) {
+            $this->assertEquals('Paragraph #'.$index,$child->getChild(0)->getText());
+            $index++;
+        }
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild05() {
+        $node = new HTMLNode();
+        $subNode = new HTMLNode('a');
+        $subNode->text('Link');
+        $liObj = new ListItem();
+        $liObj->text('List Item Obj');
+        $node->ul([
+            'Simple Text',
+            $liObj,
+            $subNode
+        ]);
+        $this->assertEquals(3,$node->getChild(0)->childrenCount());
+        $this->assertEquals('Simple Text',$node->getChild(0)->getChild(0)->getChild(0)->getText());
+        $this->assertEquals('List Item Obj',$node->getChild(0)->getChild(1)->getChild(0)->getText());
+        $this->assertTrue($node->getChild(0)->getChild(2)->getChild(0) instanceof HTMLNode);
+        $this->assertEquals('a', $node->getChild(0)->getChild(2)->getChild(0)->getNodeName());
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild06() {
+        $node = new HTMLNode();
+        $node->paragraph(new HTMLNode('a'));
+        $this->assertEquals('a',$node->getChild(0)->getChild(0)->getNodeName());
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild07() {
+        $node = new HTMLNode('#text');
+        $temp = new HTMLNode();
+        $node->addChild($temp);
+        $this->assertFalse($node->hasChild($temp));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild08() {
+        $node = new HTMLNode('#comment');
+        $temp = new HTMLNode();
+        $node->addChild($temp);
+        $this->assertFalse($node->hasChild($temp));
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testAddChild09() {
+        $node = new HTMLNode();
+        $node->setAttributes([
+            'class' => 'hello',
+            'disabled'
+        ]);
+        $node->table();
+        foreach ($node as $child) {
+            $this->assertEquals('table',$child->getNodeName());
+        }
+        $this->assertEquals("&lt;div class = \"hello\" disabled&gt;\r\n"
+                . "    &lt;table&gt;\r\n"
+                . "    &lt;/table&gt;\r\n"
+                . "&lt;/div&gt;\r\n", $node->asCode([
+            'with-colors' => false,
+            'use-pre' => false
+        ]));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild10() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', false);
+        $this->assertEquals('v-row', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild11() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', false, true);
+        $this->assertEquals('v-row', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild12() {
+        $node = new HTMLNode();
+        $x = $node->addChild('v-row', true, false);
+        $this->assertEquals('div', $x->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testAddChild13() {
+        $node = new HTMLNode();
+        $x = $node->addChild(null, true);
+        $this->assertSame($x, $node);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild14() {
+        $node = new HTMLNode();
+        $x = $node->addChild(null);
+        $this->assertNull($x);
+        $x = $node->addChild('v-row');
+        $this->assertEquals('v-row', $x->getNodeName());
     }
     /**
      * @test
@@ -120,7 +346,14 @@ class HTMLNodeTest extends TestCase {
      */
     public function testAsCode00() {
         $node = new HTMLNode();
-        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33);"
+                . " color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">"
+                . "&lt;</span><span style=\"color:rgb(204,225,70)\">"
+                . "div</span><span style=\"color:rgb(204,225,70)\">"
+                . "&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">"
+                . "&lt;/</span><span style=\"color:rgb(204,225,70)\">"
+                . "div</span><span style=\"color:rgb(204,225,70)\">"
+                . "&gt;</span>\r\n</pre>",$node->asCode());
     }
     /**
      * @test
@@ -134,7 +367,187 @@ class HTMLNodeTest extends TestCase {
         $child00->setWritingDir('ltr');
         $node->addChild($child00);
         $this->assertTrue(true);
-        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$node->asCode());
+        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n</pre>",$node->asCode());
+    }
+    /**
+     * @test
+     */
+    public function testChaining00() {
+        $node = new HTMLNode('table');
+        $node->tr([
+            'User ID','Username','Email','Pass Code'
+        ],['class' => 'header-row'], true);
+        $node->tr([
+            new Anchor('https://example.com', '12345'),
+            'WarriorVX',
+            'ibrahim@example.com',
+            '6677'
+        ]);
+        
+        $this->assertEquals(2, $node->childrenCount());
+        $this->assertEquals('tr', $node->getChild(0)->getNodeName());
+        $this->assertEquals('tr', $node->getChild(1)->getNodeName());
+        $this->assertEquals('<table>'
+                . '<tr class="header-row"><th>User ID</th><th>Username</th><th>Email</th><th>Pass Code</th></tr>'
+                . '<tr><td><a href="https://example.com" target=_self>12345</a></td><td>WarriorVX</td><td>'
+                . 'ibrahim@example.com</td><td>6677</td></tr>'
+                . '</table>', $node->toHTML());
+        
+    }
+    /**
+     * @test
+     */
+    public function testChaining02() {
+        $node = new HTMLNode();
+        $node->form([
+            'method' => 'post',
+            'action' => 'my-action',
+            'enctype' => 'multipart/form-data'
+        ])
+            ->label('Username:', ['style' => 'font-weight:bold'])
+            ->getParent()
+            ->br()->input('text', ['placeholder' => 'Enter Your Username Or Email'])
+            ->getParent()
+            ->br()->label('Password:', ['style' => 'font-weight:bold'])
+            ->getParent()
+            ->br()->input('password')
+            ->getParent()
+            ->br()->input('submit', [
+                'value' => 'Login'
+            ]);
+        $this->assertEquals('<div>'
+                . '<form method=post action="my-action" enctype="multipart/form-data">'
+                . '<label style="font-weight:bold;">Username:</label><br>'
+                . '<input type=text placeholder="Enter Your Username Or Email"><br>'
+                . '<label style="font-weight:bold;">Password:</label><br>'
+                . '<input type=password><br>'
+                . '<input type=submit value=Login>'
+                . '</form>'
+                . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining03() {
+        $node = new HTMLNode();
+        $node->div([
+            'itemscope','@onclick'
+        ])->li('Hello')
+          ->ul([
+              'Hello', 'World'
+          ])->ol([
+              'Good', 'Girl', new Label('Test With Node'), 
+              new ListItem()
+          ]);
+        $node->getChild(0)
+        ->anchor(new HTMLNode('img', [
+            'src'=>'Test',
+            'alt'=>'Test',
+        ]), [
+            'class'=>'imag-link'
+        ]);
+          $this->assertEquals(1, $node->childrenCount());
+          $subNode = $node->getChild(0);
+          $this->assertEquals('div', $subNode->getNodeName());
+         
+          $this->assertEquals('<div><div itemscope @onclick>'
+                  . '<ul><li>Hello</li><li>World</li></ul>'
+                  . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
+                  . '<a href target=_self class="imag-link"><img src=Test alt=Test></a>'
+                  . '</div></div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining04() {
+        $node = new HTMLNode('ul');
+        $node->li('Hello', ['class' => 'first-menu-item'])
+                ->li('World')
+                ->li('From PHP');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<ul>'
+                . '<li class="first-menu-item">Hello</li>'
+                . '<li>World</li>'
+                . '<li>From PHP</li>'
+                . '</ul>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testChaining05() {
+        $node = new HTMLNode('ol');
+        $node->li('Hello', ['class' => 'first-menu-item'])
+                ->li('World')
+                ->li('From PHP');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<ol>'
+                . '<li class="first-menu-item">Hello</li>'
+                . '<li>World</li>'
+                . '<li>From PHP</li>'
+                . '</ol>', $node->toHTML());
+    }
+    public function testChaining01() {
+        $node = new HTMLNode();
+        $node->anchor('Hello', ['href' => 'https://example.com'])
+                ->comment('A random comment in the middle.')
+                ->tr();
+        $node->cell();
+        $node->section('This is a section.', 3)
+                ->getParent()
+                ->paragraph('A super paragraph.',['class' => 'sup-pr']);
+        $this->assertEquals(4, $node->childrenCount());
+        $this->assertEquals('a', $node->getChild(0)->getNodeName());
+        $this->assertEquals('#COMMENT', $node->getChild(1)->getNodeName());
+        $this->assertEquals('section', $node->getChild(2)->getNodeName());
+        $this->assertEquals('p', $node->getChild(3)->getNodeName());
+        
+    }
+    /**
+     * @test
+     */
+    public function testCount00() {
+        $node = new HTMLNode();
+        $node->section('Hello')
+                ->getParent()
+                ->br()
+                ->codeSnippit('PHP Code', "")
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(5, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount01() {
+        $node = new HTMLNode('img');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(0, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount02() {
+        $node = new HTMLNode('#text');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph');
+        $this->assertEquals(0, $node->count());
+    }
+    /**
+     * @test
+     */
+    public function testCount03() {
+        $node = new HTMLNode('#comment');
+        $node->section('Hello')
+                ->br()
+                ->text('Random Text')
+                ->paragraph('A paragraph')
+                ->comment('hello');
+        $this->assertEquals(0, $node->count());
     }
     /**
      * @test
@@ -216,6 +629,32 @@ class HTMLNodeTest extends TestCase {
         $nodeName = '-not-valid';
         $this->expectExceptionMessage('Invalid node name: \''.$nodeName.'\'.');
         $node = new HTMLNode($nodeName);
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testConstructor08() {
+        $this->expectException('webfiori\ui\exceptions\InvalidNodeNameException');
+        $node = new HTMLNode('.xyz');
+    }
+    /**
+     * @test
+     * 
+     */
+    public function testConstructor09() {
+        $this->expectException('webfiori\ui\exceptions\InvalidNodeNameException');
+        $node = new HTMLNode(':xyz');
+    }
+    /**
+     * @test
+     */
+    public function testVoidNode00() {
+        $node = new HTMLNode();
+        $node->setIsVoidNode(true);
+        $this->assertEquals('<div>', $node->toHTML());
+        $node->setIsVoidNode(false);
+        $this->assertEquals('<div></div>', $node->toHTML());
     }
     /**
      * @test
@@ -315,8 +754,60 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testFromHTML_12() {
+        $htmlTxt = '<base href=https://example.com/>';
+        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $this->assertTrue($val instanceof HTMLNode);
+        $this->assertEquals('https://example.com/',$val->getAttribute('href'));
+    }
+    public function testFromHTML_13() {
+        $html = '<h3>Object Does not Implement <code>JsonI</code></h3>
+<p>Assuming that we would like to add an instance of the following class to an instance of <code>Json</code>:</p>
+<pre><code class="language-php">class Employee {
+    private $fName;
+    private $lName;
+    private $salary;
+    public function __construct($fName, $lName, $salary) {
+        $this->fName = $fName;
+        $this->lName = $lName;
+        $this->salary = $salary;
+    }
+    public function getFullName() {
+        return $this->getFirstName().\' \'.$this->getLastName();
+    }
+    public function salary() {
+        return $this->salary;
+    }
+}</code></pre>
+<p>Also, assuming that we add the object as follows:</p>
+<pre><code class="language-php">$jsonObj = new Json();
+
+$jsonObj->addObject("obj", new Employee("Ibrahim", "BinAlshikh", 7200));
+</code></pre>
+<p>The JSON output that will be created will be similar to the following:</p>
+<pre><code class="language-json">{
+    "obj": {
+        "FirstName": "Ibrahim",
+        "LastName": "BinAlshikh",
+        "FullName": "Ibrahim BinAlshikh"
+    }
+}</code></pre>';
+        $val = HTMLNode::fromHTMLText($html);
+        $this->assertEquals('h3', $val[0]->getNodeName());
+        $this->assertEquals('#TEXT', $val[0]->getChild(0)->getNodeName());
+        $this->assertEquals('code', $val[0]->getChild(1)->getNodeName());
+        $this->assertEquals('p', $val[1]->getNodeName());
+        $this->assertEquals('#TEXT', $val[1]->getChild(0)->getNodeName());
+        $this->assertEquals('pre', $val[2]->getNodeName());
+        $this->assertEquals('code', $val[2]->getChild(0)->getNodeName());
+        $this->assertEquals('p', $val[3]->getNodeName());
+        $this->assertEquals('pre', $val[4]->getNodeName());
+    }
+    /**
+     * @test
+     */
     public function testFromHTML_10() {
-        $htmlTxt = '<html><head><base other="" href="https://example.com/"><meta charset="utf-8"><title>This is a test document.</title><link rel="text/css" href="https://example.com/"></head><body>'
+        $htmlTxt = '<html><head><base other="" href=https://example.com/><meta charset="utf-8"><title>This is a test document.</title><link rel=text/css href=https://example.com/></head><body>'
                 .'<input type = text ID="input-el-1">';
         $val = HTMLNode::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
@@ -341,20 +832,20 @@ and open the template in the editor.
     <head>
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel ="canonical" href="https://example.com/pages/home">
+        <meta name=viewport content="width=device-width, initial-scale=1.0">
+        <link rel =canonical href=https://example.com/pages/home>
         <!--Comment-->
-        <base href="https://example.com">
-        <link rel="stylesheet" HREf="https://example.com/my-css-1.css">
-        <link rel="StyleSheet" hRef="https://example.com/my-css-2.css">
-        <link Rel="stylesheet" href="https://example.com/my-css-3.css">
-        <script Type="text/javaScript" src="https://example.com/my-js-1.js">
+        <base href=https://example.com>
+        <link rel=stylesheet HREf=https://example.com/my-css-1.css>
+        <link rel=StyleSheet hRef=https://example.com/my-css-2.css>
+        <link Rel=stylesheet href=https://example.com/my-css-3.css>
+        <script Type=text/javaScript src=https://example.com/my-js-1.js>
             window.onload = function(){
                 
             }
         </script>
-        <Script type="text/javaScript" src="https://example.com/my-js-2.js"></script>
-        <LINK rel="alternate" hreflang="EN" href="https://example.com/pages/home?lang=en">
+        <Script type=text/javaScript src=https://example.com/my-js-2.js></script>
+        <LINK rel=alternate hreflang=EN href=https://example.com/pages/home?lang=en>
     </head>
     <body>
         <Div>
@@ -362,16 +853,16 @@ and open the template in the editor.
             <textarea placeholder="Type something..." id="textarea-input"></textarea>
         </div>
         <input type=text id="input-1">
-        <input type="text" id="input-2">
-        <input type= "text" id="input-3">
+        <input type=text id="input-2">
+        <input type= text id="input-3">
         <input type= text id="input-4">
         <input type ="text" id="input-5">
         <input type =text id="input-6">
         <input disabled type=checkbox id="input-7">
-        <input type="checkbox" disabled id="input-8">
+        <input type=checkbox disabled id="input-8">
         <input type  = "checkbox"  id="input-9"   disabled>
         <input type= checkbox id="input-10">
-        <input type =  "checkbox" disabled id="input-11">
+        <input type =  checkbox disabled id="input-11">
         <input disabled type =         checkbox  checked id=    "input-12">
         <input disabled type =checkbox id=    "input-13" checked>
         <input type =       checkbox disabled checked id     =    "input-14">
@@ -390,6 +881,40 @@ and open the template in the editor.
         $this->assertEquals('UTF-8',$val->getHeadNode()->getCharSet());
         $el = $val->getChildByID('textarea-input');
         $this->assertEquals('Type something...',$el->getAttributeValue('placeholder'));
+    }
+    /**
+     * @test
+     */
+    public function testGetLastChild00() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getLastChild());
+        $node->br();
+        $this->assertEquals('br', $node->getLastChild()->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testGetLastChild01() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getLastChild());
+        $node->text('Hello')
+                ->paragraph('Great Paragraph')
+                ->anchor('A link', [
+                    'href'=>'https://example.com',
+                    'id'=>'example-node-link',
+                    'tabindex' => 3
+                    ]);
+        $this->assertEquals('a', $node->getLastChild()->getNodeName());
+        $this->assertEquals('https://example.com', $node->getLastChild()->getAttribute('href'));
+        $this->assertEquals('example-node-link', $node->getLastChild()->getID());
+        $this->assertEquals(3, $node->getLastChild()->getTabIndex());
+        $node->removeLastChild();
+        $this->assertEquals('p', $node->getLastChild()->getNodeName());
+        $node->removeLastChild();
+        $this->assertEquals('#TEXT', $node->getLastChild()->getNodeName());
+        $node->removeLastChild();
+        $this->assertNull($node->getLastChild());
+        $this->assertNull($node->removeLastChild());
     }
     /**
      * @test
@@ -702,7 +1227,7 @@ and open the template in the editor.
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
         $this->assertEquals(count($array[1]['children']),1);
-        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'Testing');
+        $this->assertEquals($array[1]['children'][0]['children'][0]['children'][0]['body-text'],'   Testing  ');
         $this->assertEquals(count($array[1]['children'][0]['children']),3);
     }
     /**
@@ -729,7 +1254,7 @@ and open the template in the editor.
         $this->assertEquals(2,count($array[1]['children']));
         $this->assertEquals(4,count($array[2]['children']));
         $this->assertEquals('#COMMENT',$array[1]['children'][0]['tag-name']);
-        $this->assertEquals('A Comment.',$array[1]['children'][0]['body-text']);
+        $this->assertEquals('       A Comment.       ',$array[1]['children'][0]['body-text']);
     }
     /**
      * @test
@@ -750,9 +1275,9 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_08() {
-        $htmlText = '<html lang="AR"><head><meta charset = "utf-8">'
+        $htmlText = '<html lang=AR><head><meta charset = "utf-8">'
                 .'<title>An HTMLDoc</title></head>'
-                .'<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
+                .'<body itemscope="" itemtype=http://schema.org/WebPage><div><input   data=   myDataEl     type="text"   '
                 .'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked></div></body></html>';
         $array = HTMLNode::htmlAsArray($htmlText);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
@@ -800,7 +1325,7 @@ and open the template in the editor.
                 .'- Added exctra column to the users table to store mobile number.'
                 .'<br>'
                 .'- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: '
-                .'<a href="https://alyaseenagri.com/crm/view-employees" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
+                .'<a href=https://alyaseenagri.com/crm/view-employees target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://alyaseenagri.com/crm/view-employees&amp;source=gmail&amp;ust=1577348740508000&amp;usg=AFQjCNE-UWG7jjaZTRs5FPH7mgQ79EhtSw">https://alyaseenagri.com/crm/<wbr>view-employees</a>'
                 .'<br>'
                 .'- Applied the update to the system.</td>', false);
         $this->assertEquals('td',$test->getNodeName());
@@ -811,7 +1336,7 @@ and open the template in the editor.
         $this->assertEquals('#TEXT',$test->getChild(2)->getNodeName());
         $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
         $this->assertEquals('br',$test->getChild(3)->getNodeName());
-        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(4)->getText());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: ',$test->getChild(4)->getText());
         $this->assertEquals('a',$test->getChild(5)->getNodeName());
         $this->assertEquals('br',$test->getChild(6)->getNodeName());
         $this->assertEquals('#TEXT',$test->getChild(7)->getNodeName());
@@ -839,8 +1364,8 @@ and open the template in the editor.
         $this->assertEquals('- Added exctra column to the users table to store mobile number.',$test->getChild(2)->getText());
         $this->assertEquals('br',$test->getChild(3)->getNodeName());
         $this->assertEquals('#COMMENT',$test->getChild(4)->getNodeName());
-        $this->assertEquals('A Comment',$test->getChild(4)->getText());
-        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link:',$test->getChild(5)->getText());
+        $this->assertEquals('A Comment    ',$test->getChild(4)->getText());
+        $this->assertEquals('- Created new view to display a list of all active employees in the company. It can be accessed throgh the following link: ',$test->getChild(5)->getText());
         $this->assertEquals('a',$test->getChild(6)->getNodeName());
         $this->assertEquals('br',$test->getChild(7)->getNodeName());
         $this->assertEquals('#TEXT',$test->getChild(8)->getNodeName());
@@ -848,9 +1373,397 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testHTMLAsArray_13() {
+        $html = 'This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_14() {
+        $html = 'This is a text. <div> This is a div</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text. '
+        ],[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => ' This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_15() {
+        $html = '<div>This is a div</div>This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_16() {
+        $html = '<div> This is a div<div>With Sub Div</div></div>This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => ' This is a div',
+                ],
+                [
+                    'tag-name' => 'div',
+                    'is-void-tag' => false,
+                    'attributes' => [],
+                    'children' => [
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => 'With Sub Div',
+                        ]
+                    ]
+                ]
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_17() {
+        $html = '<div>'
+                . 'This is a div'
+                . '<div>With Sub Div</div>'
+                . 'A Text After Div'
+                . '</div>'
+                . 'This is a text.';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ],
+                [
+                    'tag-name' => 'div',
+                    'is-void-tag' => false,
+                    'attributes' => [],
+                    'children' => [
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => 'With Sub Div',
+                        ]
+                    ]
+                ],
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'A Text After Div',
+                ],
+            ]
+        ], [
+            'tag-name' => '#TEXT',
+            'body-text' => 'This is a text.'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_18() {
+        $html = "<div :bind=\"{{ok ? 'YES' : 'NO' }}\">"
+                . 'This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                ':bind' => "{{ok ? 'YES' : 'NO' }}"
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_19() {
+        $html = '<div class="first-class second-class third">'
+                . 'This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                'class' => 'first-class second-class third'
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => 'This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_20() {
+        $html = '<input "type"=text value="Hello World">';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'input',
+            'is-void-tag' => true,
+            'attributes' => [
+                'type' => 'text',
+                'value' => 'Hello World'
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_21() {
+        $html = '<div :bind=\'{{ok ? "YES" : "NO" }}\'>'
+                . ' This is a div'
+                . '</div>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => 'div',
+            'is-void-tag' => false,
+            'attributes' => [
+                ':bind' => '{{ok ? \'YES\' : \'NO\' }}'
+            ],
+            'children' => [
+                [
+                    'tag-name' => '#TEXT',
+                    'body-text' => ' This is a div',
+                ]
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_22() {
+        $html = '<v-row>'
+                . '<v-col cols= "12" md="6" lg=4>'
+                . '<v-text-field v-model="search" '
+                . 'append-icon="mdi-magnify"'
+                . ':label="languageVars.general.action.search"'
+                . 'single-line hide-details>'
+                . '</v-text-field>'
+                . '"Hello world!"'
+                . '</v-col></v-row>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        // TODO: Fix test
+        $this->assertEquals([[
+            'tag-name' => 'v-row',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => 'v-col',
+                    'is-void-tag' => false,
+                    'attributes' => [
+                        'cols'=> "12",
+                        'md'=>"6",
+                        'lg'=>"4"
+                    ],
+                    'children' => [
+                        [
+                            'tag-name' => 'v-text-field',
+                            'is-void-tag' => false,
+                            'attributes' => [
+                                'v-model' => "search",
+                                'append-icon' => "mdi-magnify",
+                                ':label' => "languageVars.general.action.search",
+                                'single-line' => '',
+                                'hide-details' => ''
+                            ],
+                            'children'=>[]
+                        ],
+                        [
+                            'tag-name' => '#TEXT',
+                            'body-text' => '"Hello world!"'
+                        ]
+                    ]
+                ],
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_23() {
+        $html = '"Good"';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => '"Good"'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_24() {
+        $html = "'Good' Boy ";
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#TEXT',
+            'body-text' => "'Good' Boy "
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_25() {
+        $html = '<!--"Good"-->';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#COMMENT',
+            'body-text' => '"Good"'
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_26() {
+        $html = "<!--'Good' Boy -->";
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        $this->assertEquals([[
+            'tag-name' => '#COMMENT',
+            'body-text' => "'Good' Boy "
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testHTMLAsArray_27() {
+        $html = '<v-row>'
+                . '<v-col cols= "12" md="6" lg="4">'
+                . '<v-table >'
+                . '<v-template v-if="{hello:\'good\',super:\'hero\'}"></v-template>'
+                . '</v-table>'
+                . '</v-col></v-row>';
+        $htmlArr = HTMLNode::htmlAsArray($html);
+        // TODO: Fix test
+        $this->assertEquals([[
+            'tag-name' => 'v-row',
+            'is-void-tag' => false,
+            'attributes' => [],
+            'children' => [
+                [
+                    'tag-name' => 'v-col',
+                    'is-void-tag' => false,
+                    'attributes' => [
+                        'cols'=> "12",
+                        'md'=>"6",
+                        'lg'=>"4"
+                    ],
+                    'children' => [
+                        [
+                            'tag-name' => 'v-table',
+                            'is-void-tag' => false,
+                            'attributes' => [
+
+                            ],
+                            'children'=>[
+                                [
+                                    'tag-name' => 'v-template',
+                                    'is-void-tag' => false,
+                                    'attributes' => [
+                                        'v-if' => '{hello:\'good\',super:\'hero\'}'
+                                    ],
+                                    'children' => [
+                                        
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ]
+        ]],$htmlArr);
+    }
+    /**
+     * @test
+     */
+    public function testAsArray_28() {
+        $txt = '<p><br/>  Text  <br/>'
+                . '</p>'
+                . 'More Text.';
+        $array = HTMLNode::htmlAsArray($txt);
+        $this->assertEquals([
+            [
+                'tag-name' => 'p',
+                'is-void-tag' => false,
+                'attributes' => [],
+                'children' => [
+                    [
+                        'tag-name' => 'br',
+                        'is-void-tag' => true,
+                        'attributes' => [],
+                    ],
+                    [
+                        'tag-name' => '#TEXT',
+                        'body-text' => '  Text  '
+                    ],
+                    [
+                        'tag-name' => 'br',
+                        'is-void-tag' => true,
+                        'attributes' => [],
+                    ],
+                ]
+            ],
+            [
+                'tag-name' => '#TEXT',
+                'body-text' => "More Text."
+            ], 
+        ], $array);
+    }
+    /**
+     * @test
+     */
     public function testInsert00() {
         $node = new HTMLNode();
-        $this->assertFalse($node->insert($node, 0));
+        $node->insert($node, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -859,7 +1772,7 @@ and open the template in the editor.
     public function testInsert01() {
         $node = HTMLNode::createTextNode('Hello');
         $xNode = new HTMLNode();
-        $this->assertFalse($node->insert($xNode, 0));
+        $node->insert($xNode, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -868,7 +1781,7 @@ and open the template in the editor.
     public function testInsert02() {
         $node = HTMLNode::createComment('Hello Comment');
         $xNode = new HTMLNode();
-        $this->assertFalse($node->insert($xNode, 0));
+        $node->insert($xNode, 0);
         $this->assertEquals(0,$node->childrenCount());
     }
     /**
@@ -877,7 +1790,7 @@ and open the template in the editor.
     public function testInsert03() {
         $node = HTMLNode::createTextNode('Hello');
         $xNode = new HTMLNode();
-        $this->assertTrue($xNode->insert($node, 0));
+        $xNode->insert($node, 0);
         $this->assertEquals(1,$xNode->childrenCount());
         $xNode->insert(HTMLNode::createComment('A Comment'), 0);
         $this->assertEquals('#COMMENT',$xNode->getChild(0)->getNodeName());
@@ -901,14 +1814,9 @@ and open the template in the editor.
     public function testIterator00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello #0');
-        $node->addTextNode('Hello #1');
-        $node->addChild('Hello #2');
-        $index = 0;
+        $node->addTextNode(' Hello #1');
 
-        foreach ($node as $child) {
-            $this->assertEquals('Hello #'.$index,$child->getText());
-            $index++;
-        }
+        $this->assertEquals('Hello #0 Hello #1',$node->getLastChild()->getText());
     }
     /**
      * @test
@@ -966,7 +1874,7 @@ and open the template in the editor.
         $el00 = new HTMLNode('p');
         $el00->setID('paragraph');
         $node->addChild($el00);
-        $this->assertEquals('<div><p id="paragraph"></p></div>',$node->toHTML());
+        $this->assertEquals('<div><p id=paragraph></p></div>',$node->toHTML());
         $p = $node->getChildByID('paragraph');
         $r = $node->removeChild($p);
         $this->assertTrue($p === $r);
@@ -1041,42 +1949,75 @@ and open the template in the editor.
     /**
      * @test
      */
+    public function testRemoveChild09() {
+        $node = new HTMLNode();
+        $node->text('Hello')
+               ->paragraph('Super Paragraph', ['id'=>'p-1'])
+               ->div(['id'=>'empty-div'])
+               ->getParent()
+               ->section('Hello Sec', 1, [
+                    'id' => 'my-sec'
+                ]);
+        $this->assertEquals(4, $node->childrenCount());
+        $node->removeChild('empty-div');
+        $this->assertEquals(3, $node->childrenCount());
+        $this->assertEquals('<div>'
+                . 'Hello'
+                . '<p id="p-1">'
+                . 'Super Paragraph</p>'
+                . '<section id="my-sec"><h1>Hello Sec</h1></section>'
+                . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testSetAttribute00() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute(''));
-        $this->assertFalse($node->setAttribute('     '));
-        $this->assertFalse($node->setAttribute('dir'));
-        $bool = $node->setAttribute('   dir');
-        $this->assertFalse($bool);
+        $node->setAttribute('   dir');
+        $this->assertFalse($node->hasAttribute('dir'));
     }
     /**
      * @test
      */
     public function testSetAttribute01() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('hello'));
+        $node->setAttribute('hello');
+        $this->assertTrue($node->hasAttribute('hello'));
         $node->setAttribute(' hello ', 'world!');
-        $node->setAttribute('   BIG ONE', 'Random Val  ');
+        $this->assertTrue($node->hasAttribute('hello'));
+        $this->assertEquals('world!',$node->getAttributeValue('hello'));
     }
     /**
      * @test
      */
     public function testSetAttribute02() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('dir'));
-        $this->assertFalse($node->setAttribute(' dir ', 'XXXX!'));
-        $this->assertTrue($node->setAttribute(' dir ', 'LTR'));
-        $this->assertTrue($node->setAttribute(' dir ', 'rTl'));
+        $node->setAttribute('dir');
+        $this->assertFalse($node->hasAttribute('dir'));
+        $node->setAttribute(' dir ', 'XXXX!');
+        $this->assertFalse($node->hasAttribute('dir'));
+        $node->setAttribute(' dir ', 'LTR');
+        $this->assertTrue($node->hasAttribute('dir'));
+        $this->assertEquals('ltr', $node->getAttribute('dir'));
+        $this->assertEquals('ltr', $node->getWritingDir());
+        $node->setAttribute(' dir ', 'rTl');
+        $this->assertEquals('rtl', $node->getAttribute('dir'));
+        $this->assertEquals('rtl', $node->getWritingDir());
+        
     }
     /**
      * @test
      */
     public function testSetAttribute03() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('style',''));
-        $this->assertFalse($node->setAttribute('style','color:'));
-        $this->assertFalse($node->setAttribute('style','color:;background:;'));
-        $this->assertFalse($node->setAttribute('style',':;:;:;'));
+        $node->setAttribute('style','');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style','color:');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style','color:;background:;');
+        $this->assertFalse($node->hasAttribute('style'));
+        $node->setAttribute('style',':;:;:;');
+        $this->assertFalse($node->hasAttribute('style'));
         $this->assertEquals([],$node->getStyle());
         $this->assertNull($node->getAttribute('style'));
     }
@@ -1085,7 +2026,7 @@ and open the template in the editor.
      */
     public function testSetAttribute04() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('style','color:red'));
+        $node->setAttribute('style','color:red');
         $this->assertEquals([
             'color' => 'red'
         ],$node->getStyle());
@@ -1096,7 +2037,7 @@ and open the template in the editor.
      */
     public function testSetAttribute05() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('style','color  :red; : ; hello: ; border: 1px solid'));
+        $node->setAttribute('style','color  :red; : ; hello: ; border: 1px solid');
         $this->assertEquals([
             'color' => 'red',
             'border' => '1px solid'
@@ -1108,15 +2049,17 @@ and open the template in the editor.
      */
     public function testSetAttribute06() {
         $node = new HTMLNode();
-        $this->assertFalse($node->setAttribute('0-data','550'));
-        $this->assertFalse($node->setAttribute('-data','550'));
+        $node->setAttribute('0-data','550');
+        $this->assertFalse($node->hasAttribute('0-data'));
+        $node->setAttribute('-data','550');
+        $this->assertFalse($node->hasAttribute('-data'));
     }
     /**
      * @test
      */
     public function testSetAttribute07() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('disabled',null));
+        $node->setAttribute('disabled',null);
         $this->assertNull($node->getAttribute('disabled'));
         $this->assertEquals('<div disabled>',$node->open());
         $node->setAttribute('data-name', '');
@@ -1128,18 +2071,117 @@ and open the template in the editor.
      */
     public function testSetAttribute08() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute(':disabled',"hell"));
+        $node->setAttribute(':disabled',"hell");
         $this->assertEquals('hell',$node->getAttribute(':disabled'));
-        $this->assertEquals('<div :disabled="hell"></div>',$node->toHTML());
+        $this->assertEquals('<div :disabled=hell></div>',$node->toHTML());
     }
     /**
      * @test
      */
     public function testSetAttribute09() {
         $node = new HTMLNode();
-        $this->assertTrue($node->setAttribute('placeholder','This is "NOT" funny.'));
+        $node->setAttribute('placeholder','This is "NOT" funny.');
         $this->assertEquals('This is "NOT" funny.',$node->getAttribute('placeholder'));
         $this->assertEquals('<div placeholder="This is \"NOT\" funny."></div>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute10() {
+        $node = new HTMLNode();
+        $this->assertNull($node->getName());
+        $node->setName(' hello ');
+        $this->assertEquals('hello',$node->getName());
+        $node->removeAttribute('name');
+        $this->assertNull($node->getName());
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute11() {
+        $node = new HTMLNode('div',[
+            'false' => false,
+            'true' => true,
+            'int' => 33,
+            'double' => 5.7
+        ]);
+        $this->assertEquals('true', $node->getAttribute('true'));
+        $this->assertEquals('false', $node->getAttribute('false'));
+        $this->assertEquals(33, $node->getAttribute('int'));
+        $this->assertEquals(5.7, $node->getAttribute('double'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute12() {
+        $node = new HTMLNode('div',[
+            'False' => false,
+            'trUe' => true,
+            'iNt' => 33,
+            'douBle' => 5.7,
+            'StYle' => [
+                'color' => 'red'
+            ]
+        ]);
+        $this->assertEquals('true', $node->getAttribute('true'));
+        $this->assertEquals('false', $node->getAttribute('false'));
+        $this->assertEquals(33, $node->getAttribute('int'));
+        $this->assertEquals(5.7, $node->getAttribute('double'));
+        $this->assertEquals('color:red;', $node->getAttribute('style'));
+    }
+    /**
+     * 
+     */
+    public function testSetAttribute13() {
+        $node = new HTMLNode('div',[
+            'StYle' => 'background-color:red;color:blue;'
+        ]);
+        $this->assertEquals('background-color:red;color:blue;', $node->getAttribute('style'));
+    }
+    /**
+     * @test
+     */
+    public function testSetStyle00() {
+        $node = new HTMLNode();
+        $this->assertEquals([], $node->getStyle());
+        $node->setStyle(['border' => '1px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['font-family' => 'arial']);
+        $this->assertEquals(['border' => '1px solid', 'font-family' => 'arial'], $node->getStyle());
+        return $node;
+    }
+    /**
+     * @test
+     */
+    public function testSetStyle01() {
+        $node = new HTMLNode();
+        $this->assertEquals([], $node->getStyle());
+        $node->setStyle(['border' => '1px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['border' => '10px solid']);
+        $this->assertEquals(['border' => '1px solid'], $node->getStyle());
+        $node->setStyle(['border' => '10px solid'], true);
+        $this->assertEquals(['border' => '10px solid'], $node->getStyle());
+        return $node;
+    }
+    /**
+     * @test
+     */
+    public function testSetTitle00() {
+        $node = new HTMLNode();
+        $node->setTitle('Title attr');
+        $this->assertEquals('Title attr',$node->getTitle());
+        $this->assertEquals('Title attr',$node->getAttribute('title'));
+    }
+    /**
+     * @test
+     */
+    public function testSetAttribute() {
+        $node = new HTMLNode();
+        $node->setAttribute('hello');
+        $this->assertEquals('<div hello></div>', $node->toHTML());
+        $node->setAttribute('hello', '');
+        $this->assertEquals('<div hello=""></div>', $node->toHTML());
     }
     /**
      * @test
@@ -1212,7 +2254,7 @@ and open the template in the editor.
     public function testToHTML01() {
         $node = new HTMLNode();
         $node->setID('container');
-        $this->assertEquals('<div id="container"></div>',$node->toHTML());
+        $this->assertEquals('<div id=container></div>',$node->toHTML());
     }
     /**
      * @test
@@ -1221,9 +2263,9 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals('<div id="container">Hello World!.</div>',$node->toHTML());
+        $this->assertEquals('<div id=container>Hello World!.</div>',$node->toHTML());
         $node->addTextNode('Another Text node.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node->toHTML());
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.</div>',$node->toHTML());
     }
     /**
      * @test
@@ -1232,20 +2274,20 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals('<div id="container">Hello World!.</div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.</div>',$node.'');
         $node->addTextNode('Another Text node.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.</div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.</div>',$node);
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.<p>I\'m a paragraph.</p></div>',$node);
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.<p>I\'m a paragraph.</p></div>',$node);
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.'
                 .'<p>I\'m a paragraph.<img alt="Alternate Text"></p></div>',$node);
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals('<div id="container">Hello World!.Another Text node.'
+        $this->assertEquals('<div id=container>Hello World!.Another Text node.'
                 .'<p>I\'m a paragraph.<img alt="Alternate Text"></p><!--This is '
                 .'a simple comment.--></div>',$node);
     }
@@ -1254,7 +2296,7 @@ and open the template in the editor.
      */
     public function testToHTML04() {
         $node = new HTMLNode();
-        $this->assertEquals("<div>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div>\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -1262,7 +2304,7 @@ and open the template in the editor.
     public function testToHTML05() {
         $node = new HTMLNode();
         $node->setID('container');
-        $this->assertEquals("<div id=\"container\">\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -1271,9 +2313,9 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
-        $node->addTextNode('Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!.\r\n</div>\r\n",$node->toHTML(true));
+        $node->addTextNode(' Another Text node.');
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n</div>\r\n",$node->toHTML(true));
     }
     /**
      * @test
@@ -1282,29 +2324,29 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setID('container');
         $node->addTextNode('Hello World!.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n</div>\n",$node->toHTML(true));
-        $node->addTextNode('Another Text node.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!.\r\n</div>\r\n",$node->toHTML(true));
+        $node->addTextNode(' Another Text node.');
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n</div>\r\n",$node->toHTML(true));
         $child = new HTMLNode('p');
         $child->addTextNode('I\'m a paragraph.');
         $node->addChild($child);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n    <p>\n        "
-                ."I'm a paragraph.\n    </p>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n    <p>\r\n        "
+                ."I'm a paragraph.\r\n    </p>\r\n</div>\r\n",$node->toHTML(true));
         $anotherChild = new HTMLNode('img');
         $anotherChild->setAttribute('alt', 'Alternate Text');
         $child->addChild($anotherChild);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n</div>\r\n",$node->toHTML(true));
         $node->addCommentNode('This is a simple comment.');
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true));
-        $this->assertEquals("    <div id=\"container\">\n        Hello World!.\n        Another Text node.\n"
-                ."        <p>\n            I'm a paragraph.\n            <img alt=\"Alternate Text\">\n        </p>\n        <!--This is a simple comment.-->\n    </div>\n",$node->toHTML(true,1));
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML(true,-1));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML(true));
+        $this->assertEquals("    <div id=container>\r\n        Hello World!. Another Text node.\r\n"
+                ."        <p>\r\n            I'm a paragraph.\r\n            <img alt=\"Alternate Text\">\r\n        </p>\r\n        <!--This is a simple comment.-->\r\n    </div>\r\n",$node->toHTML(true,1));
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML(true,-1));
         $node->setIsFormatted(true);
-        $this->assertEquals("<div id=\"container\">\n    Hello World!.\n    Another Text node.\n"
-                ."    <p>\n        I'm a paragraph.\n        <img alt=\"Alternate Text\">\n    </p>\n    <!--This is a simple comment.-->\n</div>\n",$node->toHTML());
+        $this->assertEquals("<div id=container>\r\n    Hello World!. Another Text node.\r\n"
+                ."    <p>\r\n        I'm a paragraph.\r\n        <img alt=\"Alternate Text\">\r\n    </p>\r\n    <!--This is a simple comment.-->\r\n</div>\r\n",$node->toHTML());
     }
 
     /**
@@ -1327,7 +2369,7 @@ and open the template in the editor.
         $child05 = new HTMLNode('ul');
         $node->addChild($child05);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
-        $this->assertEquals("<div>\n    <div>\n        <textarea></textarea>\n        <code></code>\n    </div>\n    <pre></pre>\n    <p>\n    </p>\n    <img>\n    <ul>\n    </ul>\n</div>\n",$node->toHTML(true));
+        $this->assertEquals("<div>\r\n    <div>\r\n        <textarea></textarea>\r\n        <code></code>\r\n    </div>\r\n    <pre></pre>\r\n    <p>\r\n    </p>\r\n    <img>\r\n    <ul>\r\n    </ul>\r\n</div>\r\n",$node->toHTML(true));
         $node->setIsFormatted(false);
         $this->assertEquals('<div><div><textarea></textarea><code></code></div><pre></pre><p></p><img><ul></ul></div>',$node->toHTML());
     }

@@ -1,5 +1,9 @@
 /nbproject
 /phpunit-7.5.8/
+cs-fixer.phar
+/vendor
+.php_cs.cache
 .phpunit.result.cache
-my-page.html
-vendor/*
+clover.xml
+composer.lock
+php-cs-fixer-v2.phar

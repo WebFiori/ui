@@ -1,11 +1,10 @@
 <?php
-namespace phpStructs\tests\html;
+namespace webfiori\ui\test;
 
-namespace phpStructs\tests\html;
-
-use phpStructs\html\HTMLDoc;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\HTMLDoc;
+use webfiori\ui\HTMLNode;
 use PHPUnit\Framework\TestCase;
+use phpStructs\html\InvalidNodeNameException;
 /**
  * Description of HTMLDocTest
  *
@@ -15,41 +14,103 @@ class HTMLDocTest extends TestCase {
     /**
      * @test
      */
+    public function testgetChildrenByAttrVal00() {
+        $doc = new HTMLDoc();
+        $doc->addChild('a', [
+            'href' => 'https://webfiori.com'
+        ]);
+        $list = $doc->getChildrenByAttributeValue('href', 'https://webfiori.com');
+        $this->assertEquals(1, $list->size());
+        $this->assertEquals('a', $list->get(0)->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testgetChildrenByAttrVal01() {
+        $doc = new HTMLDoc();
+        for ($x = 0 ; $x < 3 ; $x++) {
+            $doc->addChild('ul', [
+                'id' => 'list-'.$x
+            ])->addChild('li', [
+                'id' => 'list-'.$x.'-item-1',
+                'class' => 'list-item'
+            ], true)->addChild('li', [
+                'id' => 'list-'.$x.'-item-2',
+                'class' => 'list-item'
+            ])->text('Some Text');
+            
+        }
+        $list1 = $doc->getChildrenByAttributeValue('class', 'list-item');
+        $this->assertEquals(6, $list1->size());
+        $this->assertEquals('list-0-item-1', $list1->get(0)->getAttribute('id'));
+        $this->assertEquals('list-0-item-2', $list1->get(1)->getAttribute('id'));
+        $this->assertEquals('list-2-item-2', $list1->get(5)->getAttribute('id'));
+        $list2 = $doc->getChildrenByAttributeValue('id', 'list-0');
+        $this->assertEquals(1, $list2->size());
+        $this->assertEquals('ul', $list2->get(0)->getNodeName());
+        $ul = $list2->get(0);
+        $this->assertEquals(2, $ul->childrenCount());
+    }
+    /**
+     * @test
+     */
     public function testAddChild00() {
+        $this->expectException('Exception');
         $doc = new HTMLDoc();
         $ch = '';
-        $this->assertFalse($doc->addChild($ch));
+        $doc->addChild($ch);
+        
+        
+    }
+    /**
+     * @test
+     */
+    public function testAddChild02() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node00 = new HTMLNode('html');
-        $this->assertFalse($doc->addChild($node00));
+        $doc->addChild($node00);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild03() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node01 = new HTMLNode('body');
-        $this->assertFalse($doc->addChild($node01));
+        $doc->addChild($node01);
+    }
+    /**
+     * @test
+     */
+    public function testAddChild04() {
+        $this->expectException('Exception');
+        $doc = new HTMLDoc();
         $node02 = new HTMLNode('head');
-        $this->assertFalse($doc->addChild($node02));
+        $doc->addChild($node02);
     }
     /**
      * @test
      */
     public function testAddChild01() {
         $doc = new HTMLDoc();
-        $ch = '';
-        $this->assertFalse($doc->addChild($ch));
         $node00 = new HTMLNode('div');
-        $this->assertTrue($doc->addChild($node00));
+        $doc->addChild($node00);
         $this->assertEquals(1,$doc->getBody()->childrenCount());
         $node01 = new HTMLNode('input');
-        $this->assertTrue($doc->addChild($node01));
+        $doc->addChild($node01);
         $this->assertEquals(2,$doc->getBody()->childrenCount());
         $node02 = new HTMLNode('textarea');
-        $this->assertTrue($doc->addChild($node02));
+        $doc->addChild($node02);
         $this->assertEquals(3,$doc->getBody()->childrenCount());
     }
     /**
      * @test
      */
-    public function testAsCode00() {
-        $doc = new HTMLDoc();
-        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">!DOCTYPE html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n            Default\n        <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">meta</span> <span style=\"color:rgb(0,124,0)\">name</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"viewport\"</span> <span style=\"color:rgb(0,124,0)\">content</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">body</span> <span style=\"color:rgb(0,124,0)\">itemscope</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"\"</span> <span style=\"color:rgb(0,124,0)\">itemtype</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"http://schema.org/WebPage\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">body</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\n</pre>",$doc->asCode());
-    }
+//    public function testAsCode00() {
+//        $doc = new HTMLDoc();
+//        $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">!DOCTYPE html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n            Default\r\n        <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">title</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n        <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">meta</span> <span style=\"color:rgb(0,124,0)\">name</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">viewport</span> <span style=\"color:rgb(0,124,0)\">content</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">head</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">body</span> <span style=\"color:rgb(0,124,0)\">itemscope</span> <span style=\"color:rgb(0,124,0)\">itemtype</span> <span style=\"color:gray\">=</span> <span style=\"color:rgb(170,85,137)\">\"\"http://schema.org/WebPage\"\"</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n    <span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">body</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">html</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n</pre>",$doc->asCode());
+//    }
     /**
      * @test
      */
@@ -62,25 +123,25 @@ class HTMLDocTest extends TestCase {
                 ."<title>"
                 ."Default"
                 ."</title>"
-                ."<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
+                ."<meta name=viewport content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">"
                 ."</head>"
-                ."<body itemscope=\"\" itemtype=\"http://schema.org/WebPage\">"
+                ."<body itemscope itemtype=\"http://schema.org/WebPage\">"
                 ."</body>"
                 ."</html>"
                 .""
-                ."",$doc);
+                ."",$doc.'');
         $this->assertEquals(""
-                ."<!DOCTYPE html>\n"
-                ."<html>\n"
-                ."    <head>\n"
-                ."        <title>\n"
-                ."            Default\n"
-                ."        </title>\n"
-                ."        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n"
-                ."    </head>\n"
-                ."    <body itemscope=\"\" itemtype=\"http://schema.org/WebPage\">\n"
-                ."    </body>\n"
-                ."</html>\n"
+                ."<!DOCTYPE html>\r\n"
+                ."<html>\r\n"
+                ."    <head>\r\n"
+                ."        <title>\r\n"
+                ."            Default\r\n"
+                ."        </title>\r\n"
+                ."        <meta name=viewport content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\r\n"
+                ."    </head>\r\n"
+                ."    <body itemscope itemtype=\"http://schema.org/WebPage\">\r\n"
+                ."    </body>\r\n"
+                ."</html>\r\n"
                 .""
                 ."",$doc->toHTML());
     }
@@ -172,11 +233,32 @@ class HTMLDocTest extends TestCase {
         $doc->addChild($ch01);
         $doc->addChild($ch02);
         $doc->addChild($ch03);
+        $this->assertEquals(4,$doc->getBody()->childrenCount());
         $removed = $doc->removeChild($ch00);
+        $this->assertEquals(3,$doc->getBody()->childrenCount());
         $this->assertTrue($removed === $ch00);
         $this->assertFalse($removed === $ch02);
         $this->assertTrue($doc->removeChild($ch01) === $ch01);
         $this->assertEquals(2,$doc->getBody()->childrenCount());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild02() {
+        $doc = new HTMLDoc();
+        $ch00 = new HTMLNode();
+        $ch01 = new HTMLNode('input');
+        $ch02 = new HTMLNode();
+        $ch03 = new HTMLNode('input');
+        $ch03->setID('my-input');
+        $doc->addChild($ch00);
+        $doc->addChild($ch01);
+        $doc->addChild($ch02);
+        $doc->addChild($ch03);
+        $this->assertEquals(4,$doc->getBody()->childrenCount());
+        $removed = $doc->removeChild('my-input');
+        $this->assertEquals(3,$doc->getBody()->childrenCount());
+        $this->assertTrue($removed === $ch03);
     }
     /**
      * @test

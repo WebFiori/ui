@@ -4,25 +4,19 @@
     </php>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <file>./src/LinkedList.php</file>
-            <file>./src/Node.php</file>
-            <file>./src/Stack.php</file>
-            <file>./src/Queue.php</file>
-            <file>./src/html/HTMLNode.php</file>
-            <file>./src/html/HeadNode.php</file>
-            <file>./src/html/HTMLDoc.php</file>
-            <file>./src/html/Input.php</file>
+            <file>./src/HTMLNode.php</file>
+            <file>./src/HeadNode.php</file>
+            <file>./src/HTMLDoc.php</file>
+            <file>./src/Input.php</file>
+            <file>./src/HTMLTable.php</file>
         </whitelist>
     </filter>
     <logging>
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
     <testsuites>
-        <testsuite name="Data Structures Tests">
-            <directory>./tests/data-structures</directory>
-        </testsuite>
         <testsuite name="HTML Elements Tests">
-            <directory>./tests/html</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

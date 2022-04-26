@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="{{vue-src}}"></script>
+    </head>
+    <body>
+        <div id="app-5">
+            <p id="php-message">{{php-message}}</p>
+            <p id="vue-message">{{ message }}</p>
+            <button v-on:click="reverseMessage">Reverse Message</button>
+        </div>
+        <script>
+            var app5 = new Vue({
+                el: '#app-5',
+                data: {
+                  message: 'Hello Vue.js and phpStructs!'
+                },
+                methods: {
+                  reverseMessage: function () {
+                    this.message = this.message.split('').reverse().join('');
+                  }
+                }
+            });
+        </script>
+    </body>
+</html>

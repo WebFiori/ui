@@ -31,34 +31,39 @@ $rootDir = substr(__DIR__, 0, strlen(__DIR__) - strlen($testsDirName));
 $DS = DIRECTORY_SEPARATOR;
 $rootDirTrimmed = trim($rootDir,'/\\');
 //echo 'Include Path: \''. get_include_path().'\''."\n";
-if(explode($DS, $rootDirTrimmed)[0] == 'home'){
+if (explode($DS, $rootDirTrimmed)[0] == 'home') {
     //linux.
     $rootDir = $DS.$rootDirTrimmed.$DS;
-}
-else{
+} else {
     $rootDir = $rootDirTrimmed.$DS;
 }
 define('ROOT', $rootDir);
 //echo 'Root Directory: \''.$rootDir.'\'.'."\n";
-require_once $rootDir.'src'.$DS.'Node.php';
-require_once $rootDir.'src'.$DS.'LinkedList.php';
-require_once $rootDir.'src'.$DS.'Stack.php';
-require_once $rootDir.'src'.$DS.'Queue.php';
-require_once $rootDir.'src'.$DS.'Comparable.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Node.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'AbstractCollection.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'LinkedList.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Stack.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Queue.php';
+require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Comparable.php';
 //HTML classes
-require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLNode.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'Br.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'HeadNode.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'PNode.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'HTMLDoc.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'CodeSnippet.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'Input.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'JsCode.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'Label.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'Anchor.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'UnorderedList.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'ListItem.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'TableCell.php';
-require_once $rootDir.'src'.$DS.'html'.$DS.'TableRow.php';
+require_once $rootDir.'src'.$DS.'exceptions'.$DS.'InvalidNodeNameException.php';
+require_once $rootDir.'src'.$DS.'exceptions'.$DS.'TemplateNotFoundException.php';
+require_once $rootDir.'src'.$DS.'HTMLNode.php';
+require_once $rootDir.'src'.$DS.'Br.php';
+require_once $rootDir.'src'.$DS.'HeadNode.php';
+require_once $rootDir.'src'.$DS.'Paragraph.php';
+require_once $rootDir.'src'.$DS.'HTMLDoc.php';
+require_once $rootDir.'src'.$DS.'CodeSnippet.php';
+require_once $rootDir.'src'.$DS.'Input.php';
+require_once $rootDir.'src'.$DS.'JsCode.php';
+require_once $rootDir.'src'.$DS.'Label.php';
+require_once $rootDir.'src'.$DS.'Anchor.php';
+require_once $rootDir.'src'.$DS.'HTMLList.php';
+require_once $rootDir.'src'.$DS.'UnorderedList.php';
+require_once $rootDir.'src'.$DS.'OrderedList.php';
+require_once $rootDir.'src'.$DS.'ListItem.php';
+require_once $rootDir.'src'.$DS.'TableCell.php';
+require_once $rootDir.'src'.$DS.'TableRow.php';
+require_once $rootDir.'src'.$DS.'HTMLTable.php';
+require_once $rootDir.'src'.$DS.'RadioGroup.php';
 
-require_once $rootDir.'tests'.$DS.'AnyObject.php';
