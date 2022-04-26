@@ -928,7 +928,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setTitle($title) {
+    public function setTitle(string $title) : HTMLNode {
         if ($title === null && $this->hasChild($this->titleNode)) {
             $this->removeChild($this->titleNode);
             $this->titleNode->children()->get(0)->setText('');

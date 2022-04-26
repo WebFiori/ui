@@ -55,7 +55,7 @@ class Anchor extends HTMLNode {
      * @param string $target The value to set for the attribute 'target'. 
      * Default is '_self'.
      */
-    public function __construct($href, $body, $target = '_self') {
+    public function __construct(string $href, $body, string $target = '_self') {
         parent::__construct('a');
         $this->setAttribute(self::$Attrs[1],$href);
 
@@ -78,7 +78,7 @@ class Anchor extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setHref($link) {
+    public function setHref(string $link) {
         $trimmed = trim($link);
 
         if (strlen($trimmed) > 0) {
@@ -110,11 +110,12 @@ class Anchor extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setText($text,$escHtmlEntities = true) {
+    public function setText(string $text,$escHtmlEntities = true) : Anchor {
         $node = $this->getChild(0);
 
         if ($node->getNodeName() == '#TEXT') {
             $node->setText($text,$escHtmlEntities);
         }
+        return $this;
     }
 }

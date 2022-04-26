@@ -60,7 +60,7 @@ class Label extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function setFor($elIdOrInput) {
+    public function setFor($elIdOrInput) : Label {
         if ($elIdOrInput instanceof Input) {
             $id = $elIdOrInput->getAttributeValue('id');
 
@@ -89,7 +89,7 @@ class Label extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setText($text,$escEntities = true) {
+    public function setText(string $text,$escEntities = true) : Label {
         $node = $this->getChild(0);
 
         if ($node->getNodeName() == '#TEXT') {

@@ -785,7 +785,7 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('hello page',$node->getTitle());
         $node->setTitle('');
         $this->assertEquals('hello page',$node->getTitle());
-        $node->setTitle(null);
+        $node->setTitle((string)null);
         $this->assertEquals(1,$node->childrenCount());
         $this->assertEquals('',$node->getTitle());
     }

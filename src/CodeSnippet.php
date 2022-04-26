@@ -271,9 +271,10 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setTitle($title) {
+    public function setTitle(string $title) : HTMLNode {
         $this->titleNode->clear();
         $this->titleNode->addText($title);
+        return $this;
     }
     private function _addLine() {
         $span = new HTMLNode('span');
