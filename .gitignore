@@ -1,2 +1,4 @@
 /nbproject
 /phpunit-7.5.8/
+.phpunit.result.cache
+my-page.html
