@@ -244,7 +244,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddChild08() {
         $node = new HeadNode();
-        $this->assertNull($node->addChild('div', [], false));
+        $this->assertNotNull($node->addChild('div', [], false));
         $this->assertTrue($node === $node->addChild('div'));
         $this->assertEquals('script', $node->addChild('script', [], false)->getNodeName());
     }
@@ -542,7 +542,7 @@ class HeadNodeTest extends TestCase {
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
         $this->assertNull($node->getBaseURL());
-        $this->assertEquals('Default',$node->getTitle());
+        $this->assertEquals('Default',$node->getPageTitle());
         $this->assertNull($node->getCanonical());
         $this->assertNull($node->getCharSet());
     }
@@ -557,7 +557,7 @@ class HeadNodeTest extends TestCase {
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
         $this->assertEquals('https://example.com/',$node->getBaseURL());
-        $this->assertEquals('My Page',$node->getTitle());
+        $this->assertEquals('My Page',$node->getPageTitle());
         $this->assertEquals('https://example.com/my-page',$node->getCanonical());
         $this->assertNull($node->getCharSet());
     }
@@ -572,7 +572,7 @@ class HeadNodeTest extends TestCase {
         $this->assertNotNull($node->getCanonicalNode());
         $this->assertNotNull($node->getCharsetNode());
         $this->assertNull($node->getBaseURL());
-        $this->assertEquals('',$node->getTitle());
+        $this->assertEquals('',$node->getPageTitle());
         $this->assertNull($node->getCanonical());
         $this->assertNull($node->getCharSet());
     }
@@ -661,7 +661,7 @@ class HeadNodeTest extends TestCase {
      */
     public function testOrderOfChildren00() {
         $node = new HeadNode();
-        $node->setTitle('Hello World!');
+        $node->setPageTitle('Hello World!');
         $node->setCharSet('utf-8');
         $node->setCanonical('http://example.com');
         $node->setBase('http://example.com');
@@ -779,14 +779,14 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode('');
         $this->assertEquals(1,$node->childrenCount());
         $this->assertNotNull($node->getTitleNode());
-        $this->assertEquals('',$node->getTitle());
-        $node->setTitle('hello page');
+        $this->assertEquals('',$node->getPageTitle());
+        $node->setPageTitle('hello page');
         $this->assertEquals(2,$node->childrenCount());
-        $this->assertEquals('hello page',$node->getTitle());
-        $node->setTitle('');
-        $this->assertEquals('hello page',$node->getTitle());
-        $node->setTitle(null);
+        $this->assertEquals('hello page',$node->getPageTitle());
+        $node->setPageTitle('');
+        $this->assertEquals('hello page',$node->getPageTitle());
+        $node->setPageTitle(null);
         $this->assertEquals(1,$node->childrenCount());
-        $this->assertEquals('',$node->getTitle());
+        $this->assertEquals('',$node->getPageTitle());
     }
 }

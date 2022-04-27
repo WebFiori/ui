@@ -85,7 +85,7 @@ class LoadTemplateTest extends TestCase {
         $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-00.html');
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
-        $this->assertEquals('TODO supply a title', $node->getTitle());
+        $this->assertEquals('TODO supply a title', $node->getPageTitle());
         $this->assertEquals('UTF-8', $node->getCharSet());
     }
     /**
@@ -95,7 +95,7 @@ class LoadTemplateTest extends TestCase {
         $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-01.html');
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
-        $this->assertEquals('{{title}}', $node->getTitle());
+        $this->assertEquals('{{title}}', $node->getPageTitle());
         $this->assertEquals('UTF-8', $node->getCharSet());
     }
     /**
@@ -107,7 +107,7 @@ class LoadTemplateTest extends TestCase {
         ]);
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
-        $this->assertEquals('This is page title.', $node->getTitle());
+        $this->assertEquals('This is page title.', $node->getPageTitle());
         $this->assertEquals('UTF-8', $node->getCharSet());
     }
     /**
@@ -120,7 +120,7 @@ class LoadTemplateTest extends TestCase {
         ]);
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(4, $node->childrenCount());
-        $this->assertEquals('This is page title.', $node->getTitle());
+        $this->assertEquals('This is page title.', $node->getPageTitle());
         $this->assertEquals('This is the description of the page.', $node->getMeta('description')->getAttributeValue('content'));
         $this->assertEquals('UTF-8', $node->getCharSet());
     }
@@ -131,7 +131,7 @@ class LoadTemplateTest extends TestCase {
         $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-03.html');
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(6, $node->childrenCount());
-        $this->assertEquals('{{title}}', $node->getTitle());
+        $this->assertEquals('{{title}}', $node->getPageTitle());
         $this->assertEquals('{{description}}', $node->getMeta('description')->getAttributeValue('content'));
         $this->assertEquals('UTF-8', $node->getCharSet());
     }

@@ -412,7 +412,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function setNodeName($name) {
+    public function setNodeName(string $name) : bool {
         return false;
     }
     /**
