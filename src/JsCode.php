@@ -68,7 +68,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setAttribute(string $name, $val = null) : JsCode {
+    public function setAttribute(string $name, $val = null) : HTMLNode {
         if ($name != 'type') {
             return parent::setAttribute($name, $val);
         }
@@ -78,7 +78,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setClassName(string $val, $val2 = true) : JsCode {
+    public function setClassName(string $val, $val2 = true) : HTMLNode {
         return $this;
     }
     /**
@@ -86,7 +86,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setName(string $val) : JsCode {
+    public function setName(string $val) : HTMLNode {
         return $this;
     }
     /**
@@ -94,16 +94,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setTabIndex(int $val) : JsCode {
-        return $this;
-    }
-    /**
-     * A method that does nothing.
-     * 
-     * @since 1.0
-     * 
-     */
-    public function setText(string $text, $esc = true) : JsCode {
+    public function setTabIndex(int $val) : HTMLNode {
         return $this;
     }
     /**
@@ -112,7 +103,7 @@ class JsCode extends HTMLNode {
      * @since 1.0
      * 
      */
-    public function setTitle(string $val) : JsCode {
+    public function setText(string $text, $esc = true) : HTMLNode {
         return $this;
     }
     /**
@@ -121,7 +112,16 @@ class JsCode extends HTMLNode {
      * @since 1.0
      * 
      */
-    public function setWritingDir(string $val) : JsCode {
+    public function setTitle(string $val) : HTMLNode {
+        return $this;
+    }
+    /**
+     * A method that does nothing.
+     * 
+     * @since 1.0
+     * 
+     */
+    public function setWritingDir(string $val) : HTMLNode {
         return $this;
     }
 }
