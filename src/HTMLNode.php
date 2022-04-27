@@ -2325,7 +2325,7 @@ class HTMLNode implements Countable, Iterator {
             if ($this->isComment()) {
                 $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
             } else if ($escHtmlEntities === true) {
-                $text = htmlentities($text);
+                $text = htmlentities($text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
             }
             $this->text = $text;
         }
