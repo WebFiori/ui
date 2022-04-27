@@ -2,8 +2,8 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://github.com/WebFiori/ui/actions">
-    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207,8/badge.svg?branch=master">
+  <a href="https://github.com/WebFiori/database/actions">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=main">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
@@ -22,13 +22,23 @@ A set of classes that provide basic web pages creation utilities in addition to 
 ## API Docs
 This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/webfiori/ui .
 
+
+## Supported PHP Versions
+| Build Status |
+|:-----------:|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.0/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.1/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.2/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.3/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.4/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=main"></a>|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=dev"></a><br>(dev)|
+
 ## Features
 - Ability to create custom HTML UI Elements.
 - Create and modify DOM through PHP.
 - Provides a basic templating engine.
-
-## Supported PHP Versions
-The library support all versions starting from version 5.6 up to version 8.
   
 ## Usage
 For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
