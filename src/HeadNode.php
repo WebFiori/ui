@@ -29,7 +29,7 @@ use webfiori\collections\LinkedList;
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *
  * @author Ibrahim
- * @version 1.1.6
+ * @version 1.1.7
  */
 class HeadNode extends HTMLNode {
     /**
@@ -106,7 +106,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($title = 'Default',$canonical = '',$base = '') {
+    public function __construct(string $title = 'Default', string $canonical = '', string $base = '') {
         parent::__construct('head');
 
         $this->baseNode = new HTMLNode('base');
@@ -114,7 +114,7 @@ class HeadNode extends HTMLNode {
 
         $this->titleNode = new HTMLNode('title');
         $this->titleNode->addTextNode('');
-        $this->setTitle($title);
+        $this->setPageTitle($title);
 
         $this->canonical = new HTMLNode('link');
         $this->canonical->setAttribute('rel', 'canonical');
@@ -135,12 +135,12 @@ class HeadNode extends HTMLNode {
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. Default is empty array.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addAlternate($url, $lang, array $otherAttrs = []) {
+    public function addAlternate(string $url, string $lang, array $otherAttrs = []) : HeadNode {
         $trimmedUrl = trim($url);
         $trimmedLang = trim($lang);
 
@@ -197,15 +197,15 @@ class HeadNode extends HTMLNode {
      * to the body of the parent or child. Default value is true. It means the 
      * chaining will happen at parent level.
      * 
-     * @return HeadNode|HTMLNode|null If the parameter <code>$chainOnParent</code> is set to true, 
+     * @return HeadNode|HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. Note that if no child is added, the method will 
-     * return null.
+     * return same instance.
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
-        $retVal = null;
+    public function addChild($node, $attrs = [], $chainOnParent = true) : HTMLNode {
+        $retVal = $this;
         
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
@@ -242,12 +242,12 @@ class HeadNode extends HTMLNode {
      * This one can be also a string that represents the version of CSS file.
      * Default is false. 'cv' = CSS Version. Default is empty array. 
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addCSS($href, array $otherAttrs = []) {
+    public function addCSS(string $href, array $otherAttrs = []) : HeadNode {
         $trimmedHref = trim($href);
         $splitted = explode('?', $trimmedHref);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
@@ -308,12 +308,12 @@ class HeadNode extends HTMLNode {
      * This also can be a string that represents the version of the file.
      * 'jv' = JavaScript Version. Default is empty array.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addJs($loc, array $otherAttrs = []) {
+    public function addJs(string $loc, array $otherAttrs = []) : HeadNode {
         $trimmedLoc = trim($loc);
         $splitted = explode('?', $trimmedLoc);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
@@ -374,12 +374,12 @@ class HeadNode extends HTMLNode {
      * The keys will be used as an attribute and the key value will be used 
      * as attribute value.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.1
      */
-    public function addLink($rel, $href, array $otherAttrs = []) {
+    public function addLink(string $rel, string $href, array $otherAttrs = []) : HeadNode {
         $trimmedRel = trim(strtolower($rel));
         $trimmedHref = trim($href);
 
@@ -428,12 +428,12 @@ class HeadNode extends HTMLNode {
      * which has the given name and this attribute is set to true, 
      * the content of the meta will be overridden by the passed value. 
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function addMeta($name, $content, $override = false) {
+    public function addMeta(string $name, string $content, $override = false) : HeadNode {
         $trimmedName = trim(strtolower($name.''));
 
         if (strlen($trimmedName) != 0) {
@@ -474,7 +474,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getAlternates() {
+    public function getAlternates() : LinkedList {
         $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
@@ -498,7 +498,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getBaseNode() {
+    public function getBaseNode() : HTMLNode {
         return $this->baseNode;
     }
     /**
@@ -526,12 +526,11 @@ class HeadNode extends HTMLNode {
     /**
      * Returns an object of type HTMLNode that represents the canonical URL.
      * 
-     * @return HTMLNode|null If the canonical URL is set, the method will return 
-     * an object of type HTMLNode. If not set, the method will return null.
+     * @return HTMLNode An object of type HTMLNode.
      * 
      * @since 1.1.3
      */
-    public function getCanonicalNode() {
+    public function getCanonicalNode() : HTMLNode {
         return $this->canonical;
     }
     /**
@@ -557,7 +556,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.4
      */
-    public function getCharsetNode() {
+    public function getCharsetNode() : HTMLNode {
         return $this->metaCharset;
     }
     /**
@@ -568,7 +567,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getCSSNodes() {
+    public function getCSSNodes() : LinkedList {
         $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
@@ -592,7 +591,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getJSNodes() {
+    public function getJSNodes() : LinkedList {
         $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
@@ -616,7 +615,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.6
      */
-    public function getLinkNodes() {
+    public function getLinkNodes() : LinkedList {
         return $this->getChildrenByTag('link');
     }
     /**
@@ -632,7 +631,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.2
      */
-    public function getMeta($name) {
+    public function getMeta(string $name) {
         $lName = strtolower(trim($name));
 
         if ($lName == 'charset') {
@@ -657,7 +656,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getMetaNodes() {
+    public function getMetaNodes() : LinkedList {
         $children = $this->children();
         $chCount = $children->size();
         $list = new LinkedList();
@@ -681,8 +680,17 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.3
      */
-    public function getTitle() {
+    public function getPageTitle() {
         return $this->titleNode->children()->get(0)->getText();
+    }
+    /**
+     * 
+     * @return type
+     * 
+     * @deprecated since version 1.1.7
+     */
+    public function getTitle() {
+        return $this->getPageTitle();
     }
     /**
      * Returns an object of type HTMLNode that represents the title node.
@@ -694,7 +702,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.3
      */
-    public function getTitleNode() {
+    public function getTitleNode() : HTMLNode {
         return $this->titleNode;
     }
     /**
@@ -712,7 +720,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.5
      */
-    public function hasCss($loc) {
+    public function hasCss(string $loc) : bool {
         $trimmedLoc = trim($loc);
         $splitted = explode('?', $trimmedLoc);
 
@@ -749,7 +757,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.5
      */
-    public function hasJs($src) {
+    public function hasJs(string $src) : bool {
         $trimmedLoc = trim($src);
         $splitted = explode('?', $trimmedLoc);
 
@@ -782,7 +790,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.2
      */
-    public function hasMeta($name) {
+    public function hasMeta(string $name) : bool {
         $lName = strtolower($name);
 
         if ($lName == 'charset') {
@@ -807,12 +815,12 @@ class HeadNode extends HTMLNode {
      * only if the given parameter is a string and it is not empty. If null is 
      * given, the node will be removed from the body of the head tag.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function setBase($url) {
+    public function setBase($url) : HeadNode {
         if ($url === null && $this->hasChild($this->baseNode)) {
             $this->removeChild($this->baseNode);
             $this->baseNode->removeAttribute('href');
@@ -841,12 +849,12 @@ class HeadNode extends HTMLNode {
      * which represents the canonical URL will be removed from the body of the 
      * head tag.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function setCanonical($link) {
+    public function setCanonical($link) : HeadNode {
         if ($link === null && $this->hasChild($this->canonical)) {
             $this->removeChild($this->canonical);
             $this->canonical->removeAttribute('href');
@@ -884,12 +892,12 @@ class HeadNode extends HTMLNode {
      * render the document (such as 'UTF-8' or 'ISO-8859-8'. If null is 
      * given, the node will be removed from the head body. 
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.1.4
      */
-    public function setCharSet($charset) {
+    public function setCharSet($charset) : HeadNode {
         if ($charset === null && $this->hasChild($this->metaCharset)) {
             $this->removeChild($this->metaCharset);
             $this->metaCharset->removeAttribute('charset');
@@ -923,12 +931,12 @@ class HeadNode extends HTMLNode {
      * order to set. If null is given, 'title' node will be omitted from the 
      * body of the 'head' tag.
      * 
-     * @return HeadNote The method will return the instance at which the method 
+     * @return HeadNode The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function setTitle(string $title) : HTMLNode {
+    public function setPageTitle($title) : HeadNode {
         if ($title === null && $this->hasChild($this->titleNode)) {
             $this->removeChild($this->titleNode);
             $this->titleNode->children()->get(0)->setText('');
@@ -950,6 +958,24 @@ class HeadNode extends HTMLNode {
         }
 
         return $this;
+    }
+    /**
+     * Sets the text value of the node 'title'.
+     * 
+     * @param string $title The title to set. It must be non-empty string in 
+     * order to set. If empty string is given, 'title' node will be omitted from the 
+     * body of the 'head' tag.
+     * 
+     * @return HeadNode he method will return the instance at which the method 
+     * is called on.
+     * 
+     * @deprecated since version 1.1.7
+     */
+    public function setTitle(string $title) : HeadNode {
+        if (strlen($title) == 0) {
+            return $this->setPageTitle(null);
+        }
+        return $this->setPageTitle($title);
     }
     private function _addAttrs(&$node,$otherAttrs,$notAllowed) {
         if (gettype($otherAttrs) == 'array') {

@@ -243,6 +243,8 @@ class HTMLNode implements Countable, Iterator {
         $this->isQuoted = false;
         $this->isFormated = false;
         $this->text = '';
+        $this->useOriginalTxt = false;
+        $this->attributes = [];
         $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
@@ -264,8 +266,6 @@ class HTMLNode implements Countable, Iterator {
             $this->setIsVoidNode(false);
             $this->childrenList = new LinkedList();
         }
-        $this->attributes = [];
-        $this->useOriginalTxt = false;
         $this->setAttributes($attrs);
     }
     /**
@@ -2437,14 +2437,12 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function toHTML($formatted = false,$initTab = 0) {
-        if ($this->isFormatted() !== null) {
-            $formatted = $this->isFormatted();
-        }
-
+        
         if (!$formatted) {
             $this->nl = '';
             $this->tabSpace = '';
         } else {
+            $this->setIsFormatted(true);
             $this->nl = HTMLDoc::NL;
 
             if ($initTab > -1) {
@@ -2452,15 +2450,11 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $this->tabCount = 0;
             }
-            $this->tabSpace = '';
-
-            for ($x = 0 ; $x < 4 ; $x++) {
-                $this->tabSpace .= ' ';
-            }
+            $this->tabSpace = str_repeat(' ', 4);
         }
         $this->htmlString = '';
         $this->nodesStack = new Stack();
-        $this->_pushNode($this,$formatted);
+        $this->_pushNode($this);
 
         return $this->htmlString;
     }
@@ -2807,13 +2801,7 @@ class HTMLNode implements Countable, Iterator {
         if ($this->tabCount == 0) {
             return '';
         } else {
-            $tab = '';
-
-            for ($i = 0 ; $i < $this->tabCount ; $i++) {
-                $tab .= $this->tabSpace;
-            }
-
-            return $tab;
+            return str_repeat($this->tabSpace, $this->tabCount);
         }
     }
     private static function _getTextActualValue($hashedValsArr, $hashVal) {
@@ -3037,7 +3025,7 @@ class HTMLNode implements Countable, Iterator {
      */
     private function _pushNode($node) {
         if ($node->isTextNode()) {
-            if ($node->isFormatted() !== null && $node->isFormatted() === false) {
+            if (!$node->isFormatted()) {
                 if ($node->isUseOriginalText()) {
                     $this->htmlString .= $node->getOriginalText();
                 } else {
@@ -3060,7 +3048,7 @@ class HTMLNode implements Countable, Iterator {
             }
         } else {
             if ($node->isComment()) {
-                if ($node->isFormatted() !== null && $node->isFormatted() === false) {
+                if (!$node->isFormatted()) {
                     $this->htmlString .= $node->getComment();
                 } else {
                     $this->htmlString .= $this->_getTab().$node->getComment().$this->nl;
@@ -3069,7 +3057,7 @@ class HTMLNode implements Countable, Iterator {
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
 
-                if ($node->isFormatted() !== null && $node->isFormatted() === false) {
+                if (!$node->isFormatted()) {
                     $this->htmlString .= $node->open();
                 } else {
                     $nodeType = $node->getNodeName();
@@ -3084,6 +3072,7 @@ class HTMLNode implements Countable, Iterator {
 
                 for ($x = 0 ; $x < $chCount ; $x++) {
                     $nodeAtx = $node->children()->get($x);
+                    $nodeAtx->setIsFormatted($node->isFormatted());
                     $this->_pushNode($nodeAtx);
                 }
                 $this->_reduceTab();
