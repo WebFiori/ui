@@ -217,6 +217,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.6 
      */
     private $useOriginalTxt;
+    private $null;
     /**
      * Constructs a new instance of the class.
      * 
