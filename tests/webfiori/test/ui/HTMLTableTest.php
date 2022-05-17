@@ -1,12 +1,7 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace webfiori\test\ui;
 
-namespace webfiori\ui\test;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 use webfiori\ui\HTMLTable;
@@ -16,7 +11,7 @@ use webfiori\ui\HTMLTable;
  *
  * @author Ibrahim
  */
-class TestHTMLTable extends TestCase {
+class HTMLTableTest extends TestCase {
     /**
      * @test
      */

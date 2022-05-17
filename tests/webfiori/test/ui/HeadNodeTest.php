@@ -1,5 +1,5 @@
 <?php
-namespace webfiori\ui\test;
+namespace webfiori\test\ui;
 
 use webfiori\ui\HTMLNode;
 use webfiori\ui\HeadNode;

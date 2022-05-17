@@ -1,12 +1,6 @@
 <?php
+namespace webfiori\test\ui;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-namespace webfiori\ui\test;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLDoc;
