@@ -17,9 +17,10 @@ class HTMLTableTest extends TestCase {
      */
     public function test00() {
         $table = new HTMLTable(3, 5);
+        $table->setIsQuotedAttribute(true);
         $this->assertEquals(5, $table->cols());
         $this->assertEquals(3, $table->rows());
-        $this->assertEquals('<table border="1" style="border-collapse:collapse">'
+        $this->assertEquals('<table border="1" style="border-collapse:collapse;">'
                 . '<tr>'
                 . '<td></td><td></td><td></td><td></td><td></td>'
                 . '</tr>'
@@ -37,7 +38,8 @@ class HTMLTableTest extends TestCase {
         $this->assertEquals(5, $table->cols());
         $this->assertEquals(3, $table->rows());
         $table->setValue(0, 0, 'Hello');
-        $this->assertEquals('<table border="1" style="border-collapse:collapse">'
+        $table->setIsQuotedAttribute(true);
+        $this->assertEquals('<table border="1" style="border-collapse:collapse;">'
                 . '<tr>'
                 . '<td>Hello</td><td></td><td></td><td></td><td></td>'
                 . '</tr>'
