@@ -24,6 +24,29 @@ class HTMLDocTest extends TestCase {
         $this->assertEquals('a', $list->get(0)->getNodeName());
     }
     /**
+     * 
+     * @param HTMLDoc $doc
+     * @depends testConstructor00
+     */
+    public function testAsCode00(HTMLDoc $doc) {
+        $this->assertEquals(""
+                ."&lt;!DOCTYPE html&gt;\r\n"
+                ."&lt;html&gt;\r\n"
+                ."    &lt;head&gt;\r\n"
+                ."        &lt;title&gt;\r\n"
+                ."            Default\r\n"
+                ."        &lt;/title&gt;\r\n"
+                ."        &lt;meta name = \"viewport\" content = \"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\"&gt;\r\n"
+                ."    &lt;/head&gt;\r\n"
+                ."    &lt;body itemscope itemtype = \"http://schema.org/WebPage\"&gt;\r\n"
+                ."    &lt;/body&gt;\r\n"
+                ."&lt;/html&gt;\r\n"
+                .""
+                ."", $doc->asCode([
+                    'with-colors' => false
+                ]));
+    }
+    /**
      * @test
      */
     public function testgetChildrenByAttrVal01() {
@@ -144,6 +167,7 @@ class HTMLDocTest extends TestCase {
                 ."</html>\r\n"
                 .""
                 ."",$doc->toHTML());
+        return $doc;
     }
     /**
      * @test
