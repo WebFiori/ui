@@ -1,12 +1,7 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace webfiori\test\ui;
 
-namespace webfiori\ui\test;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 use webfiori\ui\HTMLTable;
@@ -16,15 +11,16 @@ use webfiori\ui\HTMLTable;
  *
  * @author Ibrahim
  */
-class TestHTMLTable extends TestCase {
+class HTMLTableTest extends TestCase {
     /**
      * @test
      */
     public function test00() {
         $table = new HTMLTable(3, 5);
+        $table->setIsQuotedAttribute(true);
         $this->assertEquals(5, $table->cols());
         $this->assertEquals(3, $table->rows());
-        $this->assertEquals('<table border="1" style="border-collapse:collapse">'
+        $this->assertEquals('<table border="1" style="border-collapse:collapse;">'
                 . '<tr>'
                 . '<td></td><td></td><td></td><td></td><td></td>'
                 . '</tr>'
@@ -42,7 +38,8 @@ class TestHTMLTable extends TestCase {
         $this->assertEquals(5, $table->cols());
         $this->assertEquals(3, $table->rows());
         $table->setValue(0, 0, 'Hello');
-        $this->assertEquals('<table border="1" style="border-collapse:collapse">'
+        $table->setIsQuotedAttribute(true);
+        $this->assertEquals('<table border="1" style="border-collapse:collapse;">'
                 . '<tr>'
                 . '<td>Hello</td><td></td><td></td><td></td><td></td>'
                 . '</tr>'

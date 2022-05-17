@@ -1895,7 +1895,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Removes a direct child node.
      * 
-     * @param HTMLNode|string $nodeInstOrId The node that will be removed. This also can 
+     * @param HTMLNode|string|int $nodeInstOrId The node that will be removed. This also can 
      * be the ID of the child that will be removed. In addition to that, this can 
      * be the index of the element that will be removed starting from 0.
      * 

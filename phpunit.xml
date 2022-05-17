@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="tests/test.php">
+<phpunit colors="true" bootstrap="tests/bootstrap.php">
     <php>
     </php>
     <filter>
@@ -16,7 +16,7 @@
     </logging>
     <testsuites>
         <testsuite name="HTML Elements Tests">
-            <directory>./tests</directory>
+            <directory>./tests/webfiori/test/ui</directory>
         </testsuite>
     </testsuites>
 </phpunit>

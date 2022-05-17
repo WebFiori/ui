@@ -190,7 +190,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function getChild($index) {
+    public function getChild(int $index) {
         $ch = parent::getChild($index);
 
         if ($ch instanceof ListItem) {

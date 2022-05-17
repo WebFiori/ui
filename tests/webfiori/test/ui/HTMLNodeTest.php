@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\ui\test;
+namespace webfiori\test\ui;
 
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLDoc;
@@ -302,6 +302,52 @@ class HTMLNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddChild15() {
+        $node = new HTMLNode();
+        $node->tr([1, 2, 3]);
+        $this->assertEquals('<div></div>', $node.'');
+        $node->table()->tr(['Hello', 'World']);
+        $this->assertEquals('<div><table><tr><td>Hello</td><td>World</td></tr></table></div>', $node.'');
+    }
+    /**
+     * @test
+     */
+    public function testAddChild16() {
+        $node = new HTMLNode('tr');
+        $node->cell('Hello');
+        $this->assertEquals('<tr><td>Hello</td></tr>', $node.'');
+        $this->assertEquals('&lt;tr&gt;'.HTMLDoc::NL
+                . '    &lt;td&gt;'.HTMLDoc::NL
+                . '        Hello'.HTMLDoc::NL
+                . '    &lt;/td&gt;'.HTMLDoc::NL
+                . '&lt;/tr&gt;'.HTMLDoc::NL, $node->asCode([
+            'with-colors' => false
+        ]));
+    }
+    /**
+     * @test
+     */
+    public function testAddChild17() {
+        $node = new HTMLNode('html');
+        $node->addChild('body')
+                ->img([
+                    'src' => 'image.png'
+                ]);
+        $this->assertEquals('<html><body><img src=image.png></body></html>', $node.'');
+        $node->setIsQuotedAttribute(true);
+        $this->assertEquals('<html><body><img src="image.png"></body></html>', $node.'');
+        $this->assertEquals('&lt;!DOCTYPE html&gt;'.HTMLDoc::NL
+                . '&lt;html&gt;'.HTMLDoc::NL
+                . '    &lt;body&gt;'.HTMLDoc::NL
+                . '        &lt;img src = "image.png"&gt;'.HTMLDoc::NL
+                . '    &lt;/body&gt;'.HTMLDoc::NL
+                . '&lt;/html&gt;'.HTMLDoc::NL, $node->asCode([
+            'with-colors' => false
+        ]));
+    }
+    /**
+     * @test
+     */
     public function testAddTextNode00() {
         $node = new HTMLNode();
         $node->addTextNode('Hello World!');
@@ -507,7 +553,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testCount00() {
         $node = new HTMLNode();
-        $node->section('Hello')
+        $node->section(new HTMLNode())
                 ->getParent()
                 ->br()
                 ->codeSnippit('PHP Code', "")
@@ -1967,6 +2013,38 @@ and open the template in the editor.
                 . 'Super Paragraph</p>'
                 . '<section id="my-sec"><h1>Hello Sec</h1></section>'
                 . '</div>', $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function testRemoveChild10() {
+        $node = new HTMLNode();
+        $node->text('Hello')
+               ->paragraph('Super Paragraph', ['id'=>'p-1'])
+               ->div(['id'=>'empty-div'])
+               ->getParent()
+               ->section('Hello Sec', 1, [
+                    'id' => 'my-sec'
+                ]);
+        $removed = $node->removeChild(0);
+        $this->assertEquals('Hello', $removed->getText());
+        $removed2 = $node->removeChild(1);
+        $this->assertEquals('div', $removed2->getNodeName());
+    }
+    /**
+     * @test
+     */
+    public function testReplace00() {
+        $div = new HTMLNode();
+        $div->img();
+        $div->paragraph('Hello');
+        $div->text('Super');
+        $table = $div->table();
+        $another = new HTMLNode('input');
+        
+        $this->assertTrue($div->replaceChild($table, $another));
+        $this->assertEquals('input', $div->getLastChild()->getNodeName());
+        $this->assertFalse($div->replaceChild(new HTMLNode(), $table));
     }
     /**
      * @test

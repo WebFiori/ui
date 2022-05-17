@@ -1,5 +1,5 @@
 <?php
-namespace webfiori\ui\test;
+namespace webfiori\test\ui;
 
 use webfiori\ui\HTMLNode;
 use webfiori\ui\HeadNode;
@@ -788,5 +788,18 @@ class HeadNodeTest extends TestCase {
         $node->setPageTitle(null);
         $this->assertEquals(1,$node->childrenCount());
         $this->assertEquals('',$node->getPageTitle());
+    }
+    /**
+     * @test
+     */
+    public function testSetTitle01() {
+        $node = new HeadNode('Hello');
+        $this->assertEquals(2,$node->childrenCount());
+        $this->assertNotNull($node->getTitleNode());
+        $this->assertEquals('Hello',$node->getPageTitle());
+        $node->setTitle('');
+        $this->assertEquals(1,$node->childrenCount());
+        $this->assertEquals('',$node->getPageTitle());
+        $this->assertNotNull($node->getTitleNode());
     }
 }
