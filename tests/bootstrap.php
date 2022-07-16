@@ -39,12 +39,14 @@ if (explode($DS, $rootDirTrimmed)[0] == 'home') {
 }
 define('ROOT', $rootDir);
 //echo 'Root Directory: \''.$rootDir.'\'.'."\n";
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Node.php';
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'AbstractCollection.php';
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'LinkedList.php';
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Stack.php';
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Queue.php';
-require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Comparable.php';
+$collLibPath = $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'webfiori'.$DS.'collections'.$DS;
+
+require_once $collLibPath.'Node.php';
+require_once $collLibPath.'AbstractCollection.php';
+require_once $collLibPath.'LinkedList.php';
+require_once $collLibPath.'Stack.php';
+require_once $collLibPath.'Queue.php';
+require_once $collLibPath.'Comparable.php';
 //HTML classes
 $libPath = $rootDir.'webfiori'.$DS.'ui'.$DS;
 
