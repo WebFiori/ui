@@ -1872,11 +1872,15 @@ class HTMLNode implements Countable, Iterator {
      */
     public function removeAttribute($name) : HTMLNode {
         if (!$this->isTextNode() && !$this->isComment()) {
+            $tempArr = [];
             $trimmed = strtolower(trim($name));
-
-            if (isset($this->attributes[$trimmed])) {
-                unset($this->attributes[$trimmed]);
+            
+            foreach ($this->getAttributes() as $index => $v) {
+                if ($index != $trimmed) {
+                    $tempArr[$index] = $v;
+                }
             }
+            $this->attributes = $tempArr;
         }
 
         return $this;
