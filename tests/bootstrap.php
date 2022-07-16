@@ -46,24 +46,26 @@ require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'S
 require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Queue.php';
 require_once $rootDir.'vendor'.$DS.'webfiori'.$DS.'collections'.$DS.'src'.$DS.'Comparable.php';
 //HTML classes
-require_once $rootDir.'src'.$DS.'exceptions'.$DS.'InvalidNodeNameException.php';
-require_once $rootDir.'src'.$DS.'exceptions'.$DS.'TemplateNotFoundException.php';
-require_once $rootDir.'src'.$DS.'HTMLNode.php';
-require_once $rootDir.'src'.$DS.'Br.php';
-require_once $rootDir.'src'.$DS.'HeadNode.php';
-require_once $rootDir.'src'.$DS.'Paragraph.php';
-require_once $rootDir.'src'.$DS.'HTMLDoc.php';
-require_once $rootDir.'src'.$DS.'CodeSnippet.php';
-require_once $rootDir.'src'.$DS.'Input.php';
-require_once $rootDir.'src'.$DS.'JsCode.php';
-require_once $rootDir.'src'.$DS.'Label.php';
-require_once $rootDir.'src'.$DS.'Anchor.php';
-require_once $rootDir.'src'.$DS.'HTMLList.php';
-require_once $rootDir.'src'.$DS.'UnorderedList.php';
-require_once $rootDir.'src'.$DS.'OrderedList.php';
-require_once $rootDir.'src'.$DS.'ListItem.php';
-require_once $rootDir.'src'.$DS.'TableCell.php';
-require_once $rootDir.'src'.$DS.'TableRow.php';
-require_once $rootDir.'src'.$DS.'HTMLTable.php';
-require_once $rootDir.'src'.$DS.'RadioGroup.php';
+$libPath = $rootDir.'webfiori'.$DS.'ui'.$DS;
+
+require_once $libPath.'exceptions'.$DS.'InvalidNodeNameException.php';
+require_once $libPath.'exceptions'.$DS.'TemplateNotFoundException.php';
+require_once $libPath.'HTMLNode.php';
+require_once $libPath.'Br.php';
+require_once $libPath.'HeadNode.php';
+require_once $libPath.'Paragraph.php';
+require_once $libPath.'HTMLDoc.php';
+require_once $libPath.'CodeSnippet.php';
+require_once $libPath.'Input.php';
+require_once $libPath.'JsCode.php';
+require_once $libPath.'Label.php';
+require_once $libPath.'Anchor.php';
+require_once $libPath.'HTMLList.php';
+require_once $libPath.'UnorderedList.php';
+require_once $libPath.'OrderedList.php';
+require_once $libPath.'ListItem.php';
+require_once $libPath.'TableCell.php';
+require_once $libPath.'TableRow.php';
+require_once $libPath.'HTMLTable.php';
+require_once $libPath.'RadioGroup.php';
 
