@@ -344,6 +344,7 @@ class HTMLNodeTest extends TestCase {
                 . '&lt;/html&gt;'.HTMLDoc::NL, $node->asCode([
             'with-colors' => false
         ]));
+        $node->setIsQuotedAttribute(false);
     }
     /**
      * @test
@@ -419,6 +420,7 @@ class HTMLNodeTest extends TestCase {
      * @test
      */
     public function testChaining00() {
+        HTMLNode::setIsQuotedAttribute(false);
         $node = new HTMLNode('table');
         $node->tr([
             'User ID','Username','Email','Pass Code'

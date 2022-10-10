@@ -152,7 +152,15 @@ class HTMLNode implements Countable, Iterator {
      */
     private $htmlString;
     private $isFormated;
-    private $isQuoted;
+    /**
+     * A global static variable to decide if attributes values
+     * will be quoted or not.
+     * 
+     * Default is false.
+     * 
+     * @var bool
+     */
+    private static $IsQuoted = false;
     /**
      * The name of the tag (such as 'div')
      * @var string
@@ -241,7 +249,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function __construct($name = 'div', array $attrs = []) {
         $this->null = null;
-        $this->isQuoted = false;
         $this->isFormated = false;
         $this->text = '';
         $this->useOriginalTxt = false;
@@ -961,7 +968,10 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.8
      */
     public function getChild(int $index) {
-        return $this->children()->get($index);
+        
+        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+            return $this->children()->get($index);
+        } 
     }
     /**
      * Returns a node based on its attribute value (Direct child).
@@ -1603,19 +1613,20 @@ class HTMLNode implements Countable, Iterator {
         return !$this->mustClose();
     }
     /**
-     * Checks if the node will rendere all attributes quoted or not.
+     * Checks if instances of the class will render all attributes 
+     * with quotes or not.
      * 
-     * This method is used to make sure that all attributes are quotated when
+     * This method is used to make sure that all attributes are quoted when
      * rendering the node. If false is returned, then the quoted attributes 
      * will be decided based on the value of the attribute.
      * 
-     * @return boolean The method will return true if all attributes will be 
+     * @return bool The method will return true if all attributes will be 
      * quoted. False if not.
      * 
      * @since 1.8.5
      */
-    public function isQuotedAttribute() : bool {
-        return $this->isQuoted;
+    public static function isQuotedAttribute() : bool {
+        return self::$IsQuoted;
     }
     #[\ReturnTypeWillChange]
     /**
@@ -2146,30 +2157,17 @@ class HTMLNode implements Countable, Iterator {
         $this->notVoid = $bool === false;
     }
     /**
-     * Sets the value of the property which is used to tell if all node attributes 
+     * Sets the value of the property which is used to tell if all attributes 
      * will be quoted or not.
      * 
-     * Note that this method is only applicable if the element that the method 
-     * is called on has no parent (root node).
      * 
      * @param boolean $bool True to make the node render quoted attributes. 
      * False to not.
      * 
      * @since 1.8.5
      */
-    public function setIsQuotedAttribute($bool) {
-        if ($this->getParent() === null || $bool === $this->getParent()->isQuotedAttribute()) {
-            $this->isQuoted = $bool === true;
-            $this->_isQutedForCh($this->children(), $this->isQuotedAttribute());
-        }
-    }
-    private function _isQutedForCh($childrenArr, $bool) {
-        if ($childrenArr !== null) {
-            foreach ($childrenArr as $ch) {
-                $ch->setIsQuotedAttribute($bool);
-                $this->_isQutedForCh($ch->children(), $bool);
-            }
-        }
+    public static function setIsQuotedAttribute(bool $bool) {
+        self::$IsQuoted = $bool;
     }
     /**
      * Sets the value of the attribute 'name' of the node.
@@ -3209,13 +3207,10 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param HTMLNode $node
+     * @param HTMLNode|null $node
      * @since 1.2
      */
     private function _setParent($node) {
-        if ($node !== null) {
-            $this->setIsQuotedAttribute($node->isQuotedAttribute());
-        }
         $this->parentNode = $node;
     }
     /**

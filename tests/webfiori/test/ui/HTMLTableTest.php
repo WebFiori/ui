@@ -29,6 +29,7 @@ class HTMLTableTest extends TestCase {
                 . '<tr><td></td><td></td><td></td><td></td><td></td>'
                 . '</tr>'
                 . '</table>', $table->toHTML());
+        $table->setIsQuotedAttribute(false);
     }
     /**
      * @test
@@ -52,6 +53,7 @@ class HTMLTableTest extends TestCase {
         $table->setValue(0, 1, new \webfiori\ui\HTMLNode());
         $this->assertEquals('<div></div>', $table->getValue(0, 1).'');
         $this->assertNull($table->getValue(88, 99));
+        $table->setIsQuotedAttribute(false);
     }
     /**
      * @test
