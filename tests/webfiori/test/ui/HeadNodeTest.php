@@ -76,6 +76,7 @@ class HeadNodeTest extends TestCase {
             'one' => 'not-one',
             'two' => 'yes_two'
         ]);
+        $this->assertFalse($n->isQuotedAttribute());
         $this->assertEquals('<div one="not-one" two=yes_two></div>', $n.'');
         $n->setIsQuotedAttribute(true);
         $this->assertEquals('<div one="not-one" two="yes_two"></div>', $n.'');
@@ -466,6 +467,7 @@ class HeadNodeTest extends TestCase {
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
                 .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
                 .'</head>',$node->toHTML());
+        $node->setIsQuotedAttribute(false);
     }
     /**
      * @test
