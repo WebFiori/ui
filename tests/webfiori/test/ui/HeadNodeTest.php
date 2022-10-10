@@ -207,6 +207,7 @@ class HeadNodeTest extends TestCase {
         $this->assertFalse($node->hasChild($notAllowed));
         $node->addTextNode('Hello');
         $this->assertEquals(2,$node->childrenCount());
+        $this->assertNull($node->getChild(4));
     }
     /**
      * @test

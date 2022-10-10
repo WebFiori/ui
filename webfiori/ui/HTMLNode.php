@@ -968,7 +968,10 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.8
      */
     public function getChild(int $index) {
-        return $this->children()->get($index);
+        
+        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+            return $this->children()->get($index);
+        } 
     }
     /**
      * Returns a node based on its attribute value (Direct child).
