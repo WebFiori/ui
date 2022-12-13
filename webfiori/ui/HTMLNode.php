@@ -128,6 +128,12 @@ class HTMLNode implements Countable, Iterator {
         'base','col','link','param','source','track','area'
     ];
     /**
+     * Set to true to include forward slash at end of void nodes.
+     * 
+     * @var bool
+     */
+    private $useForwardSlash;
+    /**
      * An array of key-value elements. The key acts as the attribute name 
      * and the value acts as the value of the attribute.
      * @var array
@@ -253,6 +259,7 @@ class HTMLNode implements Countable, Iterator {
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
+        $this->useForwardSlash = false;
         $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
@@ -275,6 +282,31 @@ class HTMLNode implements Countable, Iterator {
             $this->childrenList = new LinkedList();
         }
         $this->setAttributes($attrs);
+    }
+    /**
+     * Sets the value of the property which is used to tell if a void node
+     * will have forward slash or not added to its tag.
+     * 
+     * This method is only applicable to void nodes. Using it in non-void
+     * nodes will have no effect. For XML, the value of the attribute
+     * should be true.
+     * 
+     * @param bool $hasForward True to use forward slash. False to not.
+     */
+    public function setUseForwardSlash(bool $hasForward) {
+        $this->useForwardSlash = $hasForward;
+    }
+    /**
+     * Checks if forward slash will be used in tag opening.
+     * 
+     * This method is only applicable to void nodes. Using it in non-void
+     * nodes will have no effect. For XML, the value of the attribute
+     * should be true.
+     * 
+     * @return bool True if forward slash will be used. False if not.
+     */
+    public function isUseForwardSlash() : bool {
+        return $this->useForwardSlash;
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
@@ -1815,7 +1847,11 @@ class HTMLNode implements Countable, Iterator {
                     }
                 }
             }
-            $retVal .= '>';
+            if ($this->isVoidNode() && $this->isUseForwardSlash()) {
+                $retVal .= '/>';
+            } else {
+                $retVal .= '>';
+            }
         }
 
         return $retVal;
