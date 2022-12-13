@@ -192,6 +192,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0 
      */
     private $notVoid;
+    private $isVoid;
 
     /**
      * The original text of a text node.
@@ -2190,6 +2191,8 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setIsVoidNode($bool) {
         $this->notVoid = $bool === false;
+    public function setIsVoidNode(bool $bool) {
+        $this->isVoid = $bool;
     }
     /**
      * Sets the value of the property which is used to tell if all attributes 
