@@ -33,17 +33,18 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 |<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.4/badge.svg?branch=master"></a>|
 |<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=master"></a>|
 |<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=dev"></a><br>(dev)|
+|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a><br>|
 
 ## Features
-- Ability to create custom HTML UI Elements.
-- Create and modify DOM through PHP.
-- Provides a basic templating engine.
+* Ability to create custom HTML UI Elements.
+* Create and modify DOM through PHP.
+* Provides a basic templating engine.
+* Support for creating XML documents.
   
 ## Usage
 For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
 
-The very basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
+The basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. The class can be used as follows:
 ``` php
 use webfiori\ui\HTMLDoc;
 
@@ -68,7 +69,7 @@ The output of this code is HTML 5 document. The structure of the document will b
 </html>
 ```
 ## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/webfiori/ui/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/webfiori/ui">here</a>. The following code shows a code which is used to create a basic login form.
+To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/webfiori/ui/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/webfiori/ui">here</a>. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use webfiori\ui\HTMLDoc;
@@ -152,5 +153,29 @@ The output of the above PHP code will be the following HTML code.
     </body>
 </html>
 ```
+## Creating XML Document
+In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The diffrence between HTML and XML is that XML is case sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as its used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
+
+``` php
+$xml = new HTMLNode('saml:Assertion', [
+   'xmlns:saml' => "urn:oasis:names:tc:SAML:2.0:assertion",
+   'xmlns:xs' => "http://www.w3.org/2001/XMLSchema",
+   'ID' => "_d71a3a8e9fcc45c9e9d248ef7049393fc8f04e5f75",
+   'Version' => "2.0",
+   'IssueInstant' => "2004-12-05T09:22:05Z",
+]);
+$xml->addChild('saml:Issuer')->text('https://idp.example.org/SAML2');
+
+echo $xml->toXML();
+//Output:
+/*
+<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_d71a3a8e9fcc45c9e9d248ef7049393fc8f04e5f75" Version="2.0" IssueInstant="2004-12-05T09:22:05Z">
+    <saml:Issuer>
+        https://idp.example.org/SAML2
+    </saml:Issuer>
+</saml:Assertion>
+*/
+```
+
 ## License
 The library is licensed under MIT license.
