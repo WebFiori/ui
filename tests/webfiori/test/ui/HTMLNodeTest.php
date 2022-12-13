@@ -703,7 +703,9 @@ class HTMLNodeTest extends TestCase {
         $node->setUseForwardSlash(true);
         $this->assertEquals('<div/>', $node->toHTML());
         $node->setIsVoidNode(false);
+        
         $this->assertEquals('<div></div>', $node->toHTML());
+        $node->setUseForwardSlash(false);
     }
     /**
      * @test

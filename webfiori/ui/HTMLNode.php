@@ -2369,7 +2369,8 @@ class HTMLNode implements Countable, Iterator {
      * 
      * This method is only applicable to void nodes. Using it in non-void
      * nodes will have no effect. For XML, the value of the attribute
-     * should be true.
+     * should be true. Note that this method will apply the value to all
+     * instances of the class.
      * 
      * @param bool $hasForward True to use forward slash. False to not.
      */
@@ -2496,7 +2497,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function toXML(bool $formatted = false) : string {
         $isQuted = $this->isQuotedAttribute();
-        $forwardSlash = $this->isUseForwardSlash();
+        $forwardSlash = $this->isUseForwardSlash() === true;
         $this->setUseForwardSlash(true);
         $this->setIsQuotedAttribute(true);
         $asHtml = $this->toHTML($formatted);
@@ -2506,7 +2507,7 @@ class HTMLNode implements Countable, Iterator {
             $xml .= HTMLDoc::NL;
         }
         $this->setUseForwardSlash($forwardSlash);
-        $this->setIsQuotedAttribute(self::$IsQuoted);
+        $this->setIsQuotedAttribute($isQuted);
         return $xml.$asHtml;
     }
     /**
