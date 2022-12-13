@@ -274,6 +274,7 @@ class CodeSnippet extends HTMLNode {
     public function setTitle(string $title) : HTMLNode {
         $this->titleNode->clear();
         $this->titleNode->addText($title);
+
         return $this;
     }
     private function _addLine() {

@@ -207,6 +207,7 @@ class HeadNode extends HTMLNode {
     public function addChild($node, $attrs = [], $chainOnParent = true) : HTMLNode {
         $retVal = $this;
         
+
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
@@ -221,10 +222,12 @@ class HeadNode extends HTMLNode {
         }
         $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
         
+
         if (!$cOnParent) {
             return $retVal;
         }
         
+
         return $this;
     }
     /**
@@ -253,6 +256,7 @@ class HeadNode extends HTMLNode {
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
         
+
         if (count($splitted) == 2) {
             $trimmedHref = trim($splitted[0]);
             $queryString = trim($splitted[1]);
@@ -319,6 +323,7 @@ class HeadNode extends HTMLNode {
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
         
+
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
             $queryString = trim($splitted[1]);
@@ -332,6 +337,7 @@ class HeadNode extends HTMLNode {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
             
+
             $revType = gettype($revision);
 
             if ($revType == 'string') {
@@ -975,6 +981,7 @@ class HeadNode extends HTMLNode {
         if (strlen($title) == 0) {
             return $this->setPageTitle(null);
         }
+
         return $this->setPageTitle($title);
     }
     private function _addAttrs(&$node,$otherAttrs,$notAllowed) {
