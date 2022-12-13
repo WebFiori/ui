@@ -128,12 +128,6 @@ class HTMLNode implements Countable, Iterator {
         'base','col','link','param','source','track','area'
     ];
     /**
-     * Set to true to include forward slash at end of void nodes.
-     * 
-     * @var bool
-     */
-    private $useForwardSlash;
-    /**
      * An array of key-value elements. The key acts as the attribute name 
      * and the value acts as the value of the attribute.
      * @var array
@@ -168,6 +162,13 @@ class HTMLNode implements Countable, Iterator {
      */
     private static $IsQuoted = false;
     /**
+     * A boolean value. If set to false, The node must be closed while building 
+     * the document.
+     * @var boolean
+     * @since 1.0 
+     */
+    private $isVoid;
+    /**
      * The name of the tag (such as 'div')
      * @var string
      * @since 1.0 
@@ -185,13 +186,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.3
      */
     private $nodesStack;
-    /**
-     * A boolean value. If set to true, The node must be closed while building 
-     * the document.
-     * @var boolean
-     * @since 1.0 
-     */
-    private $notVoid;
+    private $null;
 
     /**
      * The original text of a text node.
@@ -225,13 +220,18 @@ class HTMLNode implements Countable, Iterator {
      */
     private $text;
     /**
+     * Set to true to include forward slash at end of void nodes.
+     * 
+     * @var bool
+     */
+    private $useForwardSlash;
+    /**
      * A boolean value which is set to true in case of using original 
      * text in the body of the node.
      * @var boolan
      * @since 1.7.6 
      */
     private $useOriginalTxt;
-    private $null;
     /**
      * Constructs a new instance of the class.
      * 
@@ -275,38 +275,15 @@ class HTMLNode implements Countable, Iterator {
 
         if ($this->isTextNode() === true || $this->isComment()) {
             $this->setIsVoidNode(true);
-        } else if (in_array($this->name, self::VOID_TAGS)) {
-            $this->setIsVoidNode(true);
         } else {
-            $this->setIsVoidNode(false);
-            $this->childrenList = new LinkedList();
+            if (in_array($this->name, self::VOID_TAGS)) {
+                $this->setIsVoidNode(true);
+            } else {
+                $this->setIsVoidNode(false);
+                $this->childrenList = new LinkedList();
+            }
         }
         $this->setAttributes($attrs);
-    }
-    /**
-     * Sets the value of the property which is used to tell if a void node
-     * will have forward slash or not added to its tag.
-     * 
-     * This method is only applicable to void nodes. Using it in non-void
-     * nodes will have no effect. For XML, the value of the attribute
-     * should be true.
-     * 
-     * @param bool $hasForward True to use forward slash. False to not.
-     */
-    public function setUseForwardSlash(bool $hasForward) {
-        $this->useForwardSlash = $hasForward;
-    }
-    /**
-     * Checks if forward slash will be used in tag opening.
-     * 
-     * This method is only applicable to void nodes. Using it in non-void
-     * nodes will have no effect. For XML, the value of the attribute
-     * should be true.
-     * 
-     * @return bool True if forward slash will be used. False if not.
-     */
-    public function isUseForwardSlash() : bool {
-        return $this->useForwardSlash;
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
@@ -358,8 +335,8 @@ class HTMLNode implements Countable, Iterator {
             $toAdd = $node;
         }
         $sType = gettype($attrsOrChain);
-        
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
+
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
             if ($toAdd->getNodeName() == '#TEXT') {
                 //If trying to add text node and last child is a text node,
@@ -373,11 +350,10 @@ class HTMLNode implements Countable, Iterator {
                     $this->childrenList->add($toAdd);
                 }
             } else {
-                
                 if ($sType == 'array') {
                     $toAdd->setAttributes($attrsOrChain);
                 }
-                
+
                 $toAdd->_setParent($this);
                 $this->childrenList->add($toAdd);
             }
@@ -404,7 +380,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addCommentNode(string $text) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             $this->addChild(self::createComment($text));
         }
 
@@ -428,7 +404,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addTextNode(string $text, bool $escHtmlEntities = true) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
 
@@ -589,34 +565,12 @@ class HTMLNode implements Countable, Iterator {
         foreach ($arrOfChildren as $child) {
             if ($child instanceof HTMLNode) {
                 $this->addChild($child);
-            } else if (gettype($child) == 'array') {
-                $this->addChild($this->_childArr($child));
-            }
-        }
-    }
-    private function _childArr(array $arr) {
-        $name = isset($arr['name']) ? $arr['name'] : 'div';
-        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
-        $node = new HTMLNode($name, $attrs);
-        $isVoid = isset($arr['is-void']) ? $arr['is-void'] === true : false;
-        $node->setIsVoidNode($isVoid);
-        
-        if ($node->isComment() || $node->isTextNode()) {
-            $text = isset($arr['text']) ? $arr['text'] : '';
-            $node->setText($text);
-        }
-        
-        if (!$isVoid && isset($arr['children']) && gettype($arr['children']) == 'array') {
-            foreach ($arr['children'] as $chArr) {
-                if ($chArr instanceof HTMLNode) {
-                    $node->addChild($chArr);
-                } else {
-                    $node->addChild($this->_childArr($chArr));
+            } else {
+                if (gettype($child) == 'array') {
+                    $this->addChild($this->_childArr($child));
                 }
             }
         }
-        
-        return $node;
     }
     /**
      * Adds a cell (&lt;td&gt; or &lt;th&gt;) to the body of the node.
@@ -672,7 +626,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.4
      */
     public function childrenCount() : int {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return $this->children()->size();
         }
 
@@ -688,7 +642,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function close() : string {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return '</'.$this->getNodeName().'>';
         }
 
@@ -911,27 +865,35 @@ class HTMLNode implements Countable, Iterator {
 
                             if ($child->getNodeName() == 'head') {
                                 $retVal->setHeadNode($child);
-                            } else if ($child->getNodeName() == 'body') {
-                                for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
-                                    $node = $child->children()->get($z);
-                                    $retVal->addChild($node);
+                            } else {
+                                if ($child->getNodeName() == 'body') {
+                                    for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
+                                        $node = $child->children()->get($z);
+                                        $retVal->addChild($node);
+                                    }
                                 }
                             }
                         }
-                    } else if ($nodesArr[$x][$TN] != 'head') {
-                        $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
-                        $retVal->setHeadNode($headNode);
+                    } else {
+                        if ($nodesArr[$x][$TN] != 'head') {
+                            $headNode = self::_fromHTMLTextHelper_00($nodesArr[$x]);
+                            $retVal->setHeadNode($headNode);
+                        }
                     }
                 }
-            } else if (count($nodesArr) != 1) {
-                $retVal = [];
+            } else {
+                if (count($nodesArr) != 1) {
+                    $retVal = [];
 
-                foreach ($nodesArr as $node) {
-                    $asHtmlNode = self::_fromHTMLTextHelper_00($node);
-                    $retVal[] = $asHtmlNode;
+                    foreach ($nodesArr as $node) {
+                        $asHtmlNode = self::_fromHTMLTextHelper_00($node);
+                        $retVal[] = $asHtmlNode;
+                    }
+                } else {
+                    if (count($nodesArr) == 1) {
+                        return self::_fromHTMLTextHelper_00($nodesArr[0]);
+                    }
                 }
-            } else if (count($nodesArr) == 1) {
-                return self::_fromHTMLTextHelper_00($nodesArr[0]);
             }
 
             return $retVal;
@@ -1000,10 +962,9 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.8
      */
     public function getChild(int $index) {
-        
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return $this->children()->get($index);
-        } 
+        }
     }
     /**
      * Returns a node based on its attribute value (Direct child).
@@ -1043,7 +1004,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function getChildByID(string $val) {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && strlen($val) != 0) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && strlen($val) != 0) {
             return $this->_getChildByID($val, $this->children());
         }
     }
@@ -1069,7 +1030,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $list = new LinkedList();
 
-        if (strlen($valToSearch) != 0 && $this->mustClose()) {
+        if (strlen($valToSearch) != 0 && !$this->isVoidNode()) {
             return $this->_getChildrenByTag($valToSearch, $this->children(), $list);
         }
 
@@ -1287,7 +1248,7 @@ class HTMLNode implements Countable, Iterator {
     public function hasAttribute($attrName) : bool {
         if (!$this->isTextNode() && !$this->isComment()) {
             $trimmed = trim($attrName);
-            
+
             return array_key_exists($trimmed, $this->attributes);
         }
 
@@ -1450,13 +1411,15 @@ class HTMLNode implements Countable, Iterator {
 
                                 if (in_array($nodeName, self::VOID_TAGS)) {
                                     $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
-                                } else if ($nodeName == '!doctype') {
-                                    //We consider the node !doctype as void node 
-                                    //since it does not have closing tag
-                                    $nodesNames[$nodesNamesIndex][$TN] = '!DOCTYPE';
-                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
                                 } else {
-                                    $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
+                                    if ($nodeName == '!doctype') {
+                                        //We consider the node !doctype as void node 
+                                        //since it does not have closing tag
+                                        $nodesNames[$nodesNamesIndex][$TN] = '!DOCTYPE';
+                                        $nodesNames[$nodesNamesIndex]['is-void-tag'] = true;
+                                    } else {
+                                        $nodesNames[$nodesNamesIndex]['is-void-tag'] = false;
+                                    }
                                 }
                             }
                             $attributesStrLen = strlen($nodesNames[$nodesNamesIndex][0]);
@@ -1567,7 +1530,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.9
      */
     public function insert(HTMLNode $el, int $position) : HTMLNode {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && $el !== $this) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && $el !== $this) {
             $retVal = $this->childrenList->insert($el, $position);
 
             if ($retVal === true) {
@@ -1605,6 +1568,22 @@ class HTMLNode implements Countable, Iterator {
         return $this->isFormated;
     }
     /**
+     * Checks if instances of the class will render all attributes 
+     * with quotes or not.
+     * 
+     * This method is used to make sure that all attributes are quoted when
+     * rendering the node. If false is returned, then the quoted attributes 
+     * will be decided based on the value of the attribute.
+     * 
+     * @return bool The method will return true if all attributes will be 
+     * quoted. False if not.
+     * 
+     * @since 1.8.5
+     */
+    public static function isQuotedAttribute() : bool {
+        return self::$IsQuoted;
+    }
+    /**
      * Checks if the node is a text node or not.
      * 
      * @return boolean true if the node is a text node. false otherwise.
@@ -1613,6 +1592,18 @@ class HTMLNode implements Countable, Iterator {
      */
     public function isTextNode() : bool {
         return $this->getNodeName() == self::TEXT_NODE;
+    }
+    /**
+     * Checks if forward slash will be used in tag opening.
+     * 
+     * This method is only applicable to void nodes. Using it in non-void
+     * nodes will have no effect. For XML, the value of the attribute
+     * should be true.
+     * 
+     * @return bool True if forward slash will be used. False if not.
+     */
+    public function isUseForwardSlash() : bool {
+        return $this->useForwardSlash;
     }
     /**
      * Returns the value of the property $useOriginalTxt.
@@ -1641,23 +1632,7 @@ class HTMLNode implements Countable, Iterator {
      * False if not. Note that text nodes and comment nodes are considered as void tags.
      */
     public function isVoidNode() : bool {
-        return !$this->mustClose();
-    }
-    /**
-     * Checks if instances of the class will render all attributes 
-     * with quotes or not.
-     * 
-     * This method is used to make sure that all attributes are quoted when
-     * rendering the node. If false is returned, then the quoted attributes 
-     * will be decided based on the value of the attribute.
-     * 
-     * @return bool The method will return true if all attributes will be 
-     * quoted. False if not.
-     * 
-     * @since 1.8.5
-     */
-    public static function isQuotedAttribute() : bool {
-        return self::$IsQuoted;
+        return $this->isVoid;
     }
     #[\ReturnTypeWillChange]
     /**
@@ -1831,6 +1806,7 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $valType = gettype($val);
                     $quoted = $this->isQuotedAttribute();
+
                     if (!$quoted && $valType == "integer" || $valType == 'double') {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
@@ -1846,6 +1822,7 @@ class HTMLNode implements Countable, Iterator {
                     }
                 }
             }
+
             if ($this->isVoidNode() && $this->isUseForwardSlash()) {
                 $retVal .= '/>';
             } else {
@@ -1900,7 +1877,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function removeAllChildNodes() : HTMLNode {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             $this->childrenList->clear();
         }
 
@@ -1920,7 +1897,7 @@ class HTMLNode implements Countable, Iterator {
         if (!$this->isTextNode() && !$this->isComment()) {
             $tempArr = [];
             $trimmed = trim($name);
-            
+
             foreach ($this->getAttributes() as $index => $v) {
                 if ($index != $trimmed) {
                     $tempArr[$index] = $v;
@@ -1955,7 +1932,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function removeChild($nodeInstOrId) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             if ($nodeInstOrId instanceof HTMLNode) {
                 $child = $this->children()->removeElement($nodeInstOrId);
 
@@ -2177,21 +2154,6 @@ class HTMLNode implements Countable, Iterator {
         $this->isFormated = $bool === true;
     }
     /**
-     * Make the node a void node or not.
-     * 
-     * A void node is a node which does not require closing tag. The developer 
-     * does not have to set the node type to void or not since this is done 
-     * automatically. For custom made elements, this might be required.
-     * 
-     * @param boolean $bool If the developer would like to make the 
-     * node a void node, then he must pass true.
-     * 
-     * @since 1.8.4
-     */
-    public function setIsVoidNode($bool) {
-        $this->notVoid = $bool === false;
-    }
-    /**
      * Sets the value of the property which is used to tell if all attributes 
      * will be quoted or not.
      * 
@@ -2203,6 +2165,21 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function setIsQuotedAttribute(bool $bool) {
         self::$IsQuoted = $bool;
+    }
+    /**
+     * Make the node a void node or not.
+     * 
+     * A void node is a node which does not require closing tag. The developer 
+     * does not have to set the node type to void or not since this is done 
+     * automatically. For custom made elements, this might be required.
+     * 
+     * @param boolean $bool If the developer would like to make the 
+     * node a void node, then he must pass true.
+     * 
+     * @since 1.8.4
+     */
+    public function setIsVoidNode(bool $bool) {
+        $this->isVoid = $bool;
     }
     /**
      * Sets the value of the attribute 'name' of the node.
@@ -2249,7 +2226,7 @@ class HTMLNode implements Countable, Iterator {
             if ($this->_validateNodeName($lName)) {
                 $reqClose = !in_array($lName, self::VOID_TAGS);
 
-                if ($this->mustClose() && $reqClose !== true) {
+                if (!$this->isVoidNode() && $reqClose !== true) {
                     if ($this->childrenCount() == 0) {
                         $this->name = $lName;
                         $this->setIsVoidNode(true);
@@ -2385,6 +2362,19 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setTitle(string $val) : HTMLNode {
         return $this->setAttribute('title', $val);
+    }
+    /**
+     * Sets the value of the property which is used to tell if a void node
+     * will have forward slash or not added to its tag.
+     * 
+     * This method is only applicable to void nodes. Using it in non-void
+     * nodes will have no effect. For XML, the value of the attribute
+     * should be true.
+     * 
+     * @param bool $hasForward True to use forward slash. False to not.
+     */
+    public function setUseForwardSlash(bool $hasForward) {
+        $this->useForwardSlash = $hasForward;
     }
     /**
      * Sets the value of the property $useOriginalTxt.
@@ -2598,7 +2588,7 @@ class HTMLNode implements Countable, Iterator {
 
         for (; $x < $nodesCount ; $x++) {
             $node = $parsedNodesArr[$x];
-            $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
+            $isVoidNode = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
             $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
 
             if ($node[$TN] == self::COMMENT_NODE) {
@@ -2606,7 +2596,7 @@ class HTMLNode implements Countable, Iterator {
                 $retVal[] = $node;
             } else if ($node[$TN] == self::TEXT_NODE) {
                 $retVal[] = $node;
-            } else if ($isVoid) {
+            } else if ($isVoidNode) {
                 unset($node['is-closing-tag']);
                 unset($node['body-text']);
                 $retVal[] = $node;
@@ -2621,6 +2611,30 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $retVal;
+    }
+    private function _childArr(array $arr) {
+        $name = isset($arr['name']) ? $arr['name'] : 'div';
+        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
+        $node = new HTMLNode($name, $attrs);
+        $isVoidNode = isset($arr['is-void']) ? $arr['is-void'] === true : false;
+        $node->setIsVoidNode($isVoidNode);
+        
+        if ($node->isComment() || $node->isTextNode()) {
+            $text = isset($arr['text']) ? $arr['text'] : '';
+            $node->setText($text);
+        }
+        
+        if (!$isVoidNode && isset($arr['children']) && gettype($arr['children']) == 'array') {
+            foreach ($arr['children'] as $chArr) {
+                if ($chArr instanceof HTMLNode) {
+                    $node->addChild($chArr);
+                } else {
+                    $node->addChild($this->_childArr($chArr));
+                }
+            }
+        }
+        
+        return $node;
     }
     /**
      * 
@@ -2811,7 +2825,7 @@ class HTMLNode implements Countable, Iterator {
         for ($x = 0 ; $x < $chCount ; $x++) {
             $child = $chList->get($x);
 
-            if ($child->mustClose()) {
+            if (!$child->isVoidNode()) {
                 $tmpList = $child->_getChildrenByTag($val,$child->children(),new LinkedList());
 
                 for ($y = 0 ; $y < $tmpList->size() ; $y++) {
@@ -3091,7 +3105,7 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $this->htmlString .= $this->_getTab().$node->getComment().$this->nl;
                 }
-            } else if ($node->mustClose()) {
+            } else if (!$node->isVoidNode()) {
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
 
@@ -3138,7 +3152,7 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $this->codeString .= $this->_getTab().'&lt!--'.$node->getText().'--&gt;'.$this->nl;
             }
-        } else if ($node->mustClose()) {
+        } else if (!$node->isVoidNode()) {
             $chCount = $node->children()->size();
             $this->nodesStack->push($node);
             $nodeName = $node->getNodeName();
@@ -3401,17 +3415,6 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return false;
-    }
-    /**
-     * Checks if the node require ending tag or not (deprecated).
-     * If the node is a comment or its a text node, the method will 
-     * always return false. This method is deprecated. Use HTMLNode::isVoidNode() instead.
-     * @return boolean true if the node does require ending tag.
-     * @since 1.0
-     * @deprecated since version 1.7.4
-     */
-    private function mustClose() {
-        return $this->notVoid;
     }
     private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
         foreach ($slotsValsArr as $slotName => $slotVal) {

@@ -116,6 +116,7 @@ class Anchor extends HTMLNode {
         if ($node->getNodeName() == '#TEXT') {
             $node->setText($text,$escHtmlEntities);
         }
+
         return $this;
     }
 }
