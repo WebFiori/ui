@@ -186,12 +186,11 @@ class HTMLNode implements Countable, Iterator {
      */
     private $nodesStack;
     /**
-     * A boolean value. If set to true, The node must be closed while building 
+     * A boolean value. If set to false, The node must be closed while building 
      * the document.
      * @var boolean
      * @since 1.0 
      */
-    private $notVoid;
     private $isVoid;
 
     /**
@@ -599,15 +598,15 @@ class HTMLNode implements Countable, Iterator {
         $name = isset($arr['name']) ? $arr['name'] : 'div';
         $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
         $node = new HTMLNode($name, $attrs);
-        $isVoid = isset($arr['is-void']) ? $arr['is-void'] === true : false;
-        $node->setIsVoidNode($isVoid);
+        $isVoidNode = isset($arr['is-void']) ? $arr['is-void'] === true : false;
+        $node->setIsVoidNode($isVoidNode);
         
         if ($node->isComment() || $node->isTextNode()) {
             $text = isset($arr['text']) ? $arr['text'] : '';
             $node->setText($text);
         }
         
-        if (!$isVoid && isset($arr['children']) && gettype($arr['children']) == 'array') {
+        if (!$isVoidNode && isset($arr['children']) && gettype($arr['children']) == 'array') {
             foreach ($arr['children'] as $chArr) {
                 if ($chArr instanceof HTMLNode) {
                     $node->addChild($chArr);
@@ -2599,7 +2598,7 @@ class HTMLNode implements Countable, Iterator {
 
         for (; $x < $nodesCount ; $x++) {
             $node = $parsedNodesArr[$x];
-            $isVoid = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
+            $isVoidNode = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
             $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
 
             if ($node[$TN] == self::COMMENT_NODE) {
@@ -2607,7 +2606,7 @@ class HTMLNode implements Countable, Iterator {
                 $retVal[] = $node;
             } else if ($node[$TN] == self::TEXT_NODE) {
                 $retVal[] = $node;
-            } else if ($isVoid) {
+            } else if ($isVoidNode) {
                 unset($node['is-closing-tag']);
                 unset($node['body-text']);
                 $retVal[] = $node;
