@@ -360,7 +360,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $sType = gettype($attrsOrChain);
         
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
             if ($toAdd->getNodeName() == '#TEXT') {
                 //If trying to add text node and last child is a text node,
@@ -405,7 +405,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addCommentNode(string $text) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             $this->addChild(self::createComment($text));
         }
 
@@ -429,7 +429,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.6
      */
     public function addTextNode(string $text, bool $escHtmlEntities = true) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             $this->addChild(self::createTextNode($text,$escHtmlEntities));
         }
 
@@ -673,7 +673,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.4
      */
     public function childrenCount() : int {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return $this->children()->size();
         }
 
@@ -689,7 +689,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function close() : string {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return '</'.$this->getNodeName().'>';
         }
 
@@ -1002,7 +1002,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getChild(int $index) {
         
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return $this->children()->get($index);
         } 
     }
@@ -1044,7 +1044,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function getChildByID(string $val) {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && strlen($val) != 0) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && strlen($val) != 0) {
             return $this->_getChildByID($val, $this->children());
         }
     }
@@ -1070,7 +1070,7 @@ class HTMLNode implements Countable, Iterator {
         }
         $list = new LinkedList();
 
-        if (strlen($valToSearch) != 0 && $this->mustClose()) {
+        if (strlen($valToSearch) != 0 && !$this->isVoidNode()) {
             return $this->_getChildrenByTag($valToSearch, $this->children(), $list);
         }
 
@@ -1568,7 +1568,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.9
      */
     public function insert(HTMLNode $el, int $position) : HTMLNode {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose() && $el !== $this) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && $el !== $this) {
             $retVal = $this->childrenList->insert($el, $position);
 
             if ($retVal === true) {
@@ -1642,7 +1642,7 @@ class HTMLNode implements Countable, Iterator {
      * False if not. Note that text nodes and comment nodes are considered as void tags.
      */
     public function isVoidNode() : bool {
-        return !$this->mustClose();
+        return $this->isVoid;
     }
     /**
      * Checks if instances of the class will render all attributes 
@@ -1901,7 +1901,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function removeAllChildNodes() : HTMLNode {
-        if (!$this->isTextNode() && !$this->isComment() && $this->mustClose()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             $this->childrenList->clear();
         }
 
@@ -1956,7 +1956,7 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.2
      */
     public function removeChild($nodeInstOrId) {
-        if ($this->mustClose()) {
+        if (!$this->isVoidNode()) {
             if ($nodeInstOrId instanceof HTMLNode) {
                 $child = $this->children()->removeElement($nodeInstOrId);
 
@@ -2189,8 +2189,6 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.8.4
      */
-    public function setIsVoidNode($bool) {
-        $this->notVoid = $bool === false;
     public function setIsVoidNode(bool $bool) {
         $this->isVoid = $bool;
     }
@@ -2252,7 +2250,7 @@ class HTMLNode implements Countable, Iterator {
             if ($this->_validateNodeName($lName)) {
                 $reqClose = !in_array($lName, self::VOID_TAGS);
 
-                if ($this->mustClose() && $reqClose !== true) {
+                if (!$this->isVoidNode() && $reqClose !== true) {
                     if ($this->childrenCount() == 0) {
                         $this->name = $lName;
                         $this->setIsVoidNode(true);
@@ -3414,7 +3412,7 @@ class HTMLNode implements Countable, Iterator {
      * @deprecated since version 1.7.4
      */
     private function mustClose() {
-        return $this->notVoid;
+        return !$this->isVoid;
     }
     private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
         foreach ($slotsValsArr as $slotName => $slotVal) {
