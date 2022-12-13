@@ -2612,6 +2612,30 @@ class HTMLNode implements Countable, Iterator {
 
         return $retVal;
     }
+    private function _childArr(array $arr) {
+        $name = isset($arr['name']) ? $arr['name'] : 'div';
+        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
+        $node = new HTMLNode($name, $attrs);
+        $isVoidNode = isset($arr['is-void']) ? $arr['is-void'] === true : false;
+        $node->setIsVoidNode($isVoidNode);
+        
+        if ($node->isComment() || $node->isTextNode()) {
+            $text = isset($arr['text']) ? $arr['text'] : '';
+            $node->setText($text);
+        }
+        
+        if (!$isVoidNode && isset($arr['children']) && gettype($arr['children']) == 'array') {
+            foreach ($arr['children'] as $chArr) {
+                if ($chArr instanceof HTMLNode) {
+                    $node->addChild($chArr);
+                } else {
+                    $node->addChild($this->_childArr($chArr));
+                }
+            }
+        }
+        
+        return $node;
+    }
     /**
      * 
      * @param array $FO Formatting options.
