@@ -169,6 +169,7 @@ $xml->addChild('saml:Issuer')->text('https://idp.example.org/SAML2');
 echo $xml->toXML();
 //Output:
 /*
+<?xml version="1.0" encoding="UTF-8"?>
 <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_d71a3a8e9fcc45c9e9d248ef7049393fc8f04e5f75" Version="2.0" IssueInstant="2004-12-05T09:22:05Z">
     <saml:Issuer>
         https://idp.example.org/SAML2
