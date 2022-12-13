@@ -2812,7 +2812,7 @@ class HTMLNode implements Countable, Iterator {
         for ($x = 0 ; $x < $chCount ; $x++) {
             $child = $chList->get($x);
 
-            if ($child->mustClose()) {
+            if (!$child->isVoidNode()) {
                 $tmpList = $child->_getChildrenByTag($val,$child->children(),new LinkedList());
 
                 for ($y = 0 ; $y < $tmpList->size() ; $y++) {
@@ -3092,7 +3092,7 @@ class HTMLNode implements Countable, Iterator {
                 } else {
                     $this->htmlString .= $this->_getTab().$node->getComment().$this->nl;
                 }
-            } else if ($node->mustClose()) {
+            } else if (!$node->isVoidNode()) {
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
 
@@ -3139,7 +3139,7 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $this->codeString .= $this->_getTab().'&lt!--'.$node->getText().'--&gt;'.$this->nl;
             }
-        } else if ($node->mustClose()) {
+        } else if (!$node->isVoidNode()) {
             $chCount = $node->children()->size();
             $this->nodesStack->push($node);
             $nodeName = $node->getNodeName();
@@ -3402,17 +3402,6 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return false;
-    }
-    /**
-     * Checks if the node require ending tag or not (deprecated).
-     * If the node is a comment or its a text node, the method will 
-     * always return false. This method is deprecated. Use HTMLNode::isVoidNode() instead.
-     * @return boolean true if the node does require ending tag.
-     * @since 1.0
-     * @deprecated since version 1.7.4
-     */
-    private function mustClose() {
-        return !$this->isVoid;
     }
     private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
         foreach ($slotsValsArr as $slotName => $slotVal) {
