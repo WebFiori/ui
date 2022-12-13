@@ -24,13 +24,12 @@
  */
 namespace webfiori\test\ui;
 
+use PHPUnit\Framework\TestCase;
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLDoc;
 use webfiori\ui\HTMLNode;
-use webfiori\ui\ListItem;
 use webfiori\ui\Label;
-use PHPUnit\Framework\TestCase;
-use webfiori\ui\exceptions\InvalidNodeNameException;
+use webfiori\ui\ListItem;
 /**
  * Description of HTMLNodeTest
  *
@@ -2490,5 +2489,19 @@ and open the template in the editor.
         $htmlTxt = '';
         $array = HTMLNode::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
+    }
+    /**
+     * @test
+     */
+    public function testToXml00() {
+        $node = new HTMLNode('root');
+        $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?><root></root>', $node->toXML());
+        $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?>'.HTMLDoc::NL
+                . '<root>'.HTMLDoc::NL
+                . '</root>'.HTMLDoc::NL, $node->toXML(true));
+        $node->addChild('CustomEl')->addChild('saml:AuthNReqest', [
+            'Good' => 'Bad'
+        ])->setIsVoidNode(true);
+        $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?><root><CustomEl><saml:AuthNReqest Good="Bad"/></CustomEl></root>', $node->toXML());
     }
 }

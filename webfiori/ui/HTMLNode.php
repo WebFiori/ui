@@ -224,7 +224,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @var bool
      */
-    private $useForwardSlash;
+    private static $UseForwardSlash = false;
     /**
      * A boolean value which is set to true in case of using original 
      * text in the body of the node.
@@ -259,7 +259,7 @@ class HTMLNode implements Countable, Iterator {
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
-        $this->useForwardSlash = false;
+        
         $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
@@ -1603,7 +1603,7 @@ class HTMLNode implements Countable, Iterator {
      * @return bool True if forward slash will be used. False if not.
      */
     public function isUseForwardSlash() : bool {
-        return $this->useForwardSlash;
+        return self::$UseForwardSlash;
     }
     /**
      * Returns the value of the property $useOriginalTxt.
@@ -2374,7 +2374,7 @@ class HTMLNode implements Countable, Iterator {
      * @param bool $hasForward True to use forward slash. False to not.
      */
     public function setUseForwardSlash(bool $hasForward) {
-        $this->useForwardSlash = $hasForward;
+        self::$UseForwardSlash = $hasForward;
     }
     /**
      * Sets the value of the property $useOriginalTxt.
@@ -2485,6 +2485,29 @@ class HTMLNode implements Countable, Iterator {
         $this->_pushNode($this);
 
         return $this->htmlString;
+    }
+    /**
+     * Convert the element to XML document.
+     * 
+     * @param bool $formatted If set to true, the returned document
+     * will be well formatted and readable.
+     * 
+     * @return string A string that represent the emement as XML document.
+     */
+    public function toXML(bool $formatted = false) : string {
+        $isQuted = $this->isQuotedAttribute();
+        $forwardSlash = $this->isUseForwardSlash();
+        $this->setUseForwardSlash(true);
+        $this->setIsQuotedAttribute(true);
+        $asHtml = $this->toHTML($formatted);
+        
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        if ($formatted) {
+            $xml .= HTMLDoc::NL;
+        }
+        $this->setUseForwardSlash($forwardSlash);
+        $this->setIsQuotedAttribute(self::$IsQuoted);
+        return $xml.$asHtml;
     }
     /**
      * Adds a row (&lt;tr&gt;) to the body of the node.
