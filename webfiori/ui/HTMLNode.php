@@ -1815,7 +1815,11 @@ class HTMLNode implements Countable, Iterator {
                     }
                 }
             }
-            $retVal .= '>';
+            if ($this->isVoidNode()) {
+                $retVal .= '/>';
+            } else {
+                $retVal .= '>';
+            }
         }
 
         return $retVal;
