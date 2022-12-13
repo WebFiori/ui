@@ -266,7 +266,7 @@ class HTMLNode implements Countable, Iterator {
             $this->name = $nameUpper;
             $this->setIsVoidNode(true);
         } else {
-            $this->name = strtolower(trim($name));
+            $this->name = trim($name);
 
             if (!$this->_validateNodeName($this->getNodeName())) {
                 throw new InvalidNodeNameException('Invalid node name: \''.$name.'\'.');
@@ -1278,8 +1278,7 @@ class HTMLNode implements Countable, Iterator {
      * Note that if the node is a text node or a comment node, it will 
      * always return false.
      * 
-     * @param string $attrName The name of the attribute. It can be in upper case 
-     * or lower case.
+     * @param string $attrName The name of the attribute (case sensitive).
      * 
      * @return boolean true if the attribute is set.
      * 
@@ -1287,8 +1286,8 @@ class HTMLNode implements Countable, Iterator {
      */
     public function hasAttribute($attrName) : bool {
         if (!$this->isTextNode() && !$this->isComment()) {
-            $trimmed = strtolower(trim($attrName));
-
+            $trimmed = trim($attrName);
+            
             return array_key_exists($trimmed, $this->attributes);
         }
 
@@ -1917,10 +1916,10 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function removeAttribute($name) : HTMLNode {
+    public function removeAttribute(string $name) : HTMLNode {
         if (!$this->isTextNode() && !$this->isComment()) {
             $tempArr = [];
-            $trimmed = strtolower(trim($name));
+            $trimmed = trim($name);
             
             foreach ($this->getAttributes() as $index => $v) {
                 if ($index != $trimmed) {
@@ -2052,7 +2051,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets a value for an attribute.
      * 
-     * @param string $name The name of the attribute. If the attribute does not 
+     * @param string $name The name of the attribute (case sensitive). If the attribute does not 
      * exist, it will be created. If already exists, its value will be updated. 
      * Note that if the node type is text node, the attribute will never be created.
      * 
@@ -2091,13 +2090,13 @@ class HTMLNode implements Countable, Iterator {
                         return $this->setStyle($styleArr);
                     }
                 } else if ($val === null) {
-                    $this->attributes[$lower] = null;
+                    $this->attributes[$trimmedName] = null;
                 } else if ($attrValType == 'string'){
-                    $this->attributes[$lower] = $trimmedVal;
+                    $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
-                    $this->attributes[$lower] = $val;
+                    $this->attributes[$trimmedName] = $val;
                 } else if ($attrValType == 'boolean') {
-                    $this->attributes[$lower] = $val === true ? 'true' : 'false';
+                    $this->attributes[$trimmedName] = $val === true ? 'true' : 'false';
                 }
             }
         }
@@ -3390,7 +3389,7 @@ class HTMLNode implements Countable, Iterator {
                     return false;
                 }
 
-                if (!(($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
+                if (!(($char <= 'Z' && $char >= 'A') || ($char <= 'z' && $char >= 'a') || ($char >= '0' && $char <= '9') 
                         || $char == '-' 
                         || $char == ':' 
                         || $char == '.')) {

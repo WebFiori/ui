@@ -638,7 +638,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testConstructor03() {
         $node = new HTMLNode('DiV');
-        $this->assertEquals('div',$node->getNodeName());
+        $this->assertEquals('DiV',$node->getNodeName());
         $this->assertFalse($node->isVoidNode());
         $this->assertFalse($node->isUseOriginalText());
     }
@@ -657,7 +657,7 @@ class HTMLNodeTest extends TestCase {
     public function testConstructor05() {
         $nodeName = 'valid-WITH-dash';
         $node = new HTMLNode($nodeName);
-        $this->assertEquals('valid-with-dash',$node->getNodeName());
+        $this->assertEquals('valid-WITH-dash',$node->getNodeName());
         $this->assertFalse($node->isVoidNode());
     }
     /**
@@ -1189,7 +1189,7 @@ and open the template in the editor.
         $node->setID('66x');
         $this->assertTrue($node->hasAttribute('id'));
         $this->assertTrue($node->hasAttribute(' id '));
-        $this->assertTrue($node->hasAttribute('ID '));
+        $this->assertFalse($node->hasAttribute('ID '));
         $node->setClassName('class-name');
         $this->assertTrue($node->hasAttribute('class'));
         $node->removeAttribute('class');
@@ -1203,15 +1203,18 @@ and open the template in the editor.
 
         $this->assertFalse($node->hasAttribute('title'));
         $node->setTitle('hello');
-        $this->assertTrue($node->hasAttribute(' TITLE'));
+        $this->assertFalse($node->hasAttribute(' TITLE'));
+        $this->assertTrue($node->hasAttribute(' title'));
         $node->removeAttribute('TItle ');
+        $this->assertTrue($node->hasAttribute(' title'));
+        $node->removeAttribute('title ');
         $this->assertFalse($node->hasAttribute('title '));
 
         $this->assertFalse($node->hasAttribute('tabindex'));
         $node->setTabIndex(5);
-        $this->assertTrue($node->hasAttribute('TabIndex '));
-        $node->removeAttribute(' tabIndex    ');
-        $this->assertFalse($node->hasAttribute('  TABIndex     '));
+        $this->assertTrue($node->hasAttribute('tabindex '));
+        $node->removeAttribute(' tabindex    ');
+        $this->assertFalse($node->hasAttribute('  tabindex     '));
 
         $this->assertFalse($node->hasAttribute('style'));
         $node->setStyle([
@@ -1220,6 +1223,8 @@ and open the template in the editor.
         ]);
         $this->assertTrue($node->hasAttribute('style'));
         $node->removeAttribute('Style');
+        $this->assertTrue($node->hasAttribute('style'));
+        $node->removeAttribute('style');
         $this->assertFalse($node->hasAttribute('style'));
     }
     /**
@@ -2205,10 +2210,11 @@ and open the template in the editor.
                 'color' => 'red'
             ]
         ]);
-        $this->assertEquals('true', $node->getAttribute('true'));
-        $this->assertEquals('false', $node->getAttribute('false'));
-        $this->assertEquals(33, $node->getAttribute('int'));
-        $this->assertEquals(5.7, $node->getAttribute('double'));
+        $this->assertNull($node->getAttribute('true'));
+        $this->assertEquals('true', $node->getAttribute('trUe'));
+        $this->assertEquals('false', $node->getAttribute('False'));
+        $this->assertEquals(33, $node->getAttribute('iNt'));
+        $this->assertEquals(5.7, $node->getAttribute('douBle'));
         $this->assertEquals('color:red;', $node->getAttribute('style'));
     }
     /**
