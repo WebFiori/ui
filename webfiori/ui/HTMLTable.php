@@ -64,6 +64,40 @@ class HTMLTable extends HTMLNode {
         }
     }
     /**
+     * Sets the attributes of cells in one specific column.
+     * 
+     * This method is useful to have a unified set of attributes such as
+     * 'class' to one column.
+     * 
+     * @param int $colNum Number of column starting from 0.
+     * 
+     * @param array $attributes An array that contains the attributes and
+     * their values.
+     */
+    public function setColAttributes(int $colNum, array $attributes) {
+        for ($x = 0 ; $x < $this->rows() ; $x++) {
+            $this->getCell($x, $colNum)->setAttributes($attributes);
+        }
+    }
+    /**
+     * Sets the attributes of cells in one specific row.
+     * 
+     * This method is useful to have a unified set of attributes such as
+     * 'class' to one row.
+     * 
+     * @param int $rowNum Number of row starting from 0.
+     * 
+     * @param array $attributes An array that contains the attributes and
+     * their values.
+     */
+    public function setRowAttributes(int $rowNum, array $attributes) {
+        $row = $this->getRow($rowNum);
+        
+        foreach ($row->children() as $cell) {
+            $cell->setAttributes($attributes);
+        }
+    }
+    /**
      * Adds a new column to the table.
      * 
      * @param array $data The data that will be added. If the array holds more 
