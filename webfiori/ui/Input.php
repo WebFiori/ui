@@ -111,7 +111,7 @@ class Input extends HTMLNode {
      * the newly added child. Also, this argument can work as last method argument 
      * if a boolean is given.
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 

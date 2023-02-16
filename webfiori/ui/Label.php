@@ -68,7 +68,7 @@ class Label extends HTMLNode {
      * 
      * @param string $text The text that will be displayed by the label.
      * 
-     * @param boolean $escEntities If set to TRUE, the method will 
+     * @param bool $escEntities If set to TRUE, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is TRUE.

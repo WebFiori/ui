@@ -26,14 +26,14 @@ class HTMLList extends HTMLNode {
      * that represents each list item. Also, it can have objects of type 
      * 'ListItem' or 'HTMLNode'.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
      * 
      * @since 1.0
      */
-    public function __construct($listType = 'ul', $arrOfItems = [], $escHtmlEntities = true) {
+    public function __construct(string $listType = 'ul', array $arrOfItems = [], bool $escHtmlEntities = true) {
         parent::__construct('ul');
         $lower = strtolower(trim($listType));
 
@@ -53,7 +53,7 @@ class HTMLList extends HTMLNode {
      * @param array|boolean $attrs An optional array of attributes which will be set in 
      * the newly added list item.
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -69,7 +69,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = false) {
+    public function addChild($node, array $attrs = [], $chainOnParent = false) {
         if ($node instanceof ListItem) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else {
@@ -90,7 +90,7 @@ class HTMLList extends HTMLNode {
      * @param string|ListItem|HTMLNode $listItemBody The text that will be displayed by the 
      * list item. Also, it can be an object of type 'HTMLNode'.
      * 
-     * @param boolean $escHtmlEntities If set to true and the body of the list is a text, 
+     * @param bool $escHtmlEntities If set to true and the body of the list is a text, 
      * the method will replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Applicable only if the first parameter is a text. 
@@ -101,7 +101,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addListItem($listItemBody,$escHtmlEntities = true) {
+    public function addListItem($listItemBody, bool $escHtmlEntities = true) : HTMLList {
         if ($listItemBody instanceof ListItem) {
             $this->addChild($listItemBody);
         } else {
@@ -124,7 +124,7 @@ class HTMLList extends HTMLNode {
      * that represents each list item. Also, it can have objects of type 
      * 'ListItem' or 'HTMLNode'.
      * 
-     * @param boolean $escHtmlEntities If set to true and a text is given for the list 
+     * @param bool $escHtmlEntities If set to true and a text is given for the list 
      * item, the method will replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -135,7 +135,7 @@ class HTMLList extends HTMLNode {
      * @since 1.0.1
      * 
      */
-    public function addListItems($arrOfItems,$escHtmlEntities = true) {
+    public function addListItems(array $arrOfItems, bool $escHtmlEntities = true) : HTMLList {
         if (gettype($arrOfItems) == 'array') {
             foreach ($arrOfItems as $listItem) {
                 $this->addListItem($listItem,$escHtmlEntities);
@@ -145,7 +145,7 @@ class HTMLList extends HTMLNode {
         return $this;
     }
     /**
-     * Adds a sublist to the main list.
+     * Adds a sub-list to the main list.
      * 
      * @param HTMLList $ul An object of type 'HTMLList'.
      * 
@@ -154,7 +154,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addSubList($ul) {
+    public function addSubList($ul) : HTMLList {
         if ($ul instanceof HTMLList) {
             $li = new ListItem();
             $li->addList($ul);

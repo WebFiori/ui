@@ -89,7 +89,7 @@ class Anchor extends HTMLNode {
      * 
      * @param string $text The text to set.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is false.
