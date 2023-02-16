@@ -176,7 +176,7 @@ class HeadNode extends HTMLNode {
      * @param array|boolean $attrs Not used if array is given. If boolean is 
      * given, it will be treated as last method argument.
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -190,7 +190,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) : HTMLNode {
+    public function addChild($node, $attrs = [], bool $chainOnParent = true) : HTMLNode {
         $retVal = $this;
         
 
@@ -416,7 +416,7 @@ class HeadNode extends HTMLNode {
      * 
      * @param string $content The value of the property 'content'.
      * 
-     * @param boolean $override A boolean attribute. If a meta node was found 
+     * @param bool $override A boolean attribute. If a meta node was found 
      * which has the given name and this attribute is set to true, 
      * the content of the meta will be overridden by the passed value. 
      * 

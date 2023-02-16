@@ -36,7 +36,7 @@ class TableRow extends HTMLNode {
      * in the body of the table and 'th' if the cell is in the header. If 
      * none of the two is given, 'td' will be used by default.
      * 
-     * @param boolean $escEntities If set to true and cell text is provided, 
+     * @param bool $escEntities If set to true and cell text is provided, 
      * the method will replace the 
      * characters '&lt;', '&gt;' and '&' with the following HTML 
      * entities: '&lt;', '&gt;' and '&amp;' in the given text. Default is false.
@@ -79,7 +79,7 @@ class TableRow extends HTMLNode {
      * the newly added child. This also can act as last method parameter if it 
      * is given as boolean.
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -93,7 +93,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = false) {
+    public function addChild($node, $attrs = [], bool $chainOnParent = false) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else if ($node == 'td' || $node == 'th') {
@@ -128,7 +128,7 @@ class TableRow extends HTMLNode {
      * @param array $data An array that holds the data as strings or objects 
      * of type 'HTMLNode'.
      * 
-     * @param boolean $headerData If set to true, the method will add the 
+     * @param bool $headerData If set to true, the method will add the 
      * data in a 'th' cell instead of 'td' cell. Default is false.
      * 
      * @since 1.0.3

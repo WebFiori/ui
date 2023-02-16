@@ -298,7 +298,7 @@ class HTMLNode implements Countable, Iterator {
      * a text or a comment node. Also, this can be used as boolean value to 
      * act as last method parameter (the $chainOnParent)
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -314,7 +314,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrsOrChain = [], $chainOnParent = false) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) {
         if (gettype($node) == 'string') {
             $toAdd = new HTMLNode($node);
         } else {
@@ -380,7 +380,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $text The text that will be in the node.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -430,7 +430,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $cName The value of the attribute.
      * 
-     * @param boolean $override If set to true and the child has already this 
+     * @param bool $override If set to true and the child has already this 
      * attribute set, the given value will override the existing value. If set to 
      * false, the new value will be appended to the existing one. Default is 
      * true.
@@ -752,7 +752,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $nodeText The text that will be inserted in the body 
      * of the node.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text.
@@ -817,7 +817,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $text A string that represents HTML code.
      * 
-     * @param boolean $asHTMLDocObj If set to 'true' and given HTML represents a 
+     * @param bool $asHTMLDocObj If set to 'true' and given HTML represents a 
      * structured HTML document, the method will convert the code to an object 
      * of type 'HTMLDoc'. Default is 'true'.
      * 
@@ -1830,7 +1830,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @param boolean $escEntities If set to true, the method will 
+     * @param bool $escEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -2096,7 +2096,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $val The name of the class.
      * 
-     * @param boolean $override If this parameter is set to false and the node 
+     * @param bool $override If this parameter is set to false and the node 
      * has a class already set, the given class name will be appended to the 
      * existing one. Default is true which means the attribute will be set as 
      * new.
@@ -2131,7 +2131,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the property $isFormatted.
      * 
-     * @param boolean $bool true to make the document that will be generated 
+     * @param bool $bool true to make the document that will be generated 
      * from the node user-readable. false to make it compact.
      * 
      * @since 1.7.2
@@ -2144,7 +2144,7 @@ class HTMLNode implements Countable, Iterator {
      * will be quoted or not.
      * 
      * 
-     * @param boolean $bool True to make the node render quoted attributes. 
+     * @param bool $bool True to make the node render quoted attributes. 
      * False to not.
      * 
      * @since 1.8.5
@@ -2159,7 +2159,7 @@ class HTMLNode implements Countable, Iterator {
      * does not have to set the node type to void or not since this is done 
      * automatically. For custom made elements, this might be required.
      * 
-     * @param boolean $bool If the developer would like to make the 
+     * @param bool $bool If the developer would like to make the 
      * node a void node, then he must pass true.
      * 
      * @since 1.8.4
@@ -2236,7 +2236,7 @@ class HTMLNode implements Countable, Iterator {
      * be the names of CSS Properties and the values should be the values of 
      * the attributes (e.g. 'color'=>'white').
      * 
-     * @param boolean $override If this value is set to true and a style is already 
+     * @param bool $override If this value is set to true and a style is already 
      * set, then the old style will be overridden by the given style. Default is 
      * false.
      * 
@@ -2309,7 +2309,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true. Ignored in case the node type is comment.
@@ -2373,7 +2373,7 @@ class HTMLNode implements Countable, Iterator {
      * false, then the text which is in the body of the node will be the 
      * value which is returned by the method HTMLNode::getText().
      * 
-     * @param boolean $boolean True or false.
+     * @param bool $boolean True or false.
      * 
      * @since 1.7.6
      */
@@ -2424,7 +2424,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $txt The text that will be in the node.
      * 
-     * @param boolean $escEntities If set to true, the method will 
+     * @param bool $escEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -2440,7 +2440,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Returns HTML string that represents the node as a whole.
      * 
-     * @param boolean $formatted Set to true to return a well formatted 
+     * @param bool $formatted Set to true to return a well formatted 
      * HTML document (has new lines and indentations). Note that the size of 
      * generated node will increase if this one is set to true. Default is false.
      * 
@@ -2508,7 +2508,7 @@ class HTMLNode implements Countable, Iterator {
      * @param array $attributes An optional array of attributes to set for the 
      * row.
      * 
-     * @param boolean $headerRow If set to true, the method will add the 
+     * @param bool $headerRow If set to true, the method will add the 
      * data in a 'th' cell instead of 'td' cell. Default is false.
      * 
      * @return HTMLNode The method will return the same instance at which the method is 
@@ -3034,7 +3034,7 @@ class HTMLNode implements Countable, Iterator {
      * If no equal sign is found, it will add the given value to the queue and 
      * set its value to empty string.
      * @param Queue $queue
-     * @param boolean $isEqualFound
+     * @param bool $isEqualFound
      * @param string $val
      * @since 1.7.4
      */

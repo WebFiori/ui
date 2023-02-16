@@ -25,6 +25,6 @@ class Br extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($param, $attrs = [], $chainOnParent = true) {
+    public function addChild($param, $attrs = [], bool $chainOnParent = true) {
     }
 }

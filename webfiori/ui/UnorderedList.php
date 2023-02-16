@@ -25,7 +25,7 @@ class UnorderedList extends HTMLList {
      * that represents each list item. Also, it can have objects of type 
      * 'ListItem'.
      * 
-     * @param boolean $escHtmlEntities If set to true, the method will 
+     * @param bool $escHtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.

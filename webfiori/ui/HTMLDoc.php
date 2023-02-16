@@ -114,7 +114,7 @@ class HTMLDoc {
      * @param array $attributes An optional array of attributes which will be set in 
      * the newly added child.
      * 
-     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * @param bool $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
@@ -303,7 +303,7 @@ class HTMLDoc {
      * 
      * @param string $fileName The name of the file (such as 'index'). Must be non empty string.
      * 
-     * @param boolean $wellFormatted If set to true, The generated file will be 
+     * @param bool $wellFormatted If set to true, The generated file will be 
      * well formatted (readable by humans).
      * 
      * @return boolean The method will return true if the file is successfully created. 
@@ -379,7 +379,7 @@ class HTMLDoc {
     /**
      * Returns HTML string that represents the document.
      * 
-     * @param boolean $formatted If set to true, The generated HTML code will be 
+     * @param bool $formatted If set to true, The generated HTML code will be 
      * well formatted. Default is true. Note that this attribute will take 
      * effect only if the formatting option is not set using the method 
      * HTMLNode::setIsFormatted().
