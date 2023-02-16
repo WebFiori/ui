@@ -46,7 +46,7 @@ class Paragraph extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], bool $chainOnParent = true) {
         if ($node instanceof HTMLNode) {
             if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDS) || $node->isTextNode()) {
                 parent::addChild($node, $attrs);

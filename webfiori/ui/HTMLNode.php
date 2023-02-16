@@ -314,7 +314,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrsOrChain = [], $chainOnParent = false) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) {
         if (gettype($node) == 'string') {
             $toAdd = new HTMLNode($node);
         } else {

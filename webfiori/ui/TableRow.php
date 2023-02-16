@@ -93,7 +93,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = false) {
+    public function addChild($node, $attrs = [], bool $chainOnParent = false) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else if ($node == 'td' || $node == 'th') {

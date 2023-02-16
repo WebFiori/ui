@@ -123,7 +123,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], bool $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $temp = $node;
 

@@ -190,7 +190,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], $chainOnParent = true) : HTMLNode {
+    public function addChild($node, $attrs = [], bool $chainOnParent = true) : HTMLNode {
         $retVal = $this;
         
 
