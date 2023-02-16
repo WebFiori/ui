@@ -3,7 +3,7 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 <p align="center">
   <a href="https://github.com/WebFiori/database/actions">
-    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
