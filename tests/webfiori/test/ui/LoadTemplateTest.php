@@ -75,6 +75,13 @@ class LoadTemplateTest extends TestCase {
     /**
      * @test
      */
+    public function test05() {
+        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'php-template.php');
+        $this->assertEquals("<div><?php echo 'This is a test on php ';?></div>", $node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testHeadTemplate00() {
         $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-00.html');
         $this->assertTrue($node instanceof HeadNode);

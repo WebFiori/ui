@@ -113,6 +113,7 @@ class HTMLNode implements Countable, Iterator {
         'br','hr','meta','img','input','wbr','embed',
         'base','col','link','param','source','track','area'
     ];
+    private $isPhp;
     /**
      * An array of key-value elements. The key acts as the attribute name 
      * and the value acts as the value of the attribute.
@@ -245,6 +246,7 @@ class HTMLNode implements Countable, Iterator {
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
+        $this->isPhp = false;
         
         $nameUpper = strtoupper(trim($name));
 
@@ -270,6 +272,9 @@ class HTMLNode implements Countable, Iterator {
             }
         }
         $this->setAttributes($attrs);
+    }
+    public function isPhpNode() {
+        return $this->isPhp;
     }
     /**
      * Returns non-formatted HTML string that represents the node as a whole.
@@ -628,8 +633,10 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function close() : string {
-        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && !$this->isPhpNode()) {
             return '</'.$this->getNodeName().'>';
+        } else if ($this->isPhpNode()) {
+            return '?>';
         }
 
         return '';
@@ -1783,7 +1790,7 @@ class HTMLNode implements Countable, Iterator {
     public function open() : string {
         $retVal = '';
 
-        if (!$this->isTextNode() && !$this->isComment()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isPhpNode()) {
             $retVal .= '<'.$this->getNodeName().'';
 
             foreach ($this->getAttributes() as $attr => $val) {
@@ -1814,6 +1821,8 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $retVal .= '>';
             }
+        } else if ($this->isPhpNode()) {
+            return '<?php';
         }
 
         return $retVal;
@@ -3403,6 +3412,10 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.7.4
      */
     private function _validateNodeName($name) {
+        if ($name == '<?php') {
+            $this->isPhp = true;
+            return true;
+        }
         $len = strlen($name);
 
         if ($len > 0) {
