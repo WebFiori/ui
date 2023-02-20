@@ -1,4 +1,4 @@
 <div>
-    <?php echo 'This is a test on php ';?>
+    <?php echo 'This is a test on php';?>
 </div>
 

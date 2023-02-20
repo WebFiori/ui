@@ -30,6 +30,7 @@ use webfiori\ui\HTMLDoc;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\Label;
 use webfiori\ui\ListItem;
+use webfiori\ui\TemplateCompiler;
 /**
  * Description of HTMLNodeTest
  *
@@ -712,7 +713,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_00() {
         $htmlTxt = '<!doctype html>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
     }
     /**
@@ -720,7 +721,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_01() {
         $htmlTxt = '';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertNull($val);
     }
     /**
@@ -728,7 +729,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_02() {
         $htmlTxt = '<!doctype html>';
-        $val = HTMLNode::fromHTMLText($htmlTxt,false);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt,false);
         $this->assertTrue($val instanceof HTMLNode);
         $this->assertEquals('<!DOCTYPE html>',$val->getText());
     }
@@ -737,7 +738,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_03() {
         $htmlTxt = '<!docType htMl><html></html><div></div><body></body>';
-        $val = HTMLNode::fromHTMLText($htmlTxt,false);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt,false);
         $this->assertEquals('array',gettype($val));
         $this->assertEquals(4,count($val));
         $this->assertEquals('<!DOCTYPE html>',$val[0]->getText());
@@ -750,7 +751,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_04() {
         $htmlTxt = '<!docType htMl><html></html><div></div><body></body>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
     }
     /**
@@ -758,7 +759,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_05() {
         $htmlTxt = '<html></html>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
     }
     /**
@@ -766,7 +767,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_06() {
         $htmlTxt = '<html>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
     }
     /**
@@ -774,7 +775,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_07() {
         $htmlTxt = '<html><head><title>This is a test document. ';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
     }
@@ -783,7 +784,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_08() {
         $htmlTxt = '<html><HEAD><meta CHARSET="utf-8"><title>This is a test document.</title>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
         $this->assertEquals('utf-8',$val->getHeadNode()->getCharSet());
@@ -794,7 +795,7 @@ class HTMLNodeTest extends TestCase {
     public function testFromHTML_09() {
         $htmlTxt = '<html><head><meta charset="utf-8"><title>This is a test document.</title></head><body>'
                 .'<input type = text ID="input-el-1">';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
         $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
@@ -807,7 +808,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_12() {
         $htmlTxt = '<base href=https://example.com/>';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLNode);
         $this->assertEquals('https://example.com/',$val->getAttribute('href'));
     }
@@ -843,7 +844,7 @@ $jsonObj->addObject("obj", new Employee("Ibrahim", "BinAlshikh", 7200));
         "FullName": "Ibrahim BinAlshikh"
     }
 }</code></pre>';
-        $val = HTMLNode::fromHTMLText($html);
+        $val = TemplateCompiler::fromHTMLText($html);
         $this->assertEquals('h3', $val[0]->getNodeName());
         $this->assertEquals('#TEXT', $val[0]->getChild(0)->getNodeName());
         $this->assertEquals('code', $val[0]->getChild(1)->getNodeName());
@@ -860,7 +861,7 @@ $jsonObj->addObject("obj", new Employee("Ibrahim", "BinAlshikh", 7200));
     public function testFromHTML_10() {
         $htmlTxt = '<html><head><base other="" href=https://example.com/><meta charset="utf-8"><title>This is a test document.</title><link rel=text/css href=https://example.com/></head><body>'
                 .'<input type = text ID="input-el-1">';
-        $val = HTMLNode::fromHTMLText($htmlTxt);
+        $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
         $this->assertEquals('https://example.com/',$val->getHeadNode()->getBaseURL());
@@ -921,7 +922,7 @@ and open the template in the editor.
     </body>
 </html>
 ';
-        $val = HTMLNode::fromHTMLText($html);
+        $val = TemplateCompiler::fromHTMLText($html);
         $this->assertTrue($val instanceof HTMLDoc);
         $this->assertEquals('TODO supply a title',$val->getHeadNode()->getTitle());
         $this->assertEquals(12,$val->getHeadNode()->childrenCount());
@@ -1233,7 +1234,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_00() {
         $htmlTxt = '<!doctype html>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals(count($array),1);
     }
@@ -1242,7 +1243,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_01() {
         $htmlTxt = '<!doctype html><html></html>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -1252,7 +1253,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_02() {
         $htmlTxt = '<!doctype html><HTML><head></head></html>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -1263,7 +1264,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_03() {
         $htmlTxt = '<!doctype html><HTML><head><title>Testing if it works</title></head></HtMl>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -1278,7 +1279,7 @@ and open the template in the editor.
         $htmlTxt = '<!doctype html><html><head>'
                 .'<title>   Testing  </title>'
                 .'<meta charset="utf-8"><meta name="view-port" content=""></head></html>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),2);
         $this->assertEquals($array[0]['tag-name'],'!DOCTYPE');
         $this->assertEquals($array[1]['tag-name'],'html');
@@ -1291,7 +1292,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_05() {
         $htmlTxt = '<div></div><div><input></div><div><img><img><input><pre></pre></div>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),3);
         $this->assertEquals(count($array[0]['children']),0);
         $this->assertEquals(count($array[1]['children']),1);
@@ -1304,7 +1305,7 @@ and open the template in the editor.
         $htmlTxt = '<div></div>'
                 .'<div><!--       A Comment.       --><input></div>'
                 .'<div><img><img><input><pre></pre></div>';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(3,count($array));
         $this->assertEquals(0,count($array[0]['children']));
         $this->assertEquals(2,count($array[1]['children']));
@@ -1318,7 +1319,7 @@ and open the template in the editor.
     public function testHTMLAsArray_07() {
         $htmlText = '<input   data=   myDataEl     type="text"   '
                 .'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
-        $array = HTMLNode::htmlAsArray($htmlText);
+        $array = TemplateCompiler::htmlAsArray($htmlText);
         $this->assertEquals(6,count($array[0]['attributes']));
         $this->assertEquals('text',$array[0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['attributes']['placeholder']);
@@ -1335,7 +1336,7 @@ and open the template in the editor.
                 .'<title>An HTMLDoc</title></head>'
                 .'<body itemscope="" itemtype=http://schema.org/WebPage><div><input   data=   myDataEl     type="text"   '
                 .'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked></div></body></html>';
-        $array = HTMLNode::htmlAsArray($htmlText);
+        $array = TemplateCompiler::htmlAsArray($htmlText);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
         $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
@@ -1357,7 +1358,7 @@ and open the template in the editor.
                 .'<title>An HTMLDoc</title></head>'
                 .'<body itemscope="" itemtype="http://schema.org/WebPage"><div><input   data=   myDataEl     type="text"   '
                 .'placeholder    ="  Something to test  ?  " disabled class= "my-input-el" checked>';
-        $array = HTMLNode::htmlAsArray($htmlText);
+        $array = TemplateCompiler::htmlAsArray($htmlText);
         $this->assertEquals(6,count($array[0]['children'][1]['children'][0]['children'][0]['attributes']));
         $this->assertEquals('text',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['type']);
         $this->assertEquals('  Something to test  ?  ',$array[0]['children'][1]['children'][0]['children'][0]['attributes']['placeholder']);
@@ -1375,7 +1376,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_11() {
-        $test = HTMLNode::fromHTMLText('<td>'
+        $test = TemplateCompiler::fromHTMLText('<td>'
                 .'SWE:'
                 .'<br>'
                 .'- Added exctra column to the users table to store mobile number.'
@@ -1401,7 +1402,7 @@ and open the template in the editor.
      * @test
      */
     public function testHTMLAsArray_12() {
-        $test = HTMLNode::fromHTMLText('<td>'
+        $test = TemplateCompiler::fromHTMLText('<td>'
                 .'SWE:'
                 .'<br>'
                 .'- Added exctra column to the users table to store mobile number.'
@@ -1431,7 +1432,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_13() {
         $html = 'This is a text.';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#TEXT',
             'body-text' => 'This is a text.'
@@ -1442,7 +1443,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_14() {
         $html = 'This is a text. <div> This is a div</div>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#TEXT',
             'body-text' => 'This is a text. '
@@ -1463,7 +1464,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_15() {
         $html = '<div>This is a div</div>This is a text.';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1484,7 +1485,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_16() {
         $html = '<div> This is a div<div>With Sub Div</div></div>This is a text.';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1521,7 +1522,7 @@ and open the template in the editor.
                 . 'A Text After Div'
                 . '</div>'
                 . 'This is a text.';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1559,7 +1560,7 @@ and open the template in the editor.
         $html = "<div :bind=\"{{ok ? 'YES' : 'NO' }}\">"
                 . 'This is a div'
                 . '</div>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1582,7 +1583,7 @@ and open the template in the editor.
         $html = '<div class="first-class second-class third">'
                 . 'This is a div'
                 . '</div>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1602,7 +1603,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_20() {
         $html = '<input "type"=text value="Hello World">';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'input',
             'is-void-tag' => true,
@@ -1619,7 +1620,7 @@ and open the template in the editor.
         $html = '<div :bind=\'{{ok ? "YES" : "NO" }}\'>'
                 . ' This is a div'
                 . '</div>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => 'div',
             'is-void-tag' => false,
@@ -1647,7 +1648,7 @@ and open the template in the editor.
                 . '</v-text-field>'
                 . '"Hello world!"'
                 . '</v-col></v-row>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         // TODO: Fix test
         $this->assertEquals([[
             'tag-name' => 'v-row',
@@ -1689,7 +1690,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_23() {
         $html = '"Good"';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#TEXT',
             'body-text' => '"Good"'
@@ -1700,7 +1701,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_24() {
         $html = "'Good' Boy ";
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#TEXT',
             'body-text' => "'Good' Boy "
@@ -1711,7 +1712,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_25() {
         $html = '<!--"Good"-->';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#COMMENT',
             'body-text' => '"Good"'
@@ -1722,7 +1723,7 @@ and open the template in the editor.
      */
     public function testHTMLAsArray_26() {
         $html = "<!--'Good' Boy -->";
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         $this->assertEquals([[
             'tag-name' => '#COMMENT',
             'body-text' => "'Good' Boy "
@@ -1738,7 +1739,7 @@ and open the template in the editor.
                 . '<v-template v-if="{hello:\'good\',super:\'hero\'}"></v-template>'
                 . '</v-table>'
                 . '</v-col></v-row>';
-        $htmlArr = HTMLNode::htmlAsArray($html);
+        $htmlArr = TemplateCompiler::htmlAsArray($html);
         // TODO: Fix test
         $this->assertEquals([[
             'tag-name' => 'v-row',
@@ -1785,7 +1786,7 @@ and open the template in the editor.
         $txt = '<p><br/>  Text  <br/>'
                 . '</p>'
                 . 'More Text.';
-        $array = HTMLNode::htmlAsArray($txt);
+        $array = TemplateCompiler::htmlAsArray($txt);
         $this->assertEquals([
             [
                 'tag-name' => 'p',
@@ -2489,7 +2490,7 @@ and open the template in the editor.
      */
     public function testToHTML11() {
         $htmlTxt = '';
-        $array = HTMLNode::htmlAsArray($htmlTxt);
+        $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
     }
     /**

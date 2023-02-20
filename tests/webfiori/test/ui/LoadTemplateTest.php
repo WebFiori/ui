@@ -1,10 +1,11 @@
 <?php
 namespace webfiori\test\ui;
 
-use webfiori\ui\HTMLNode;
+use PHPUnit\Framework\TestCase;
 use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLDoc;
-use PHPUnit\Framework\TestCase;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\TemplateCompiler;
 /**
  * Description of TestLoadTemplate
  *
@@ -17,13 +18,14 @@ class LoadTemplateTest extends TestCase {
      */
     public function test00() {
         $this->expectException('Exception');
-        HTMLNode::loadComponent('');
+        $compiler = new TemplateCompiler('');
     }
     /**
      * @test
      */
     public function test01() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'t00.html');
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'t00.html');
+        $node = $compiler->getCompiled();
         $this->assertTrue($node instanceof HTMLDoc);
         $this->assertEquals(3, $node->getHeadNode()->childrenCount());
         $this->assertEquals('TODO supply a title', $node->getHeadNode()->getTitle());
@@ -35,10 +37,11 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function test03() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'vue-00.html', [
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'vue-00.html', [
             'vue-src' => 'https://cdn.jsdelivr.net/npm/vue',
             'php-message' => 'This is PHP var.'
         ]);
+        $node = $compiler->getCompiled();
         $this->assertEquals('This is PHP var.', $node->getChildByID('php-message')->getChild(0)->getText());
         $this->assertEquals('{{ message }}', $node->getChildByID('vue-message')->getChild(0)->getText());
     }
@@ -46,7 +49,7 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function test02() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'t01.html', [
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'t01.html', [
             'title' => 'Users Status',
             'desc' => 'A page that shows the status of users accounts.',
             'top-paragraph' => 'All users.',
@@ -54,6 +57,7 @@ class LoadTemplateTest extends TestCase {
             'email' => 'The email of the user.',
             'ajax lib' => 'https://example.com/ajaxlib.js'
         ]);
+        $node = $compiler->getCompiled();
         $this->assertTrue($node instanceof HTMLDoc);
         $this->assertEquals(5, $node->getHeadNode()->childrenCount());
         $this->assertEquals('https://example.com/ajaxlib.js', $node->getChildByID('my-script')->getAttribute('src'));
@@ -69,21 +73,51 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function test04() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'super-00.html');
-        $this->assertEquals('object', gettype($node));
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'super-00.html');
+        $this->assertEquals('object', gettype($compiler->getCompiled()));
     }
     /**
      * @test
      */
     public function test05() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'php-template.php');
-        $this->assertEquals("<div><?php echo 'This is a test on php ';?></div>", $node->toHTML());
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'php-template.php');
+        $node = $compiler->getCompiled();
+        $this->assertEquals("<div>\n    This is a test on php</div>", $node->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function test06() {
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'php-template-2.php', [
+            'posts' => [
+                'One',
+                'Two',
+                'Three'
+            ]]);
+        $this->assertEquals("<div>"
+                . "<ul>"
+                . "<li>One</li>"
+                . "<li>Two</li>"
+                . "<li>Three</li>"
+                . "</ul>"
+                . "</div>", $compiler->getCompiled()->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function test07() {
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'php-template-2.php', [
+            'posts' => []
+        ]);
+        $node = $compiler->getCompiled();
+        $this->assertEquals("<div>\n    No posts.\n</div>", $node->toHTML());
     }
     /**
      * @test
      */
     public function testHeadTemplate00() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-00.html');
+        $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-00.html');
+        $node = $c->getCompiled();
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
         $this->assertEquals('TODO supply a title', $node->getPageTitle());
@@ -93,7 +127,8 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function testHeadTemplate01() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-01.html');
+        $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-01.html');
+        $node = $c->getCompiled();
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
         $this->assertEquals('{{title}}', $node->getPageTitle());
@@ -103,9 +138,10 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function testHeadTemplate02() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-01.html', [
+        $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-01.html', [
             'title' => 'This is page title.'
         ]);
+        $node = $c->getCompiled();
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(3, $node->childrenCount());
         $this->assertEquals('This is page title.', $node->getPageTitle());
@@ -115,10 +151,11 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function testHeadTemplate03() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-02.html', [
+        $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-02.html', [
             'title' => 'This is page title.',
             'description'=>'This is the description of the page.'
         ]);
+        $node = $c->getCompiled();
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(4, $node->childrenCount());
         $this->assertEquals('This is page title.', $node->getPageTitle());
@@ -129,7 +166,8 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function testHeadTemplate04() {
-        $node = HTMLNode::loadComponent(self::TEST_TEMPLATES_PATH.'head-template-03.html');
+        $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-03.html');
+        $node = $c->getCompiled();
         $this->assertTrue($node instanceof HeadNode);
         $this->assertEquals(6, $node->childrenCount());
         $this->assertEquals('{{title}}', $node->getPageTitle());
