@@ -2296,50 +2296,7 @@ class HTMLNode implements Countable, Iterator {
     private function _addTab() {
         $this->tabCount += 1;
     }
-    /**
-     * Build an associative array that represents parsed HTML string.
-     * 
-     * @param array $parsedNodesArr An array that contains the parsed HTML 
-     * elements.
-     * 
-     * @param int $x The current element index.
-     * 
-     * @param int $nodesCount Number of parsed nodes.
-     * 
-     * @return array
-     * 
-     * @since 1.7.4
-     */
-    private static function _buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
-        $retVal = [];
-        $TN = 'tag-name';
-
-        for (; $x < $nodesCount ; $x++) {
-            $node = $parsedNodesArr[$x];
-            $isVoidNode = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
-            $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
-
-            if ($node[$TN] == self::COMMENT_NODE) {
-                unset($node['is-closing-tag']);
-                $retVal[] = $node;
-            } else if ($node[$TN] == self::TEXT_NODE) {
-                $retVal[] = $node;
-            } else if ($isVoidNode) {
-                unset($node['is-closing-tag']);
-                unset($node['body-text']);
-                $retVal[] = $node;
-            } else if ($isClosingTag) {
-                return $retVal;
-            } else {
-                $x++;
-                $node['children'] = self::_buildArrayTree($parsedNodesArr, $x, $nodesCount);
-                unset($node['is-closing-tag']);
-                $retVal[] = $node;
-            }
-        }
-
-        return $retVal;
-    }
+    
     private function _childArr(array $arr) {
         $name = isset($arr['name']) ? $arr['name'] : 'div';
         $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
