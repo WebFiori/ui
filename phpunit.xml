@@ -9,6 +9,7 @@
             <file>./webfiori/ui/HTMLDoc.php</file>
             <file>./webfiori/ui/Input.php</file>
             <file>./webfiori/ui/HTMLTable.php</file>
+            <file>./webfiori/ui/TemplateCompiler.php</file>
         </whitelist>
     </filter>
     <logging>
