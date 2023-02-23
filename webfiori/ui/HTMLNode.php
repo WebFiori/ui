@@ -632,10 +632,8 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function close() : string {
-        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && !$this->isPhpNode()) {
+        if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
             return '</'.$this->getNodeName().'>';
-        } else if ($this->isPhpNode()) {
-            return '?>';
         }
 
         return '';
@@ -1498,7 +1496,7 @@ class HTMLNode implements Countable, Iterator {
     public function open() : string {
         $retVal = '';
 
-        if (!$this->isTextNode() && !$this->isComment() && !$this->isPhpNode()) {
+        if (!$this->isTextNode() && !$this->isComment()) {
             $retVal .= '<'.$this->getNodeName().'';
 
             foreach ($this->getAttributes() as $attr => $val) {
@@ -1529,8 +1527,6 @@ class HTMLNode implements Countable, Iterator {
             } else {
                 $retVal .= '>';
             }
-        } else if ($this->isPhpNode()) {
-            return '<?php';
         }
 
         return $retVal;
