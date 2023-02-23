@@ -4,7 +4,7 @@
     <ul>
     <?php
         foreach ($posts as $postTitle) {?>
-        <li><?php echo $postTitle;?></li>
+        <li><?= $postTitle;?></li>
         <?php
         }
         ?>
