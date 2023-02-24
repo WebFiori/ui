@@ -38,6 +38,7 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 ## Features
 * Ability to create custom HTML UI Elements.
 * Create and modify DOM through PHP.
+* Building dynamic HTML templates with PHP.
 * Provides a basic templating engine.
 * Support for creating XML documents.
   
@@ -101,7 +102,7 @@ The output of the code would be similar to the following image.
 <img src="tests/images/login-form.png">
 
 ## Loading HTML Files
-Another way to have your HTML rendered as object of type HTMLDoc is to create your document fully in HTML and add slots within its body and set the values of the slots in your PHP code. For example, let's assume that we have HTML file with the following markup:
+Another way to have HTML rendered as object of type HTMLDoc is to create a document fully in HTML and add slots within its body and set the values of the slots in PHP code. Assume that we have HTML file with the following markup:
 ``` html
 <!DOCTYPE html>
 <html>
@@ -122,9 +123,9 @@ Another way to have your HTML rendered as object of type HTMLDoc is to create yo
     </body>
 </html>
 ```
-If you notice, there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the solts with values, we have to load HTML code into PHP. The following code shows how to do it.
+It is noted that there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the solts with values, we have to load HTML code into PHP. The following code shows how to do it.
 ``` php
-$document = HTMLNode::loadComponent('my-html-file.html', [
+$document = HTMLNode::fromFile('my-html-file.html', [
     'page-title' => 'Hello Page',
     'page-desc' => 'A page that shows visits numbers.',
     'mr-name' => 'Ibrahim Ali',
@@ -153,6 +154,45 @@ The output of the above PHP code will be the following HTML code.
     </body>
 </html>
 ```
+### PHP Templates
+Another feature of the library is the support of rendering PHP templates and convert them to objects. This can be useful in seperating HTML templates from actual back-end code. 
+
+Assuming that we have following PHP template that shows a list of posts titles:
+
+``` php
+<div>
+    <?php 
+    if (count($posts) != 0) {?>
+    <ul>
+    <?php
+        foreach ($posts as $postTitle) {?>
+        <li><?= $postTitle;?></li>
+        <?php
+        }
+        ?>
+    </ul>
+    <?php
+    } else {
+        echo "No posts.\n";
+    }
+    ?>
+</div>
+```
+
+This template can be loaded into object of type `HTMLNode` as follows:
+
+``` php
+$posts = [
+  'Post 1',
+  'Post 2',
+  'Post 3'
+];
+
+$node = HTMLNode::fromFile('posts-list.php', [
+  'posts' => $posts
+])
+```
+
 ## Creating XML Document
 In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The diffrence between HTML and XML is that XML is case sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as its used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
 
