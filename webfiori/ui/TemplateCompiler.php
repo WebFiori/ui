@@ -137,7 +137,7 @@ class TemplateCompiler {
                             }
                         }
                     } else {
-                        if ($nodesArr[$x][$TN] != 'head') {
+                        if ($nodesArr[$x][$TN] == 'head') {
                             $headNode = self::fromHTMLTextHelper00($nodesArr[$x]);
                             $retVal->setHeadNode($headNode);
                         }
