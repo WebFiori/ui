@@ -710,7 +710,6 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.8.4
      */
     public function component(string $path, array $slotsVals) {
-        
         $loaded = self::fromFile($path, $slotsVals);
 
         if (gettype($loaded) == 'array') {
@@ -720,30 +719,6 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $this->addChild($loaded);
         }
-    }
-    /**
-     * Create HTML from template or HTML file.
-     * 
-     * @param string $absPath The absolute path to HTML document. This can
-     * also be the path to PHP template file.
-     * 
-     * @param array $slotsOrVars An associative array that have solts values of
-     * the template. This also can be the values that will be passed to PHP
-     * template.
-     * 
-     * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
-     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes 
-     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
-     * an array that contains an objects of type 'HTMLNode' is returned. If the 
-     * given code has one top level node, an object of type 'HTMLNode' is returned. 
-     * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
-     */
-    public static function fromFile(string $absPath, array $slotsOrVars) {
-        $compiler = new TemplateCompiler($absPath, $slotsOrVars);
-        $loaded = $compiler->getCompiled();
-        
-        return $loaded;
     }
     /**
      * Returns the number of child nodes attached to the node.
@@ -837,6 +812,30 @@ class HTMLNode implements Countable, Iterator {
      */
     public function form(array $attributes = []) : HTMLNode {
         return $this->addChild(new HTMLNode('form'), $attributes);
+    }
+    /**
+     * Create HTML from template or HTML file.
+     * 
+     * @param string $absPath The absolute path to HTML document. This can
+     * also be the path to PHP template file.
+     * 
+     * @param array $slotsOrVars An associative array that have solts values of
+     * the template. This also can be the values that will be passed to PHP
+     * template.
+     * 
+     * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
+     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes 
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
+     * an array that contains an objects of type 'HTMLNode' is returned. If the 
+     * given code has one top level node, an object of type 'HTMLNode' is returned. 
+     * Note that it is possible that the method will return an instance which 
+     * is a sub-class of the class 'HTMLNode'.
+     */
+    public static function fromFile(string $absPath, array $slotsOrVars) {
+        $compiler = new TemplateCompiler($absPath, $slotsOrVars);
+        $loaded = $compiler->getCompiled();
+
+        return $loaded;
     }
 
     /**
