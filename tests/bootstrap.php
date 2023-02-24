@@ -70,4 +70,5 @@ require_once $libPath.'TableCell.php';
 require_once $libPath.'TableRow.php';
 require_once $libPath.'HTMLTable.php';
 require_once $libPath.'RadioGroup.php';
+require_once $libPath.'TemplateCompiler.php';
 
