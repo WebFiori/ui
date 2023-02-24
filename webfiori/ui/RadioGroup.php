@@ -47,7 +47,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($groupLabel, $groupName, array $labels = []) {
+    public function __construct(string $groupLabel, string $groupName, array $labels = []) {
         parent::__construct('fieldset');
         $groupNameT = trim($groupName);
 
@@ -71,7 +71,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addButton($label, array $attrs = []) {
+    public function addButton(string $label, array $attrs = []) {
         $trimmedLbl = trim($label);
 
         if (strlen($trimmedLbl) == 0) {
@@ -108,7 +108,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getGroupName() {
+    public function getGroupName() : string {
         return $this->gName;
     }
     /**
@@ -121,7 +121,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getRadio($index) {
+    public function getRadio(int $index) {
         $div = $this->getChild($index + 1);
 
         if ($div !== null) {
@@ -142,7 +142,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getRadioLabel($index) {
+    public function getRadioLabel(int $index) {
         $div = $this->getChild($index + 1);
 
         if ($div !== null) {
@@ -160,7 +160,7 @@ class RadioGroup extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setLabel($lbl) {
+    public function setLabel(string $lbl) {
         $this->groupLbl->removeAllChildNodes();
         $this->groupLbl->text($lbl);
     }

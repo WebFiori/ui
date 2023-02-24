@@ -130,7 +130,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attributes = [], $chainOnParent = false) {
+    public function addChild($node, array $attributes = [], bool $chainOnParent = false) {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {
@@ -176,7 +176,7 @@ class HTMLDoc {
      * 
      * @since 1.2
      */
-    public function getBody() {
+    public function getBody() : HTMLNode {
         return $this->body;
     }
     /**
@@ -205,11 +205,11 @@ class HTMLDoc {
      * 
      * @since 1.4.2
      */
-    public function getChildrenByAttributeValue($attrName, $attrVal) {
+    public function getChildrenByAttributeValue(string $attrName, string $attrVal) : LinkedList {
         $list = new LinkedList();
         $trimmedAttrName = trim($attrName);
         $trimmedVal = trim($attrVal);
-        $this->_getChildrenByAttributeValue($trimmedAttrName, $trimmedVal, $list, $this->getDocumentRoot());
+        $this->getChildrenByAttributeValueHelper($trimmedAttrName, $trimmedVal, $list, $this->getDocumentRoot());
 
         return $list;
     }
@@ -224,12 +224,12 @@ class HTMLDoc {
      * 
      * @since 1.2
      */
-    public function getChildrenByTag($val) {
+    public function getChildrenByTag(string $val) : LinkedList {
         $list = new LinkedList();
         $trimmedVal = strtolower(trim($val));
 
         if (strlen($trimmedVal) != 0) {
-            $this->_getChildrenByTag($trimmedVal, $list, $this->getDocumentRoot());
+            $this->getChildrenByTagHelper($trimmedVal, $list, $this->getDocumentRoot());
         }
 
         return $list;
@@ -243,7 +243,7 @@ class HTMLDoc {
      * 
      * @since 1.4.1
      */
-    public function getDocumentRoot() {
+    public function getDocumentRoot() : HTMLNode {
         return $this->htmlNode;
     }
     /**
@@ -253,7 +253,7 @@ class HTMLDoc {
      * 
      * @since 1.2
      */
-    public function getHeadNode() {
+    public function getHeadNode() : HeadNode {
         return $this->headNode;
     }
     /**
@@ -264,12 +264,34 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function getLanguage() {
+    public function getLanguage() : string {
         if ($this->getDocumentRoot()->hasAttribute('lang')) {
             return $this->getDocumentRoot()->getAttributeValue('lang');
         }
 
         return '';
+    }
+    /**
+     * Removes a child element given its ID.
+     * 
+     * The element will be removed only if it is exist and not one of the
+     * following elements: 'body' and, 'head'.
+     * 
+     * @param string $id The value of the attribute 'id' of the element.
+     * 
+     * @return HTMLNode|null If the element is removed, an object is
+     * returned that holds the information of the element. Other than that,
+     * null is returned.
+     */
+    public function removeChildByID(string $id) {
+        $toRemove = $this->getDocumentRoot()->getChildByID($id);
+        
+        if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
+            return $this->removeChildHelper($this->getDocumentRoot(), $toRemove);
+        }
+        
+
+        return null;
     }
     /**
      * Removes a child node from the document.
@@ -284,12 +306,9 @@ class HTMLDoc {
      */
     public function removeChild($node) {
         if ($node instanceof HTMLNode && $node !== $this->body && $node !== $this->headNode) {
-            return $this->_removeChild($this->getDocumentRoot(), $node);
+            return $this->removeChildHelper($this->getDocumentRoot(), $node);
         } else if (gettype($node) == 'string') {
-            $toRemove = $this->getDocumentRoot()->getChildByID($node);
-            if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
-                return $this->_removeChild($this->getDocumentRoot(), $toRemove);
-            }
+            return $this->removeChildByID($node);
         }
 
         return null;
@@ -306,12 +325,12 @@ class HTMLDoc {
      * @param bool $wellFormatted If set to true, The generated file will be 
      * well formatted (readable by humans).
      * 
-     * @return boolean The method will return true if the file is successfully created. 
+     * @return bool The method will return true if the file is successfully created. 
      * False if not. Default is true.
      * 
      * @since 1.0
      */
-    public function saveToHTMLFile($path,$fileName,$wellFormatted = true) {
+    public function saveToHTMLFile(string $path, string $fileName, bool $wellFormatted = true) {
         $trimmedPath = trim($path);
         $trimmedName = trim($fileName);
 
@@ -333,12 +352,12 @@ class HTMLDoc {
      * 
      * @param HeadNode $node The node to set.
      * 
-     * @return boolean If head node is set, the method will return true. 
+     * @return bool If head node is set, the method will return true. 
      * if it is not set, the method will return false.
      * 
      * @since 1.0
      */
-    public function setHeadNode($node) {
+    public function setHeadNode(HeadNode $node) : bool {
         if ($node instanceof HeadNode && $this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
             $this->headNode = $node;
 
@@ -354,13 +373,13 @@ class HTMLDoc {
      * empty or its length does not equal to 2, language won't be set. If null 
      * is given, then the attribute will be removed if it was set.
      * 
-     * @return boolean If the attribute 'lang' of the document is set, or 
+     * @return bool If the attribute 'lang' of the document is set, or 
      * removed, the method will return true. Note that the method will always 
      * return true if null is given. Other than that, it will return false.
      * 
      * @since 1.0
      */
-    public function setLanguage($lang) {
+    public function setLanguage(string $lang = null) {
         if ($lang === null) {
             $this->getDocumentRoot()->removeAttribute('lang');
 
@@ -388,7 +407,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function toHTML($formatted = true) {
+    public function toHTML(bool $formatted = true) : string {
         if (!$formatted) {
             $this->nl = '';
         } else {
@@ -401,19 +420,19 @@ class HTMLDoc {
     }
     /**
      * 
-     * @param type $attr
-     * @param type $val
+     * @param string $attr
+     * @param string $val
      * @param LinkedList $list
      * @param HTMLNode $el
      */
-    private function _getChildrenByAttributeValue($attr, $val, LinkedList $list, HTMLNode $el) {
+    private function getChildrenByAttributeValueHelper(string $attr, string $val, LinkedList $list, HTMLNode $el) {
         if ($el->getAttribute($attr) == $val) {
             $list->add($el);
         }
 
         if ($el->children() !== null) {
             foreach ($el->children() as $child) {
-                $this->_getChildrenByAttributeValue($attr, $val, $list, $child);
+                $this->getChildrenByAttributeValueHelper($attr, $val, $list, $child);
             }
         }
     }
@@ -423,7 +442,7 @@ class HTMLDoc {
      * @param LinkedList $list
      * @param HTMLNode $child
      */
-    private function _getChildrenByTag($val,$list,$child) {
+    private function getChildrenByTagHelper($val,$list,$child) {
         if ($child->getNodeName() == $val) {
             $list->add($child);
         }
@@ -434,7 +453,7 @@ class HTMLDoc {
 
             for ($x = 0 ; $x < $chCount ; $x++) {
                 $ch = $children->get($x);
-                $this->_getChildrenByTag($val, $list, $ch);
+                $this->getChildrenByTagHelper($val, $list, $ch);
             }
         }
     }
@@ -443,9 +462,9 @@ class HTMLDoc {
      * @param HTMLNode $ch
      * @param HTMLNode $nodeToRemove Description
      */
-    private function _removeChild($ch,$nodeToRemove) {
+    private function removeChildHelper($ch,$nodeToRemove) {
         for ($x = 0 ; $x < $ch->childrenCount() ; $x++) {
-            $removed = $this->_removeChild($ch->children()->get($x),$nodeToRemove);
+            $removed = $this->removeChildHelper($ch->children()->get($x),$nodeToRemove);
 
             if ($removed instanceof HTMLNode) {
                 return $removed;

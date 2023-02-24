@@ -1740,7 +1740,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function setAttribute(string $name, $val = null) : HTMLNode {
+    public function setAttribute(string $name, string $val = null) : HTMLNode {
         $trimmedName = trim($name);
         $attrValType = gettype($val);
 

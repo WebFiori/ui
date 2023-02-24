@@ -33,7 +33,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($cellType = 'td', $cellBody = null) {
+    public function __construct(string $cellType = 'td', $cellBody = null) {
         parent::__construct();
         $cType = strtolower($cellType);
 
@@ -93,7 +93,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setColSpan($colSpan) {
+    public function setColSpan(int $colSpan) {
         if ($colSpan >= 1 && $colSpan <= 1000) {
             $this->setAttribute('colspan', $colSpan);
         }
@@ -115,7 +115,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setRowSpan($rowSpan) {
+    public function setRowSpan(int $rowSpan) {
         if ($rowSpan >= 0 && $rowSpan <= 65534) {
             $this->setAttribute('rowspan', $rowSpan);
         }

@@ -50,7 +50,7 @@ class HTMLList extends HTMLNode {
      * class 'HTMLNode' or a string that represents the 
      * content of the list item that will be added.
      * 
-     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrs An optional array of attributes which will be set in 
      * the newly added list item.
      * 
      * @param bool $chainOnParent If this parameter is set to true, the method 
@@ -154,12 +154,10 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addSubList($ul) : HTMLList {
-        if ($ul instanceof HTMLList) {
-            $li = new ListItem();
-            $li->addList($ul);
-            $this->addChild($li);
-        }
+    public function addSubList(HTMLList $ul) : HTMLList {
+        $li = new ListItem();
+        $li->addList($ul);
+        $this->addChild($li);
 
         return $this;
     }

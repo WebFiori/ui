@@ -39,7 +39,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addCode($jsCode) {
+    public function addCode(string $jsCode) {
         parent::addChild(self::createTextNode($jsCode,false));
     }
     /**
@@ -54,7 +54,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setAttribute(string $name, $val = null) : HTMLNode {
+    public function setAttribute(string $name, string $val = null) : HTMLNode {
         if ($name != 'type') {
             return parent::setAttribute($name, $val);
         }

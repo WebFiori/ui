@@ -96,7 +96,7 @@ class Anchor extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setText(string $text,$escHtmlEntities = true) : HTMLNode {
+    public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         $node = $this->getChild(0);
 
         if ($node->getNodeName() == '#TEXT') {
