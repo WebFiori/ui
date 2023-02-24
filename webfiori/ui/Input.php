@@ -436,7 +436,6 @@ class Input extends HTMLNode {
             }
         } else if ($this->hasAttribute('placeholder')) {
             $this->removeAttribute('placeholder');
-
         }
 
         return $this;

@@ -192,7 +192,7 @@ class HeadNode extends HTMLNode {
      */
     public function addChild($node, $attrs = [], bool $chainOnParent = true) : HTMLNode {
         $retVal = $this;
-        
+
 
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
@@ -202,17 +202,18 @@ class HeadNode extends HTMLNode {
             }
         } else if (gettype($node) == 'string') {
             $temp = new HTMLNode($node);
+
             if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
                 $retVal = $this->_addChildHelper($temp);
             }
         }
         $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
-        
+
 
         if (!$cOnParent) {
             return $retVal;
         }
-        
+
 
         return $this;
     }
@@ -241,7 +242,7 @@ class HeadNode extends HTMLNode {
         $splitted = explode('?', $trimmedHref);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
-        
+
 
         if (count($splitted) == 2) {
             $trimmedHref = trim($splitted[0]);
@@ -308,7 +309,7 @@ class HeadNode extends HTMLNode {
         $splitted = explode('?', $trimmedLoc);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
-        
+
 
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
@@ -322,7 +323,7 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            
+
 
             $revType = gettype($revision);
 

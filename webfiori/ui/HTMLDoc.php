@@ -272,28 +272,6 @@ class HTMLDoc {
         return '';
     }
     /**
-     * Removes a child element given its ID.
-     * 
-     * The element will be removed only if it is exist and not one of the
-     * following elements: 'body' and, 'head'.
-     * 
-     * @param string $id The value of the attribute 'id' of the element.
-     * 
-     * @return HTMLNode|null If the element is removed, an object is
-     * returned that holds the information of the element. Other than that,
-     * null is returned.
-     */
-    public function removeChildByID(string $id) {
-        $toRemove = $this->getDocumentRoot()->getChildByID($id);
-        
-        if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
-            return $this->removeChildHelper($this->getDocumentRoot(), $toRemove);
-        }
-        
-
-        return null;
-    }
-    /**
      * Removes a child node from the document.
      * 
      * @param HTMLNode|string $node The node that will be removed.  This also 
@@ -310,6 +288,28 @@ class HTMLDoc {
         } else if (gettype($node) == 'string') {
             return $this->removeChildByID($node);
         }
+
+        return null;
+    }
+    /**
+     * Removes a child element given its ID.
+     * 
+     * The element will be removed only if it is exist and not one of the
+     * following elements: 'body' and, 'head'.
+     * 
+     * @param string $id The value of the attribute 'id' of the element.
+     * 
+     * @return HTMLNode|null If the element is removed, an object is
+     * returned that holds the information of the element. Other than that,
+     * null is returned.
+     */
+    public function removeChildByID(string $id) {
+        $toRemove = $this->getDocumentRoot()->getChildByID($id);
+
+        if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
+            return $this->removeChildHelper($this->getDocumentRoot(), $toRemove);
+        }
+
 
         return null;
     }
