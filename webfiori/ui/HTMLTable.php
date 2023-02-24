@@ -44,7 +44,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($rows, $cols) {
+    public function __construct(int $rows, int $cols) {
         parent::__construct('table', ['border' => '1']);
         $iRows = intval($rows);
         $iCols = intval($cols);
@@ -61,40 +61,6 @@ class HTMLTable extends HTMLNode {
                 $row->addCell('');
             }
             $this->addRow($row);
-        }
-    }
-    /**
-     * Sets the attributes of cells in one specific column.
-     * 
-     * This method is useful to have a unified set of attributes such as
-     * 'class' to one column.
-     * 
-     * @param int $colNum Number of column starting from 0.
-     * 
-     * @param array $attributes An array that contains the attributes and
-     * their values.
-     */
-    public function setColAttributes(int $colNum, array $attributes) {
-        for ($x = 0 ; $x < $this->rows() ; $x++) {
-            $this->getCell($x, $colNum)->setAttributes($attributes);
-        }
-    }
-    /**
-     * Sets the attributes of cells in one specific row.
-     * 
-     * This method is useful to have a unified set of attributes such as
-     * 'class' to one row.
-     * 
-     * @param int $rowNum Number of row starting from 0.
-     * 
-     * @param array $attributes An array that contains the attributes and
-     * their values.
-     */
-    public function setRowAttributes(int $rowNum, array $attributes) {
-        $row = $this->getRow($rowNum);
-        
-        foreach ($row->children() as $cell) {
-            $cell->setAttributes($attributes);
         }
     }
     /**
@@ -150,7 +116,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function cols() {
+    public function cols() : int {
         return $this->cols;
     }
     /**
@@ -165,7 +131,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function getCell($rowIndex, $colIndex) {
+    public function getCell(int $rowIndex, int $colIndex) {
         $row = $this->getRow($rowIndex);
 
         if ($row !== null) {
@@ -182,7 +148,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getRow($rowIndex) {
+    public function getRow(int $rowIndex) {
         return $this->getChild($rowIndex);
     }
     /**
@@ -199,7 +165,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getValue($rowIndex, $colIndex) {
+    public function getValue(int $rowIndex, int $colIndex) {
         $row = $this->getRow($rowIndex);
 
         if ($row !== null) {
@@ -227,7 +193,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function removeCol($colIndex) {
+    public function removeCol(int $colIndex) : array {
         $colCells = [];
 
         if ($colIndex < $this->cols()) {
@@ -249,7 +215,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function removeRow($rowIndex) {
+    public function removeRow(int $rowIndex) {
         return $this->removeChild($rowIndex);
     }
     /**
@@ -259,8 +225,42 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function rows() {
+    public function rows() : int {
         return $this->rows;
+    }
+    /**
+     * Sets the attributes of cells in one specific column.
+     * 
+     * This method is useful to have a unified set of attributes such as
+     * 'class' to one column.
+     * 
+     * @param int $colNum Number of column starting from 0.
+     * 
+     * @param array $attributes An array that contains the attributes and
+     * their values.
+     */
+    public function setColAttributes(int $colNum, array $attributes) {
+        for ($x = 0 ; $x < $this->rows() ; $x++) {
+            $this->getCell($x, $colNum)->setAttributes($attributes);
+        }
+    }
+    /**
+     * Sets the attributes of cells in one specific row.
+     * 
+     * This method is useful to have a unified set of attributes such as
+     * 'class' to one row.
+     * 
+     * @param int $rowNum Number of row starting from 0.
+     * 
+     * @param array $attributes An array that contains the attributes and
+     * their values.
+     */
+    public function setRowAttributes(int $rowNum, array $attributes) {
+        $row = $this->getRow($rowNum);
+
+        foreach ($row->children() as $cell) {
+            $cell->setAttributes($attributes);
+        }
     }
     /**
      * Sets the value of a specific cell in the table.
@@ -276,7 +276,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setValue($rowIndex, $colIndex, $value) {
+    public function setValue(int $rowIndex, int $colIndex, $value) {
         if ($rowIndex < $this->rows() && $rowIndex >= 0) {
             if ($colIndex < $this->cols() && $colIndex >= 0) {
                 $cell = $this->getChild($rowIndex)->getChild($colIndex);

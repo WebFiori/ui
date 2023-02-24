@@ -90,7 +90,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($title = 'Code Snippit', $code = null) {
+    public function __construct($title = 'Code Snippit',string $code = null) {
         parent::__construct();
         $this->originalCode = '';
         $this->codeStrNode = HTMLNode::createTextNode('');
@@ -162,7 +162,7 @@ class CodeSnippet extends HTMLNode {
         $this->addChild($this->codeDisplay);
         $this->codeDisplay->addChild($this->pre);
         $this->pre->addChild($this->code);
-        $this->_addLine();
+        $this->addLineHelper();
         $this->setCode($code);
         $this->setTitle($title);
     }
@@ -176,7 +176,7 @@ class CodeSnippet extends HTMLNode {
      */
     public function addCodeLine($codeAsTxt) {
         $this->originalCode .= $codeAsTxt;
-        $this->_addLine();
+        $this->addLineHelper();
         $oldCode = $this->codeStrNode->getTextUnescaped();
         $oldCode .= trim($codeAsTxt,"\n\r")."\n";
         $this->codeStrNode->setText($oldCode);
@@ -239,12 +239,12 @@ class CodeSnippet extends HTMLNode {
         if ($len !== 0) {
             for ($x = 0 ; $x < $len ; $x++) {
                 if ($xCode[$x] == "\n") {
-                    $this->_addLine();
+                    $this->addLineHelper();
                 }
             }
         }
         $this->codeStrNode->setText($xCode."\n");
-        $this->_addLine();
+        $this->addLineHelper();
     }
     /**
      * Sets the title of the snippit.
@@ -263,7 +263,7 @@ class CodeSnippet extends HTMLNode {
 
         return $this;
     }
-    private function _addLine() {
+    private function addLineHelper() {
         $span = new HTMLNode('span');
         $span->setClassName('line-number');
         $span->setAttribute('style', ''

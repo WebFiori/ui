@@ -14,7 +14,6 @@ use Countable;
 use Exception;
 use Iterator;
 use webfiori\collections\LinkedList;
-use webfiori\collections\Queue;
 use webfiori\collections\Stack;
 use webfiori\ui\exceptions\InvalidNodeNameException;
 use webfiori\ui\exceptions\TemplateNotFoundException;
@@ -249,7 +248,7 @@ class HTMLNode implements Countable, Iterator {
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
-        
+
         $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
@@ -815,7 +814,7 @@ class HTMLNode implements Countable, Iterator {
     public function form(array $attributes = []) : HTMLNode {
         return $this->addChild(new HTMLNode('form'), $attributes);
     }
-    
+
     /**
      * Returns the value of an attribute.
      * 
@@ -1639,6 +1638,7 @@ class HTMLNode implements Countable, Iterator {
             } else if (gettype($nodeInstOrId) == 'string') {
                 $toRemove = $this->getChildByID($nodeInstOrId);
                 $child = $this->children()->removeElement($toRemove);
+
                 return $this->removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'integer') {
                 return $this->children()->remove($nodeInstOrId);
@@ -1767,7 +1767,7 @@ class HTMLNode implements Countable, Iterator {
                     }
                 } else if ($val === null) {
                     $this->attributes[$trimmedName] = null;
-                } else if ($attrValType == 'string'){
+                } else if ($attrValType == 'string') {
                     $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
                     $this->attributes[$trimmedName] = $val;
@@ -2032,7 +2032,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @since 1.0
      */
-    public function setText(string $text,$escHtmlEntities = true) : HTMLNode {
+    public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         if ($this->isTextNode() || $this->isComment()) {
             $this->originalText = $text;
 
@@ -2165,7 +2165,6 @@ class HTMLNode implements Countable, Iterator {
      * @since 1.0
      */
     public function toHTML(bool $formatted = false, int $initTab = 0) {
-        
         if (!$formatted) {
             $this->nl = '';
             $this->tabSpace = '';
@@ -2200,13 +2199,15 @@ class HTMLNode implements Countable, Iterator {
         $this->setUseForwardSlash(true);
         $this->setIsQuotedAttribute(true);
         $asHtml = $this->toHTML($formatted);
-        
+
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+
         if ($formatted) {
             $xml .= HTMLDoc::NL;
         }
         $this->setUseForwardSlash($forwardSlash);
         $this->setIsQuotedAttribute($isQuted);
+
         return $xml.$asHtml;
     }
     /**
@@ -2290,31 +2291,6 @@ class HTMLNode implements Countable, Iterator {
      */
     private function addTab() {
         $this->tabCount += 1;
-    }
-    
-    private function nodeFromArrayHelper(array $arr) {
-        $name = isset($arr['name']) ? $arr['name'] : 'div';
-        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
-        $node = new HTMLNode($name, $attrs);
-        $isVoidNode = isset($arr['is-void']) ? $arr['is-void'] === true : false;
-        $node->setIsVoidNode($isVoidNode);
-        
-        if ($node->isComment() || $node->isTextNode()) {
-            $text = isset($arr['text']) ? $arr['text'] : '';
-            $node->setText($text);
-        }
-        
-        if (!$isVoidNode && isset($arr['children']) && gettype($arr['children']) == 'array') {
-            foreach ($arr['children'] as $chArr) {
-                if ($chArr instanceof HTMLNode) {
-                    $node->addChild($chArr);
-                } else {
-                    $node->addChild($this->nodeFromArrayHelper($chArr));
-                }
-            }
-        }
-        
-        return $node;
     }
     /**
      * 
@@ -2409,6 +2385,31 @@ class HTMLNode implements Countable, Iterator {
         } else {
             return str_repeat($this->tabSpace, $this->tabCount);
         }
+    }
+
+    private function nodeFromArrayHelper(array $arr) {
+        $name = isset($arr['name']) ? $arr['name'] : 'div';
+        $attrs = isset($arr['attributes']) && gettype($arr['attributes']) == 'array' ? $arr['attributes'] : [];
+        $node = new HTMLNode($name, $attrs);
+        $isVoidNode = isset($arr['is-void']) ? $arr['is-void'] === true : false;
+        $node->setIsVoidNode($isVoidNode);
+
+        if ($node->isComment() || $node->isTextNode()) {
+            $text = isset($arr['text']) ? $arr['text'] : '';
+            $node->setText($text);
+        }
+
+        if (!$isVoidNode && isset($arr['children']) && gettype($arr['children']) == 'array') {
+            foreach ($arr['children'] as $chArr) {
+                if ($chArr instanceof HTMLNode) {
+                    $node->addChild($chArr);
+                } else {
+                    $node->addChild($this->nodeFromArrayHelper($chArr));
+                }
+            }
+        }
+
+        return $node;
     }
     /**
      * 
@@ -2619,35 +2620,6 @@ class HTMLNode implements Countable, Iterator {
         $this->parentNode = $node;
     }
     /**
-     * A helper method which is used to validate the attribute 'style' 
-     * when its value is given as a string.
-     * 
-     * @param string $style
-     * 
-     * @return array
-     * 
-     * @since 1.7.7
-     */
-    private function validateStyleAttribute(string $style) : array {
-        $vals = explode(';', $style);
-        $retVal = [];
-
-        foreach ($vals as $str) {
-            $attrAndVal = explode(':', $str);
-
-            if (count($attrAndVal) == 2) {
-                $attr = trim($attrAndVal[0]);
-                $val = trim($attrAndVal[1]);
-
-                if (strlen($attr) != 0 && strlen($val) != 0) {
-                    $retVal[$attr] = $val;
-                }
-            }
-        }
-
-        return $retVal;
-    }
-    /**
      * Validates the name of the node.
      * 
      * @param string $name The name of the node in lower case.
@@ -2781,5 +2753,34 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return false;
+    }
+    /**
+     * A helper method which is used to validate the attribute 'style' 
+     * when its value is given as a string.
+     * 
+     * @param string $style
+     * 
+     * @return array
+     * 
+     * @since 1.7.7
+     */
+    private function validateStyleAttribute(string $style) : array {
+        $vals = explode(';', $style);
+        $retVal = [];
+
+        foreach ($vals as $str) {
+            $attrAndVal = explode(':', $str);
+
+            if (count($attrAndVal) == 2) {
+                $attr = trim($attrAndVal[0]);
+                $val = trim($attrAndVal[1]);
+
+                if (strlen($attr) != 0 && strlen($val) != 0) {
+                    $retVal[$attr] = $val;
+                }
+            }
+        }
+
+        return $retVal;
     }
 }

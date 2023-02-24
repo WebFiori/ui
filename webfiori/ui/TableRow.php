@@ -49,7 +49,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addCell($cellContent, $type = 'td',$escEntities = false, array $attrs = []) {
+    public function addCell($cellContent, string $type = 'td', bool $escEntities = false, array $attrs = []) {
         if ($cellContent instanceof TableCell) {
             $cellContent->setAttributes($attrs);
             $this->addChild($cellContent);
@@ -75,7 +75,7 @@ class TableRow extends HTMLNode {
      * @param TableCell|string $node New table cell. This also can be a string 
      * such as 'td' or 'th'.
      * 
-     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrs An optional array of attributes which will be set in 
      * the newly added child. This also can act as last method parameter if it 
      * is given as boolean.
      * 
@@ -111,7 +111,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function getCell($index) {
+    public function getCell(int $index) {
         return $this->children()->get($index);
     }
     /**
@@ -133,7 +133,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0.3
      */
-    public function setData(array $data, $headerData = false) {
+    public function setData(array $data, bool $headerData = false) {
         $parent = $this->getParent();
         $this->removeAllChildNodes();
         $cellType = $headerData === true ? 'th' : 'td';

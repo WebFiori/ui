@@ -173,7 +173,7 @@ class HeadNode extends HTMLNode {
      * </ul>
      * Other than that, the node will be not added.
      * 
-     * @param array|boolean $attrs Not used if array is given. If boolean is 
+     * @param array|bool $attrs Not used if array is given. If boolean is 
      * given, it will be treated as last method argument.
      * 
      * @param bool $chainOnParent If this parameter is set to true, the method 
@@ -192,7 +192,7 @@ class HeadNode extends HTMLNode {
      */
     public function addChild($node, $attrs = [], bool $chainOnParent = true) : HTMLNode {
         $retVal = $this;
-        
+
 
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
@@ -202,17 +202,18 @@ class HeadNode extends HTMLNode {
             }
         } else if (gettype($node) == 'string') {
             $temp = new HTMLNode($node);
+
             if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
                 $retVal = $this->_addChildHelper($temp);
             }
         }
         $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
-        
+
 
         if (!$cOnParent) {
             return $retVal;
         }
-        
+
 
         return $this;
     }
@@ -241,7 +242,7 @@ class HeadNode extends HTMLNode {
         $splitted = explode('?', $trimmedHref);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
-        
+
 
         if (count($splitted) == 2) {
             $trimmedHref = trim($splitted[0]);
@@ -308,7 +309,7 @@ class HeadNode extends HTMLNode {
         $splitted = explode('?', $trimmedLoc);
         $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
         unset($otherAttrs['revision']);
-        
+
 
         if (count($splitted) == 2) {
             $trimmedLoc = trim($splitted[0]);
@@ -322,7 +323,7 @@ class HeadNode extends HTMLNode {
         if (strlen($trimmedLoc) != 0) {
             $tag = new HTMLNode('script');
             $tag->setAttribute('type','text/javascript');
-            
+
 
             $revType = gettype($revision);
 
@@ -706,7 +707,7 @@ class HeadNode extends HTMLNode {
      * @param string $loc The value of the attribute 'href' of 
      * the CSS node.
      * 
-     * @return boolean If a link node with the given 'href' value does 
+     * @return bool If a link node with the given 'href' value does 
      * exist, the method will return true. Other than that, the method 
      * will return false.
      * 
@@ -743,7 +744,7 @@ class HeadNode extends HTMLNode {
      * @param string $src The value of the attribute 'src' of 
      * the script node.
      * 
-     * @return boolean If a JavaScript node with the given 'src' value does 
+     * @return bool If a JavaScript node with the given 'src' value does 
      * exist, the method will return true. Other than that, the method 
      * will return false.
      * 
@@ -777,7 +778,7 @@ class HeadNode extends HTMLNode {
      * tag. If the developer would like to check for the existence of the 
      * node which has the attribute 'charset', he can pass the value 'charset'.
      * 
-     * @return boolean If a meta tag which has the given name was found, 
+     * @return bool If a meta tag which has the given name was found, 
      * true is returned. false otherwise.
      * 
      * @since 1.1.2

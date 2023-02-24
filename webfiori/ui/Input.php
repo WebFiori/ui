@@ -107,7 +107,7 @@ class Input extends HTMLNode {
      * body of the text area. If input type is &lt;select&gt;, then new option 
      * will be added with the same label of the given text.
      * 
-     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrs An optional array of attributes which will be set in 
      * the newly added child. Also, this argument can work as last method argument 
      * if a boolean is given.
      * 
@@ -163,7 +163,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOption($options = []) {
+    public function addOption(array $options = []) {
         if ($this->getNodeName() == 'select' && gettype($options) == 'array' && isset($options['value']) && isset($options['label'])) {
             $option = new HTMLNode('option');
             $option->setAttribute('value', $options['value']);
@@ -201,7 +201,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOptions($arrayOfOpt) {
+    public function addOptions(array $arrayOfOpt) {
         if (gettype($arrayOfOpt) == 'array') {
             foreach ($arrayOfOpt as $value => $lblOrOptions) {
                 if (gettype($lblOrOptions) == 'array') {
@@ -247,7 +247,7 @@ class Input extends HTMLNode {
      * is called on.
      * @since 1.0.1
      */
-    public function addOptionsGroup($optionsGroupArr) {
+    public function addOptionsGroup(array $optionsGroupArr) {
         if ($this->getNodeName() == 'select' && gettype($optionsGroupArr) == 'array' && isset($optionsGroupArr['label']) && isset($optionsGroupArr['options'])) {
             $optGroup = new HTMLNode('optgroup');
             $optGroup->setAttribute('label', $optionsGroupArr['label']);
@@ -258,7 +258,7 @@ class Input extends HTMLNode {
                 }
             }
 
-            $this->_addOptionsToGroup($optionsGroupArr, $optGroup);
+            $this->addOptionsToGroupHelper($optionsGroupArr, $optGroup);
             $this->addChild($optGroup);
         }
 
@@ -286,7 +286,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setInputMode($mode) {
+    public function setInputMode(string $mode) {
         $lMode = strtolower(trim($mode));
 
         if (in_array($lMode, Input::INPUT_MODES)) {
@@ -307,7 +307,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setList($listId) {
+    public function setList(string $listId) {
         $iType = $this->getType();
 
         if ($iType != 'hidden' && 
@@ -394,7 +394,7 @@ class Input extends HTMLNode {
      * 
      * @param string $name
      * 
-     * @return boolean The method will always return false.
+     * @return bool The method will always return false.
      * 
      * @since 1.0.2
      */
@@ -436,7 +436,6 @@ class Input extends HTMLNode {
             }
         } else if ($this->hasAttribute('placeholder')) {
             $this->removeAttribute('placeholder');
-
         }
 
         return $this;
@@ -482,7 +481,7 @@ class Input extends HTMLNode {
     public function setValue($text) {
         return $this->setAttribute('value', $text);
     }
-    private function _addOptionsToGroup($optionsGroupArr, $optGroup) {
+    private function addOptionsToGroupHelper($optionsGroupArr, $optGroup) {
         foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
             if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
                 $o = new HTMLNode('option');

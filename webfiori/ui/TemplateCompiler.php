@@ -20,12 +20,7 @@ use webfiori\ui\exceptions\TemplateNotFoundException;
  * @author Ibrahim
  */
 class TemplateCompiler {
-    /**
-     * Type of template file.
-     * 
-     * @var string
-     */
-    private $tType;
+    private $compiled;
     /**
      * The absolute path of template file.
      * 
@@ -33,7 +28,12 @@ class TemplateCompiler {
      */
     private $path;
     private $rawOutput;
-    private $compiled;
+    /**
+     * Type of template file.
+     * 
+     * @var string
+     */
+    private $tType;
     /**
      * Creates new instance of the class.
      * 
@@ -55,44 +55,6 @@ class TemplateCompiler {
         $this->path = $templatePath;
         $this->rawOutput = '';
         $this->compile($vars);
-    }
-    /**
-     * Returns the compiled template.
-     * 
-     * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
-     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes 
-     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
-     * an array that contains an objects of type 'HTMLNode' is returned. If the 
-     * given code has one top level node, an object of type 'HTMLNode' is returned. 
-     * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
-     */
-    public function getCompiled() {
-        return $this->compiled;
-    }
-    /**
-     * Returns the absolute path to template file.
-     * 
-     * @return string The absolute path to template file.
-     */
-    public function getPath() : string {
-        return $this->path;
-    }
-    /**
-     * Returns a string that represent the type of the template.
-     * 
-     * @return string A string such as 'php' or 'HTML'.
-     */
-    public function getType() : string {
-        return $this->tType;
-    }
-    /**
-     * Returns the raw compiled HTML as string.
-     * 
-     * @return string The compiled HTML as string.
-     */
-    public function getRaw() : string {
-        return $this->rawOutput;
     }
     /**
      * Compile the template and return its representation as an object.
@@ -119,36 +81,10 @@ class TemplateCompiler {
         } else {
             $this->rawOutput = file_get_contents($this->getPath());
         }
-        
+
         $this->compiled = self::fromHTMLText(self::setComponentVars($varsToPass, $this->getRaw()));
-        
+
         return $this->getCompiled();
-    }
-    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
-        foreach ($slotsValsArr as $slotName => $slotVal) {
-            if (gettype($slotVal) == 'array') {
-                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
-            } else {
-                foreach ($allSlots as $slotNameFromComponent) {
-                    $trimmed = trim($slotNameFromComponent, '{{ }}');
-
-                    if ($trimmed == $slotName) {
-                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
-                    }
-                }
-            }
-        }
-
-        return $component;
-    }
-    private static function setComponentVars($varsArr, $component) {
-        if (gettype($varsArr) == 'array') {
-            $variables = [];
-            preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
-            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
-        }
-
-        return $component;
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
@@ -201,7 +137,7 @@ class TemplateCompiler {
                             }
                         }
                     } else {
-                        if ($nodesArr[$x][$TN] != 'head') {
+                        if ($nodesArr[$x][$TN] == 'head') {
                             $headNode = self::fromHTMLTextHelper00($nodesArr[$x]);
                             $retVal->setHeadNode($headNode);
                         }
@@ -226,6 +162,44 @@ class TemplateCompiler {
         }
 
         return null;
+    }
+    /**
+     * Returns the compiled template.
+     * 
+     * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
+     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes 
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
+     * an array that contains an objects of type 'HTMLNode' is returned. If the 
+     * given code has one top level node, an object of type 'HTMLNode' is returned. 
+     * Note that it is possible that the method will return an instance which 
+     * is a sub-class of the class 'HTMLNode'.
+     */
+    public function getCompiled() {
+        return $this->compiled;
+    }
+    /**
+     * Returns the absolute path to template file.
+     * 
+     * @return string The absolute path to template file.
+     */
+    public function getPath() : string {
+        return $this->path;
+    }
+    /**
+     * Returns the raw compiled HTML as string.
+     * 
+     * @return string The compiled HTML as string.
+     */
+    public function getRaw() : string {
+        return $this->rawOutput;
+    }
+    /**
+     * Returns a string that represent the type of the template.
+     * 
+     * @return string A string such as 'php' or 'HTML'.
+     */
+    public function getType() : string {
+        return $this->tType;
     }
     /**
      * Converts a string of HTML code to an array that looks like a tree of 
@@ -322,7 +296,7 @@ class TemplateCompiler {
                         }
 
                         if ((isset($nodeName[0]) && $nodeName[0] == '!') && (
-                                isset($nodeName[1]) && $nodeName[1] == '-') && 
+                            isset($nodeName[1]) && $nodeName[1] == '-') && 
                                 (isset($nodeName[2]) && $nodeName[2] == '-')) {
                             //if we have '!' or '-' at the start of the name, then 
                             //it must be a comment.
@@ -405,14 +379,6 @@ class TemplateCompiler {
 
         return [];
     }
-    private static function getTextActualValue($hashedValsArr, $hashVal) {
-        //If text, it means that we have a text node or a comment node with a quted text.
-        foreach ($hashedValsArr as $hash => $val) {
-            $hashVal = str_replace($hash, $val, $hashVal);
-        }
-
-        return $hashVal;
-    }
     /**
      * Build an associative array that represents parsed HTML string.
      * 
@@ -456,6 +422,140 @@ class TemplateCompiler {
         }
 
         return $retVal;
+    }
+    /**
+     * Creates an object of type HTMLNode given its properties as an associative 
+     * array.
+     * @param array $nodeArr An associative array that contains node properties. 
+     * This array can have the following indices:
+     * <ul>
+     * <li>tag-name: An index that contains tag name.</li>
+     * <li>attributes: An associative array that contains node attributes. Ignored 
+     * if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
+     * <li>children: A sub array that contains the info of all node children. 
+     * Ignored if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
+     * </ul>
+     * @return HTMLNode
+     */
+    private static function fromHTMLTextHelper00($nodeArr) {
+        $TN = 'tag-name';
+        $BT = 'body-text';
+
+        if ($nodeArr[$TN] == HTMLNode::COMMENT_NODE) {
+            return HTMLNode::createComment($nodeArr[$BT]);
+        } else if ($nodeArr[$TN] == HTMLNode::TEXT_NODE) {
+            return HTMLNode::createTextNode($nodeArr[$BT], false);
+        } else if ($nodeArr[$TN] == 'head') {
+            $htmlNode = new HeadNode();
+            $htmlNode->removeAllChildNodes();
+
+            for ($x = 0 ; $x < count($nodeArr['children']) ; $x++) {
+                $chNode = $nodeArr['children'][$x];
+
+                if ($chNode[$TN] == 'title') {
+                    if (count($chNode['children']) == 1 && $chNode['children'][0][$TN] == HTMLNode::TEXT_NODE) {
+                        $htmlNode->setTitle($chNode['children'][0][$BT]);
+                    }
+
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        $htmlNode->getTitleNode()->setAttribute($attr, $val);
+                    }
+                } else if ($chNode[$TN] == 'base') {
+                    $isBaseSet = false;
+
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        if ($attr == 'href') {
+                            $isBaseSet = $htmlNode->setBase($val);
+                            break;
+                        }
+                    }
+
+                    if ($isBaseSet) {
+                        foreach ($chNode['attributes'] as $attr => $val) {
+                            $htmlNode->getBaseNode()->setAttribute($attr, $val);
+                        }
+                    }
+                } else if ($chNode[$TN] == 'link') {
+                    $isCanonical = false;
+                    $tmpNode = new HTMLNode('link');
+
+                    foreach ($chNode['attributes'] as $attr => $val) {
+                        $tmpNode->setAttribute($attr, $val);
+                        $lower = strtolower($val);
+
+                        if ($attr == 'rel' && $lower == 'canonical') {
+                            $isCanonical = true;
+                            $tmpNode->setAttribute($attr, $lower);
+                        } else if ($attr == 'rel' && $lower == 'stylesheet') {
+                            $tmpNode->setAttribute($attr, $lower);
+                        }
+                    }
+
+                    if ($isCanonical) {
+                        $isCanonicalSet = $htmlNode->setCanonical($tmpNode->getAttributeValue('href'));
+
+                        if ($isCanonicalSet) {
+                            foreach ($tmpNode->getAttributes() as $attr => $val) {
+                                $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
+                            }
+                        }
+                    } else {
+                        $htmlNode->addChild($tmpNode);
+                    }
+                } else if ($chNode[$TN] == 'script') {
+                    $tmpNode = self::fromHTMLTextHelper00($chNode);
+
+                    foreach ($tmpNode->getAttributes() as $attr => $val) {
+                        $tmpNode->setAttribute($attr, $val);
+                        $lower = strtolower($val);
+
+                        if ($attr == 'type' && $lower == 'text/javascript') {
+                            $tmpNode->setAttribute($attr, $lower);
+                        }
+                    }
+                    $htmlNode->addChild($tmpNode);
+                } else if ($chNode[$TN] == 'meta') {
+                    if (isset($chNode['attributes']['charset'])) {
+                        $htmlNode->setCharSet($chNode['attributes']['charset']);
+                    } else {
+                        $htmlNode->addChild(self::fromHTMLTextHelper00($chNode));
+                    }
+                } else {
+                    $newCh = self::fromHTMLTextHelper00($chNode);
+                    $htmlNode->addChild($newCh);
+                }
+            }
+        } else if ($nodeArr[$TN] == '!DOCTYPE') {
+            return HTMLNode::createTextNode('<!DOCTYPE html>',false);
+        } else {
+            $htmlNode = new HTMLNode($nodeArr[$TN]);
+        }
+
+        if (isset($nodeArr['attributes'])) {
+            foreach ($nodeArr['attributes'] as $key => $value) {
+                $htmlNode->setAttribute($key, $value);
+            }
+        }
+
+        if ($nodeArr[$TN] != 'head' && isset($nodeArr['children'])) {
+            foreach ($nodeArr['children'] as $child) {
+                $htmlNode->addChild(self::fromHTMLTextHelper00($child));
+            }
+        }
+
+        if (isset($nodeArr[$BT]) && strlen(trim($nodeArr[$BT])) != 0) {
+            $htmlNode->addTextNode($nodeArr[$BT]);
+        }
+
+        return $htmlNode;
+    }
+    private static function getTextActualValue($hashedValsArr, $hashVal) {
+        //If text, it means that we have a text node or a comment node with a quted text.
+        foreach ($hashedValsArr as $hash => $val) {
+            $hashVal = str_replace($hash, $val, $hashVal);
+        }
+
+        return $hashVal;
     }
     /**
      * A helper method to parse a string of HTML element attributes.
@@ -645,130 +745,30 @@ class TemplateCompiler {
             'html-string' => $htmlStr
         ];
     }
-    /**
-     * Creates an object of type HTMLNode given its properties as an associative 
-     * array.
-     * @param array $nodeArr An associative array that contains node properties. 
-     * This array can have the following indices:
-     * <ul>
-     * <li>tag-name: An index that contains tag name.</li>
-     * <li>attributes: An associative array that contains node attributes. Ignored 
-     * if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
-     * <li>children: A sub array that contains the info of all node children. 
-     * Ignored if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
-     * </ul>
-     * @return HTMLNode
-     */
-    private static function fromHTMLTextHelper00($nodeArr) {
-        $TN = 'tag-name';
-        $BT = 'body-text';
+    private static function setComponentVars($varsArr, $component) {
+        if (gettype($varsArr) == 'array') {
+            $variables = [];
+            preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
+            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
+        }
 
-        if ($nodeArr[$TN] == HTMLNode::COMMENT_NODE) {
-            return HTMLNode::createComment($nodeArr[$BT]);
-        } else if ($nodeArr[$TN] == HTMLNode::TEXT_NODE) {
-            return HTMLNode::createTextNode($nodeArr[$BT], false);
-        } else if ($nodeArr[$TN] == 'head') {
-            $htmlNode = new HeadNode();
-            $htmlNode->removeAllChildNodes();
+        return $component;
+    }
+    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
+        foreach ($slotsValsArr as $slotName => $slotVal) {
+            if (gettype($slotVal) == 'array') {
+                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
+            } else {
+                foreach ($allSlots as $slotNameFromComponent) {
+                    $trimmed = trim($slotNameFromComponent, '{{ }}');
 
-            for ($x = 0 ; $x < count($nodeArr['children']) ; $x++) {
-                $chNode = $nodeArr['children'][$x];
-
-                if ($chNode[$TN] == 'title') {
-                    if (count($chNode['children']) == 1 && $chNode['children'][0][$TN] == HTMLNode::TEXT_NODE) {
-                        $htmlNode->setTitle($chNode['children'][0][$BT]);
+                    if ($trimmed == $slotName) {
+                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
                     }
-
-                    foreach ($chNode['attributes'] as $attr => $val) {
-                        $htmlNode->getTitleNode()->setAttribute($attr, $val);
-                    }
-                } else if ($chNode[$TN] == 'base') {
-                    $isBaseSet = false;
-
-                    foreach ($chNode['attributes'] as $attr => $val) {
-                        if ($attr == 'href') {
-                            $isBaseSet = $htmlNode->setBase($val);
-                            break;
-                        }
-                    }
-
-                    if ($isBaseSet) {
-                        foreach ($chNode['attributes'] as $attr => $val) {
-                            $htmlNode->getBaseNode()->setAttribute($attr, $val);
-                        }
-                    }
-                } else if ($chNode[$TN] == 'link') {
-                    $isCanonical = false;
-                    $tmpNode = new HTMLNode('link');
-
-                    foreach ($chNode['attributes'] as $attr => $val) {
-                        $tmpNode->setAttribute($attr, $val);
-                        $lower = strtolower($val);
-
-                        if ($attr == 'rel' && $lower == 'canonical') {
-                            $isCanonical = true;
-                            $tmpNode->setAttribute($attr, $lower);
-                        } else if ($attr == 'rel' && $lower == 'stylesheet') {
-                            $tmpNode->setAttribute($attr, $lower);
-                        }
-                    }
-
-                    if ($isCanonical) {
-                        $isCanonicalSet = $htmlNode->setCanonical($tmpNode->getAttributeValue('href'));
-
-                        if ($isCanonicalSet) {
-                            foreach ($tmpNode->getAttributes() as $attr => $val) {
-                                $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
-                            }
-                        }
-                    } else {
-                        $htmlNode->addChild($tmpNode);
-                    }
-                } else if ($chNode[$TN] == 'script') {
-                    $tmpNode = self::fromHTMLTextHelper00($chNode);
-
-                    foreach ($tmpNode->getAttributes() as $attr => $val) {
-                        $tmpNode->setAttribute($attr, $val);
-                        $lower = strtolower($val);
-
-                        if ($attr == 'type' && $lower == 'text/javascript') {
-                            $tmpNode->setAttribute($attr, $lower);
-                        }
-                    }
-                    $htmlNode->addChild($tmpNode);
-                } else if ($chNode[$TN] == 'meta') {
-                    if (isset($chNode['attributes']['charset'])) {
-                        $htmlNode->setCharSet($chNode['attributes']['charset']);
-                    } else {
-                        $htmlNode->addChild(self::fromHTMLTextHelper00($chNode));
-                    }
-                } else {
-                    $newCh = self::fromHTMLTextHelper00($chNode);
-                    $htmlNode->addChild($newCh);
                 }
             }
-        } else if ($nodeArr[$TN] == '!DOCTYPE') {
-            return HTMLNode::createTextNode('<!DOCTYPE html>',false);
-        } else {
-            $htmlNode = new HTMLNode($nodeArr[$TN]);
         }
 
-        if (isset($nodeArr['attributes'])) {
-            foreach ($nodeArr['attributes'] as $key => $value) {
-                $htmlNode->setAttribute($key, $value);
-            }
-        }
-
-        if ($nodeArr[$TN] != 'head' && isset($nodeArr['children'])) {
-            foreach ($nodeArr['children'] as $child) {
-                $htmlNode->addChild(self::fromHTMLTextHelper00($child));
-            }
-        }
-
-        if (isset($nodeArr[$BT]) && strlen(trim($nodeArr[$BT])) != 0) {
-            $htmlNode->addTextNode($nodeArr[$BT]);
-        }
-
-        return $htmlNode;
+        return $component;
     }
 }

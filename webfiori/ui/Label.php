@@ -75,7 +75,7 @@ class Label extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setText(string $text,$escEntities = true) : HTMLNode {
+    public function setText(string $text, bool $escEntities = true) : HTMLNode {
         $node = $this->getChild(0);
 
         if ($node->getNodeName() == '#TEXT') {
