@@ -218,6 +218,27 @@ class HeadNode extends HTMLNode {
         return $this;
     }
     /**
+     * Add multiple CSS resources files.
+     * 
+     * @param array $files An array that holds paths to CSS files. This also
+     * can be an associative array. In this case, the indices are paths to files
+     * and the value of each index is a sub associative array of attributes.
+     * 
+     * @return HeadNode The method will return the instance at which the method 
+     * is called on.
+     */
+    public function addCSSFiles(array $files) : HeadNode {
+        foreach ($files as $index => $options) {
+            if (gettype($index) == 'integer') {
+                $this->addCSS($options);
+            } else {
+                $this->addCSS($index, $options);
+            }
+        }
+        
+        return $this;
+    }
+    /**
      * Adds new CSS source file.
      * 
      * @param string $href The link to the file. Must be non empty string. It is 
@@ -282,6 +303,27 @@ class HeadNode extends HTMLNode {
             $this->_cssJsInsertHelper($tag, $otherAttrs);
         }
 
+        return $this;
+    }
+    /**
+     * Add multiple JS resources files.
+     * 
+     * @param array $files An array that holds paths to JS files. This also
+     * can be an associative array. In this case, the indices are paths to files
+     * and the value of each index is a sub associative array of attributes.
+     * 
+     * @return HeadNode The method will return the instance at which the method 
+     * is called on.
+     */
+    public function addJSFiles(array $files) : HeadNode {
+        foreach ($files as $index => $options) {
+            if (gettype($index) == 'integer') {
+                $this->addJs($options);
+            } else {
+                $this->addJs($index, $options);
+            }
+        }
+        
         return $this;
     }
     /**
@@ -408,6 +450,18 @@ class HeadNode extends HTMLNode {
         }
 
         return $this;
+    }
+    /**
+     * Adds a set of meta tags.
+     * 
+     * @param array $tags An associative array. The indices of the array
+     * are the values of the attribute 'name' and the value of the index is
+     * the value of the attribute 'content'.
+     */
+    public function addMetaTags(array $tags) {
+        foreach ($tags as $name => $content) {
+            $this->addMeta($name, $content);
+        }
     }
     /**
      * Adds new meta tag.
