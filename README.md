@@ -1,5 +1,6 @@
 # WebFiori UI Package
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
+Class library to provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
   <a href="https://github.com/WebFiori/database/actions">
@@ -21,6 +22,7 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 ## API Docs
 This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/webfiori/ui .
+This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, [click here](https://webfiori.com/docs/webfiori/ui) .
 
 
 ## Supported PHP Versions
