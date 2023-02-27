@@ -7,3 +7,4 @@ cs-fixer.phar
 clover.xml
 composer.lock
 php-cs-fixer-v2.phar
+.idea/*
