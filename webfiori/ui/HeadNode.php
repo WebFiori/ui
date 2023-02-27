@@ -241,10 +241,10 @@ class HeadNode extends HTMLNode {
     /**
      * Adds new CSS source file.
      * 
-     * @param string $href The link to the file. Must be non empty string. It is 
+     * @param string $href The link to the file. Must be non-empty string. It is
      * possible to append query string to the end of the link.
      * 
-     * @param $otherAttrs An associative array of additional attributes 
+     * @param array $otherAttrs An associative array of additional attributes
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. One special attribute is 
@@ -327,12 +327,12 @@ class HeadNode extends HTMLNode {
         return $this;
     }
     /**
-     * Adds new JavsScript source file.
+     * Adds new JavaScript source file.
      * 
      * @param string $loc The location of the file. Must be non-empty string. It 
      * can have query string at the end.
      * 
-     * @param $otherAttrs An associative array of additional attributes 
+     * @param array $otherAttrs An associative array of additional attributes
      * to set for the node. The indices are the names of attributes and the value 
      * of each index is the value of the attribute. Also, the array can only 
      * have attribute name if its empty attribute. One special attribute is 
@@ -466,7 +466,7 @@ class HeadNode extends HTMLNode {
     /**
      * Adds new meta tag.
      * 
-     * @param string $name The value of the property 'name'. Must be non empty 
+     * @param string $name The value of the property 'name'. Must be non-empty
      * string.
      * 
      * @param string $content The value of the property 'content'.
@@ -755,8 +755,8 @@ class HeadNode extends HTMLNode {
     /**
      * Checks if a CSS node with specific 'href' does exist or not.
      * 
-     * Note that the method will not check for query string in the passed 
-     * value. It will simply ignore it.
+     * Note that the method will not check for query string in passed value.
+     * It will simply ignore it.
      * 
      * @param string $loc The value of the attribute 'href' of 
      * the CSS node.
@@ -792,8 +792,8 @@ class HeadNode extends HTMLNode {
     /**
      * Checks if a JavaScript node with specific 'src' value does exist or not.
      * 
-     * Note that the method will not check for query string in the passed 
-     * value. It will simply ignore it.
+     * Note that the method will not check for query string in passed value.
+     * It will simply ignore it.
      * 
      * @param string $src The value of the attribute 'src' of 
      * the script node.
@@ -859,7 +859,7 @@ class HeadNode extends HTMLNode {
      * Sets the value of the attribute 'href' for the 'base' tag.
      * 
      * @param string|null $url The value to set. The base URL will be updated 
-     * only if the given parameter is a string and it is not empty. If null is 
+     * only if the given parameter is a string and, it is not empty. If null is
      * given, the node will be removed from the body of the head tag.
      * 
      * @return HeadNode The method will return the instance at which the method 
@@ -936,7 +936,7 @@ class HeadNode extends HTMLNode {
      * Set the value of the meta tag which has the attribute 'charset'.
      * 
      * @param string|null $charset The character set that will be used to 
-     * render the document (such as 'UTF-8' or 'ISO-8859-8'. If null is 
+     * render the document (such as 'UTF-8' or 'ISO-8859-8'). If null is
      * given, the node will be removed from the head body. 
      * 
      * @return HeadNode The method will return the instance at which the method 
@@ -983,7 +983,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setPageTitle($title) : HeadNode {
+    public function setPageTitle(string $title = null) : HeadNode {
         if ($title === null && $this->hasChild($this->titleNode)) {
             $this->removeChild($this->titleNode);
             $this->titleNode->children()->get(0)->setText('');
@@ -1013,12 +1013,11 @@ class HeadNode extends HTMLNode {
      * order to set. If empty string is given, 'title' node will be omitted from the 
      * body of the 'head' tag.
      * 
-     * @return HeadNode he method will return the instance at which the method 
-     * is called on.
+     * @return HeadNode The method will return the instance at which the method is called on.
      * 
      * @deprecated since version 1.1.7
      */
-    public function setTitle(string $title) : HTMLNode {
+    public function setTitle(string $title) : HeadNode {
         if (strlen($title) == 0) {
             return $this->setPageTitle(null);
         }

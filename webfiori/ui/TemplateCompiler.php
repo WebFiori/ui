@@ -70,7 +70,7 @@ class TemplateCompiler {
      * an array that contains an objects of type 'HTMLNode' is returned. If the 
      * given code has one top level node, an object of type 'HTMLNode' is returned. 
      * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
+     * is a subclass of the class 'HTMLNode'.
      */
     public function compile(array $varsToPass = []) {
         if ($this->getType() == 'php') {
@@ -104,7 +104,7 @@ class TemplateCompiler {
      * an array that contains an objects of type 'HTMLNode' is returned. If the 
      * given code has one top level node, an object of type 'HTMLNode' is returned. 
      * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
+     * is a subclass of the class 'HTMLNode'.
      * 
      * @since 1.7.4
      */
@@ -172,7 +172,7 @@ class TemplateCompiler {
      * an array that contains an objects of type 'HTMLNode' is returned. If the 
      * given code has one top level node, an object of type 'HTMLNode' is returned. 
      * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
+     * is a subclass of the class 'HTMLNode'.
      */
     public function getCompiled() {
         return $this->compiled;
@@ -317,7 +317,7 @@ class TemplateCompiler {
                             $nodesNames[$nodesNamesIndex][0] = trim(substr($nodesNames[$nodesNamesIndex][0], strlen($nodeName)));
 
                             if ($nodeName[0] == '/') {
-                                //If the node name has /, then its a closing tag (e.g. /div)
+                                //If the node name has /, then it's a closing tag (e.g. /div)
                                 $nodesNames[$nodesNamesIndex]['is-closing-tag'] = true;
                             } else {
                                 //Void tag such as <br/>
@@ -550,7 +550,7 @@ class TemplateCompiler {
         return $htmlNode;
     }
     private static function getTextActualValue($hashedValsArr, $hashVal) {
-        //If text, it means that we have a text node or a comment node with a quted text.
+        //If it is text, it means that we have a text node or a comment node with a quted text.
         foreach ($hashedValsArr as $hash => $val) {
             $hashVal = str_replace($hash, $val, $hashVal);
         }
@@ -588,7 +588,7 @@ class TemplateCompiler {
             } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQouted && !$inDoubleQueted) {
                 //Empty attribute (attribute without a value) such as 
                 // <div itemscope ></div>. 'itemscope' is empty attribute.
-                // This also could be attribute without queted value 
+                // This also could be an attribute without queted value
                 // (e.g. <input type=text>
                 $str = trim($str);
 

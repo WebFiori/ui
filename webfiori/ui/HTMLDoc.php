@@ -294,7 +294,7 @@ class HTMLDoc {
     /**
      * Removes a child element given its ID.
      * 
-     * The element will be removed only if it is exist and not one of the
+     * The element will be removed only if it is existed and not one of the
      * following elements: 'body' and, 'head'.
      * 
      * @param string $id The value of the attribute 'id' of the element.
@@ -318,9 +318,9 @@ class HTMLDoc {
      * 
      * @param string $path The location where the content will be written to 
      * (e.g. 'C:\user\html\pages'). 
-     * must be non empty string.
+     * must be non-empty string.
      * 
-     * @param string $fileName The name of the file (such as 'index'). Must be non empty string.
+     * @param string $fileName The name of the file (such as 'index'). Must be non-empty string.
      * 
      * @param bool $wellFormatted If set to true, The generated file will be 
      * well formatted (readable by humans).

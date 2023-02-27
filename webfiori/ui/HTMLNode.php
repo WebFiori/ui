@@ -21,13 +21,12 @@ use webfiori\ui\exceptions\TemplateNotFoundException;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.8.5
  */
 class HTMLNode implements Countable, Iterator {
     /**
      * A constant that indicates a node is of type comment.
+     * 
      * @var string
-     * @since 1.8.1
      */
     const COMMENT_NODE = '#COMMENT';
     /**
@@ -61,7 +60,6 @@ class HTMLNode implements Countable, Iterator {
      * </li>
      * <ul>
      * @var array
-     * @since 1.5
      */
     const DEFAULT_CODE_FORMAT = [
         'tab-spaces' => 4,
@@ -82,13 +80,13 @@ class HTMLNode implements Countable, Iterator {
     /**
      * A constant that indicates a node is of type text.
      * @var string
-     * @since 1.8.1
+     *
      */
     const TEXT_NODE = '#TEXT';
     /**
      * An array that contains all unpaired (or void) HTML tags.
      * An unpaired tag is a tag that does tot require closing tag. Its 
-     * body is empty and does not contain any thing.
+     * body is empty and does not contain anything.
      * This array has the following values:
      * <ul>
      * <li>br</li>
@@ -106,7 +104,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>track</li>
      * <li>area</li>
      * </ul>
-     * @since 1.7.4
+     *
      */
     const VOID_TAGS = [
         'br','hr','meta','img','input','wbr','embed',
@@ -116,27 +114,27 @@ class HTMLNode implements Countable, Iterator {
      * An array of key-value elements. The key acts as the attribute name 
      * and the value acts as the value of the attribute.
      * @var array
-     * @since 1.0 
+     * 
      */
     private $attributes;
     /**
      * A list of child nodes.
      * @var LinkedList
-     * @since 1.0 
+     * 
      */
     private $childrenList;
     /**
      * The Node as viewable HTML code.
-     * @since 1.5
+     *
      */
     private $codeString;
     /**
      * The node as HTML string.
      * @var string
-     * @since 1.3 
+     * 
      */
     private $htmlString;
-    private $isFormated;
+    private $isFormatted;
     /**
      * A global static variable to decide if attributes values
      * will be quoted or not.
@@ -152,25 +150,25 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @var boolean
      * 
-     * @since 1.0 
+     * 
      */
     private $isVoid;
     /**
      * The name of the tag (such as 'div')
      * @var string
-     * @since 1.0 
+     * 
      */
     private $name;
     /**
      * A variable that represents new line character.
      * @var string
-     * @since 1.3 
+     * 
      */
     private $nl;
     /**
      * A stack that is used to build HTML representation of the node.
      * @var Stack 
-     * @since 1.3
+     *
      */
     private $nodesStack;
     private $null;
@@ -178,32 +176,32 @@ class HTMLNode implements Countable, Iterator {
     /**
      * The original text of a text node.
      * @var string 
-     * @since 1.7.6
+     *
      */
     private $originalText;
     /**
      * The parent node of the instance.
      * @var HTMLNode
-     * @since 1.2 
+     * 
      */
     private $parentNode;
     /**
      * A variable to indicate the number of tabs used (e.g. 1 = 4 spaces 2 = 8).
      * @var int
-     * @since 1.3 
+     * 
      */
     private $tabCount;
     /**
      * A string that represents a tab. Usually 4 spaces.
      * @var string 
-     * @since 1.3
+     *
      */
     private $tabSpace;
     /**
      * The text that is located in the node body (applies only if the node is a 
      * text node). 
      * @var string
-     * @since 1.0 
+     * 
      */
     private $text;
     /**
@@ -218,7 +216,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @var boolan
      * 
-     * @since 1.7.6 
+     * 
      */
     private $useOriginalTxt;
     /**
@@ -293,7 +291,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>If the node is not a text node.</li>
      * <li>The node is not a comment node.</li>
      * <li>The node is not a void node.</li>
-     * <li>The node is not it self. (making a node as a child of it self)</li>
+     * <li>The node is not itself. (making a node as a child of it self)</li>
      * </ul>
      * 
      * @param array|bool $attrsOrChain An optional array of attributes which will be set in 
@@ -315,7 +313,7 @@ class HTMLNode implements Countable, Iterator {
      * @throws InvalidNodeNameException The method will throw this exception if 
      * node name is given and the name is not valid.
      * 
-     * @since 1.0
+     *
      */
     public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) {
         if (gettype($node) == 'string') {
@@ -329,7 +327,7 @@ class HTMLNode implements Countable, Iterator {
             && ($toAdd instanceof HTMLNode) && $toAdd !== $this) {
             if ($toAdd->getNodeName() == '#TEXT') {
                 //If trying to add text node and last child is a text node,
-                //Add the text to the last node instead of addig new instance.
+                //Add the text to the last node instead of adding new instance.
                 $lastChild = $this->getLastChild();
 
                 if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
@@ -366,7 +364,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the same instance at which the 
      * method is called on.
      * 
-     * @since 1.6
+     *
      */
     public function addCommentNode(string $text) {
         if (!$this->isVoidNode()) {
@@ -390,7 +388,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the same instance.
      * 
-     * @since 1.6
+     *
      */
     public function addTextNode(string $text, bool $escHtmlEntities = true) {
         if (!$this->isVoidNode()) {
@@ -412,7 +410,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function anchor($body = null, $attributes = []) {
         $href = null;
@@ -440,7 +438,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the same instance.
      * 
-     * @since 1.7.9
+     *
      */
     public function applyClass(string $cName, bool $override = true) {
         foreach ($this as $child) {
@@ -475,7 +473,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string The node as readable HTML code wrapped inside 'pre' element.
      * 
-     * @since 1.4
+     *
      */
     public function asCode(array $formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
         $formattingOptionsV = $this->validateFormatingOptions($formattingOptions);
@@ -522,7 +520,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function br() : HTMLNode {
         $this->addChild(new Br());
@@ -548,7 +546,7 @@ class HTMLNode implements Countable, Iterator {
      * the child. The arrays can have same structure.</li>
      * </ul>
      * 
-     * @since 1.8.5
+     *
      */
     public function build(array $arrOfChildren) {
         foreach ($arrOfChildren as $child) {
@@ -581,7 +579,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      * 
      */
     public function cell($cellBody = null, string $cellType = 'td', array $attributes = []) {
@@ -599,7 +597,7 @@ class HTMLNode implements Countable, Iterator {
      * @return LinkedList|null A linked list of all child nodes. if the 
      * given node is a text node, the method will return null.
      * 
-     * @since 1.0
+     *
      */
     public function children() {
         return $this->childrenList;
@@ -612,7 +610,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return int The number of child nodes attached to the node.
      * 
-     * @since 1.4
+     *
      */
     public function childrenCount() : int {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
@@ -628,7 +626,7 @@ class HTMLNode implements Countable, Iterator {
      * if the node is a text node, a comment node or a void node the returned
      *  value will be an empty string.
      * 
-     * @since 1.0
+     *
      */
     public function close() : string {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
@@ -638,11 +636,11 @@ class HTMLNode implements Countable, Iterator {
         return '';
     }
     /**
-     * Adds an object of type 'CodeSnippit' as a child element.
+     * Adds an object of type 'CodeSnippet' as a child element.
      * 
-     * @param string $title The title of the code snippit such as 'PHP Code'.
+     * @param string $title The title of the code snippet such as 'PHP Code'.
      * 
-     * @param string $code The code that will be displayed by the snippit. It 
+     * @param string $code The code that will be displayed by the snippet. It
      * is recommended that the code enclosed between double quotation marks.
      * 
      * @param array $attributes An optional array of attributes to set for the 
@@ -652,10 +650,10 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance at which the method is 
      * called on.
      * 
-     * @since 1.8.3
+     *
      */
-    public function codeSnippit(string $title, $code, array $attributes = []) {
-        $snippit = new CodeSnippet($title, $code);
+    public function codeSnippet(string $title, $code, array $attributes = []) {
+        $snippet = new CodeSnippet($title, $code);
 
         if (isset($attributes['class'])) {
             unset($attributes['class']);
@@ -664,8 +662,8 @@ class HTMLNode implements Countable, Iterator {
         if (isset($attributes['style'])) {
             unset($attributes['style']);
         }
-        $snippit->setAttributes($attributes);
-        $this->addChild($snippit);
+        $snippet->setAttributes($attributes);
+        $this->addChild($snippet);
 
         return $this;
     }
@@ -680,7 +678,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function comment(string $txt) {
         return $this->addCommentNode($txt);
@@ -696,7 +694,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $path The location of the file that 
      * will have the HTML component.
      * 
-     * @param array $slotsVals An array that contains slots values. A slot in 
+     * @param array $slotsValues An array that contains slots values. A slot in
      * the component is a string which is enclosed between two curly braces (such as {{name}}). 
      * This array must be associative. The indices of the array are slots names 
      * and values of the indices are slots values. The values of the slots can be 
@@ -707,10 +705,10 @@ class HTMLNode implements Countable, Iterator {
      * @throws TemplateNotFoundException If the file that the component is 
      * loaded from does not exist.
      * 
-     * @since 1.8.4
+     *
      */
-    public function component(string $path, array $slotsVals) {
-        $loaded = self::fromFile($path, $slotsVals);
+    public function component(string $path, array $slotsValues) {
+        $loaded = self::fromFile($path, $slotsValues);
 
         if (gettype($loaded) == 'array') {
             foreach ($loaded as $node) {
@@ -728,7 +726,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return int The number of child nodes attached to the node.
      * 
-     * @since 1.7.9
+     *
      */
     public function count() : int {
         return $this->childrenCount();
@@ -741,7 +739,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode An object of type HTMLNode.
      * 
-     * @since 1.5
+     *
      */
     public static function createComment(string $text) : HTMLNode {
         $comment = new HTMLNode(self::COMMENT_NODE);
@@ -762,7 +760,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode An object of type HTMLNode.
      * 
-     * @since 1.5
+     *
      */
     public static function createTextNode(string $nodeText, bool $escHtmlEntities = true) : HTMLNode {
         $text = new HTMLNode(self::TEXT_NODE);
@@ -780,7 +778,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The element that the iterator is currently is pointing to.
      * 
-     * @since 1.7.9
+     *
      */
     public function current() {
         return $this->childrenList->current();
@@ -794,7 +792,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance which was added to 
      * the body of the instance that the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function div(array $attributes = []) : HTMLNode {
         return $this->addChild(new HTMLNode(), $attributes);
@@ -808,7 +806,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance which was added to 
      * the body of the instance that the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function form(array $attributes = []) : HTMLNode {
         return $this->addChild(new HTMLNode('form'), $attributes);
@@ -819,7 +817,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $absPath The absolute path to HTML document. This can
      * also be the path to PHP template file.
      * 
-     * @param array $slotsOrVars An associative array that have solts values of
+     * @param array $slotsOrVars An associative array that have slots values of
      * the template. This also can be the values that will be passed to PHP
      * template.
      * 
@@ -829,7 +827,7 @@ class HTMLNode implements Countable, Iterator {
      * an array that contains an objects of type 'HTMLNode' is returned. If the 
      * given code has one top level node, an object of type 'HTMLNode' is returned. 
      * Note that it is possible that the method will return an instance which 
-     * is a sub-class of the class 'HTMLNode'.
+     * is a subclass of the class 'HTMLNode'.
      */
     public static function fromFile(string $absPath, array $slotsOrVars) {
         $compiler = new TemplateCompiler($absPath, $slotsOrVars);
@@ -850,7 +848,7 @@ class HTMLNode implements Countable, Iterator {
      * if found. If no such attribute or the value of the attribute is set 
      * to null, the method will return null.
      * 
-     * @since 1.7.7
+     *
      */
     public function getAttribute(string $attrName) {
         if ($this->hasAttribute($attrName)) {
@@ -866,7 +864,7 @@ class HTMLNode implements Countable, Iterator {
      * name and the value will act as the value of the attribute. If the node 
      * is a text node, the method will return null.
      * 
-     * @since 1.0 
+     * 
      */
     public function getAttributes() {
         return $this->attributes;
@@ -881,7 +879,7 @@ class HTMLNode implements Countable, Iterator {
      * if found. If no such attribute or the value of the attribute is set 
      * to null, the method will return null.
      * 
-     * @since 1.1
+     *
      */
     public function getAttributeValue(string $attrName) {
         return $this->getAttribute($attrName);
@@ -896,7 +894,7 @@ class HTMLNode implements Countable, Iterator {
      * an object of type 'HTMLNode'. If no element was found, the method will 
      * return null.
      * 
-     * @since 1.7.8
+     *
      */
     public function getChild(int $index) {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
@@ -917,7 +915,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode|null The method will return an object of type HTMLNode 
      * if a node is found. Other than that, the method will return null.
      * 
-     * @since 1.2
+     *
      */
     public function getChildByAttributeValue(string $attrName, string $attrVal) {
         if (!$this->isTextNode() && !$this->isComment()) {
@@ -938,7 +936,7 @@ class HTMLNode implements Countable, Iterator {
      * @return null|HTMLNode The method returns an object of type HTMLNode 
      * if found. If no node has the given ID, the method will return null.
      * 
-     * @since 1.2
+     *
      */
     public function getChildByID(string $val) {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && strlen($val) != 0) {
@@ -957,7 +955,7 @@ class HTMLNode implements Countable, Iterator {
      * @return LinkedList A linked list that contains all child nodes which has the given 
      * tag name.
      * 
-     * @since 1.2
+     *
      */
     public function getChildrenByTag(string $val) {
         $valToSearch = strtoupper($val);
@@ -979,7 +977,7 @@ class HTMLNode implements Countable, Iterator {
      * @return string|null If the attribute 'class' is set, the method will return 
      * its value. If not set, the method will return null.
      * 
-     * @since 1.7.9
+     *
      */
     public function getClassName() {
         return $this->getAttribute('class');
@@ -990,7 +988,7 @@ class HTMLNode implements Countable, Iterator {
      * @return string The node as HTML comment. if the node is not a comment, 
      * the method will return empty string.
      * 
-     * @since 1.5
+     *
      */
     public function getComment() : string {
         if ($this->isComment()) {
@@ -1005,7 +1003,7 @@ class HTMLNode implements Countable, Iterator {
      * @return string|null If the attribute 'id' is set, the method will return 
      * its value. If not set, the method will return null.
      * 
-     * @since 1.7.9
+     *
      */
     public function getID() {
         return $this->getAttribute('id');
@@ -1016,7 +1014,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode|null The child will be returned as an object of type 'HTMLNode'. 
      * If the node has no children, the method will return null.
      * 
-     * @since 1.8.2
+     *
      */
     public function getLastChild() {
         if ($this->childrenCount() >= 1) {
@@ -1030,8 +1028,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string|null If the attribute 'name' is set, the method will return 
      * its value. If not set, the method will return null.
-     * 
-     * @since 1.7.9
+     *
      */
     public function getName() {
         return $this->getAttribute('name');
@@ -1042,8 +1039,7 @@ class HTMLNode implements Countable, Iterator {
      * @return string The name of the node. If the node is a text node, the 
      * method will return the value '#TEXT'. If the node is a comment node, the 
      * method will return the value '#COMMENT'.
-     * 
-     * @since 1.0
+     *
      */
     public function getNodeName() : string {
         return $this->name;
@@ -1063,8 +1059,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode|null An object of type HTMLNode if the node 
      * has a parent. If the node has no parent, the method will return null.
-     * 
-     * @since 1.2
+     *
      */
     public function getParent() {
         return $this->parentNode;
@@ -1077,8 +1072,7 @@ class HTMLNode implements Countable, Iterator {
      * @return array An associative array of CSS declarations. The keys of the array will 
      * be the names of CSS Properties and the values will be the values of 
      * the attributes (e.g. 'color'=>'white').
-     * 
-     * @since 1.0
+     *
      */
     public function getStyle() : array {
         $styleStr = $this->getAttributeValue('style');
@@ -1102,8 +1096,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string|null If the attribute 'tabindex' is set, the method will return 
      * its value. If not set, the method will return null.
-     * 
-     * @since 1.7.9
+     *
      */
     public function getTabIndex() {
         return $this->getAttribute('tabindex');
@@ -1116,8 +1109,7 @@ class HTMLNode implements Countable, Iterator {
      * the method will return empty string. Note that if the node represents 
      * a text node and HTML entities where escaped while setting its text, the 
      * returned value will have HTML entities escaped.
-     * 
-     * @since 1.0
+     *
      */
     public function getText() : string {
         if ($this->isComment() || $this->isTextNode()) {
@@ -1135,7 +1127,7 @@ class HTMLNode implements Countable, Iterator {
      * the method will return the text in the body of the node. If not, 
      * the method will return empty string.
      * 
-     * @since 1.7.5
+     *
      */
     public function getTextUnescaped() : string {
         if ($this->isTextNode()) {
@@ -1153,8 +1145,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string|null If the attribute 'title' is set, the method will return 
      * its value. If not set, the method will return null.
-     * 
-     * @since 1.7.9
+     *
      */
     public function getTitle() {
         return $this->getAttribute('title');
@@ -1164,8 +1155,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string|null If the attribute 'dir' is set, the method will return 
      * its value. If not set, the method will return null.
-     * 
-     * @since 1.7.9
+     *
      */
     public function getWritingDir() {
         return $this->getAttribute('dir');
@@ -1176,11 +1166,10 @@ class HTMLNode implements Countable, Iterator {
      * Note that if the node is a text node or a comment node, it will 
      * always return false.
      * 
-     * @param string $attrName The name of the attribute (case sensitive).
+     * @param string $attrName The name of the attribute (case-sensitive).
      * 
      * @return bool true if the attribute is set.
-     * 
-     * @since 1.1
+     *
      */
     public function hasAttribute($attrName) : bool {
         if (!$this->isTextNode() && !$this->isComment()) {
@@ -1197,10 +1186,9 @@ class HTMLNode implements Countable, Iterator {
      * @param HTMLNode $node The node that will be checked.
      * 
      * @return bool true is returned if the node is a child 
-     * of the instance. false if not. Also if the current instance is a 
+     * of the instance. false if not. Also, if the current instance is a
      * text node or a comment node, the function will always return false.
-     * 
-     * @since 1.2
+     *
      */
     public function hasChild($node) : bool {
         if (!$this->isTextNode() && !$this->isComment()) {
@@ -1215,7 +1203,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function hr() : HTMLNode {
         return $this->addChild(new HTMLNode('hr'), true);
@@ -1230,7 +1218,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance which was added to 
      * the body of the instance that the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function img(array $attributes = []) : HTMLNode {
         $img = new HTMLNode('img', $attributes);
@@ -1254,7 +1242,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance which was added to 
      * the body of the instance that the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function input(string $inputType = 'text', array $attributes = []) : HTMLNode {
         $input = new Input($inputType);
@@ -1276,7 +1264,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>If the node is not a text node.</li>
      * <li>The node is not a comment node.</li>
      * <li>The note is not a void node.</li>
-     * <li>The note is not it self. (making a node as a child of it self)</li>
+     * <li>The note is not itself. (making a node as a child of it self)</li>
      * </ul>
      * 
      * @param int $position The position at which the element will be added. 
@@ -1284,8 +1272,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.7.9
+     *
      */
     public function insert(HTMLNode $el, int $position) : HTMLNode {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode() && $el !== $this) {
@@ -1303,8 +1290,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return bool The method will return true if the given 
      * node is a comment.
-     * 
-     * @since 1.5
+     *
      */
     public function isComment() : bool {
         return $this->getNodeName() == self::COMMENT_NODE;
@@ -1314,13 +1300,12 @@ class HTMLNode implements Countable, Iterator {
      * 
      * The property is used to control how the HTML code that will be generated 
      * will look like. If set to true, the code will be user-readable. If set to 
-     * false, it will be compact and the load size will be come less since no 
+     * false, it will be compact and the load size will become less since no
      * new line characters or spaces will be added in the code.
      * 
      * @return bool|null If the property is set, the method will return 
      * its value. If not set, the method will return null.
-     * 
-     * @since 1.7.2
+     *
      */
     public function isFormatted() : bool {
         return $this->isFormated;
@@ -1336,7 +1321,7 @@ class HTMLNode implements Countable, Iterator {
      * @return bool The method will return true if all attributes will be 
      * quoted. False if not.
      * 
-     * @since 1.8.5
+     *
      */
     public static function isQuotedAttribute() : bool {
         return self::$IsQuoted;
@@ -1345,8 +1330,7 @@ class HTMLNode implements Countable, Iterator {
      * Checks if the node is a text node or not.
      * 
      * @return bool true if the node is a text node. false otherwise.
-     * 
-     * @since 1.0
+     *
      */
     public function isTextNode() : bool {
         return $this->getNodeName() == self::TEXT_NODE;
@@ -1375,8 +1359,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return bool True if original text will be used in the body of the 
      * text node. False if not. Default is false.
-     * 
-     * @since 1.7.6
+     *
      */
     public function isUseOriginalText() : bool {
         return $this->useOriginalTxt;
@@ -1402,8 +1385,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode An object of type 'HTMLNode' or null if the node 
      * has no children is empty or the iterator is finished.
-     * 
-     * @since 1.4.3 
+     *
      */
     public function key() {
         $this->childrenList->key()->data();
@@ -1422,7 +1404,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return Label The method will return the newly added label.
      * 
-     * @since 1.8.3
+     *
      */
     public function label($body, array $attributes = []) : HTMLNode {
         $label = new Label($body);
@@ -1445,7 +1427,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function li($itemBody, array $attributes = []) : HTMLNode {
         if ($this->getNodeName() == 'ul' || $this->getNodeName() == 'ol') {
@@ -1472,8 +1454,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The next element in the iterator. If the iterator is 
      * finished or the list is empty, the method will return null.
-     * 
-     * @since 1.4.3 
+     *
      */
     public function next() {
         $this->childrenList->next();
@@ -1496,7 +1477,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will always return the same instance at 
      * which the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function ol(array $items = [], array $attributes = []) {
         if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'ol') {
@@ -1512,8 +1493,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string A string that represents the opening part of the node. 
      * if the node is a text node or a comment node, the returned value will be an empty string.
-     * 
-     * @since 1.0
+     *
      */
     public function open() : string {
         $retVal = '';
@@ -1558,7 +1538,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string|HTMLNode $body An optional text to add to the body of the paragraph. 
      * This also can be an object of type 'HTMLNode'. Note that if HTMLNode 
-     * object is given, its name must be part of the array PNode::ALLOWED_CHILDS or 
+     * object is given, its name must be part of the array Paragraph::ALLOWED_CHILDREN or
      * the method will not add it.
      * 
      * @param type $attributes
@@ -1573,7 +1553,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance at which the method 
      * is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function paragraph($body = null, array $attributes = [], bool $escEntities = true) : HTMLNode {
         $paragraph = new Paragraph();
@@ -1594,8 +1574,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * 
      * method is called on.
-     * 
-     * @since 1.0
+     *
      */
     public function removeAllChildNodes() : HTMLNode {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
@@ -1611,8 +1590,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.0
+     *
      */
     public function removeAttribute(string $name) : HTMLNode {
         if (!$this->isTextNode() && !$this->isComment()) {
@@ -1635,7 +1613,7 @@ class HTMLNode implements Countable, Iterator {
      * This method will simply re-initialize the array that holds all 
      * the attributes.
      * 
-     * @since 1.8.4
+     *
      */
     public function removeAttributes() {
         $this->attributes = [];
@@ -1649,8 +1627,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
-     * 
-     * @since 1.2
+     *
      */
     public function removeChild($nodeInstOrId) {
         if (!$this->isVoidNode()) {
@@ -1674,7 +1651,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode|null If a node is removed, the method will return it as 
      * an object of type 'HTMLNode'. Other than that, the method will return null.
      * 
-     * @since 1.8.4
+     *
      */
     public function removeLastChild() {
         return $this->removeChild($this->getLastChild());
@@ -1687,8 +1664,7 @@ class HTMLNode implements Countable, Iterator {
      * @param HTMLNode $replacement The replacement node.
      * 
      * @return bool true is returned if the node replaced. false if not.
-     * 
-     * @since 1.2
+     *
      */
     public function replaceChild(HTMLNode $oldNode, HTMLNode $replacement) {
         if (!$this->isTextNode() && !$this->isComment() && $this->hasChild($oldNode)) {
@@ -1704,8 +1680,7 @@ class HTMLNode implements Countable, Iterator {
      * This method is only used if the list is used in a 'foreach' loop. 
      * The developer should not call it manually unless he knows what he 
      * is doing.
-     * 
-     * @since 1.4.3 
+     *
      */
     public function rewind() {
         $this->childrenList->rewind();
@@ -1730,7 +1705,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return an object that represents the added
      * section.
      * 
-     * @since 1.8.3
+     *
      */
     public function section($title, int $headingLvl = 1, array $attributes = []) : HTMLNode {
         $hAsInt = intval($headingLvl);
@@ -1750,7 +1725,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets a value for an attribute.
      * 
-     * @param string $name The name of the attribute (case sensitive). If the attribute does not 
+     * @param string $name The name of the attribute (case-sensitive). If the attribute does not
      * exist, it will be created. If already exists, its value will be updated. 
      * Note that if the node type is text node, the attribute will never be created.
      * 
@@ -1760,8 +1735,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.0
+     *
      */
     public function setAttribute(string $name, $val = null) : HTMLNode {
         $trimmedName = trim($name);
@@ -1806,15 +1780,13 @@ class HTMLNode implements Countable, Iterator {
      * Sets multiple attributes at once.
      * 
      * @param array $attrsArr An associative array that has attributes names 
-     * and values. The indices will represents 
-     * attributes names and the value of each index represents the values of 
+     * and values. The indices will represent attributes names and the value of each index represents the values of
      * the attributes. If the given array has elements without keys, they 
      * will be added without values.
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.7.9
+     *
      */
     public function setAttributes(array $attrsArr) : HTMLNode {
         foreach ($attrsArr as $attr => $val) {
@@ -1839,8 +1811,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.2
+     *
      */
     public function setClassName(string $val, $override = true) : HTMLNode {
         if ($override === true) {
@@ -1858,8 +1829,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
-     * 
-     * @since 1.2
+     *
      */
     public function setID(string $idVal) : HTMLNode {
         return $this->setAttribute('id',$idVal);
@@ -1870,7 +1840,7 @@ class HTMLNode implements Countable, Iterator {
      * @param bool $bool true to make the document that will be generated 
      * from the node user-readable. false to make it compact.
      * 
-     * @since 1.7.2
+     *
      */
     public function setIsFormatted($bool) {
         $this->isFormated = $bool === true;
@@ -1883,7 +1853,7 @@ class HTMLNode implements Countable, Iterator {
      * @param bool $bool True to make the node render quoted attributes. 
      * False to not.
      * 
-     * @since 1.8.5
+     *
      */
     public static function setIsQuotedAttribute(bool $bool) {
         self::$IsQuoted = $bool;
@@ -1893,12 +1863,12 @@ class HTMLNode implements Countable, Iterator {
      * 
      * A void node is a node which does not require closing tag. The developer 
      * does not have to set the node type to void or not since this is done 
-     * automatically. For custom made elements, this might be required.
+     * automatically. For custom-made elements, this might be required.
      * 
      * @param bool $bool If the developer would like to make the 
      * node a void node, then he must pass true.
      * 
-     * @since 1.8.4
+     *
      */
     public function setIsVoidNode(bool $bool) {
         $this->isVoid = $bool;
@@ -1911,7 +1881,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.2
+     *
      */
     public function setName(string $val) : HTMLNode {
         return $this->setAttribute('name',$val);
@@ -1922,14 +1892,14 @@ class HTMLNode implements Countable, Iterator {
      * If the node type is a text or a comment, 
      * developer can only switch between the two types. If the node type is of 
      * another type and has child nodes, type will be changed only if the given 
-     * node name is not a void node. If the node is a void node and it has no 
+     * node name is not a void node. If the node is a void node, and it has no
      * children, it will switch without problems.
      * 
      * @param string $name The new name.
      * 
      * @return boolean The method will return true if the type is updated.
      * 
-     * @since 1.7
+     *
      */
     public function setNodeName(string $name) : bool {
         if ($this->isTextNode() || $this->isComment()) {
@@ -1979,7 +1949,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.7.1
+     *
      */
     public function setStyle(array $cssStyles, bool $override = false) : HTMLNode {
         $ovrride = $override === true;
@@ -2015,7 +1985,7 @@ class HTMLNode implements Countable, Iterator {
      * Sets the value of the attribute 'tabindex' of the node.
      * 
      * @param int $val The value to set. From MDN: An integer attribute indicating if 
-     * the element can take input focus. It can takes several values: 
+     * the element can take input focus. It can take several values:
      * <ul>
      * <li>A negative value means that the element should be focusable, but 
      * should not be reachable via sequential keyboard navigation.</li>
@@ -2031,7 +2001,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.2
+     *
      */
     public function setTabIndex(int $val) : HTMLNode {
         return $this->setAttribute('tabindex', $val);
@@ -2053,7 +2023,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.0
+     *
      */
     public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         if ($this->isTextNode() || $this->isComment()) {
@@ -2080,14 +2050,13 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.2
+     *
      */
     public function setTitle(string $val) : HTMLNode {
         return $this->setAttribute('title', $val);
     }
     /**
-     * Sets the value of the property which is used to tell if a void node
-     * will have forward slash or not added to its tag.
+     * Sets the value of the property which is used to tell if a void node will have forward-slash or not added to its tag.
      * 
      * This method is only applicable to void nodes. Using it in non-void
      * nodes will have no effect. For XML, the value of the attribute
@@ -2111,7 +2080,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param bool $boolean True or false.
      * 
-     * @since 1.7.6
+     *
      */
     public function setUseOriginal(bool $boolean) {
         if ($this->isTextNode()) {
@@ -2126,7 +2095,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.2
+     *
      */
     public function setWritingDir(string $val) : HTMLNode {
         $lowerVal = strtolower(trim($val));
@@ -2145,7 +2114,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return HTMLNode The method will return the newly added instance.
      * 
-     * @since 1.8.3
+     *
      */
     public function table(array $attributes = []) : HTMLNode {
         $node = new HTMLNode('table');
@@ -2168,7 +2137,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function text(string $txt, bool $escEntities = true) : HTMLNode {
         return $this->addTextNode($txt, $escEntities);
@@ -2185,7 +2154,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return string HTML string that represents the node.
      * 
-     * @since 1.0
+     *
      */
     public function toHTML(bool $formatted = false, int $initTab = 0) {
         if (!$formatted) {
@@ -2251,7 +2220,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the same instance at which the method is 
      * called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function tr(array $data = [], array $attributes = [], bool $headerRow = false) : HTMLNode {
         if ($this->getNodeName() == 'tbody' || $this->getNodeName() == 'table') {
@@ -2280,7 +2249,7 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will always return the same instance at 
      * which the method is called on.
      * 
-     * @since 1.8.3
+     *
      */
     public function ul(array $items = [], array $attributes = []) : HTMLNode {
         if ($this->getNodeName() != 'ul' && $this->getNodeName() != 'ol') {
@@ -2302,7 +2271,7 @@ class HTMLNode implements Countable, Iterator {
      * @return bool If there is a next element, the method 
      * will return true. False otherwise.
      * 
-     * @since 1.7.9
+     *
      */
     public function valid() : bool {
         return $this->childrenList->valid();
@@ -2310,7 +2279,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Increase tab size by 1.
      * 
-     * @since 1.0
+     *
      */
     private function addTab() {
         $this->tabCount += 1;
@@ -2319,7 +2288,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param array $FO Formatting options.
      * @return string
-     * @since 1.5
+     *
      */
     private function closeAsCode(array $FO) {
         if ($FO['with-colors'] === true && !$this->isTextNode() && !$this->isComment()) {
@@ -2400,7 +2369,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Returns the currently used tag space. 
      * @return string
-     * @since 1.0
+     *
      */
     private function getTab() {
         if ($this->tabCount == 0) {
@@ -2438,7 +2407,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param array $FO Formatting options.
      * @return string
-     * @since 1.5
+     *
      */
     private function openAsCode(array $FO) {
         $retVal = '';
@@ -2491,7 +2460,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param array $FO Formatting options.
      * 
-     * @since 1.5
+     *
      */
     private function popNodeAsCode(array $FO) {
         $node = $this->nodesStack->pop();
@@ -2574,7 +2543,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param array $FO Formatting options.
      * 
-     * @since 1.5
+     *
      */
     private function pushNodeAsCode(HTMLNode $node, array $FO) {
         if ($node->isTextNode()) {
@@ -2617,7 +2586,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * If the tab size is 0, it will not reduce it more.
      * 
-     * @since 1.0
+     *
      */
     private function reduceTab() {
         if ($this->tabCount > 0) {
@@ -2637,7 +2606,7 @@ class HTMLNode implements Countable, Iterator {
      * @param HTMLNode|null $node If non-null value is provided, then the parent
      * is set. If null is provided, it is unset.
      * 
-     * @since 1.2
+     *
      */
     private function setParentHelper(HTMLNode $node = null) {
         $this->parentNode = $node;
@@ -2657,7 +2626,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>Can only have the following characters in its name: [A-Z], [a-z], 
      * [0-9], ':', '@' and '-'.</li>
      * <ul>
-     * @since 1.7.4
+     *
      */
     private function validateAttrNameHelper($name) {
         $nameLen = strlen($name);
@@ -2695,7 +2664,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return array An array of formatting options
      * 
-     * @since 1.5
+     *
      */
     private function validateFormatingOptions($FO) {
         $defaultFormat = self::DEFAULT_CODE_FORMAT;
@@ -2751,7 +2720,7 @@ class HTMLNode implements Countable, Iterator {
      * <li>Can only have the following characters in its name: [A-Z], [a-z], 
      * [0-9], ':', '.' and '-'.</li>
      * <ul>
-     * @since 1.7.4
+     *
      */
     private function validateNodeName($name) {
         $len = strlen($name);
@@ -2785,7 +2754,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return array
      * 
-     * @since 1.7.7
+     *
      */
     private function validateStyleAttribute(string $style) : array {
         $vals = explode(';', $style);

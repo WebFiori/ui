@@ -11,20 +11,20 @@
 namespace webfiori\ui;
 
 /**
- * A class that can be used to display code snippits in good looking way.
+ * A class that can be used to display code snippets in good-looking way.
  * 
  * The class has a set of nodes which defines the following attributes of a 
  * code block:
  * <ul>
- * <li>A title for the code snippit.</li>
+ * <li>A title for the code snippet.</li>
  * <li>Line numbers.</li>
  * <li>The code it self.</li>
  * </ul>
- * The developer can use the following CSS selectors (class selector) to customize the snippit 
+ * The developer can use the following CSS selectors (class selector) to customize the snippet 
  * using CSS:
  * <ul>
- * <li>code-snippit: The container that contains all other elements.</li>
- * <li>snippit-title: Can be used to customize the look and feel of snippit title.</li>
+ * <li>code-snippet: The container that contains all other elements.</li>
+ * <li>snippet-title: Can be used to customize the look and feel of snippet title.</li>
  * <li>line-numbers: A container that contains a set of span elements which has 
  * line numbers.</li>
  * <li>line-number: A single span element that contains line number.</li>
@@ -83,14 +83,14 @@ class CodeSnippet extends HTMLNode {
     /**
      * Creates new instance of the class.
      * 
-     * @param string $title The title of the snippit. This will appear at the top 
+     * @param string $title The title of the snippet. This will appear at the top 
      * of the element. It can be something like 'PHP Code' or 'Java Code'.
      * 
-     * @param string $code The code that will be displayed by the snippit.
+     * @param string $code The code that will be displayed by the snippet.
      * 
      * @since 1.0
      */
-    public function __construct($title = 'Code Snippit',string $code = null) {
+    public function __construct(string $title = 'Code Snippet',string $code = null) {
         parent::__construct();
         $this->originalCode = '';
         $this->codeStrNode = HTMLNode::createTextNode('');
@@ -116,7 +116,7 @@ class CodeSnippet extends HTMLNode {
         );
         $this->titleNode = new Paragraph();
         $this->titleNode->addText('Code');
-        $this->titleNode->setClassName('snippit-title');
+        $this->titleNode->setClassName('snippet-title');
         $this->titleNode->setStyle(
             [
                 'padding' => '0',
@@ -146,7 +146,7 @@ class CodeSnippet extends HTMLNode {
                 'float' => 'left'
             ]   
         );
-        $this->setClassName('code-snippt');
+        $this->setClassName('code-snippet');
         $this->setStyle(
             [
                 'padding-bottom' => '16px',
@@ -167,7 +167,7 @@ class CodeSnippet extends HTMLNode {
         $this->setTitle($title);
     }
     /**
-     * Adds new line of code to the code snippit.
+     * Adds new line of code to the code snippet.
      * 
      * @param string $codeAsTxt The code line. It does not have to include "\n" 
      * character as the method will append it automatically to the string.
@@ -182,9 +182,9 @@ class CodeSnippet extends HTMLNode {
         $this->codeStrNode->setText($oldCode);
     }
     /**
-     * Returns the node that contains the code that will be shown by the snippit.
+     * Returns the node that contains the code that will be shown by the snippet.
      * 
-     * @return HTMLNode The node that contains the code that will be shown by the snippit.
+     * @return HTMLNode The node that contains the code that will be shown by the snippet.
      * 
      * @since 1.0.3
      */
@@ -202,10 +202,10 @@ class CodeSnippet extends HTMLNode {
         return $this->originalCode;
     }
     /**
-     * Returns the original code title as supplied for the method CodeSnippit::setTitle().
+     * Returns the original code title as supplied for the method CodeSnippet::setTitle().
      * 
      * @return string The original code title as supplied for the method 
-     * CodeSnippit::setTitle().
+     * CodeSnippet::setTitle().
      * 
      * @since 1.0.2
      */
@@ -213,9 +213,9 @@ class CodeSnippet extends HTMLNode {
         return $this->titleNode->getOriginalText();
     }
     /**
-     * Returns the title of the code snippit.
+     * Returns the title of the code snippet.
      * 
-     * @return string The title of the code snippit. Note that The title which 
+     * @return string The title of the code snippet. Note that The title which 
      * will be returned by this method will have HTML special characters escaped.
      * 
      * @since 1.0.2
@@ -224,7 +224,7 @@ class CodeSnippet extends HTMLNode {
         return $this->titleNode->getText();
     }
     /**
-     * Sets the code that will be displayed by the snippit block.
+     * Sets the code that will be displayed by the snippet block.
      * 
      * @param string $code The code. Note that to make the code appears in 
      * multi-lines, it must be included between double quotation marks.
@@ -247,13 +247,13 @@ class CodeSnippet extends HTMLNode {
         $this->addLineHelper();
     }
     /**
-     * Sets the title of the snippit.
+     * Sets the title of the snippet.
      * 
      * This can be used to specify the language the code represents (e.g. 
-     * 'Java Code' or 'HTML Code'. The title will appear at the top of the snippit 
+     * 'Java Code' or 'HTML Code'). The title will appear at the top of the snippet
      * block.
      * 
-     * @param string $title The title of the snippit.
+     * @param string $title The title of the snippet.
      * 
      * @since 1.0
      */

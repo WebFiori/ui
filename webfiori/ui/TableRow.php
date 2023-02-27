@@ -69,7 +69,7 @@ class TableRow extends HTMLNode {
     }
     /**
      * Adds new child node to the row.
-     * The node will be added only if its an instance of the class 
+     * The node will be added only if it's an instance of the class
      * 'TableCell'.
      * 
      * @param TableCell|string $node New table cell. This also can be a string 
@@ -88,7 +88,7 @@ class TableRow extends HTMLNode {
      * @return TableCell|TableRow|null If the parameter <code>$useChaining</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. If the given parameter is not 
-     * an instance of 'TableCell' or a string that does not represents a 
+     * an instance of 'TableCell' or a string that does not represent a
      * table cell, the method will return null.
      * 
      * @since 1.0
