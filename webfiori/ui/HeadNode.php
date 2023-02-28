@@ -1017,7 +1017,7 @@ class HeadNode extends HTMLNode {
      * 
      * @deprecated since version 1.1.7
      */
-    public function setTitle(string $title) : HeadNode {
+    public function setTitle(string $title) : HTMLNode {
         if (strlen($title) == 0) {
             return $this->setPageTitle(null);
         }
