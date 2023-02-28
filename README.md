@@ -20,24 +20,24 @@ A set of classes that provide basic web pages creation utilities in addition to 
 </p>
 
 ## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/webfiori/ui .
+This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, [click here](https://webfiori.com/docs/webfiori/ui) .
 
 
 ## Supported PHP Versions
-| Build Status |
-|:-----------:|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.0/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.1/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.2/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.3/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.4/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master"></a>|
-|<a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a><br>|
+|                                                                                       Build Status                                                                                       |
+|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.0/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.1/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.2/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.3/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.4/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
 
 ## Features
 * Ability to create custom HTML UI Elements.
-* Create and modify DOM through PHP.
+* OPP abstraction to create and modify DOM through PHP.
 * Building dynamic HTML templates with PHP.
 * Provides a basic templating engine.
 * Support for creating XML documents.
@@ -123,7 +123,7 @@ Another way to have HTML rendered as object of type HTMLDoc is to create a docum
     </body>
 </html>
 ```
-It is noted that there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the solts with values, we have to load HTML code into PHP. The following code shows how to do it.
+It is noted that there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the slots with values, we have to load HTML code into PHP. The following code shows how to do it.
 ``` php
 $document = HTMLNode::fromFile('my-html-file.html', [
     'page-title' => 'Hello Page',
@@ -155,9 +155,9 @@ The output of the above PHP code will be the following HTML code.
 </html>
 ```
 ### PHP Templates
-Another feature of the library is the support of rendering PHP templates and convert them to objects. This can be useful in seperating HTML templates from actual back-end code. 
+Another feature of the library is the support of rendering PHP templates and convert them to objects. This can be useful in separating HTML templates from actual back-end code. 
 
-Assuming that we have following PHP template that shows a list of posts titles:
+Assuming that we have the following PHP template that shows a list of posts titles:
 
 ``` php
 <div>
@@ -194,7 +194,7 @@ $node = HTMLNode::fromFile('posts-list.php', [
 ```
 
 ## Creating XML Document
-In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The diffrence between HTML and XML is that XML is case sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as its used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
+In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The difference between HTML and XML is that XML is case-sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as It's used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
 
 ``` php
 $xml = new HTMLNode('saml:Assertion', [

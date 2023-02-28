@@ -78,7 +78,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($type = 'text') {
+    public function __construct(string $type = 'text') {
         parent::__construct();
         $lType = strtolower(trim($type));
 

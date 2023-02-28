@@ -356,6 +356,25 @@ class HeadNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddCss05() {
+        $node = new HeadNode();
+        $node->addCSSFiles([
+            'https://example.com/css1?hello=world' => [
+                'reloaded','async' => 'false','data-action', 'revision' => '1.1.1'
+            ],
+            'https://example.com/css1'
+        ]);
+        $this->assertEquals(''
+                .'<head>'
+                .'<title>Default</title>'
+                .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<link rel=stylesheet href="https://example.com/css1?hello=world&cv=1.1.1" reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1">'
+                .'</head>',$node->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testAddJs00() {
         $node = new HeadNode();
         $this->assertEquals(0,$node->getJSNodes()->size());
@@ -473,6 +492,26 @@ class HeadNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddJs06() {
+        $node = new HeadNode();
+        $node->addJSFiles([
+            'https://example.com/js3?hello=world' => ['async','ok' => 'yes', 'revision' => '1.1.1'],
+            'https://example.com/js2'
+        ]);
+
+        $node->setIsQuotedAttribute(true);
+        $this->assertTrue($node->isQuotedAttribute());
+        $this->assertEquals('<head>'
+                .'<title>Default</title>'
+                .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
+                .'<script type="text/javascript" src="https://example.com/js2"></script>'
+                .'</head>',$node->toHTML());
+        $node->setIsQuotedAttribute(false);
+    }
+    /**
+     * @test
+     */
     public function testAddLink00() {
         $node = new HeadNode();
         $node->addLink('extra', 'https://example.com', ['async','data-access' => 'remote','hello']);
@@ -533,6 +572,21 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('Hello',$meta->getAttributeValue('content'));
 
         return $node;
+    }
+    /**
+     * @test
+     */
+    public function testAddMeta03() {
+        $node = new HeadNode();
+        $node->addMetaTags([
+            'description' => 'Page Description.',
+            'hello' => 'World'
+        ]);
+        $this->assertEquals(4,$node->childrenCount());
+        $node->addMeta('description', 'Hello');
+        $this->assertEquals(4,$node->childrenCount());
+        $this->assertEquals('World', $node->getMeta('hello')->getAttribute('content'));
+        $this->assertEquals('Page Description.', $node->getMeta('description')->getAttribute('content'));
     }
     /**
      * @test

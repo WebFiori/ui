@@ -34,7 +34,7 @@ class ListItem extends HTMLNode {
      * Adds a sub list to the body of the list item.
      * 
      * @param array $listItems An array that holds all list items which 
-     * will be in the body of the list. It can contain text items or it can have 
+     * will be in the body of the list. It can contain text items, or it can have
      * objects of type 'ListItem'.
      * 
      * @param string $type The type of the sub list. It can be 'ul' or 'ol'. 
@@ -48,7 +48,7 @@ class ListItem extends HTMLNode {
      * 
      * @since 1.1.1
      */
-    public function addList(array $listItems, $type = 'ul', array $attrs = []) {
+    public function addList(array $listItems, string $type = 'ul', array $attrs = []) {
         $lType = strtolower(trim($type));
 
         if ($lType == 'ol') {

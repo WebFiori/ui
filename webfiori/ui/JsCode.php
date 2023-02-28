@@ -58,6 +58,8 @@ class JsCode extends HTMLNode {
         if ($name != 'type') {
             return parent::setAttribute($name, $val);
         }
+
+        return $this;
     }
     /**
      * A method that does nothing.

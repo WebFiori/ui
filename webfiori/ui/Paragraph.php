@@ -17,7 +17,7 @@ namespace webfiori\ui;
  * @version 1.1
  */
 class Paragraph extends HTMLNode {
-    const ALLOWED_CHILDS = ['a','b','br','abbr','dfn','i','em','span','img',
+    const ALLOWED_CHILDREN = ['a','b','br','abbr','dfn','i','em','span','img',
         'big','small','kbd','samp','code','script'];
     /**
      * Creates new paragraph node.
@@ -48,10 +48,10 @@ class Paragraph extends HTMLNode {
      */
     public function addChild($node, $attrs = [], bool $chainOnParent = true) {
         if ($node instanceof HTMLNode) {
-            if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDS) || $node->isTextNode()) {
+            if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDREN) || $node->isTextNode()) {
                 parent::addChild($node, $attrs);
             }
-        } else if (in_array($node, Paragraph::ALLOWED_CHILDS)) {
+        } else if (in_array($node, Paragraph::ALLOWED_CHILDREN)) {
             $newNode = new HTMLNode($node);
             parent::addChild($newNode);
         }

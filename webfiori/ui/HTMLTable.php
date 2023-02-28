@@ -68,7 +68,7 @@ class HTMLTable extends HTMLNode {
      * 
      * @param array $data The data that will be added. If the array holds more 
      * elements than the number of rows in the table, the extra rows will be 
-     * stripped off. If the array has less items than number of rows, the 
+     * stripped off. If the array has fewer items than number of rows, the
      * method will fill remaining rows with empty cells.
      * 
      * @since 1.0
@@ -88,7 +88,7 @@ class HTMLTable extends HTMLNode {
      * @param TableRow|array $arrOrRowObj This can be an object that represents 
      * the row or an indexed array that contains row data. Note that of the array 
      * has more elements than the number of columns, the extra columns will be 
-     * stripped off. If the array has less elements than number of columns, the 
+     * stripped off. If the array has fewer elements than number of columns, the
      * method will add empty cells for remaining places.
      * 
      * @since 1.0

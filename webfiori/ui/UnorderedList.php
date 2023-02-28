@@ -32,7 +32,7 @@ class UnorderedList extends HTMLList {
      * 
      * @since 1.0
      */
-    public function __construct(array $arrOfItems = [], $escHtmlEntities = true) {
+    public function __construct(array $arrOfItems = [], bool $escHtmlEntities = true) {
         parent::__construct('ul', $arrOfItems, $escHtmlEntities);
     }
 }
