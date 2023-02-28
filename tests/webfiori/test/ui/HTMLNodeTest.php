@@ -558,7 +558,7 @@ class HTMLNodeTest extends TestCase {
         $node->section(new HTMLNode())
                 ->getParent()
                 ->br()
-                ->codeSnippit('PHP Code', "")
+                ->codeSnippet('PHP Code', "")
                 ->text('Random Text')
                 ->paragraph('A paragraph');
         $this->assertEquals(5, $node->count());
