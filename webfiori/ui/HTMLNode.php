@@ -134,7 +134,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      */
     private $htmlString;
-    private $isFormatted;
+    private static $IsFormatted = false;
     /**
      * A global static variable to decide if attributes values
      * will be quoted or not.
@@ -242,7 +242,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function __construct($name = 'div', array $attrs = []) {
         $this->null = null;
-        $this->isFormated = false;
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
@@ -1307,8 +1306,8 @@ class HTMLNode implements Countable, Iterator {
      * its value. If not set, the method will return null.
      *
      */
-    public function isFormatted() : bool {
-        return $this->isFormated;
+    public static function isFormatted() : bool {
+        return self::$IsFormatted;
     }
     /**
      * Checks if instances of the class will render all attributes 
@@ -1842,8 +1841,8 @@ class HTMLNode implements Countable, Iterator {
      * 
      *
      */
-    public function setIsFormatted($bool) {
-        $this->isFormated = $bool === true;
+    public static function setIsFormatted(bool $bool) {
+        self::$IsFormatted = $bool;
     }
     /**
      * Sets the value of the property which is used to tell if all attributes 
@@ -2444,7 +2443,7 @@ class HTMLNode implements Countable, Iterator {
     private function popNode() {
         $node = $this->nodesStack->pop();
 
-        if ($node != null && $node->isFormatted() !== null && $node->isFormatted() === false) {
+        if ($node != null && !self::isFormatted()) {
             $this->htmlString .= $node->close();
         } else {
             $nodeType = $node->getNodeName();
@@ -2481,7 +2480,7 @@ class HTMLNode implements Countable, Iterator {
      */
     private function pushNode(HTMLNode $node) {
         if ($node->isTextNode()) {
-            if (!$node->isFormatted()) {
+            if (!self::isFormatted()) {
                 if ($node->isUseOriginalText()) {
                     $this->htmlString .= $node->getOriginalText();
                 } else {
@@ -2504,7 +2503,7 @@ class HTMLNode implements Countable, Iterator {
             }
         } else {
             if ($node->isComment()) {
-                if (!$node->isFormatted()) {
+                if (!self::isFormatted()) {
                     $this->htmlString .= $node->getComment();
                 } else {
                     $this->htmlString .= $this->getTab().$node->getComment().$this->nl;
@@ -2513,7 +2512,7 @@ class HTMLNode implements Countable, Iterator {
                 $chCount = $node->children()->size();
                 $this->nodesStack->push($node);
 
-                if (!$node->isFormatted()) {
+                if (!self::isFormatted()) {
                     $this->htmlString .= $node->open();
                 } else {
                     $nodeType = $node->getNodeName();
@@ -2527,9 +2526,7 @@ class HTMLNode implements Countable, Iterator {
                 $this->addTab();
 
                 for ($x = 0 ; $x < $chCount ; $x++) {
-                    $nodeAtx = $node->children()->get($x);
-                    $nodeAtx->setIsFormatted($node->isFormatted());
-                    $this->pushNode($nodeAtx);
+                    $this->pushNode($node->children()->get($x));
                 }
                 $this->reduceTab();
                 $this->popNode();
