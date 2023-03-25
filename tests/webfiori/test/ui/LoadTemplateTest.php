@@ -28,7 +28,7 @@ class LoadTemplateTest extends TestCase {
         $node = $compiler->getCompiled();
         $this->assertTrue($node instanceof HTMLDoc);
         $this->assertEquals(3, $node->getHeadNode()->childrenCount());
-        $this->assertEquals('TODO supply a title', $node->getHeadNode()->getTitle());
+        $this->assertEquals('TODO supply a title', $node->getHeadNode()->getPageTitle());
         $this->assertEquals('UTF-8', $node->getHeadNode()->getCharSet());
         $this->assertEquals(1, $node->getBody()->childrenCount());
         $this->assertEquals('TODO write content', $node->getBody()->getChild(0)->getChild(0)->getText());
@@ -61,7 +61,7 @@ class LoadTemplateTest extends TestCase {
         $this->assertTrue($node instanceof HTMLDoc);
         $this->assertEquals(5, $node->getHeadNode()->childrenCount());
         $this->assertEquals('https://example.com/ajaxlib.js', $node->getChildByID('my-script')->getAttribute('src'));
-        $this->assertEquals('Users Status', $node->getHeadNode()->getTitle());
+        $this->assertEquals('Users Status', $node->getHeadNode()->getPageTitle());
         $this->assertEquals('A page that shows the status of users accounts.', $node->getHeadNode()->getMeta('description')->getAttribute('content'));
         $this->assertEquals('Users Status', $node->getChildByID('h-title')->getChild(0)->getText());
         $headerRow = $node->getChildByID('header-row');

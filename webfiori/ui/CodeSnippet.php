@@ -37,30 +37,13 @@ namespace webfiori\ui;
  * @version 1.0.3
  */
 class CodeSnippet extends HTMLNode {
-    /**
-     *
-     * @var HTMLCode
-     * @since 1.0 
-     */
+
     private $code;
-    /**
-     *
-     * @var HTMLCode
-     * @since 1.0 
-     */
+
     private $codeDisplay;
-    /**
-     *
-     * @var HTMLNode 
-     * @since 1.0.1
-     */
+
     private $codeStrNode;
     private $currentLineNum;
-    /**
-     *
-     * @var HTMLCode
-     * @since 1.0 
-     */
     private $lineNumsNode;
     /**
      * The original code text.
@@ -174,7 +157,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addCodeLine($codeAsTxt) {
+    public function addCodeLine(string $codeAsTxt) {
         $this->originalCode .= $codeAsTxt;
         $this->addLineHelper();
         $oldCode = $this->codeStrNode->getTextUnescaped();
@@ -188,7 +171,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0.3
      */
-    public function getCodeElement() {
+    public function getCodeElement() : HTMLNode {
         return $this->code;
     }
     /**
@@ -198,7 +181,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function getOriginalCode() {
+    public function getOriginalCode() : string {
         return $this->originalCode;
     }
     /**
@@ -209,7 +192,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function getOriginalTitle() {
+    public function getOriginalTitle() : string {
         return $this->titleNode->getOriginalText();
     }
     /**
@@ -220,7 +203,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0.2
      */
-    public function getTitle() {
+    public function getTitle() : string {
         return $this->titleNode->getText();
     }
     /**
@@ -231,7 +214,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setCode($code) {
+    public function setCode(string $code) {
         $this->originalCode = $code;
         $xCode = trim($code);
         $len = strlen($xCode);
@@ -253,27 +236,26 @@ class CodeSnippet extends HTMLNode {
      * 'Java Code' or 'HTML Code'). The title will appear at the top of the snippet
      * block.
      * 
-     * @param string $title The title of the snippet.
+     * @param string $val The title of the snippet.
      * 
      * @since 1.0
      */
-    public function setTitle(string $title) : HTMLNode {
+    public function setTitle(string $val) : HTMLNode {
         $this->titleNode->clear();
-        $this->titleNode->addText($title);
+        $this->titleNode->addText($val);
 
         return $this;
     }
     private function addLineHelper() {
         $span = new HTMLNode('span');
         $span->setClassName('line-number');
-        $span->setAttribute('style', ''
-                .'font-weight: bold;'
+        $span->setAttribute('style',
+                'font-weight: bold;'
                 .'display: block;'
                 .'font-family: monospace;'
                 .'border-right: 1px dotted white;'
                 .'padding-right: 4px;'
-                .'color: #378e80;'
-                .'');
+                .'color: #378e80;');
         $span->addTextNode($this->currentLineNum);
         $this->currentLineNum++;
         $this->lineNumsNode->addChild($span);

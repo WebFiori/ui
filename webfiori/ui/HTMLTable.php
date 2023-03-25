@@ -46,10 +46,9 @@ class HTMLTable extends HTMLNode {
      */
     public function __construct(int $rows, int $cols) {
         parent::__construct('table', ['border' => '1']);
-        $iRows = intval($rows);
-        $iCols = intval($cols);
-        $this->rows = $iRows > 0 ? $iRows : 1;
-        $this->cols = $iCols > 0 ? $iCols : 1;
+
+        $this->rows = $rows > 0 ? $rows : 1;
+        $this->cols = $cols > 0 ? $cols : 1;
         $this->setStyle([
             'border-collapse' => 'collapse'
         ]);

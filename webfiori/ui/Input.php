@@ -107,7 +107,7 @@ class Input extends HTMLNode {
      * body of the text area. If input type is &lt;select&gt;, then new option 
      * will be added with the same label of the given text.
      * 
-     * @param array|bool $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrsOrChain An optional array of attributes which will be set in
      * the newly added child. Also, this argument can work as last method argument 
      * if a boolean is given.
      * 
@@ -123,7 +123,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addChild($node, $attrs = [], bool $chainOnParent = true) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $temp = $node;
 
@@ -138,7 +138,7 @@ class Input extends HTMLNode {
 
         if ($node instanceof HTMLNode && (($this->getNodeName() == 'select' && ($node->getNodeName() == 'option' || 
                     $node->getNodeName() == 'optgroup')) || ($this->getNodeName() == 'textarea' && $node->getNodeName() == '#TEXT'))) {
-            return parent::addChild($node, $attrs, $chainOnParent);
+            return parent::addChild($node, $attrsOrChain, $chainOnParent);
         }
     }
     /**
@@ -163,7 +163,8 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOption(array $options = []) {
+    public function addOption(array $options = []): Input
+    {
         if ($this->getNodeName() == 'select' && gettype($options) == 'array' && isset($options['value']) && isset($options['label'])) {
             $option = new HTMLNode('option');
             $option->setAttribute('value', $options['value']);
@@ -201,11 +202,12 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOptions(array $arrayOfOpt) {
+    public function addOptions(array $arrayOfOpt): Input
+    {
         if (gettype($arrayOfOpt) == 'array') {
             foreach ($arrayOfOpt as $value => $lblOrOptions) {
                 if (gettype($lblOrOptions) == 'array') {
-                    $attrs = isset($lblOrOptions['attributes']) ? $lblOrOptions['attributes'] : [];
+                    $attrs = $lblOrOptions['attributes'] ?? [];
                     $this->addOption([
                         'value' => $value,
                         'label' => $lblOrOptions['label'],
@@ -247,7 +249,8 @@ class Input extends HTMLNode {
      * is called on.
      * @since 1.0.1
      */
-    public function addOptionsGroup(array $optionsGroupArr) {
+    public function addOptionsGroup(array $optionsGroupArr): Input
+    {
         if ($this->getNodeName() == 'select' && gettype($optionsGroupArr) == 'array' && isset($optionsGroupArr['label']) && isset($optionsGroupArr['options'])) {
             $optGroup = new HTMLNode('optgroup');
             $optGroup->setAttribute('label', $optionsGroupArr['label']);
@@ -286,7 +289,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setInputMode(string $mode) {
+    public function setInputMode(string $mode) : Input {
         $lMode = strtolower(trim($mode));
 
         if (in_array($lMode, Input::INPUT_MODES)) {
@@ -307,7 +310,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setList(string $listId) {
+    public function setList(string $listId) : Input {
         $iType = $this->getType();
 
         if ($iType != 'hidden' && 
@@ -319,23 +322,24 @@ class Input extends HTMLNode {
 
         return $this;
     }
+
     /**
      * Sets the value of the attribute 'max'.
-     * 
-     * @param string $max The value to set.
-     * 
-     * @return Input The method will return the instance at which the method 
+     *
+     * @param int $max The value to set.
+     *
+     * @return Input The method will return the instance at which the method
      * is called on.
-     * 
+     *
      * @since 1.0
      */
-    public function setMax($max) {
+    public function setMax(int $max) : Input {
         return $this->setAttribute('max', $max);
     }
     /**
      * Sets the value of the attribute 'maxlength'.
      * 
-     * @param string $length The value to set. The attribute value can be set only 
+     * @param int $length The value to set. The attribute value can be set only
      * for text, email, search, tel and url input types.
      * 
      * @return Input The method will return the instance at which the method 
@@ -343,7 +347,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setMaxLength($length) {
+    public function setMaxLength(int $length) : Input {
         if ($length >= 1) {
             $iType = $this->getType();
 
@@ -357,20 +361,20 @@ class Input extends HTMLNode {
     /**
      * Sets the value of the attribute 'min'.
      * 
-     * @param string $min The value to set.
+     * @param int $min The value to set.
      * 
      * @return Input The method will return the instance at which the method 
      * is called on.
      * 
      * @since 1.0
      */
-    public function setMin($min) {
+    public function setMin(int $min) : Input {
         return $this->setAttribute('min', $min);
     }
     /**
      * Sets the value of the attribute 'minlength'.
      * 
-     * @param string $length The value to set. The attribute value can be set only 
+     * @param int $length The value to set. The attribute value can be set only
      * for text, email, search, tel and url input types.
      * 
      * @return Input The method will return the instance at which the method 
@@ -378,7 +382,8 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setMinLength($length) {
+    public function setMinLength(int $length): Input
+    {
         if ($length >= 0) {
             $iType = $this->getType();
 
@@ -421,7 +426,8 @@ class Input extends HTMLNode {
      * @return Input The method will return the instance at which the method 
      * is called on.
      */
-    public function setPlaceholder($text) {
+    public function setPlaceholder(string $text = null): Input
+    {
         if ($text !== null) {
             $iType = $this->getType();
 
@@ -455,7 +461,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setType($type) {
+    public function setType(string $type) : Input {
         $nodeName = $this->getNodeName();
 
         if ($nodeName == 'input') {
@@ -478,14 +484,14 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setValue($text) {
+    public function setValue(string $text) : Input {
         return $this->setAttribute('value', $text);
     }
     private function addOptionsToGroupHelper($optionsGroupArr, $optGroup) {
         foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
+            $o = new HTMLNode('option');
+            $o->setAttribute('value', $value);
             if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
-                $o = new HTMLNode('option');
-                $o->setAttribute('value', $value);
                 $o->addTextNode($labelOrOptions['label'],false);
 
                 if (isset($labelOrOptions['attributes'])) {
@@ -493,13 +499,10 @@ class Input extends HTMLNode {
                         $o->setAttribute($attr, $v);
                     }
                 }
-                $optGroup->addChild($o);
             } else {
-                $o = new HTMLNode('option');
-                $o->setAttribute('value', $value);
                 $o->addTextNode($labelOrOptions,false);
-                $optGroup->addChild($o);
             }
+            $optGroup->addChild($o);
         }
     }
 }

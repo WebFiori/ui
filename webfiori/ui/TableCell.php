@@ -59,7 +59,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getColSpan() {
+    public function getColSpan() : int {
         $colSpn = $this->getAttributeValue('colspan');
 
         return $colSpn === null ? 1 : $colSpn;
@@ -74,7 +74,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function getRowSpan() {
+    public function getRowSpan() : int {
         $colSpn = $this->getAttributeValue('rowspan');
 
         return $colSpn === null ? 1 : $colSpn;
@@ -93,7 +93,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setColSpan(int $colSpan) {
+    public function setColSpan(int $colSpan) : TableCell {
         if ($colSpan >= 1 && $colSpan <= 1000) {
             $this->setAttribute('colspan', $colSpan);
         }
@@ -115,7 +115,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setRowSpan(int $rowSpan) {
+    public function setRowSpan(int $rowSpan) : TableCell {
         if ($rowSpan >= 0 && $rowSpan <= 65534) {
             $this->setAttribute('rowspan', $rowSpan);
         }
