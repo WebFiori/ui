@@ -43,12 +43,12 @@ class Anchor extends HTMLNode {
      */
     public function __construct(string $href, $body, string $target = '_self') {
         parent::__construct('a');
-        $this->setAttribute(self::$Attrs[1],$href);
+        $this->setHref($href);
 
         if (strlen($target) != 0) {
-            $this->setAttribute(self::$Attrs[0],$target);
+            $this->setTarget($target);
         } else {
-            $this->setAttribute(self::$Attrs[0], '_blank');
+            $this->setTarget('_blank');
         }
 
         if ($body instanceof HTMLNode) {
@@ -78,7 +78,7 @@ class Anchor extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setTarget($name) {
+    public function setTarget(string $name) {
         $this->setAttribute(self::$Attrs[0], $name);
     }
     /**

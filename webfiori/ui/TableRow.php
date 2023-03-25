@@ -75,7 +75,7 @@ class TableRow extends HTMLNode {
      * @param TableCell|string $node New table cell. This also can be a string 
      * such as 'td' or 'th'.
      * 
-     * @param array|bool $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrsOrChain An optional array of attributes which will be set in
      * the newly added child. This also can act as last method parameter if it 
      * is given as boolean.
      * 
@@ -93,11 +93,11 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], bool $chainOnParent = false) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) {
         if ($node instanceof TableCell) {
-            return parent::addChild($node, $attrs, $chainOnParent);
+            return parent::addChild($node, $attrsOrChain, $chainOnParent);
         } else if ($node == 'td' || $node == 'th') {
-            return parent::addChild(new TableCell($node), $attrs, $chainOnParent);
+            return parent::addChild(new TableCell($node), $attrsOrChain, $chainOnParent);
         }
     }
     /**

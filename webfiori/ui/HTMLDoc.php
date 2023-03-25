@@ -43,14 +43,6 @@ class HTMLDoc {
     private $body;
 
     /**
-     * The whole document as HTML string.
-     * 
-     * @var string
-     * 
-     * @since 1.0 
-     */
-    private $document;
-    /**
      * The head tag of the document.
      * @var HTMLNode 
      * @since 1.0
@@ -130,7 +122,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attributes = [], bool $chainOnParent = false) {
+    public function addChild($node, array $attributes = [], bool $chainOnParent = false) : HTMLNode {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {
@@ -166,7 +158,7 @@ class HTMLDoc {
      * 
      * @since 1.4
      */
-    public function asCode(array $formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
+    public function asCode(array $formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) : string {
         return $this->getDocumentRoot()->asCode($formattingOptions);
     }
     /**
@@ -189,7 +181,7 @@ class HTMLDoc {
      * 
      * @since 1.2
      */
-    public function getChildByID($id) {
+    public function getChildByID(string $id) {
         return $this->getDocumentRoot()->getChildByID($id);
     }
     /**
@@ -306,7 +298,7 @@ class HTMLDoc {
     public function removeChildByID(string $id) {
         $toRemove = $this->getDocumentRoot()->getChildByID($id);
 
-        if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
+        if ($toRemove !== null && $toRemove !== $this->body && $toRemove !== $this->headNode) {
             return $this->removeChildHelper($this->getDocumentRoot(), $toRemove);
         }
 
@@ -330,7 +322,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function saveToHTMLFile(string $path, string $fileName, bool $wellFormatted = true) {
+    public function saveToHTMLFile(string $path, string $fileName, bool $wellFormatted = true) : bool {
         $trimmedPath = trim($path);
         $trimmedName = trim($fileName);
 
@@ -358,7 +350,7 @@ class HTMLDoc {
      * @since 1.0
      */
     public function setHeadNode(HeadNode $node) : bool {
-        if ($node instanceof HeadNode && $this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
+        if ($this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
             $this->headNode = $node;
 
             return true;
@@ -379,7 +371,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function setLanguage(string $lang = null) {
+    public function setLanguage(string $lang = null) : bool {
         if ($lang === null) {
             $this->getDocumentRoot()->removeAttribute('lang');
 
@@ -413,10 +405,10 @@ class HTMLDoc {
         } else {
             $this->nl = self::NL;
         }
-        $this->document = '<!DOCTYPE html>'.$this->nl;
-        $this->document .= $this->getDocumentRoot()->toHTML($formatted);
+        $document = '<!DOCTYPE html>'.$this->nl;
+        $document .= $this->getDocumentRoot()->toHTML($formatted);
 
-        return $this->document;
+        return $document;
     }
     /**
      * 
@@ -438,11 +430,11 @@ class HTMLDoc {
     }
     /**
      * 
-     * @param sring $val
+     * @param string $val
      * @param LinkedList $list
      * @param HTMLNode $child
      */
-    private function getChildrenByTagHelper($val,$list,$child) {
+    private function getChildrenByTagHelper(string $val, LinkedList $list, HTMLNode $child) {
         if ($child->getNodeName() == $val) {
             $list->add($child);
         }
@@ -457,12 +449,14 @@ class HTMLDoc {
             }
         }
     }
+
     /**
-     * 
+     *
      * @param HTMLNode $ch
      * @param HTMLNode $nodeToRemove Description
+     * @return HTMLNode|null
      */
-    private function removeChildHelper($ch,$nodeToRemove) {
+    private function removeChildHelper(HTMLNode $ch, HTMLNode $nodeToRemove) {
         for ($x = 0 ; $x < $ch->childrenCount() ; $x++) {
             $removed = $this->removeChildHelper($ch->children()->get($x),$nodeToRemove);
 

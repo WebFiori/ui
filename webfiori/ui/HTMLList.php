@@ -50,7 +50,7 @@ class HTMLList extends HTMLNode {
      * class 'HTMLNode' or a string that represents the 
      * content of the list item that will be added.
      * 
-     * @param array|bool $attrs An optional array of attributes which will be set in 
+     * @param array|bool $attrsOrChain An optional array of attributes which will be set in
      * the newly added list item.
      * 
      * @param bool $chainOnParent If this parameter is set to true, the method 
@@ -69,9 +69,9 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], bool $chainOnParent = false) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) {
         if ($node instanceof ListItem) {
-            return parent::addChild($node, $attrs, $chainOnParent);
+            return parent::addChild($node, $attrsOrChain, $chainOnParent);
         } else {
             $li = new ListItem();
 
@@ -81,7 +81,7 @@ class HTMLList extends HTMLNode {
                 $li->text($node);
             }
 
-            return parent::addChild($li, $attrs, $chainOnParent);
+            return parent::addChild($li, $attrsOrChain, $chainOnParent);
         }
     }
     /**

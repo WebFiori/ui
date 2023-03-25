@@ -11,6 +11,7 @@
 namespace webfiori\ui;
 
 use webfiori\collections\Queue;
+use webfiori\ui\exceptions\InvalidNodeNameException;
 use webfiori\ui\exceptions\TemplateNotFoundException;
 
 /**
@@ -34,17 +35,19 @@ class TemplateCompiler {
      * @var string
      */
     private $tType;
+
     /**
      * Creates new instance of the class.
-     * 
+     *
      * @param string $templatePath The absolute path to PHP or HTML template.
-     * 
+     *
      * @param array $vars An associative array of variables to be passed
      * to the template. The keys of the array are variables names and the
      * value of each key represents the value of the variable inside the template.
      * This parameter is applicable only if the template is a PHP file.
-     * 
+     *
      * @throws TemplateNotFoundException If no file is found which has given path.
+     * @throws InvalidNodeNameException
      */
     public function __construct(string $templatePath, array $vars = []) {
         if (!file_exists($templatePath)) {
@@ -56,21 +59,24 @@ class TemplateCompiler {
         $this->rawOutput = '';
         $this->compile($vars);
     }
+
     /**
      * Compile the template and return its representation as an object.
-     * 
+     *
      * @param array $varsToPass An associative array of variables to be passed
      * to the template. The keys of the array are variables names and the
      * value of each key represents the value of the variable inside the template.
      * This parameter is applicable only if the template is a PHP file.
-     * 
+     *
      * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
-     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes 
-     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
-     * an array that contains an objects of type 'HTMLNode' is returned. If the 
-     * given code has one top level node, an object of type 'HTMLNode' is returned. 
-     * Note that it is possible that the method will return an instance which 
+     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'),
+     * an array that contains an objects of type 'HTMLNode' is returned. If the
+     * given code has one top level node, an object of type 'HTMLNode' is returned.
+     * Note that it is possible that the method will return an instance which
      * is a subclass of the class 'HTMLNode'.
+     *
+     * @throws InvalidNodeNameException
      */
     public function compile(array $varsToPass = []) {
         if ($this->getType() == 'php') {
@@ -86,31 +92,34 @@ class TemplateCompiler {
 
         return $this->getCompiled();
     }
+
     /**
      * Creates HTMLNode object given a string of HTML code.
-     * 
+     *
      * Note that this method is still under implementation.
-     * 
+     *
      * @param string $text A string that represents HTML code.
-     * 
-     * @param bool $asHTMLDocObj If set to 'true' and given HTML represents a 
-     * structured HTML document, the method will convert the code to an object 
+     *
+     * @param bool $asHTMLDocObj If set to 'true' and given HTML represents a
+     * structured HTML document, the method will convert the code to an object
      * of type 'HTMLDoc'. Default is 'true'.
-     * 
-     * @return array|HeadNode|HTMLDoc|HTMLNode If the given code represents HTML document 
-     * and the parameter <b>$asHTMLDocObj</b> is set to 'true', an object of type 
-     * 'HTMLDoc' is returned. If the given code has multiple top level nodes 
-     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'), 
-     * an array that contains an objects of type 'HTMLNode' is returned. If the 
-     * given code has one top level node, an object of type 'HTMLNode' is returned. 
-     * Note that it is possible that the method will return an instance which 
+     *
+     * @return array|HeadNode|HTMLDoc|HTMLNode If the given code represents HTML document
+     * and the parameter <b>$asHTMLDocObj</b> is set to 'true', an object of type
+     * 'HTMLDoc' is returned. If the given code has multiple top level nodes
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'),
+     * an array that contains an objects of type 'HTMLNode' is returned. If the
+     * given code has one top level node, an object of type 'HTMLNode' is returned.
+     * Note that it is possible that the method will return an instance which
      * is a subclass of the class 'HTMLNode'.
-     * 
+     *
+     * @throws InvalidNodeNameException
      * @since 1.7.4
      */
     public static function fromHTMLText(string $text, bool $asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);
         $TN = 'tag-name';
+        $retVal = [];
 
         if (count($nodesArr) >= 1) {
             if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
@@ -145,16 +154,13 @@ class TemplateCompiler {
                 }
             } else {
                 if (count($nodesArr) != 1) {
-                    $retVal = [];
 
                     foreach ($nodesArr as $node) {
                         $asHtmlNode = self::fromHTMLTextHelper00($node);
                         $retVal[] = $asHtmlNode;
                     }
-                } else {
-                    if (count($nodesArr) == 1) {
-                        return self::fromHTMLTextHelper00($nodesArr[0]);
-                    }
+                } else if (count($nodesArr) == 1) {
+                    return self::fromHTMLTextHelper00($nodesArr[0]);
                 }
             }
 
@@ -257,7 +263,7 @@ class TemplateCompiler {
      * @since 1.7.4
      */
     public static function htmlAsArray(string $text) : array {
-        $cleanedHtmlArr = self::replceAttrsVals($text);
+        $cleanedHtmlArr = self::replaceAttrsValues($text);
         $trimmed = str_replace('<?php', '&lt;php', $cleanedHtmlArr['html-string']);
         $BT = 'body-text';
         $TN = 'tag-name';
@@ -374,7 +380,7 @@ class TemplateCompiler {
             }
             $x = 0;
 
-            return self::buildArrayTree($nodesNames,$x,count($nodesNames),null);
+            return self::buildArrayTree($nodesNames,$x,count($nodesNames));
         }
 
         return [];
@@ -393,14 +399,14 @@ class TemplateCompiler {
      * 
      * @since 1.7.4
      */
-    private static function buildArrayTree($parsedNodesArr,&$x,$nodesCount) {
+    private static function buildArrayTree(array $parsedNodesArr, int &$x, int $nodesCount) : array {
         $retVal = [];
         $TN = 'tag-name';
 
         for (; $x < $nodesCount ; $x++) {
             $node = $parsedNodesArr[$x];
-            $isVoidNode = isset($node['is-void-tag']) ? $node['is-void-tag'] : false;
-            $isClosingTag = isset($node['is-closing-tag']) ? $node['is-closing-tag'] : false;
+            $isVoidNode = $node['is-void-tag'] ?? false;
+            $isClosingTag = $node['is-closing-tag'] ?? false;
 
             if ($node[$TN] == HTMLNode::COMMENT_NODE) {
                 unset($node['is-closing-tag']);
@@ -423,21 +429,23 @@ class TemplateCompiler {
 
         return $retVal;
     }
+
     /**
-     * Creates an object of type HTMLNode given its properties as an associative 
+     * Creates an object of type HTMLNode given its properties as an associative
      * array.
-     * @param array $nodeArr An associative array that contains node properties. 
+     * @param array $nodeArr An associative array that contains node properties.
      * This array can have the following indices:
      * <ul>
      * <li>tag-name: An index that contains tag name.</li>
-     * <li>attributes: An associative array that contains node attributes. Ignored 
+     * <li>attributes: An associative array that contains node attributes. Ignored
      * if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
-     * <li>children: A sub array that contains the info of all node children. 
+     * <li>children: A sub array that contains the info of all node children.
      * Ignored if 'tag-name' is '#COMMENT' or '!DOCTYPE'.</li>
      * </ul>
      * @return HTMLNode
+     * @throws InvalidNodeNameException
      */
-    private static function fromHTMLTextHelper00($nodeArr) {
+    private static function fromHTMLTextHelper00(array $nodeArr) {
         $TN = 'tag-name';
         $BT = 'body-text';
 
@@ -454,7 +462,7 @@ class TemplateCompiler {
 
                 if ($chNode[$TN] == 'title') {
                     if (count($chNode['children']) == 1 && $chNode['children'][0][$TN] == HTMLNode::TEXT_NODE) {
-                        $htmlNode->setTitle($chNode['children'][0][$BT]);
+                        $htmlNode->setPageTitle($chNode['children'][0][$BT]);
                     }
 
                     foreach ($chNode['attributes'] as $attr => $val) {
@@ -549,9 +557,9 @@ class TemplateCompiler {
 
         return $htmlNode;
     }
-    private static function getTextActualValue($hashedValsArr, $hashVal) {
-        //If it is text, it means that we have a text node or a comment node with a quted text.
-        foreach ($hashedValsArr as $hash => $val) {
+    private static function getTextActualValue($hashedValuesArr, $hashVal) {
+        //If it is text, it means that we have a text node or a comment node with a quoted text.
+        foreach ($hashedValuesArr as $hash => $val) {
             $hashVal = str_replace($hash, $val, $hashVal);
         }
 
@@ -566,9 +574,9 @@ class TemplateCompiler {
      * of the attributes.
      * @since 1.7.4
      */
-    private static function parseAttributes($attrsStr, $replacementsArr) {
-        $inSingleQouted = false;
-        $inDoubleQueted = false;
+    private static function parseAttributes(string $attrsStr, $replacementsArr) : array {
+        $inSingleQuoted = false;
+        $inDoubleQuoted = false;
         $isEqualFound = false;
         $queue = new Queue();
         $str = '';
@@ -576,7 +584,7 @@ class TemplateCompiler {
         for ($x = 0 ; $x < strlen($attrsStr) ; $x++) {
             $char = $attrsStr[$x];
 
-            if ($char == '=' && !$inSingleQouted && !$inDoubleQueted) {
+            if ($char == '=' && !$inSingleQuoted && !$inDoubleQuoted) {
                 //Attribute name extracted.
                 //Add the name of the attribute to the queue.
                 $str = trim($str);
@@ -585,10 +593,10 @@ class TemplateCompiler {
                     self::parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = true;
-            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQouted && !$inDoubleQueted) {
+            } else if ($char == ' ' && strlen(trim($str)) != 0 && !$inSingleQuoted && !$inDoubleQuoted) {
                 //Empty attribute (attribute without a value) such as 
                 // <div itemscope ></div>. 'itemscope' is empty attribute.
-                // This also could be an attribute without queted value
+                // This also could be an attribute without quoted value
                 // (e.g. <input type=text>
                 $str = trim($str);
 
@@ -596,39 +604,39 @@ class TemplateCompiler {
                     self::parseAttributesHelper($queue, $isEqualFound, $str);
                 }
                 $isEqualFound = false;
-            } else if (($char == "'" && $inDoubleQueted) || ($char == '"' && $inSingleQouted)) {
-                //Mostly, inside attribute value. We replace double qute with single.
+            } else if (($char == "'" && $inDoubleQuoted) || ($char == '"' && $inSingleQuoted)) {
+                //Mostly, inside attribute value. We replace double quote with single.
                 $str .= "'";
-            } else if ($char == '"' && $inDoubleQueted) {
-                // Attribute value. End of quted value.
-                //Or, it can be end of quted attribute name
+            } else if ($char == '"' && $inDoubleQuoted) {
+                // Attribute value. End of quot value.
+                //Or, it can be end of quot attribute name
                 self::parseAttributesHelper($queue, $isEqualFound, $str);
                 $isEqualFound = false;
-                $inDoubleQueted = false;
-            } else if ($char == '"' && !$inDoubleQueted) {
-                //This can be the start of quted attribute value.
-                //Or, it can be the end of queted attribute name.
+                $inDoubleQuoted = false;
+            } else if ($char == '"' && !$inDoubleQuoted) {
+                //This can be the start of quoted attribute value.
+                //Or, it can be the end of quoted attribute name.
                 $str = trim($str);
 
                 if (strlen($str) != 0) {
                     self::parseAttributesHelper($queue, $isEqualFound, $str);
                 }
-                $inDoubleQueted = true;
-            } else if ($char == "'" && $inSingleQouted) {
-                // Attribute value. End of quted value.
-                //Or, it can be end of quted attribute name
+                $inDoubleQuoted = true;
+            } else if ($char == "'" && $inSingleQuoted) {
+                // Attribute value. End of quoted value.
+                //Or, it can be end of quoted attribute name
                 self::parseAttributesHelper($queue, $isEqualFound, $str);
                 $isEqualFound = false;
-                $inSingleQouted = false;
-            } else if ($char == "'" && !$inSingleQouted) {
-                //This can be the start of quted attribute value.
-                //Or, it can be the end of queted attribute name.
+                $inSingleQuoted = false;
+            } else if ($char == "'" && !$inSingleQuoted) {
+                //This can be the start of quoted attribute value.
+                //Or, it can be the end of quoted attribute name.
                 $str = trim($str);
 
                 if (strlen($str) != 0) {
                     self::parseAttributesHelper($queue, $isEqualFound, $str);
                 }
-                $inSingleQouted = true;
+                $inSingleQuoted = true;
             } else {
                 $str .= $char;
             }
@@ -636,7 +644,7 @@ class TemplateCompiler {
         $trimmed = trim($str);
 
         if (strlen($trimmed) != 0) {
-            if ($isEqualFound && !$inSingleQouted && !$inDoubleQueted) {
+            if ($isEqualFound && !$inSingleQuoted && !$inDoubleQuoted) {
                 $queue->enqueue('=');
             }
             $queue->enqueue($trimmed);
@@ -682,14 +690,12 @@ class TemplateCompiler {
      * @param bool $isEqualFound
      * @param string $val
      */
-    private static function parseAttributesHelper($queue,$isEqualFound,&$val) {
+    private static function parseAttributesHelper(Queue $queue, bool $isEqualFound, string &$val) {
         if ($isEqualFound) {
             $equalSign = '=';
             $queue->enqueue($equalSign);
-            $queue->enqueue($val);
-        } else {
-            $queue->enqueue($val);
         }
+        $queue->enqueue($val);
         $val = '';
     }
     /**
@@ -708,13 +714,13 @@ class TemplateCompiler {
      * The second index will contain HTML string with all attributes values replaced 
      * with the hashes.
      */
-    private static function replceAttrsVals($htmlStr) {
-        //For double quts
+    private static function replaceAttrsValues(string $htmlStr) : array {
+        //For double quotation
         $attrsArr = [];
         //After every attribute value, there must be a space if more than one 
         //attribute.
         preg_match_all('/"[\t-!#-~]+" |"[\t-!#-~]+">|""/', $htmlStr, $attrsArr);
-        $tempValsArr = [];
+        $tempValuesArr = [];
 
         foreach ($attrsArr[0] as $value) {
             if ($value[strlen($value) - 1] == '>' || $value[strlen($value) - 1] == ' ') {
@@ -722,11 +728,11 @@ class TemplateCompiler {
             }
             $trimmed = trim($value,'"');
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
+            $tempValuesArr[$key] = $trimmed;
             $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
         }
 
-        //For single quts
+        //For single quotes
         $attrsArr2 = [];
         preg_match_all('/\'[\t-&(-~]+\' |\'[\t-&(-~]+\'>|\'\'/', $htmlStr, $attrsArr2);
 
@@ -736,12 +742,12 @@ class TemplateCompiler {
             }
             $trimmed = trim($value,"'");
             $key = hash('sha256', $trimmed);
-            $tempValsArr[$key] = $trimmed;
+            $tempValuesArr[$key] = $trimmed;
             $htmlStr = str_replace($value, "'".$key."'", $htmlStr);
         }
 
         return [
-            'replacements' => $tempValsArr,
+            'replacements' => $tempValuesArr,
             'html-string' => $htmlStr
         ];
     }
@@ -749,15 +755,15 @@ class TemplateCompiler {
         if (gettype($varsArr) == 'array') {
             $variables = [];
             preg_match_all('/{{\s?([^}]*)\s?}}/', $component, $variables);
-            $component = self::setSoltsHelper($variables[0], $varsArr, $component);
+            $component = self::setSlotsHelper($variables[0], $varsArr, $component);
         }
 
         return $component;
     }
-    private static function setSoltsHelper($allSlots, $slotsValsArr, $component) {
-        foreach ($slotsValsArr as $slotName => $slotVal) {
+    private static function setSlotsHelper($allSlots, $slotsValuesArr, $component) {
+        foreach ($slotsValuesArr as $slotName => $slotVal) {
             if (gettype($slotVal) == 'array') {
-                $component = self::setSoltsHelper($allSlots, $slotVal, $component);
+                $component = self::setSlotsHelper($allSlots, $slotVal, $component);
             } else {
                 foreach ($allSlots as $slotNameFromComponent) {
                     $trimmed = trim($slotNameFromComponent, '{{ }}');

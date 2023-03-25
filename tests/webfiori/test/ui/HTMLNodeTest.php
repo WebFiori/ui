@@ -501,7 +501,7 @@ class HTMLNodeTest extends TestCase {
           $this->assertEquals('<div><div itemscope @onclick>'
                   . '<ul><li>Hello</li><li>World</li></ul>'
                   . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
-                  . '<a href="" target=_self class="imag-link"><img src=Test alt=Test></a>'
+                  . '<a target=_self class="imag-link"><img src=Test alt=Test></a>'
                   . '</div></div>', $node->toHTML());
     }
     /**
@@ -777,7 +777,7 @@ class HTMLNodeTest extends TestCase {
         $htmlTxt = '<html><head><title>This is a test document. ';
         $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getPageTitle());
     }
     /**
      * @test
@@ -786,7 +786,7 @@ class HTMLNodeTest extends TestCase {
         $htmlTxt = '<html><HEAD><meta CHARSET="utf-8"><title>This is a test document.</title>';
         $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getPageTitle());
         $this->assertEquals('utf-8',$val->getHeadNode()->getCharSet());
     }
     /**
@@ -797,7 +797,7 @@ class HTMLNodeTest extends TestCase {
                 .'<input type = text ID="input-el-1">';
         $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getPageTitle());
         $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
         $el = $val->getChildByID('input-el-1');
         $this->assertTrue($el instanceof HTMLNode);
@@ -863,7 +863,7 @@ $jsonObj->addObject("obj", new Employee("Ibrahim", "BinAlshikh", 7200));
                 .'<input type = text ID="input-el-1">';
         $val = TemplateCompiler::fromHTMLText($htmlTxt);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('This is a test document.',$val->getHeadNode()->getTitle());
+        $this->assertEquals('This is a test document.',$val->getHeadNode()->getPageTitle());
         $this->assertEquals('https://example.com/',$val->getHeadNode()->getBaseURL());
         $this->assertEquals('utf-8',$val->getHeadNode()->getMeta('charset')->getAttributeValue('charset'));
         $el = $val->getChildByID('input-el-1');
@@ -924,7 +924,7 @@ and open the template in the editor.
 ';
         $val = TemplateCompiler::fromHTMLText($html);
         $this->assertTrue($val instanceof HTMLDoc);
-        $this->assertEquals('TODO supply a title',$val->getHeadNode()->getTitle());
+        $this->assertEquals('TODO supply a title',$val->getHeadNode()->getPageTitle());
         $this->assertEquals(12,$val->getHeadNode()->childrenCount());
         $this->assertEquals(2,$val->getHeadNode()->getJSNodes()->size());
         $this->assertEquals(3,$val->getHeadNode()->getCSSNodes()->size());

@@ -139,7 +139,7 @@ class HeadNode extends HTMLNode {
             $notAllowed = [
                 'rel','hreflang','href'
             ];
-            $this->_addAttrs($node, $otherAttrs, $notAllowed);
+            $this->addAttrsHelper($node, $otherAttrs, $notAllowed);
             $insertPosition = -1;
 
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
@@ -173,7 +173,7 @@ class HeadNode extends HTMLNode {
      * </ul>
      * Other than that, the node will be not added.
      * 
-     * @param array|bool $attrs Not used if array is given. If boolean is 
+     * @param array|bool $attrsOrChain Not used if array is given. If boolean is
      * given, it will be treated as last method argument.
      * 
      * @param bool $chainOnParent If this parameter is set to true, the method 
@@ -190,7 +190,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], bool $chainOnParent = true) : HTMLNode {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = true) : HTMLNode {
         $retVal = $this;
 
 
@@ -198,16 +198,16 @@ class HeadNode extends HTMLNode {
             $nodeName = $node->getNodeName();
 
             if (in_array($nodeName, self::ALLOWED_CHILDREN)) {
-                $retVal = $this->_addChildHelper($node);
+                $retVal = $this->addChildHelper($node);
             }
         } else if (gettype($node) == 'string') {
             $temp = new HTMLNode($node);
 
             if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
-                $retVal = $this->_addChildHelper($temp);
+                $retVal = $this->addChildHelper($temp);
             }
         }
-        $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
+        $cOnParent = gettype($attrsOrChain) == 'boolean' && $attrsOrChain === true || $chainOnParent === true;
 
 
         if (!$cOnParent) {
@@ -260,15 +260,15 @@ class HeadNode extends HTMLNode {
      */
     public function addCSS(string $href, array $otherAttrs = []) : HeadNode {
         $trimmedHref = trim($href);
-        $splitted = explode('?', $trimmedHref);
-        $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
+        $split = explode('?', $trimmedHref);
+        $revision = $otherAttrs['revision'] ?? false;
         unset($otherAttrs['revision']);
 
 
-        if (count($splitted) == 2) {
-            $trimmedHref = trim($splitted[0]);
-            $queryString = trim($splitted[1]);
-        } else if (count($splitted) > 2) {
+        if (count($split) == 2) {
+            $trimmedHref = trim($split[0]);
+            $queryString = trim($split[1]);
+        } else if (count($split) > 2) {
             return $this;
         } else {
             $queryString = '';
@@ -300,7 +300,7 @@ class HeadNode extends HTMLNode {
             } else {
                 $tag->setAttribute('href', $trimmedHref);
             }
-            $this->_cssJsInsertHelper($tag, $otherAttrs);
+            $this->cssJsInsertHelper($tag, $otherAttrs);
         }
 
         return $this;
@@ -348,15 +348,15 @@ class HeadNode extends HTMLNode {
      */
     public function addJs(string $loc, array $otherAttrs = []) : HeadNode {
         $trimmedLoc = trim($loc);
-        $splitted = explode('?', $trimmedLoc);
-        $revision = isset($otherAttrs['revision']) ? $otherAttrs['revision'] : false;
+        $split = explode('?', $trimmedLoc);
+        $revision = $otherAttrs['revision'] ?? false;
         unset($otherAttrs['revision']);
 
 
-        if (count($splitted) == 2) {
-            $trimmedLoc = trim($splitted[0]);
-            $queryString = trim($splitted[1]);
-        } else if (count($splitted) > 2) {
+        if (count($split) == 2) {
+            $trimmedLoc = trim($split[0]);
+            $queryString = trim($split[1]);
+        } else if (count($split) > 2) {
             return $this;
         } else {
             $queryString = '';
@@ -391,7 +391,7 @@ class HeadNode extends HTMLNode {
             } else {
                 $tag->setAttribute('src', $trimmedLoc.'?'.$queryString);
             }
-            $this->_cssJsInsertHelper($tag, $otherAttrs);
+            $this->cssJsInsertHelper($tag, $otherAttrs);
         }
 
         return $this;
@@ -429,7 +429,7 @@ class HeadNode extends HTMLNode {
                 $notAllowed = [
                     'rel','href'
                 ];
-                $this->_addAttrs($node, $otherAttrs, $notAllowed);
+                $this->addAttrsHelper($node, $otherAttrs, $notAllowed);
 
                 $insertPosition = -1;
 
@@ -480,8 +480,8 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addMeta(string $name, string $content, $override = false) : HeadNode {
-        $trimmedName = trim(strtolower($name.''));
+    public function addMeta(string $name, string $content, bool $override = false) : HeadNode {
+        $trimmedName = trim(strtolower($name));
 
         if (strlen($trimmedName) != 0) {
             $meta = $this->getMeta($trimmedName);
@@ -727,17 +727,8 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.3
      */
-    public function getPageTitle() {
+    public function getPageTitle() : string {
         return $this->titleNode->children()->get(0)->getText();
-    }
-    /**
-     * 
-     * @return type
-     * 
-     * @deprecated since version 1.1.7
-     */
-    public function getTitle() {
-        return $this->getPageTitle();
     }
     /**
      * Returns an object of type HTMLNode that represents the title node.
@@ -769,17 +760,17 @@ class HeadNode extends HTMLNode {
      */
     public function hasCss(string $loc) : bool {
         $trimmedLoc = trim($loc);
-        $splitted = explode('?', $trimmedLoc);
+        $split = explode('?', $trimmedLoc);
 
-        if (count($splitted) == 2) {
-            $trimmedLoc = trim($splitted[0]);
+        if (count($split) == 2) {
+            $trimmedLoc = trim($split[0]);
         }
         $cssNodes = $this->getCSSNodes();
 
         foreach ($cssNodes as $node) {
             if ($node->hasAttribute('href')) {
-                $hrefExpl = explode('?', $node->getAttribute('href'));
-                $href = $hrefExpl[0];
+                $hrefExplode = explode('?', $node->getAttribute('href'));
+                $href = $hrefExplode[0];
 
                 if ($href == $trimmedLoc) {
                     return true;
@@ -806,10 +797,10 @@ class HeadNode extends HTMLNode {
      */
     public function hasJs(string $src) : bool {
         $trimmedLoc = trim($src);
-        $splitted = explode('?', $trimmedLoc);
+        $split = explode('?', $trimmedLoc);
 
-        if (count($splitted) == 2) {
-            $trimmedLoc = trim($splitted[0]);
+        if (count($split) == 2) {
+            $trimmedLoc = trim($split[0]);
         }
         $jsNodes = $this->getJSNodes();
 
@@ -867,7 +858,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setBase($url) : HeadNode {
+    public function setBase(string $url = null) : HeadNode {
         if ($url === null && $this->hasChild($this->baseNode)) {
             $this->removeChild($this->baseNode);
             $this->baseNode->removeAttribute('href');
@@ -901,7 +892,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setCanonical($link) : HeadNode {
+    public function setCanonical(string $link = null) : HeadNode {
         if ($link === null && $this->hasChild($this->canonical)) {
             $this->removeChild($this->canonical);
             $this->canonical->removeAttribute('href');
@@ -944,7 +935,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.4
      */
-    public function setCharSet($charset) : HeadNode {
+    public function setCharSet(string $charset = null) : HeadNode {
         if ($charset === null && $this->hasChild($this->metaCharset)) {
             $this->removeChild($this->metaCharset);
             $this->metaCharset->removeAttribute('charset');
@@ -1006,25 +997,7 @@ class HeadNode extends HTMLNode {
 
         return $this;
     }
-    /**
-     * Sets the text value of the node 'title'.
-     * 
-     * @param string $title The title to set. It must be non-empty string in 
-     * order to set. If empty string is given, 'title' node will be omitted from the 
-     * body of the 'head' tag.
-     * 
-     * @return HeadNode The method will return the instance at which the method is called on.
-     * 
-     * @deprecated since version 1.1.7
-     */
-    public function setTitle(string $title) : HTMLNode {
-        if (strlen($title) == 0) {
-            return $this->setPageTitle(null);
-        }
-
-        return $this->setPageTitle($title);
-    }
-    private function _addAttrs(&$node,$otherAttrs,$notAllowed) {
+    private function addAttrsHelper($node, $otherAttrs, $notAllowed) {
         if (gettype($otherAttrs) == 'array') {
             foreach ($otherAttrs as $attr => $val) {
                 if (gettype($attr) == 'integer') {
@@ -1043,9 +1016,8 @@ class HeadNode extends HTMLNode {
             }
         }
     }
-    private function _addChildHelper(HTMLNode $node) {
+    private function addChildHelper(HTMLNode $node) {
         $nodeName = $node->getNodeName();
-        $retVal = null;
 
         if ($nodeName == 'meta') {
             $nodeAttrs = $node->getAttributes();
@@ -1058,7 +1030,6 @@ class HeadNode extends HTMLNode {
 
             if (!$this->hasMeta($node->getAttributeValue('name'))) {
                 parent::addChild($node);
-                $retVal = $node;
             }
         } else {
             if ($nodeName == 'base' || $nodeName == 'title') {
@@ -1069,7 +1040,6 @@ class HeadNode extends HTMLNode {
 
                     if ($relVal != 'canonical') {
                         parent::addChild($node);
-                        $relVal = $node;
                     }
                 } else {
                     parent::addChild($node);
@@ -1079,11 +1049,13 @@ class HeadNode extends HTMLNode {
 
         return $node;
     }
+
     /**
-     * 
+     *
      * @param HTMLNode $node
+     * @param $otherAttrs
      */
-    private function _cssJsInsertHelper($node, $otherAttrs) {
+    private function cssJsInsertHelper(HTMLNode $node, $otherAttrs) {
         if ($node->getNodeName() == 'link') {
             $notAllowed = [
                 'rel','href'
@@ -1094,7 +1066,7 @@ class HeadNode extends HTMLNode {
             ];
         }
 
-        $this->_addAttrs($node, $otherAttrs, $notAllowed);
+        $this->addAttrsHelper($node, $otherAttrs, $notAllowed);
 
         $insertPosition = -1;
 

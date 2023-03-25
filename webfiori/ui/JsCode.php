@@ -30,7 +30,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrs = [], bool $useChaining = true) {
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = true) {
     }
     /**
      * Adds new line of JS code into the body.
@@ -50,7 +50,7 @@ class JsCode extends HTMLNode {
      * If the attribute name is 'type', nothing will happen, 
      * the attribute will never be created.
      * 
-     * @param string $val The value of the attribute. Default is empty string.
+     * @param string|null $val The value of the attribute. Default is empty string.
      * 
      * @since 1.0
      */
@@ -66,7 +66,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setClassName(string $val, $val2 = true) : HTMLNode {
+    public function setClassName(string $val, bool $override = true) : HTMLNode {
         return $this;
     }
     /**
@@ -91,7 +91,7 @@ class JsCode extends HTMLNode {
      * @since 1.0
      * 
      */
-    public function setText(string $text, $esc = true) : HTMLNode {
+    public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         return $this;
     }
     /**

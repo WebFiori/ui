@@ -10,6 +10,8 @@
  */
 namespace webfiori\ui;
 
+use webfiori\ui\exceptions\InvalidNodeNameException;
+
 /**
  * A class that represents List Item node.
  *
@@ -30,25 +32,26 @@ class ListItem extends HTMLNode {
         parent::__construct('li');
         $this->addChild($listItemBody);
     }
+
     /**
      * Adds a sub list to the body of the list item.
-     * 
-     * @param array $listItems An array that holds all list items which 
+     *
+     * @param array $listItems An array that holds all list items which
      * will be in the body of the list. It can contain text items, or it can have
      * objects of type 'ListItem'.
-     * 
-     * @param string $type The type of the sub list. It can be 'ul' or 'ol'. 
-     * Default is 'ul'.
-     * 
-     * @param array $attrs An optional associative array of attributes which 
+     *
+     * @param string $type The type of the sub list. It can be 'ul' or 'ol'. Default is 'ul'.
+     *
+     * @param array $attrs An optional associative array of attributes which
      * will be set for the list.
-     * 
-     * @return ListItem The method will return the instance at which the method 
+     *
+     * @return ListItem The method will return the instance at which the method
      * is called on.
-     * 
+     *
+     * @throws InvalidNodeNameException
      * @since 1.1.1
      */
-    public function addList(array $listItems, string $type = 'ul', array $attrs = []) {
+    public function addList(array $listItems, string $type = 'ul', array $attrs = []) : ListItem {
         $lType = strtolower(trim($type));
 
         if ($lType == 'ol') {
