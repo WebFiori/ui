@@ -298,7 +298,7 @@ class HTMLDoc {
     public function removeChildByID(string $id) {
         $toRemove = $this->getDocumentRoot()->getChildByID($id);
 
-        if ($toRemove !== $this->body && $toRemove !== $this->headNode) {
+        if ($toRemove !== null && $toRemove !== $this->body && $toRemove !== $this->headNode) {
             return $this->removeChildHelper($this->getDocumentRoot(), $toRemove);
         }
 

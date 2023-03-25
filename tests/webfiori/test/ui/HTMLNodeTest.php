@@ -501,7 +501,7 @@ class HTMLNodeTest extends TestCase {
           $this->assertEquals('<div><div itemscope @onclick>'
                   . '<ul><li>Hello</li><li>World</li></ul>'
                   . '<ol><li>Good</li><li>Girl</li><li><label>Test With Node</label></li><li></li></ol>'
-                  . '<a href="" target=_self class="imag-link"><img src=Test alt=Test></a>'
+                  . '<a target=_self class="imag-link"><img src=Test alt=Test></a>'
                   . '</div></div>', $node->toHTML());
     }
     /**

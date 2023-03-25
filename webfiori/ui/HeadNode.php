@@ -935,7 +935,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.4
      */
-    public function setCharSet(string $charset) : HeadNode {
+    public function setCharSet(string $charset = null) : HeadNode {
         if ($charset === null && $this->hasChild($this->metaCharset)) {
             $this->removeChild($this->metaCharset);
             $this->metaCharset->removeAttribute('charset');
