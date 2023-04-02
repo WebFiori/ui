@@ -677,33 +677,6 @@ class HTMLNode implements Countable, Iterator {
         return $this->addCommentNode($txt);
     }
     /**
-     * Loads HTML-like or PHP component and make it a child of current node.
-     * 
-     * This method can be used to load any component that uses HTML syntax 
-     * into an object and make it a child of the instance at which the method is 
-     * called in. If the component file contains more than one node as a root note, 
-     * all nodes will be added as children.
-     * 
-     * @param string $path The location of the file that 
-     * will have the HTML component.
-     * 
-     * @param array $values An array that contains slots values or variables
-     * to be passed to PHP template. A slot in
-     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
-     * This array must be associative. The indices of the array are slots names 
-     * and values of the indices are slots values. The values of the slots can be 
-     * also sub-array that contains more values. For example, if we 
-     * have a slot with the name {{ user-name }}, then the array can have the 
-     * index 'user-name' with the value of the slot.
-     * 
-     * @throws TemplateNotFoundException If the file that the component is 
-     * loaded from does not exist.
-     * 
-     */
-    public function include(string $path, array $values = []) {
-        $this->component($path, $values);
-    }
-    /**
      * Loads HTML-like component and make it a child of current node.
      * 
      * This method can be used to load any component that uses HTML syntax 
@@ -853,6 +826,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function fromFile(string $absPath, array $slotsOrVars = []) {
         $compiler = new TemplateCompiler($absPath, $slotsOrVars);
+
         return $compiler->getCompiled();
     }
 
@@ -1244,6 +1218,33 @@ class HTMLNode implements Countable, Iterator {
         $img = new HTMLNode('img', $attributes);
 
         return $this->addChild($img);
+    }
+    /**
+     * Loads HTML-like or PHP component and make it a child of current node.
+     * 
+     * This method can be used to load any component that uses HTML syntax 
+     * into an object and make it a child of the instance at which the method is 
+     * called in. If the component file contains more than one node as a root note, 
+     * all nodes will be added as children.
+     * 
+     * @param string $path The location of the file that 
+     * will have the HTML component.
+     * 
+     * @param array $values An array that contains slots values or variables
+     * to be passed to PHP template. A slot in
+     * the component is a string which is enclosed between two curly braces (such as {{name}}). 
+     * This array must be associative. The indices of the array are slots names 
+     * and values of the indices are slots values. The values of the slots can be 
+     * also sub-array that contains more values. For example, if we 
+     * have a slot with the name {{ user-name }}, then the array can have the 
+     * index 'user-name' with the value of the slot.
+     * 
+     * @throws TemplateNotFoundException If the file that the component is 
+     * loaded from does not exist.
+     * 
+     */
+    public function include(string $path, array $values = []) {
+        $this->component($path, $values);
     }
     /**
      * Adds new input (&lt;input&gt;, &lt;select&gt; or &lt;textarea&gt;) 
@@ -1976,7 +1977,6 @@ class HTMLNode implements Countable, Iterator {
      *
      */
     public function setStyle(array $cssStyles, bool $override = false) : HTMLNode {
-
         if (!$override) {
             $styleArr = $this->getStyle();
         } else {
@@ -2690,8 +2690,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      *
      */
-    private function validateFormattingOptions(array $FO): array
-    {
+    private function validateFormattingOptions(array $FO): array {
         $defaultFormat = self::DEFAULT_CODE_FORMAT;
 
         foreach ($defaultFormat as $key => $value) {
