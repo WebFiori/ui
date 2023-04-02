@@ -19,9 +19,18 @@ A set of classes that provide basic web pages creation utilities in addition to 
   </a>
 </p>
 
-## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, [click here](https://webfiori.com/docs/webfiori/ui) .
-
+## Content
+* [Supported PHP Versions](#supported-php-versions)
+* [Features](#features)
+* [Usage](#usage)
+  * [Basic Usage](#basic-usage)
+  * [Building More Complex DOM](#building-more-complex-dom)
+  * [HTML/PHP Template Files](#htmlphp-template-files)
+    * [HTML Templates](#html-templates)
+    * [PHP Templates](#php-templates)
+* [Creating XML Documents](#creating-xml-Documents)
+* [License](#license)
+ 
 
 ## Supported PHP Versions
 |                                                                                       Build Status                                                                                       |
@@ -36,21 +45,23 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
 
 ## Features
-* Ability to create custom HTML UI Elements.
+* Ability to create custom HTML UI Elements as PHP classes or PHP templates.
 * OPP abstraction to create and modify DOM through PHP.
 * Building dynamic HTML templates with PHP.
 * Provides a basic templating engine.
 * Support for creating XML documents.
   
 ## Usage
-For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
 
-The basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. The class can be used as follows:
+### Basic Usage
+
+The basic use case is to have HTML document with some text in its body. The class `HTMLDoc` represent HTML document. Simply, create an instance of this class and use it to build the whole HTML document. The class can be used as follows:
 ``` php
 use webfiori\ui\HTMLDoc;
 
+//This code will create HTML5 Document, get the <body> node and, add text to it.
 $doc = new HTMLDoc();
-$doc->getBody()->addTextNode('Hello World!');
+$doc->getBody()->text('Hello World!');
 echo $doc;
 ```
 
@@ -69,8 +80,9 @@ The output of this code is HTML 5 document. The structure of the document will b
   </body>
 </html>
 ```
-## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/webfiori/ui/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/webfiori/ui">here</a>. The following code shows a code which is used to create a basic login form.
+### Building More Complex DOM
+
+All HTML elements are represented as an instance of the class `HTMLNode`. Developers can extend this class to create custom UI components as classes. The library has already pre-made components which are used in the next code sample. In addition to that, the class has methods which utilize theses components and fasten the process of adding them as children of any HTML element. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use webfiori\ui\HTMLDoc;
@@ -101,8 +113,12 @@ The output of the code would be similar to the following image.
 
 <img src="tests/images/login-form.png">
 
-## Loading HTML Files
-Another way to have HTML rendered as object of type HTMLDoc is to create a document fully in HTML and add slots within its body and set the values of the slots in PHP code. Assume that we have HTML file with the following markup:
+### HTML/PHP Template Files
+Some developers don't like to have everything in PHP. For example, front-end developers like to work directly with HTML since it has femiliar syntax. For this reason, the library include basic support for using HTML or PHP files as templates. If the templates are pure HTML, then variables are set in the document using slots. If the template has a mix between PHP and HTML, then PHP variables can be passed to the template.
+
+#### HTML Templates
+
+Assume that we have HTML file with the following markup:
 ``` html
 <!DOCTYPE html>
 <html>
@@ -123,7 +139,7 @@ Another way to have HTML rendered as object of type HTMLDoc is to create a docum
     </body>
 </html>
 ```
-It is noted that there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the slots with values, we have to load HTML code into PHP. The following code shows how to do it.
+It is noted that there are strings which are enclosed between `{{}}`. Any string enclosed between `{{}}` is called a slot. To fill any slot, its value must be passed when rendered in PHP. The file will be rendered into an instance of the class `HTMLNode`. The file can be rendered using the static method `HTMLNode::fromFile(string $templatePath, array $values)`. First parameter of the method is the path to the template and the second parameter is an associative array that holds values of slots. The keys of the array are slots names and the value of each index is the value of the slot. The following code shows how this document is loaded into an instance of the class `HTMLNode` with slots values.
 ``` php
 $document = HTMLNode::fromFile('my-html-file.html', [
     'page-title' => 'Hello Page',
@@ -154,8 +170,9 @@ The output of the above PHP code will be the following HTML code.
     </body>
 </html>
 ```
-### PHP Templates
-Another feature of the library is the support of rendering PHP templates and convert them to objects. This can be useful in separating HTML templates from actual back-end code. 
+#### PHP Templates
+
+One draw back of using raw HTML template files with slots is that it can't have dynamic PHP code. To overcome this, it is possible to have the template written as a mix between HTML and PHP. This feature allow the use of all PHP features in HTML template. Also, this allow developers to pass PHP variables in addition to values for slots.
 
 Assuming that we have the following PHP template that shows a list of posts titles:
 
@@ -178,8 +195,9 @@ Assuming that we have the following PHP template that shows a list of posts titl
     ?>
 </div>
 ```
+This template uses a variable called `$posts` as seen. The value of this variable must be passed to the template before rendering. In this case, the second parameter of the method  `HTMLNode::fromFile(string $templatePath, array $values)` will have associative array of variables. The keys of the array are variables names and the values are variables values.
 
-This template can be loaded into object of type `HTMLNode` as follows:
+The template can be loaded into object of type `HTMLNode` as follows:
 
 ``` php
 $posts = [
@@ -193,7 +211,7 @@ $node = HTMLNode::fromFile('posts-list.php', [
 ])
 ```
 
-## Creating XML Document
+## Creating XML Documents
 In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The difference between HTML and XML is that XML is case-sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as It's used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
 
 ``` php
@@ -217,6 +235,7 @@ echo $xml->toXML();
 </saml:Assertion>
 */
 ```
+
 
 ## License
 The library is licensed under MIT license.
