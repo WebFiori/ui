@@ -10,6 +10,7 @@
  */
 namespace webfiori\ui;
 
+use InvalidArgumentException;
 use webfiori\collections\Queue;
 use webfiori\ui\exceptions\InvalidNodeNameException;
 use webfiori\ui\exceptions\TemplateNotFoundException;
@@ -50,12 +51,29 @@ class TemplateCompiler {
      * @throws InvalidNodeNameException
      */
     public function __construct(string $templatePath, array $vars = []) {
-        if (!file_exists($templatePath)) {
-            throw new TemplateNotFoundException('No file was found at "'.$templatePath.'".');
+        $trimmedPath = trim($templatePath);
+
+        if (strlen($trimmedPath) == 0) {
+            throw new InvalidArgumentException('Empty template path');
         }
-        $extArr = explode('.', $templatePath);
+
+        if (!file_exists($trimmedPath)) {
+            $possibleLocations = self::getCallingFilesPaths();
+
+            foreach ($possibleLocations as $dir) {
+                if (file_exists($dir.$trimmedPath)) {
+                    $trimmedPath = $dir.$trimmedPath;
+                    break;
+                }
+            }
+
+            if (!file_exists($trimmedPath)) {
+                throw new TemplateNotFoundException('No file was found at "'.$trimmedPath.'".');
+            }
+        }
+        $extArr = explode('.', $trimmedPath);
         $this->tType = strtolower($extArr[count($extArr) - 1]);
-        $this->path = $templatePath;
+        $this->path = $trimmedPath;
         $this->rawOutput = '';
         $this->compile($vars);
     }
@@ -154,7 +172,6 @@ class TemplateCompiler {
                 }
             } else {
                 if (count($nodesArr) != 1) {
-
                     foreach ($nodesArr as $node) {
                         $asHtmlNode = self::fromHTMLTextHelper00($node);
                         $retVal[] = $asHtmlNode;
@@ -168,6 +185,37 @@ class TemplateCompiler {
         }
 
         return null;
+    }
+    /**
+     * Returns an array that contains directories names of the calling files.
+     * 
+     * This method is used to extract the pathes of files at which they called
+     * this method.
+     * 
+     * @return array An array that contains directories names of the calling files.
+     */
+    public static function getCallingFilesPaths() : array {
+        $debugTrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 15);
+        $retVal = [];
+
+        foreach ($debugTrace as $traceEntry) {
+            if (isset($traceEntry['file'])) {
+                $file = $traceEntry['file'];
+                $split = explode(DIRECTORY_SEPARATOR, $file);
+                $withoutFile = array_diff($split, [$split[count($split) - 1]]);
+                $dir = implode(DIRECTORY_SEPARATOR, $withoutFile);
+
+                if (strlen($dir) != 0) {
+                    $dir .= DIRECTORY_SEPARATOR;
+
+                    if (!in_array($dir, $retVal)) {
+                        $retVal[] = $dir;
+                    }
+                }
+            }
+        }
+
+        return $retVal;
     }
     /**
      * Returns the compiled template.

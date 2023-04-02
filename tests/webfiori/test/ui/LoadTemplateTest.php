@@ -17,7 +17,8 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function test00() {
-        $this->expectException('Exception');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Empty template path');
         $compiler = new TemplateCompiler('');
     }
     /**
@@ -115,6 +116,28 @@ class LoadTemplateTest extends TestCase {
     /**
      * @test
      */
+    public function test08() {
+        $compiler = new TemplateCompiler('template.php', [
+            'message' => 'Good Job!',
+            'posts' => [
+                'One',
+                'Two',
+                'Three'
+            ]]);
+        $this->assertEquals("<div>"
+                . "<ul>"
+                . "<li>One</li>"
+                . "<li>Two</li>"
+                . "<li>Three</li>"
+                . "</ul>"
+                . "<div>\n"
+                . "    Good Job!"
+                . "</div>"
+                . "</div>", $compiler->getCompiled()->toHTML());
+    }
+    /**
+     * @test
+     */
     public function testHeadTemplate00() {
         $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-00.html');
         $node = $c->getCompiled();
@@ -179,7 +202,7 @@ class LoadTemplateTest extends TestCase {
      */
     public function testAddChildFromTemplate00() {
         $node = new HTMLNode();
-        $node->component(self::TEST_TEMPLATES_PATH.'component-00.html', [
+        $node->include(self::TEST_TEMPLATES_PATH.'component-00.html', [
             'base' => 'https://example.com',
             'home-label' => 'Home Page',
             'about-label' => 'About Us',

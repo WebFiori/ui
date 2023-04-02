@@ -163,8 +163,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOption(array $options = []): Input
-    {
+    public function addOption(array $options = []): Input {
         if ($this->getNodeName() == 'select' && gettype($options) == 'array' && isset($options['value']) && isset($options['label'])) {
             $option = new HTMLNode('option');
             $option->setAttribute('value', $options['value']);
@@ -202,8 +201,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addOptions(array $arrayOfOpt): Input
-    {
+    public function addOptions(array $arrayOfOpt): Input {
         if (gettype($arrayOfOpt) == 'array') {
             foreach ($arrayOfOpt as $value => $lblOrOptions) {
                 if (gettype($lblOrOptions) == 'array') {
@@ -249,8 +247,7 @@ class Input extends HTMLNode {
      * is called on.
      * @since 1.0.1
      */
-    public function addOptionsGroup(array $optionsGroupArr): Input
-    {
+    public function addOptionsGroup(array $optionsGroupArr): Input {
         if ($this->getNodeName() == 'select' && gettype($optionsGroupArr) == 'array' && isset($optionsGroupArr['label']) && isset($optionsGroupArr['options'])) {
             $optGroup = new HTMLNode('optgroup');
             $optGroup->setAttribute('label', $optionsGroupArr['label']);
@@ -382,8 +379,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setMinLength(int $length): Input
-    {
+    public function setMinLength(int $length): Input {
         if ($length >= 0) {
             $iType = $this->getType();
 
@@ -426,8 +422,7 @@ class Input extends HTMLNode {
      * @return Input The method will return the instance at which the method 
      * is called on.
      */
-    public function setPlaceholder(string $text = null): Input
-    {
+    public function setPlaceholder(string $text = null): Input {
         if ($text !== null) {
             $iType = $this->getType();
 
@@ -491,6 +486,7 @@ class Input extends HTMLNode {
         foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
             $o = new HTMLNode('option');
             $o->setAttribute('value', $value);
+
             if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
                 $o->addTextNode($labelOrOptions['label'],false);
 

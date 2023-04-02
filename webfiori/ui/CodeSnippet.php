@@ -37,7 +37,6 @@ namespace webfiori\ui;
  * @version 1.0.3
  */
 class CodeSnippet extends HTMLNode {
-
     private $code;
 
     private $codeDisplay;
@@ -250,12 +249,12 @@ class CodeSnippet extends HTMLNode {
         $span = new HTMLNode('span');
         $span->setClassName('line-number');
         $span->setAttribute('style',
-                'font-weight: bold;'
-                .'display: block;'
-                .'font-family: monospace;'
-                .'border-right: 1px dotted white;'
-                .'padding-right: 4px;'
-                .'color: #378e80;');
+            'font-weight: bold;'
+            .'display: block;'
+            .'font-family: monospace;'
+            .'border-right: 1px dotted white;'
+            .'padding-right: 4px;'
+            .'color: #378e80;');
         $span->addTextNode($this->currentLineNum);
         $this->currentLineNum++;
         $this->lineNumsNode->addChild($span);
