@@ -36,11 +36,10 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
 
 ## Features
-* Ability to create custom HTML UI Elements.
-* OPP abstraction to create and modify DOM through PHP.
+* Ability to create custom HTML UI Elements in OOP approach.
+* Virtual DOM through PHP.
 * Building dynamic HTML templates with PHP.
-* Provides a basic templating engine.
-* Support for creating XML documents.
+* Support for rendering XML documents.
   
 ## Usage
 For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
