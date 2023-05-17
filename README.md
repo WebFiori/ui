@@ -45,11 +45,10 @@ A set of classes that provide basic web pages creation utilities in addition to 
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
 
 ## Features
-* Ability to create custom HTML UI Elements as PHP classes or PHP templates.
-* OPP abstraction to create and modify DOM through PHP.
+* Ability to create custom HTML UI Elements in OOP approach.
+* Virtual DOM through PHP.
 * Building dynamic HTML templates with PHP.
-* Provides a basic templating engine.
-* Support for creating XML documents.
+* Support for rendering XML documents.
   
 ## Usage
 
