@@ -829,7 +829,31 @@ class HTMLNode implements Countable, Iterator {
 
         return $compiler->getCompiled();
     }
-
+    /**
+     * Creates HTMLNode object given a string of HTML code.
+     *
+     * Note that this method is still under implementation.
+     *
+     * @param string $htmlTxt A string that represents HTML code.
+     *
+     * @param bool $asHTMLDocObj If set to 'true' and given HTML represents a
+     * structured HTML document, the method will convert the code to an object
+     * of type 'HTMLDoc'. Default is 'true'.
+     *
+     * @return array|HeadNode|HTMLDoc|HTMLNode If the given code represents HTML document
+     * and the parameter <b>$asHTMLDocObj</b> is set to 'true', an object of type
+     * 'HTMLDoc' is returned. If the given code has multiple top level nodes
+     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'),
+     * an array that contains an objects of type 'HTMLNode' is returned. If the
+     * given code has one top level node, an object of type 'HTMLNode' is returned.
+     * Note that it is possible that the method will return an instance which
+     * is a subclass of the class 'HTMLNode'.
+     *
+     * @throws InvalidNodeNameException
+     */
+    public static function fromHTML(string $htmlTxt, bool $asHTMLDocObj = true) {
+        return TemplateCompiler::fromHTMLText($htmlTxt, $asHTMLDocObj);
+    }
     /**
      * Returns the value of an attribute.
      * 

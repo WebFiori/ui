@@ -132,7 +132,6 @@ class TemplateCompiler {
      * is a subclass of the class 'HTMLNode'.
      *
      * @throws InvalidNodeNameException
-     * @since 1.7.4
      */
     public static function fromHTMLText(string $text, bool $asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);

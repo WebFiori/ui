@@ -721,7 +721,7 @@ class HTMLNodeTest extends TestCase {
      */
     public function testFromHTML_01() {
         $htmlTxt = '';
-        $val = TemplateCompiler::fromHTMLText($htmlTxt);
+        $val = HTMLNode::fromHTML($htmlTxt);
         $this->assertNull($val);
     }
     /**
