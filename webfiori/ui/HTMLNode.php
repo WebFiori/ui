@@ -329,7 +329,7 @@ class HTMLNode implements Countable, Iterator {
                 $lastChild = $this->getLastChild();
 
                 if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
-                    $lastChild->setText($lastChild->getText().$toAdd->getText());
+                    $lastChild->setText($lastChild->getText().$toAdd->getText(), $lastChild->isEntityEscaped());
                 } else {
                     $toAdd->setParentHelper($this);
                     $this->childrenList->add($toAdd);
