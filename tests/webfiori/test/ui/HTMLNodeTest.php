@@ -1056,7 +1056,6 @@ and open the template in the editor.
         $node->setText('Hello World!');
         $this->assertEquals('Hello World!',$node->getText());
         $this->assertEquals('<!--Hello World!-->',$node->getComment());
-        $this->assertEquals('Hello World!',$node->getOriginalText());
     }
     /**
      * @test
@@ -1066,10 +1065,8 @@ and open the template in the editor.
         $this->assertEquals('<!---->',$node->getComment());
         $node->setText('A Comment <div> with </div> html.');
         $this->assertEquals('A Comment <div> with </div> html.',$node->getText());
-        $this->assertEquals('A Comment <div> with </div> html.',$node->getOriginalText());
         $node->setText('<!--A Comment');
         $this->assertEquals(' --A Comment',$node->getText());
-        $this->assertEquals('<!--A Comment',$node->getOriginalText());
         $this->assertEquals('<!-- --A Comment-->',$node->getComment());
         $node->setText('<!--A Comment X -->');
         $this->assertEquals(' --A Comment X -- ',$node->getText());
@@ -1170,13 +1167,10 @@ and open the template in the editor.
         $this->assertEquals('',$node->getText());
         $node->setText('Hello World!');
         $this->assertEquals('Hello World!',$node->getText());
-        $this->assertEquals('Hello World!',$node->getOriginalText());
         $node->setText('X < 6 and Y > 100');
         $this->assertEquals('X &lt; 6 and Y &gt; 100',$node->getText());
-        $this->assertEquals('X < 6 and Y > 100',$node->getOriginalText());
         $node->setText('X < 6 and Y > 100',false);
         $this->assertEquals('X < 6 and Y > 100',$node->getText());
-        $this->assertEquals('X < 6 and Y > 100',$node->getOriginalText());
     }
     /**
      * @test
@@ -2480,9 +2474,9 @@ and open the template in the editor.
         $html = new HTMLNode();
         $html->addChild($txtNode);
         $this->assertEquals('<div>&lt;a&gt;Link&lt;/a&gt;</div>',$html.'');
-        $txtNode->setUseOriginal(true);
+        $txtNode->setEscapeEntities(false);
         $this->assertEquals('<div><a>Link</a></div>',$html.'');
-        $txtNode->setUseOriginal(false);
+        $txtNode->setEscapeEntities(true);
         $this->assertEquals('<div>&lt;a&gt;Link&lt;/a&gt;</div>',$html.'');
     }
     /**

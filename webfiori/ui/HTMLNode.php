@@ -153,6 +153,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      */
     private $isVoid;
+    private $isEsc;
     /**
      * The name of the tag (such as 'div')
      * @var string
@@ -173,12 +174,6 @@ class HTMLNode implements Countable, Iterator {
     private $nodesStack;
     private $null;
 
-    /**
-     * The original text of a text node.
-     * @var string 
-     *
-     */
-    private $originalText;
     /**
      * The parent node of the instance.
      * @var HTMLNode
@@ -245,11 +240,15 @@ class HTMLNode implements Countable, Iterator {
         $this->text = '';
         $this->useOriginalTxt = false;
         $this->attributes = [];
+        $this->isEsc = true;
 
         $nameUpper = strtoupper(trim($name));
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
             $this->name = $nameUpper;
+            if ($nameUpper == self::COMMENT_NODE) {
+                $this->isEsc = false;
+            }
             $this->setIsVoidNode(true);
         } else {
             $this->name = trim($name);
@@ -330,7 +329,7 @@ class HTMLNode implements Countable, Iterator {
                 $lastChild = $this->getLastChild();
 
                 if ($lastChild !== null && $lastChild->getNodeName() == '#TEXT') {
-                    $lastChild->setText($lastChild->getText().$toAdd->getText(), $toAdd->getOriginalText() != $toAdd->getText());
+                    $lastChild->setText($lastChild->getText().$toAdd->getText());
                 } else {
                     $toAdd->setParentHelper($this);
                     $this->childrenList->add($toAdd);
@@ -1063,14 +1062,17 @@ class HTMLNode implements Countable, Iterator {
         return $this->name;
     }
     /**
-     * Returns the original text which was set in the body of the node.
+     * Sets the value of the property which is used to check if the text
+     * on the body of the node will be escaped or not if it has HTML entities.
      * 
-     * This only applies to text nodes and comment nodes.
+     * This only applies to text node.
      * 
-     * @return string The original text without any modifications.
+     * @param bool $esc
      */
-    public function getOriginalText() {
-        return $this->originalText;
+    public function setEscapeEntities(bool $esc) {
+        if ($this->isTextNode()) {
+            $this->isEsc = $esc;
+        }
     }
     /**
      * Returns the parent node.
@@ -1131,7 +1133,11 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getText() : string {
         if ($this->isComment() || $this->isTextNode()) {
-            return $this->text;
+            if ($this->isEntityEscaped()) {
+                return htmlentities($this->text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+            } else {
+                return $this->text;
+            }
         }
 
         return '';
@@ -1341,6 +1347,17 @@ class HTMLNode implements Countable, Iterator {
         return $this->getNodeName() == self::COMMENT_NODE;
     }
     /**
+     * Checks if HTML entities will be escaped or not.
+     * 
+     * This method is applicable only if node type is text.
+     * 
+     * @return bool The method will return true if they will be escaped. False
+     * otherwise.
+     */
+    public function isEntityEscaped() : bool {
+        return $this->isEsc;
+    }
+    /**
      * Returns the value of the property $isFormatted.
      * 
      * The property is used to control how the HTML code that will be generated 
@@ -1404,6 +1421,8 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @return bool True if original text will be used in the body of the 
      * text node. False if not. Default is false.
+     * 
+     * @deprecated since version 2.5.4
      *
      */
     public function isUseOriginalText() : bool {
@@ -1956,7 +1975,9 @@ class HTMLNode implements Countable, Iterator {
 
             if (($this->isTextNode() && $uName == self::COMMENT_NODE) || ($this->isComment() && $uName == self::TEXT_NODE)) {
                 $this->name = $uName;
-
+                if ($uName == self::COMMENT_NODE) {
+                    $this->isEsc = false;
+                }
                 return true;
             } else {
                 return false;
@@ -2074,12 +2095,13 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         if ($this->isTextNode() || $this->isComment()) {
-            $this->originalText = $text;
-
+            
+            
+            
             if ($this->isComment()) {
                 $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
-            } else if ($escHtmlEntities === true) {
-                $text = htmlentities($text, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+            } else {
+                $this->setEscapeEntities($escHtmlEntities);
             }
             $this->text = $text;
         }
@@ -2114,25 +2136,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setUseForwardSlash(bool $hasForward) {
         self::$UseForwardSlash = $hasForward;
-    }
-    /**
-     * Sets the value of the property $useOriginalTxt.
-     * 
-     * The property is used when parsing text nodes. If it is set to true, 
-     * the text that will be in the body of the node will be the exact text 
-     * which was set using the method HTMLNode::setText() (The value which will be 
-     * returned by the method HTMLNode::getOriginalText()). If it is set to 
-     * false, then the text which is in the body of the node will be the 
-     * value which is returned by the method HTMLNode::getText().
-     * 
-     * @param bool $boolean True or false.
-     * 
-     *
-     */
-    public function setUseOriginal(bool $boolean) {
-        if ($this->isTextNode()) {
-            $this->useOriginalTxt = $boolean === true;
-        }
     }
     /**
      * Sets the value of the attribute 'dir' of the node.
@@ -2532,11 +2535,7 @@ class HTMLNode implements Countable, Iterator {
     private function pushNode(HTMLNode $node) {
         if ($node->isTextNode()) {
             if (!self::isFormatted()) {
-                if ($node->isUseOriginalText()) {
-                    $this->htmlString .= $node->getOriginalText();
-                } else {
-                    $this->htmlString .= $node->getText();
-                }
+                $this->htmlString .= $node->getText();
             } else {
                 $parent = $node->getParent();
 
@@ -2595,11 +2594,7 @@ class HTMLNode implements Countable, Iterator {
      */
     private function pushNodeAsCode(HTMLNode $node, array $FO) {
         if ($node->isTextNode()) {
-            if ($node->isUseOriginalText()) {
-                $this->codeString .= $this->getTab().$node->getOriginalText().$this->nl;
-            } else {
-                $this->codeString .= $this->getTab().$node->getText().$this->nl;
-            }
+            $this->codeString .= $this->getTab().$node->getText().$this->nl;
         } else if ($node->isComment()) {
             if ($FO['with-colors'] === true) {
                 $this->codeString .= $this->getTab().'<span style="color:'.$FO['colors']['comment-color'].'">&lt!--'.$node->getText().'--&gt;</span>'.$this->nl;
