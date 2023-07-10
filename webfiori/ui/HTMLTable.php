@@ -237,11 +237,16 @@ class HTMLTable extends HTMLNode {
      * 
      * @param array $attributes An array that contains the attributes and
      * their values.
+     * 
+     * @return HTMLTable the method will return the same instance at which the
+     * method is called on.
      */
-    public function setColAttributes(int $colNum, array $attributes) {
+    public function setColAttributes(int $colNum, array $attributes) : HTMLTable {
         for ($x = 0 ; $x < $this->rows() ; $x++) {
             $this->getCell($x, $colNum)->setAttributes($attributes);
         }
+        
+        return $this;
     }
     /**
      * Sets the attributes of cells in one specific row.
@@ -253,13 +258,18 @@ class HTMLTable extends HTMLNode {
      * 
      * @param array $attributes An array that contains the attributes and
      * their values.
+     * 
+     * @return HTMLTable the method will return the same instance at which the
+     * method is called on.
      */
-    public function setRowAttributes(int $rowNum, array $attributes) {
+    public function setRowAttributes(int $rowNum, array $attributes) : HTMLTable {
         $row = $this->getRow($rowNum);
 
         foreach ($row->children() as $cell) {
             $cell->setAttributes($attributes);
         }
+        
+        return $this;
     }
     /**
      * Sets the value of a specific cell in the table.
@@ -273,21 +283,26 @@ class HTMLTable extends HTMLNode {
      * 
      * @throws InvalidArgumentException If row index or column index is invalid.
      * 
+     * @return HTMLTable the method will return the same instance at which the
+     * method is called on.
+     * 
      * @since 1.0
      */
-    public function setValue(int $rowIndex, int $colIndex, $value) {
+    public function setValue(int $rowIndex, int $colIndex, $value) : HTMLTable {
         if ($rowIndex < $this->rows() && $rowIndex >= 0) {
             if ($colIndex < $this->cols() && $colIndex >= 0) {
                 $cell = $this->getChild($rowIndex)->getChild($colIndex);
                 $cell->removeAllChildNodes();
 
-                if ($value instanceof HTMLNode) {
-                    $cell->addChild($value);
-                } else {
-                    $cell->text($value);
+                if ($value !== null) {
+                    if ($value instanceof HTMLNode) {
+                        $cell->addChild($value);
+                    } else {
+                        $cell->text($value);
+                    }
                 }
 
-                return;
+                return $this;
             }
             throw new InvalidArgumentException("Column index must be less than ".$this->cols().' and greater than -1.');
         }
