@@ -61,20 +61,6 @@ class HTMLTable extends HTMLNode {
         }
     }
     /**
-     * Update the type of cells used in first row of the table.
-     * 
-     * @param string $type This can have two values, 'th' or 'td'.
-     */
-    public function setFirstColCellType(string $type) {
-        $lower = strtolower(trim($type));
-        
-        if ($type == 'td' || $type == 'th') {
-            for ($x = 0 ; $x < $this->cols() ; $x++) {
-                $this->getCell(0, $x)->setNodeName($lower);
-            }
-        }
-    }
-    /**
      * Adds a new column to the table.
      * 
      * @param array $data The data that will be added. If the array holds more 
@@ -239,8 +225,22 @@ class HTMLTable extends HTMLNode {
         for ($x = 0 ; $x < $this->rows() ; $x++) {
             $this->getCell($x, $colNum)->setAttributes($attributes);
         }
-        
+
         return $this;
+    }
+    /**
+     * Update the type of cells used in first row of the table.
+     * 
+     * @param string $type This can have two values, 'th' or 'td'.
+     */
+    public function setFirstColCellType(string $type) {
+        $lower = strtolower(trim($type));
+
+        if ($type == 'td' || $type == 'th') {
+            for ($x = 0 ; $x < $this->cols() ; $x++) {
+                $this->getCell(0, $x)->setNodeName($lower);
+            }
+        }
     }
     /**
      * Sets the attributes of cells in one specific row.
@@ -262,7 +262,7 @@ class HTMLTable extends HTMLNode {
         foreach ($row->children() as $cell) {
             $cell->setAttributes($attributes);
         }
-        
+
         return $this;
     }
     /**

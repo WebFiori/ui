@@ -134,6 +134,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      */
     private $htmlString;
+    private $isEsc;
     private static $IsFormatted = false;
     /**
      * A global static variable to decide if attributes values
@@ -153,7 +154,6 @@ class HTMLNode implements Countable, Iterator {
      * 
      */
     private $isVoid;
-    private $isEsc;
     /**
      * The name of the tag (such as 'div')
      * @var string
@@ -246,6 +246,7 @@ class HTMLNode implements Countable, Iterator {
 
         if ($nameUpper == self::TEXT_NODE || $nameUpper == self::COMMENT_NODE) {
             $this->name = $nameUpper;
+
             if ($nameUpper == self::COMMENT_NODE) {
                 $this->isEsc = false;
             }
@@ -1060,19 +1061,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getNodeName() : string {
         return $this->name;
-    }
-    /**
-     * Sets the value of the property which is used to check if the text
-     * on the body of the node will be escaped or not if it has HTML entities.
-     * 
-     * This only applies to text node.
-     * 
-     * @param bool $esc
-     */
-    public function setEscapeEntities(bool $esc) {
-        if ($this->isTextNode()) {
-            $this->isEsc = $esc;
-        }
     }
     /**
      * Returns the parent node.
@@ -1891,6 +1879,19 @@ class HTMLNode implements Countable, Iterator {
         return $this;
     }
     /**
+     * Sets the value of the property which is used to check if the text
+     * on the body of the node will be escaped or not if it has HTML entities.
+     * 
+     * This only applies to text node.
+     * 
+     * @param bool $esc
+     */
+    public function setEscapeEntities(bool $esc) {
+        if ($this->isTextNode()) {
+            $this->isEsc = $esc;
+        }
+    }
+    /**
      * Sets the value of the attribute 'id' of the node.
      * 
      * @param string $idVal The value to set.
@@ -1975,9 +1976,11 @@ class HTMLNode implements Countable, Iterator {
 
             if (($this->isTextNode() && $uName == self::COMMENT_NODE) || ($this->isComment() && $uName == self::TEXT_NODE)) {
                 $this->name = $uName;
+
                 if ($uName == self::COMMENT_NODE) {
                     $this->isEsc = false;
                 }
+
                 return true;
             } else {
                 return false;
@@ -2095,9 +2098,6 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
         if ($this->isTextNode() || $this->isComment()) {
-            
-            
-            
             if ($this->isComment()) {
                 $text = str_replace('<!--', ' --', str_replace('-->', '-- ', $text));
             } else {

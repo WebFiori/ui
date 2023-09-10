@@ -764,7 +764,7 @@ class TemplateCompiler {
     private static function replaceAttrsValues(string $htmlStr) : array {
         $scripts = [];
         preg_match_all("/(?<=<script>)(.*?)(?=<\/script>)/s", $htmlStr, $scripts);
-        
+
         //For double quotation
         $attrsArr = [];
         //After every attribute value, there must be a space if more than one attribute.
@@ -780,9 +780,9 @@ class TemplateCompiler {
             $tempValuesArr[$key] = $trimmed;
             $htmlStr = str_replace($value, '"'.$key.'"', $htmlStr);
         }
-        
+
         $tempScriptsArr = [];
-        
+
         foreach ($scripts[0] as $scriptArr) {
             //Used to always generate a unique key based on time.
             $now = date('H:i:s.').gettimeofday()["usec"];
