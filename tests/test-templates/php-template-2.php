@@ -11,7 +11,7 @@
     </ul>
     <?php
     } else {
-        echo "No posts.\n";
+        echo "No posts.\r\n";
     }
     ?>
 </div>

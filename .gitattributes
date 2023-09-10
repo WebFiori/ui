@@ -1,4 +1,7 @@
 # Files and folders here will be not included when creating package
+* text eol=crlf
+*.php text eol=crlf
+*.html text eol=crlf
 /tests export-ignore
 /.github export-ignore
 /.gitignore export-ignore

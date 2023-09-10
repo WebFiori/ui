@@ -83,7 +83,8 @@ class LoadTemplateTest extends TestCase {
     public function test05() {
         $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'php-template.php');
         $node = $compiler->getCompiled();
-        $this->assertEquals("<div>\n    This is a test on php</div>", $node->toHTML());
+        $this->assertEquals("<div>\r\n"
+                . "    This is a test on php</div>", $node->toHTML());
     }
     /**
      * @test
@@ -111,8 +112,11 @@ class LoadTemplateTest extends TestCase {
             'posts' => []
         ]);
         $node = $compiler->getCompiled();
-        $this->assertEquals("<div>\n    No posts.\n</div>", $node->toHTML());
+        $this->assertEquals("<div>\r\n"
+                . "    No posts.\r\n"
+                . "</div>", $node->toHTML());
     }
+    
     /**
      * @test
      */
@@ -130,10 +134,50 @@ class LoadTemplateTest extends TestCase {
                 . "<li>Two</li>"
                 . "<li>Three</li>"
                 . "</ul>"
-                . "<div>\n"
+                . "<div>\r\n"
                 . "    Good Job!"
                 . "</div>"
                 . "</div>", $compiler->getCompiled()->toHTML());
+    }
+    /**
+     * @test
+     */
+    public function test09() {
+        $compiler = new TemplateCompiler('template.html');
+        $this->assertEquals("<div v-if=\"someVar <= 6 || someVar >= 8 || someVar === 6\">\r\n"
+                . "    <script>\r\n"
+                . "        \r\n"
+                . "        function allIsGood() {\r\n"
+                . "            if (a > 6) {\r\n"
+                . "                alert(\"Oh. A is > 6 but probably < 100.\");\r\n"
+                . "            }\r\n"
+                . "            if (a < 100) {\r\n"
+                . "                alert('Oh. A is < 100.');\r\n"
+                . "            }\r\n"
+                . "        }\r\n"
+                . "    \r\n"
+                . "    </script>\r\n"
+                . "</div>\r\n", $compiler->getCompiled()->toHTML(true));
+    }
+    /**
+     * @test
+     */
+    public function test10() {
+        $compiler = new TemplateCompiler('template2.php');
+        $this->assertEquals("<div v-if=\"someVar <= 6 || someVar >= 8 || someVar === 6\">\r\n"
+                . "    <script>\r\n"
+                . "        \r\n"
+                . "        function allIsGood() {\r\n"
+                . "            if (a > 6) {\r\n"
+                . "                alert(\"Oh. A is > 6 but probably < 100.\");\r\n"
+                . "            }\r\n"
+                . "            if (a < 100) {\r\n"
+                . "                alert('Oh. A is < 100.');\r\n"
+                . "            }\r\n"
+                . "        }\r\n"
+                . "    \r\n"
+                . "    </script>\r\n"
+                . "</div>\r\n", $compiler->getCompiled()->toHTML(true));
     }
     /**
      * @test

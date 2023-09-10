@@ -29,6 +29,16 @@ class HTMLTableTest extends TestCase {
                 . '<tr><td></td><td></td><td></td><td></td><td></td>'
                 . '</tr>'
                 . '</table>', $table->toHTML());
+        $table->setFirstColCellType('th');
+        $this->assertEquals('<table border="1" style="border-collapse:collapse;">'
+                . '<tr>'
+                . '<th></th><th></th><th></th><th></th><th></th>'
+                . '</tr>'
+                . '<tr><td></td><td></td><td></td><td></td><td></td>'
+                . '</tr>'
+                . '<tr><td></td><td></td><td></td><td></td><td></td>'
+                . '</tr>'
+                . '</table>', $table->toHTML());
         $table->setIsQuotedAttribute(false);
     }
     /**

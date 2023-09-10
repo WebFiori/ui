@@ -16,7 +16,6 @@ use InvalidArgumentException;
  *
  * @author Ibrahim
  * 
- * @since 1.0.1
  */
 class HTMLTable extends HTMLNode {
     /**
@@ -42,7 +41,6 @@ class HTMLTable extends HTMLNode {
      * @param int $cols Number of columns in the table. Must be greater than 0. 
      * If less than 0 is given, the value is set to 1.
      * 
-     * @since 1.0
      */
     public function __construct(int $rows, int $cols) {
         parent::__construct('table', ['border' => '1']);
@@ -69,8 +67,6 @@ class HTMLTable extends HTMLNode {
      * elements than the number of rows in the table, the extra rows will be 
      * stripped off. If the array has fewer items than number of rows, the
      * method will fill remaining rows with empty cells.
-     * 
-     * @since 1.0
      */
     public function addColumn(array $data = []) {
         for ($x = 0 ; $x < $this->rows() ; $x++) {
@@ -89,8 +85,6 @@ class HTMLTable extends HTMLNode {
      * has more elements than the number of columns, the extra columns will be 
      * stripped off. If the array has fewer elements than number of columns, the
      * method will add empty cells for remaining places.
-     * 
-     * @since 1.0
      */
     public function addRow($arrOrRowObj) {
         if ($arrOrRowObj instanceof TableRow) {
@@ -112,8 +106,6 @@ class HTMLTable extends HTMLNode {
      * Returns number of columns in the table.
      * 
      * @return int Number of columns in the table.
-     * 
-     * @since 1.0
      */
     public function cols() : int {
         return $this->cols;
@@ -127,8 +119,6 @@ class HTMLTable extends HTMLNode {
      * 
      * @return TableCell|null If a cell at given location exist, it is returned as 
      * an object. Other than that, the method will return null.
-     * 
-     * @since 1.0.1
      */
     public function getCell(int $rowIndex, int $colIndex) {
         $row = $this->getRow($rowIndex);
@@ -144,8 +134,6 @@ class HTMLTable extends HTMLNode {
      * 
      * @return TableRow|null If the row exist, the method will return it as an 
      * object. If not exist, the method will return null.
-     * 
-     * @since 1.0
      */
     public function getRow(int $rowIndex) {
         return $this->getChild($rowIndex);
@@ -161,8 +149,6 @@ class HTMLTable extends HTMLNode {
      * return a string that represent the value. If the cell contains HTML 
      * element, it is returned as an object. If cell does not exist, the method 
      * will return null.
-     * 
-     * @since 1.0
      */
     public function getValue(int $rowIndex, int $colIndex) {
         $row = $this->getRow($rowIndex);
@@ -189,8 +175,6 @@ class HTMLTable extends HTMLNode {
      * @return array The method will return an array that holds objects that 
      * represents the cells of the column. If no column was removed, the array 
      * will be empty.
-     * 
-     * @since 1.0.2
      */
     public function removeCol(int $colIndex) : array {
         $colCells = [];
@@ -211,8 +195,6 @@ class HTMLTable extends HTMLNode {
      * @return TableRow|null If the row is removed, the method will return 
      * an object that represents the removed row. Other than that, the method 
      * will return null.
-     * 
-     * @since 1.0.2
      */
     public function removeRow(int $rowIndex) {
         return $this->removeChild($rowIndex);
@@ -221,8 +203,6 @@ class HTMLTable extends HTMLNode {
      * Returns number of rows in the table.
      * 
      * @return int Number of rows in the table.
-     * 
-     * @since 1.0
      */
     public function rows() : int {
         return $this->rows;
@@ -245,8 +225,22 @@ class HTMLTable extends HTMLNode {
         for ($x = 0 ; $x < $this->rows() ; $x++) {
             $this->getCell($x, $colNum)->setAttributes($attributes);
         }
-        
+
         return $this;
+    }
+    /**
+     * Update the type of cells used in first row of the table.
+     * 
+     * @param string $type This can have two values, 'th' or 'td'.
+     */
+    public function setFirstColCellType(string $type) {
+        $lower = strtolower(trim($type));
+
+        if ($type == 'td' || $type == 'th') {
+            for ($x = 0 ; $x < $this->cols() ; $x++) {
+                $this->getCell(0, $x)->setNodeName($lower);
+            }
+        }
     }
     /**
      * Sets the attributes of cells in one specific row.
@@ -268,7 +262,7 @@ class HTMLTable extends HTMLNode {
         foreach ($row->children() as $cell) {
             $cell->setAttributes($attributes);
         }
-        
+
         return $this;
     }
     /**
@@ -285,8 +279,6 @@ class HTMLTable extends HTMLNode {
      * 
      * @return HTMLTable the method will return the same instance at which the
      * method is called on.
-     * 
-     * @since 1.0
      */
     public function setValue(int $rowIndex, int $colIndex, $value) : HTMLTable {
         if ($rowIndex < $this->rows() && $rowIndex >= 0) {
@@ -298,7 +290,7 @@ class HTMLTable extends HTMLNode {
                     if ($value instanceof HTMLNode) {
                         $cell->addChild($value);
                     } else {
-                        $cell->text($value);
+                        $cell->text($value.'');
                     }
                 }
 
