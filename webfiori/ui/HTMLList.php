@@ -78,7 +78,7 @@ class HTMLList extends HTMLNode {
             if ($node instanceof HTMLNode) {
                 $li->addChild($node);
             } else {
-                $li->text($node);
+                $li->text($node.'');
             }
 
             return parent::addChild($li, $attrsOrChain, $chainOnParent);
@@ -110,7 +110,7 @@ class HTMLList extends HTMLNode {
             if ($listItemBody instanceof HTMLNode) {
                 $li->addChild($listItemBody);
             } else {
-                $li->text($listItemBody,$escHtmlEntities);
+                $li->text($listItemBody.'',$escHtmlEntities);
             }
             $this->addChild($li);
         }
