@@ -1782,7 +1782,7 @@ class HTMLNode implements Countable, Iterator {
         if ($title instanceof HTMLNode) {
             $heading->addChild($title);
         } else {
-            $heading->text($title, false);
+            $heading->text($title.'', false);
         }
         $section = new HTMLNode('section', $attributes);
         $section->addChild($heading);
