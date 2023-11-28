@@ -3,7 +3,7 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 <p align="center">
   <a href="https://github.com/WebFiori/database/actions">
-    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.3/badge.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
@@ -43,6 +43,7 @@ A set of classes that provide basic web pages creation utilities in addition to 
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=master"></a>  |
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master"></a>  |
 | <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php83.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.3/badge.svg?branch=master"></a>  |
 
 ## Features
 * Ability to create custom HTML UI Elements in OOP approach.
