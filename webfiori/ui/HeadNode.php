@@ -451,6 +451,43 @@ class HeadNode extends HTMLNode {
 
         return $this;
     }
+    public function addMetaHttpEquiv(string $name, string $content, bool $override = false) : HeadNode {
+        $trimmedName = trim(strtolower($name));
+
+        if (strlen($trimmedName) != 0) {
+            $meta = $this->getMeta($trimmedName, true);
+
+            if ($meta !== null && $override === true) {
+                $meta->setAttribute('content', $content);
+
+                return $this;
+            } else if ($meta === null) {
+                $meta = new HTMLNode('meta');
+                $meta->setAttribute('http-equiv', $trimmedName);
+                $meta->setAttribute('content', $content);
+                $this->insertMetaInCorrectOrder($meta);
+            }
+        }
+
+        return $this;
+    }
+    private function insertMetaInCorrectOrder(HTMLNode $newMeta) {
+        $insertPosition = -1;
+
+        for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+            $chNode = $this->getChild($x);
+
+            if ($chNode->getNodeName() == 'meta') {
+                $insertPosition = $x;
+            }
+        }
+
+        if ($insertPosition != -1) {
+            $this->insert($newMeta, $insertPosition + 1);
+        } else {
+            $this->addChild($newMeta);
+        }
+    }
     /**
      * Adds new meta tag.
      * 
@@ -482,21 +519,7 @@ class HeadNode extends HTMLNode {
                 $meta = new HTMLNode('meta');
                 $meta->setAttribute('name', $trimmedName);
                 $meta->setAttribute('content', $content);
-                $insertPosition = -1;
-
-                for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-                    $chNode = $this->getChild($x);
-
-                    if ($chNode->getNodeName() == 'meta') {
-                        $insertPosition = $x;
-                    }
-                }
-
-                if ($insertPosition != -1) {
-                    $this->insert($meta,$insertPosition + 1);
-                } else {
-                    $this->addChild($meta);
-                }
+                $this->insertMetaInCorrectOrder($meta);
             }
         }
 
@@ -530,7 +553,7 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'alternate') {
+            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttribute('rel') == 'alternate') {
                 $list->add($child);
             }
         }
@@ -557,7 +580,7 @@ class HeadNode extends HTMLNode {
      * @since 1.1.3
      */
     public function getBaseURL() {
-        return $this->baseNode->getAttributeValue('href');
+        return $this->baseNode->getAttribute('href');
     }
     /**
      * Returns the canonical URL if set.
@@ -568,7 +591,7 @@ class HeadNode extends HTMLNode {
      * @since 1.0
      */
     public function getCanonical() {
-        return $this->canonical->getAttributeValue('href');
+        return $this->canonical->getAttribute('href');
     }
     /**
      * Returns an object of type HTMLNode that represents the canonical URL.
@@ -590,7 +613,7 @@ class HeadNode extends HTMLNode {
      * @since 1.1.4
      */
     public function getCharSet() {
-        return $this->metaCharset->getAttributeValue('charset');
+        return $this->metaCharset->getAttribute('charset');
     }
     /**
      * Returns an object of type HTMLNode that represents the meta tag which 
@@ -623,7 +646,7 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttributeValue('rel') == 'stylesheet') {
+            if ($childName == 'link' && $child->hasAttribute('rel') && $child->getAttribute('rel') == 'stylesheet') {
                 $list->add($child);
             }
         }
@@ -647,7 +670,7 @@ class HeadNode extends HTMLNode {
             $child = $children->get($x);
             $childName = $child->getNodeName();
 
-            if ($childName == 'script' && $child->hasAttribute('type') && $child->getAttributeValue('type') == 'text/javascript') {
+            if ($childName == 'script' && $child->hasAttribute('type') && $child->getAttribute('type') == 'text/javascript') {
                 $list->add($child);
             }
         }
@@ -672,22 +695,27 @@ class HeadNode extends HTMLNode {
      * tag. Note that if the meta node that you would like to get is 
      * the tag which has the attribute 'charset', then the passed attribute 
      * must have the value 'charset'.
+     * Note that this value is case insensitive.
+     * 
+     * @param bool $httpEquvi If set to true, the search will be based on the
+     * value of the attribute 'http-equiv' instead of 'name'.
      * 
      * @return HTMLNode|null If a meta tag which has the given name was found, 
      * It will be returned. If no meta node was found, null is returned.
      * 
      * @since 1.1.2
      */
-    public function getMeta(string $name) {
+    public function getMeta(string $name, bool $httpEquvi = false) {
         $lName = strtolower(trim($name));
-
+        $attribute = $httpEquvi ? 'http-equiv' : 'name';
+        
         if ($lName == 'charset') {
             return $this->getCharsetNode();
         } else {
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
                 $node = $this->children()->get($x);
 
-                if ($node->getNodeName() == 'meta' && $node->getAttributeValue('name') == $name) {
+                if ($node->getNodeName() == 'meta' && $node->getAttribute($attribute) == $lName) {
                     return $node;
                 }
             }
@@ -822,6 +850,8 @@ class HeadNode extends HTMLNode {
      * @param string $name The value of the attribute 'name' of the meta 
      * tag. If the developer would like to check for the existence of the 
      * node which has the attribute 'charset', he can pass the value 'charset'.
+     * Also, this can be the value of the attribute 'http-equiv' of the meta tag.
+     * Note that this value is case insensitive.
      * 
      * @return bool If a meta tag which has the given name was found, 
      * true is returned. false otherwise.
@@ -837,7 +867,7 @@ class HeadNode extends HTMLNode {
             for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
                 $node = $this->children()->get($x);
 
-                if ($node->getNodeName() == 'meta' && $node->getAttributeValue('name') == $name) {
+                if ($node->getNodeName() == 'meta' && ($node->getAttribute('name') == $lName || $node->getAttribute('http-equiv') == $lName)) {
                     return true;
                 }
             }
@@ -1028,7 +1058,7 @@ class HeadNode extends HTMLNode {
                 }
             }
 
-            if (!$this->hasMeta($node->getAttributeValue('name'))) {
+            if (!$this->hasMeta($node->getAttribute('name'))) {
                 parent::addChild($node);
             }
         } else {
