@@ -591,6 +591,27 @@ class HeadNodeTest extends TestCase {
     /**
      * @test
      */
+    public function testAddMeta04() {
+        $node = new HeadNode();
+        $this->assertFalse($node->hasMeta('content-security-policy'));
+        $node->addMetaHttpEquiv('content-security-pOlicy', "script-src 'self'");
+        $this->assertNull($node->getMeta('Content-Security-policy'));
+        $this->assertEquals("script-src 'self'", $node->getMeta('Content-Security-policy', true)->getAttribute('content'));
+        $this->assertEquals(3,$node->childrenCount());
+        $this->assertTrue($node->hasMeta('content-security-policy'));
+        $node->addMetaHttpEquiv('content-security-policy', 'Hello');
+        $this->assertEquals("script-src 'self'", $node->getMeta('Content-Security-policy', true)->getAttribute('content'));
+        $node->addMetaHttpEquiv('content-security-policy', 'Hello', true);
+        $this->assertEquals(3,$node->childrenCount());
+        $this->assertEquals("Hello", $node->getMeta('Content-Security-policy', true)->getAttribute('content'));
+        $node->addMetaHttpEquiv('refresh', 30);
+        $this->assertEquals(4,$node->childrenCount());
+        $this->assertTrue($node->hasMeta('refresh'));
+        
+    }
+    /**
+     * @test
+     */
     public function testConstructor00() {
         $node = new HeadNode();
         $this->assertEquals(2,$node->childrenCount());
