@@ -344,19 +344,10 @@ class HTMLDoc {
      * 
      * @param HeadNode $node The node to set.
      * 
-     * @return bool If head node is set, the method will return true. 
-     * if it is not set, the method will return false.
-     * 
-     * @since 1.0
      */
-    public function setHeadNode(HeadNode $node) : bool {
-        if ($this->getDocumentRoot()->replaceChild($this->headNode, $node)) {
-            $this->headNode = $node;
-
-            return true;
-        }
-
-        return false;
+    public function setHeadNode(HeadNode $node) {
+        $this->getDocumentRoot()->replaceChild($this->headNode, $node);
+        $this->headNode = $node;
     }
     /**
      * Sets the language of the document.
