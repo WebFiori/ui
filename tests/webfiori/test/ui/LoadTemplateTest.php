@@ -204,6 +204,13 @@ class LoadTemplateTest extends TestCase {
     /**
      * @test
      */
+    public function test11() {
+        $this->expectException(\webfiori\ui\exceptions\TemplateNotFoundException::class);
+        $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'not-exist.php');
+    }
+    /**
+     * @test
+     */
     public function testHeadTemplate02() {
         $c = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'head-template-01.html', [
             'title' => 'This is page title.'
