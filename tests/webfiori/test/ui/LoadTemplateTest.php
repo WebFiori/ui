@@ -146,6 +146,7 @@ class LoadTemplateTest extends TestCase {
         $compiler = new TemplateCompiler('template.html');
         $this->assertEquals("<div v-if=\"someVar <= 6 || someVar >= 8 || someVar === 6\">\r\n"
                 . "    <script>\r\n"
+                . "        \r\n"
                 . "        function allIsGood() {\r\n"
                 . "            if (a > 6) {\r\n"
                 . "                alert(\"Oh. A is > 6 but probably < 100.\");\r\n"
