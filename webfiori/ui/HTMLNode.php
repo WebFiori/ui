@@ -756,10 +756,11 @@ class HTMLNode implements Countable, Iterator {
      */
     public static function createTextNode(string $nodeText, bool $escHtmlEntities = true) : HTMLNode {
         $text = new HTMLNode(self::TEXT_NODE);
-        $text->setText($nodeText, $escHtmlEntities);
+        $text->setText(self::fixBareLineFeed($nodeText), $escHtmlEntities);
 
         return $text;
     }
+
     #[ReturnTypeWillChange]
     /**
      * Returns the element that the iterator is currently is pointing to.
@@ -788,6 +789,38 @@ class HTMLNode implements Countable, Iterator {
      */
     public function div(array $attributes = []) : HTMLNode {
         return $this->addChild(new HTMLNode(), $attributes);
+    }
+    /**
+     * Removes bare line feed characters (LF) and replaces them with CRLF.
+     * 
+     * A bare line feed is LF which was not preceded by a carriage return (CR).
+     * 
+     * @param string $str The string to be fixed.
+     * 
+     * @return string The method will return a string with all bare line feed
+     * characters replaced with CRLF.
+     */
+    public static function fixBareLineFeed(string $str) : string {
+        $finalStr = '';
+        $index = 0;
+        $len = strlen($str);
+
+        for ($index = 0 ; $index < $len ; $index++) {
+            $char = $str[$index];
+
+            if ($char == "\n") {
+                if ($index != 0 && $str[$index - 1] != "\r") {
+                    //Bare line feed found. Replace with \r\n
+                    $finalStr = trim($finalStr).HTMLDoc::NL;
+                } else {
+                    $finalStr .= $char;
+                }
+            } else {
+                $finalStr .= $char;
+            }
+        }
+
+        return $finalStr;
     }
     /**
      * Adds a &lt;form&gt; element to the body of the node.
