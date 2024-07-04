@@ -141,6 +141,7 @@ class HTMLNodeTest extends TestCase {
         $this->assertEquals('p', $node->getChild(2)->getNodeName());
         $this->assertEquals('img', $node->getChild(3)->getNodeName());
         $this->assertEquals('ok', $node->getChild(3)->getAttribute('src'));
+        
     }
     /**
      * @test
@@ -344,6 +345,14 @@ class HTMLNodeTest extends TestCase {
                 . '&lt;/html&gt;'.HTMLDoc::NL, $node->asCode([
             'with-colors' => false
         ]));
+        $this->assertEquals('<span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">!DOCTYPE html</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL
+                . '<span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">html</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL
+                . '    <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">body</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL
+                . '        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">img</span> <span style="color:rgb(0,124,0)">src</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"image.png"</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL
+                . '    <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">body</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL
+                . '<span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">html</span><span style="color:rgb(204,225,70)">&gt;</span>'.HTMLDoc::NL, $node->asCode([
+            'with-colors' => true
+        ]));
         $node->setIsQuotedAttribute(false);
     }
     /**
@@ -392,29 +401,60 @@ class HTMLNodeTest extends TestCase {
      * @test
      */
     public function testAsCode00() {
-        $node = new HTMLNode();
+        $node = new HTMLNode('div', [
+            'class' => 'box',
+            "hidden"
+        ]);
         $this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33);"
                 . " color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">"
                 . "&lt;</span><span style=\"color:rgb(204,225,70)\">"
-                . "div</span><span style=\"color:rgb(204,225,70)\">"
-                . "&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">"
+                . "div</span>"
+                . " <span style=\"color:rgb(0,124,0)\">class</span>"
+                . " <span style=\"color:gray\">=</span>"
+                . " <span style=\"color:rgb(170,85,137)\">\"box\"</span>"
+                . " <span style=\"color:rgb(0,124,0)\">hidden</span>"
+                . "<span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n"
+                . ""
+                . ""
+                
+                . "<span style=\"color:rgb(204,225,70)\">"
                 . "&lt;/</span><span style=\"color:rgb(204,225,70)\">"
                 . "div</span><span style=\"color:rgb(204,225,70)\">"
-                . "&gt;</span>\r\n</pre>",$node->asCode());
+                . "&gt;</span>\r\n"
+                . "</pre>",$node->asCode());
     }
     /**
      * @test
      */
     public function testAsCode01() {
-        $node = new HTMLNode();
-        $node->addCommentNode('This is a comment.');
-        $node->addTextNode('This is a simple text node.');
-        $child00 = new HTMLNode('input');
-        $child00->setID('child-00');
-        $child00->setWritingDir('ltr');
-        $node->addChild($child00);
-        $this->assertTrue(true);
-        //$this->assertEquals("<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n<span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">div</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n</pre>",$node->asCode());
+        $node = new HTMLNode('code');
+        $this->assertEquals(""
+                . "<pre style=\"margin:0;background-color:rgb(21, 18, 33); color:gray\">\r\n"
+                . "<span style=\"color:rgb(204,225,70)\">&lt;</span><span style=\"color:rgb(204,225,70)\">code</span>"
+                . "<span style=\"color:rgb(204,225,70)\">&gt;</span><span style=\"color:rgb(204,225,70)\">&lt;/</span><span style=\"color:rgb(204,225,70)\">code</span><span style=\"color:rgb(204,225,70)\">&gt;</span>\r\n"
+                . "</pre>",$node->asCode());
+    }
+    /**
+     * @test
+     */
+    public function testAsCode02() {
+        $node = new HTMLNode('div');
+        $node->comment('Hello');
+        $this->assertEquals(""
+                . "&lt;div&gt;\r\n"
+                . "    &lt!--Hello--&gt;\r\n"
+                . "&lt;/div&gt;\r\n"
+                . "",$node->asCode([
+            'with-colors' => false
+        ]));
+        $this->assertEquals("<pre style=\"margin:0\">\r\n"
+                . "&lt;div&gt;\r\n"
+                . "    &lt!--Hello--&gt;\r\n"
+                . "&lt;/div&gt;\r\n"
+                . "</pre>",$node->asCode([
+            'with-colors' => false,
+            'use-pre' => true
+        ]));
     }
     /**
      * @test
@@ -510,12 +550,12 @@ class HTMLNodeTest extends TestCase {
     public function testChaining04() {
         $node = new HTMLNode('ul');
         $node->li('Hello', ['class' => 'first-menu-item'])
-                ->li('World')
+                ->li(new Anchor('World', 'https://example.com'))
                 ->li('From PHP');
         $this->assertEquals(3, $node->childrenCount());
         $this->assertEquals('<ul>'
                 . '<li class="first-menu-item">Hello</li>'
-                . '<li>World</li>'
+                . '<li><a href=World target=_self>https://example.com</a></li>'
                 . '<li>From PHP</li>'
                 . '</ul>', $node->toHTML());
     }
@@ -2326,6 +2366,16 @@ and open the template in the editor.
                 .'Also, 0>-100 && 0<8.',$node->getTextUnescaped());
     }
     /**
+     * 
+     * @test
+     */
+    public function testSetText01() {
+        $node = new HTMLNode();
+        $node->setText('Hello');
+        $this->assertEquals('', $node->getText());
+        $this->assertEquals('', $node->getTextUnescaped());
+    }
+    /**
      * @test
      */
     public function testToHTML00() {
@@ -2486,6 +2536,17 @@ and open the template in the editor.
         $htmlTxt = '';
         $array = TemplateCompiler::htmlAsArray($htmlTxt);
         $this->assertEquals(count($array),0);
+    }
+    /**
+     * @test
+     */
+    public function testToHTML12() {
+        $node = new HTMLNode('div');
+        $node->addChild('div')->br()->text('Cool');
+     
+        $this->assertEquals('<div><div><br>Cool</div></div>',$node->toHTML());
+        $this->assertEquals('', $node->getChild(0)->getChild(0)->close());
+        $this->assertEquals('', $node->getChild(0)->getChild(1)->close());
     }
     /**
      * @test
