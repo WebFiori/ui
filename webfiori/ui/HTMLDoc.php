@@ -348,7 +348,6 @@ class HTMLDoc {
     public function setHeadNode(HeadNode $node) {
         $this->getDocumentRoot()->replaceChild($this->headNode, $node);
         $this->headNode = $node;
-
     }
     /**
      * Sets the language of the document.
