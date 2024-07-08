@@ -473,6 +473,7 @@ class HTMLNode implements Countable, Iterator {
     public function asCode(array $formattingOptions = HTMLNode::DEFAULT_CODE_FORMAT) {
         $formattingOptionsV = $this->validateFormattingOptions($formattingOptions);
         $this->nl = HTMLDoc::NL;
+        $this->codeString = '';
         //number of spaces in a tab
         $spacesCount = $formattingOptionsV['tab-spaces'];
         $this->tabCount = $formattingOptionsV['initial-tab'];
@@ -2373,16 +2374,15 @@ class HTMLNode implements Countable, Iterator {
      * @return string
      *
      */
-    private function closeAsCode(array $FO) {
+    private function closeAsCode(array $FO) : string {
         if ($FO['with-colors'] === true && !$this->isTextNode() && !$this->isComment()) {
             return '<span style="color:'.$FO['colors']['lt-gt-color'].'">&lt;/</span>'
             .'<span style="color:'.$FO['colors']['node-name-color'].'">'.$this->getNodeName().'</span>'
                     .'<span style="color:'.$FO['colors']['lt-gt-color'].'">&gt;</span>';
-        } else if (!$this->isTextNode() && !$this->isComment()) {
+        } else {
             return '&lt;/'.$this->getNodeName().'&gt;';
         }
 
-        return '';
     }
     /**
      * 

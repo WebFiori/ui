@@ -135,55 +135,60 @@ class TemplateCompiler {
      */
     public static function fromHTMLText(string $text, bool $asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);
-        $TN = 'tag-name';
-        $retVal = [];
-
+        
         if (count($nodesArr) >= 1) {
+            $TN = 'tag-name';
+            $retVal = [];
+            
             if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
-                $retVal = new HTMLDoc();
-                $retVal->getHeadNode()->removeAllChildNodes();
-                $retVal->getBody()->removeAttributes();
-
-                for ($x = 0 ; $x < count($nodesArr) ; $x++) {
-                    if ($nodesArr[$x][$TN] == 'html') {
-                        $htmlNode = self::fromHTMLTextHelper00($nodesArr[$x]);
-
-                        for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
-                            $child = $htmlNode->children()->get($y);
-
-                            if ($child->getNodeName() == 'head') {
-                                $retVal->setHeadNode($child);
-                            } else {
-                                if ($child->getNodeName() == 'body') {
-                                    for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
-                                        $node = $child->children()->get($z);
-                                        $retVal->addChild($node);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if ($nodesArr[$x][$TN] == 'head') {
-                            $headNode = self::fromHTMLTextHelper00($nodesArr[$x]);
-                            $retVal->setHeadNode($headNode);
-                        }
-                    }
-                }
+                $retVal = self::parseHTMLDoc($nodesArr);
             } else {
-                if (count($nodesArr) != 1) {
-                    foreach ($nodesArr as $node) {
-                        $asHtmlNode = self::fromHTMLTextHelper00($node);
-                        $retVal[] = $asHtmlNode;
-                    }
-                } else if (count($nodesArr) == 1) {
-                    return self::fromHTMLTextHelper00($nodesArr[0]);
-                }
+                $retVal = self::parseHTMLNode($nodesArr);
             }
 
             return $retVal;
         }
 
         return null;
+    }
+    private static function parseHTMLNode($nodesArr) {
+        if (count($nodesArr) != 1) {
+            $retVal = [];
+            foreach ($nodesArr as $node) {
+                $asHtmlNode = self::fromHTMLTextHelper00($node);
+                $retVal[] = $asHtmlNode;
+            }
+            return $retVal;
+        } else {
+            return self::fromHTMLTextHelper00($nodesArr[0]);
+        }
+    }
+    private static function parseHTMLDoc($children) : HTMLDoc {
+        $retVal = new HTMLDoc();
+        $retVal->getHeadNode()->removeAllChildNodes();
+        $retVal->getBody()->removeAttributes();
+        $TN = 'tag-name';
+        
+        for ($x = 0 ; $x < count($children) ; $x++) {
+            if ($children[$x][$TN] == 'html') {
+                $htmlNode = self::fromHTMLTextHelper00($children[$x]);
+
+                for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
+                    $child = $htmlNode->children()->get($y);
+
+                    if ($child->getNodeName() == 'head') {
+                        $retVal->setHeadNode($child);
+                    } else if ($child->getNodeName() == 'body') {
+                        for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
+                            $node = $child->children()->get($z);
+                            $retVal->addChild($node);
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return $retVal;
     }
     /**
      * Returns an array that contains directories names of the calling files.
