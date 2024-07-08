@@ -159,7 +159,7 @@ class HTMLTable extends HTMLNode {
             if ($cell != null) {
                 $ch = $cell->getChild(0);
 
-                if ($ch->getName() == '#TEXT') {
+                if ($ch->getNodeName() == '#TEXT') {
                     return $ch->getText();
                 }
 
@@ -170,6 +170,8 @@ class HTMLTable extends HTMLNode {
     /**
      * Removes a column from the table given column index.
      * 
+     * Note that if the table has one column, the method will not remove it.
+     * 
      * @param int $colIndex The index of the column.
      * 
      * @return array The method will return an array that holds objects that 
@@ -179,16 +181,19 @@ class HTMLTable extends HTMLNode {
     public function removeCol(int $colIndex) : array {
         $colCells = [];
 
-        if ($colIndex < $this->cols()) {
+        if ($colIndex < $this->cols() && $this->cols() > 1) {
             foreach ($this as $row) {
                 $colCells[] = $row->children()->remove($colIndex);
             }
+            $this->cols--;
         }
 
         return $colCells;
     }
     /**
      * Removes a row given its index.
+     * 
+     * Note that if the table has only one row, the method will not remove it.
      * 
      * @param int $rowIndex The index of the row.
      * 
@@ -197,7 +202,15 @@ class HTMLTable extends HTMLNode {
      * will return null.
      */
     public function removeRow(int $rowIndex) {
-        return $this->removeChild($rowIndex);
+        if ($this->rows() > 1) {
+            $row = $this->removeChild($rowIndex);
+            
+            if ($row !== null) {
+                $this->rows--;
+            }
+            
+            return $row;
+        }
     }
     /**
      * Returns number of rows in the table.
