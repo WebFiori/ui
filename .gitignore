@@ -8,3 +8,4 @@ clover.xml
 composer.lock
 php-cs-fixer-v2.phar
 .idea/*
+/release-please-config.json

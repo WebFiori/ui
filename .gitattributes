@@ -8,3 +8,6 @@
 /.travis.yml export-ignore
 /phpunit.xml export-ignore
 /sonar-project.properties export-ignore
+/release-please-config.json
+/CHANGELOG.md
+/php_cs.php.dist
