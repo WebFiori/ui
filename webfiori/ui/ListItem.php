@@ -28,7 +28,7 @@ class ListItem extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct($listItemBody = null) {
+    public function __construct(null|string|HTMLNode $listItemBody = '') {
         parent::__construct('li');
         $this->addChild($listItemBody);
     }

@@ -888,7 +888,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setBase(string $url = null) : HeadNode {
+    public function setBase(?string $url = '') : HeadNode {
         if ($url === null && $this->hasChild($this->baseNode)) {
             $this->removeChild($this->baseNode);
             $this->baseNode->removeAttribute('href');
@@ -922,7 +922,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setCanonical(string $link = null) : HeadNode {
+    public function setCanonical(?string $link = '') : HeadNode {
         if ($link === null && $this->hasChild($this->canonical)) {
             $this->removeChild($this->canonical);
             $this->canonical->removeAttribute('href');
@@ -965,7 +965,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.1.4
      */
-    public function setCharSet(string $charset = null) : HeadNode {
+    public function setCharSet(?string $charset = '') : HeadNode {
         if ($charset === null && $this->hasChild($this->metaCharset)) {
             $this->removeChild($this->metaCharset);
             $this->metaCharset->removeAttribute('charset');
@@ -1004,7 +1004,7 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setPageTitle(string $title = null) : HeadNode {
+    public function setPageTitle(string|null $title = null) : HeadNode {
         if ($title === null && $this->hasChild($this->titleNode)) {
             $this->removeChild($this->titleNode);
             $this->titleNode->children()->get(0)->setText('');

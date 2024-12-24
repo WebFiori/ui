@@ -83,7 +83,7 @@ class HTMLDoc {
      */
     public function __construct() {
         $this->body = new HTMLNode('body');
-        $this->body->setAttribute('itemscope');
+        $this->body->setAttribute('itemscope', null);
         $this->body->setAttribute('itemtype', 'http://schema.org/WebPage');
         $this->headNode = new HeadNode();
         $this->htmlNode = new HTMLNode('html');
@@ -362,7 +362,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function setLanguage(string $lang = null) : bool {
+    public function setLanguage(?string $lang = '') : bool {
         if ($lang === null) {
             $this->getDocumentRoot()->removeAttribute('lang');
 

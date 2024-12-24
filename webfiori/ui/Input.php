@@ -422,8 +422,8 @@ class Input extends HTMLNode {
      * @return Input The method will return the instance at which the method 
      * is called on.
      */
-    public function setPlaceholder(string $text = null): Input {
-        if ($text !== null) {
+    public function setPlaceholder(?string $text = ''): Input {
+        if ($text !== null && strlen($text) != 0) {
             $iType = $this->getType();
 
             if ($iType == 'password' || 

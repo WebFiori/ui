@@ -194,7 +194,7 @@ class HTMLNodeTest extends TestCase {
         $node = new HTMLNode();
         $subNode = new HTMLNode('a');
         $subNode->text('Link');
-        $liObj = new ListItem();
+        $liObj = new ListItem(null);
         $liObj->text('List Item Obj');
         $node->ul([
             'Simple Text',
@@ -525,7 +525,7 @@ class HTMLNodeTest extends TestCase {
               'Hello', 'World'
           ])->ol([
               'Good', 'Girl', new Label('Test With Node'), 
-              new ListItem()
+              new ListItem(null)
           ]);
         $node->getChild(0)
         ->anchor(new HTMLNode('img', [

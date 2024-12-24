@@ -86,7 +86,7 @@ class HTMLTable extends HTMLNode {
      * stripped off. If the array has fewer elements than number of columns, the
      * method will add empty cells for remaining places.
      */
-    public function addRow($arrOrRowObj) {
+    public function addRow(TableRow|array $arrOrRowObj) {
         if ($arrOrRowObj instanceof TableRow) {
             $this->addChild($arrOrRowObj);
         } else if (gettype($arrOrRowObj) == 'array') {

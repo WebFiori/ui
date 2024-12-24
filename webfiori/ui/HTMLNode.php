@@ -411,7 +411,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      *
      */
-    public function anchor($body = null, array $attributes = []) : HTMLNode {
+    public function anchor(string|HTMLNode $body, array $attributes = []) : HTMLNode {
         $href = null;
 
         $href = $attributes['href'] ?? '';
@@ -576,7 +576,7 @@ class HTMLNode implements Countable, Iterator {
      * method is called on.
      *
      */
-    public function cell($cellBody = null, string $cellType = 'td', array $attributes = []) : HTMLNode {
+    public function cell(string|HTMLNode $cellBody = '', string $cellType = 'td', array $attributes = []) : HTMLNode {
         if ($this->getNodeName() == 'tr') {
             $cell = new TableCell($cellType, $cellBody);
             $cell->setAttributes($attributes);
@@ -1519,7 +1519,7 @@ class HTMLNode implements Countable, Iterator {
      */
     public function li($itemBody, array $attributes = []) : HTMLNode {
         if ($this->getNodeName() == 'ul' || $this->getNodeName() == 'ol') {
-            $item = new ListItem();
+            $item = new ListItem(null);
 
             if ($itemBody instanceof HTMLNode) {
                 $item->addChild($itemBody);
@@ -1645,7 +1645,7 @@ class HTMLNode implements Countable, Iterator {
      *
      *
      */
-    public function paragraph($body = null, array $attributes = [], bool $escEntities = true) : HTMLNode {
+    public function paragraph(string|HTMLNode $body = '', array $attributes = [], bool $escEntities = true) : HTMLNode {
         $paragraph = new Paragraph();
 
         if ($body instanceof HTMLNode) {
@@ -1826,7 +1826,7 @@ class HTMLNode implements Countable, Iterator {
      * method is called on.
      *
      */
-    public function setAttribute(string $name, $val = null) : HTMLNode {
+    public function setAttribute(string $name, mixed $val = null) : HTMLNode {
         $trimmedName = trim($name);
         $attrValType = gettype($val);
         $trimmedVal = null;
@@ -1855,7 +1855,7 @@ class HTMLNode implements Countable, Iterator {
                 } else if ($val === null) {
                     $this->attributes[$trimmedName] = null;
                 } else if ($attrValType == 'string') {
-                    $this->attributes[$trimmedName] = $trimmedVal;
+                        $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
                     $this->attributes[$trimmedName] = $val;
                 } else if ($attrValType == 'boolean') {
@@ -2390,7 +2390,7 @@ class HTMLNode implements Countable, Iterator {
      * @param LinkedList $chNodes
      * @return null|HTMLNode Description
      */
-    private function getChildByIDHelper(string $val,LinkedList $chNodes = null) {
+    private function getChildByIDHelper(string $val, ?LinkedList $chNodes) {
         $chCount = $chNodes !== null ? $chNodes->size() : 0;
 
         for ($x = 0 ; $x < $chCount ; $x++) {
@@ -2671,7 +2671,7 @@ class HTMLNode implements Countable, Iterator {
     }
     private function removeChHelper($node) {
         if ($node instanceof HTMLNode) {
-            $node->setParentHelper();
+            $node->setParentHelper(null);
 
             return $node;
         }
@@ -2684,7 +2684,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      *
      */
-    private function setParentHelper(HTMLNode $node = null) {
+    private function setParentHelper(?HTMLNode $node) {
         $this->parentNode = $node;
     }
     /**
