@@ -31,10 +31,10 @@ jobs:
           
          
       - name: Install Dependencies
-        run: composer install --prefer-source --no-interaction --no-dev
+        run: composer install --prefer-dist --no-interaction --no-dev
       
       - name: Execute Tests
-        run: phpunit
+        run: phpunit --configuration tests/phpunit.xml
         
       - name: CodeCov
         uses: codecov/codecov-action@v4
