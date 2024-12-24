@@ -1,11 +1,11 @@
 {
     "name": "webfiori/ui",
     "description": "A library that provides basic utilities for creating HTML documents.",
-    "type":"library",
-    "version":"2.6.3",
+    "type": "library",
+    "version": "2.6.4",
     "require": {
         "php": ">=7.0",
-        "webfiori/collections":"1.x.x"
+        "webfiori/collections": "1.x.x"
     },
     "keywords": [
         "library",
@@ -14,13 +14,11 @@
         "code",
         "dom"
     ],
-    "autoload" :{
-        "psr-4":{
-            "webfiori\\ui\\":"webfiori/ui/"
+    "autoload": {
+        "psr-4": {
+            "webfiori\\ui\\": "webfiori/ui/"
         }
     },
-    "require-dev": {
-        
-    },
+    "require-dev": {},
     "license": "MIT"
 }
