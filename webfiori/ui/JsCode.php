@@ -54,7 +54,7 @@ class JsCode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function setAttribute(string $name, $val = null) : HTMLNode {
+    public function setAttribute(string $name, mixed $val = '') : HTMLNode {
         if ($name != 'type') {
             return parent::setAttribute($name, $val);
         }

@@ -49,7 +49,7 @@ class TableRow extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addCell($cellContent, string $type = 'td', bool $escEntities = false, array $attrs = []) {
+    public function addCell(string|TableCell|HTMLNode $cellContent, string $type = 'td', bool $escEntities = false, array $attrs = []) {
         if ($cellContent instanceof TableCell) {
             $cellContent->setAttributes($attrs);
             $this->addChild($cellContent);

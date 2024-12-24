@@ -33,7 +33,7 @@ class TableCell extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct(string $cellType = 'td', $cellBody = null) {
+    public function __construct(string $cellType = 'td', null|string|HTMLNode $cellBody = null) {
         parent::__construct();
         $cType = strtolower($cellType);
 

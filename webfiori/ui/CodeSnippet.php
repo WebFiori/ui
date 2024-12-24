@@ -72,7 +72,7 @@ class CodeSnippet extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function __construct(string $title = 'Code Snippet',string $code = null) {
+    public function __construct(string $title = 'Code Snippet', ?string $code = '') {
         parent::__construct();
         $this->originalCode = '';
         $this->codeStrNode = HTMLNode::createTextNode('');
