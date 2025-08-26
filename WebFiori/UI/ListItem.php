@@ -10,7 +10,7 @@
  */
 namespace WebFiori\UI;
 
-use WebFiori\UI\exceptions\InvalidNodeNameException;
+use WebFiori\UI\Exceptions\InvalidNodeNameException;
 
 /**
  * A class that represents List Item node.

@@ -11,7 +11,7 @@
 namespace WebFiori\UI;
 
 use WebFiori\Collections\LinkedList;
-use WebFiori\UI\exceptions\InvalidNodeNameException;
+use WebFiori\UI\Exceptions\InvalidNodeNameException;
 /**
  * A class that represents HTML document. 
  * 

@@ -12,8 +12,8 @@ namespace WebFiori\UI;
 
 use InvalidArgumentException;
 use WebFiori\Collections\Queue;
-use WebFiori\UI\exceptions\InvalidNodeNameException;
-use WebFiori\UI\exceptions\TemplateNotFoundException;
+use WebFiori\UI\Exceptions\InvalidNodeNameException;
+use WebFiori\UI\Exceptions\TemplateNotFoundException;
 
 /**
  * A class which is used to compile and load php/html templates to objects

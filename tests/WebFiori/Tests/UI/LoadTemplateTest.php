@@ -6,6 +6,7 @@ use WebFiori\UI\HeadNode;
 use WebFiori\UI\HTMLDoc;
 use WebFiori\UI\HTMLNode;
 use WebFiori\UI\TemplateCompiler;
+use WebFiori\UI\Exceptions\TemplateNotFoundException;
 /**
  * Description of TestLoadTemplate
  *
@@ -205,7 +206,7 @@ class LoadTemplateTest extends TestCase {
      * @test
      */
     public function test11() {
-        $this->expectException(\webfiori\ui\exceptions\TemplateNotFoundException::class);
+        $this->expectException(TemplateNotFoundException::class);
         $compiler = new TemplateCompiler(self::TEST_TEMPLATES_PATH.'not-exist.php');
     }
     /**
