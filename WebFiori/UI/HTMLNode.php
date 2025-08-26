@@ -8,15 +8,15 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
 use Countable;
 use Iterator;
 use ReturnTypeWillChange;
-use webfiori\collections\LinkedList;
-use webfiori\collections\Stack;
-use webfiori\ui\exceptions\InvalidNodeNameException;
-use webfiori\ui\exceptions\TemplateNotFoundException;
+use WebFiori\Collections\LinkedList;
+use WebFiori\Collections\Stack;
+use WebFiori\UI\Exceptions\InvalidNodeNameException;
+use WebFiori\UI\Exceptions\TemplateNotFoundException;
 /**
  * A class that represents HTML element.
  *

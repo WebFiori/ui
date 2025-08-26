@@ -8,12 +8,12 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
 use InvalidArgumentException;
-use webfiori\collections\Queue;
-use webfiori\ui\exceptions\InvalidNodeNameException;
-use webfiori\ui\exceptions\TemplateNotFoundException;
+use WebFiori\Collections\Queue;
+use WebFiori\UI\exceptions\InvalidNodeNameException;
+use WebFiori\UI\exceptions\TemplateNotFoundException;
 
 /**
  * A class which is used to compile and load php/html templates to objects

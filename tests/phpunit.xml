@@ -4,12 +4,12 @@
     </php>
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <file>../webfiori/ui/HTMLNode.php</file>
-            <file>../webfiori/ui/HeadNode.php</file>
-            <file>../webfiori/ui/HTMLDoc.php</file>
-            <file>../webfiori/ui/Input.php</file>
-            <file>../webfiori/ui/HTMLTable.php</file>
-            <file>../webfiori/ui/TemplateCompiler.php</file>
+            <file>../WebFiori/UI/HTMLNode.php</file>
+            <file>../WebFiori/UI/HeadNode.php</file>
+            <file>../WebFiori/UI/HTMLDoc.php</file>
+            <file>../WebFiori/UI/Input.php</file>
+            <file>../WebFiori/UI/HTMLTable.php</file>
+            <file>../WebFiori/UI/TemplateCompiler.php</file>
         </whitelist>
     </filter>
     <logging>
@@ -17,7 +17,7 @@
     </logging>
     <testsuites>
         <testsuite name="HTML Elements Tests">
-            <directory>./webfiori/test/ui</directory>
+            <directory>./WebFiori/Tests/UI</directory>
         </testsuite>
     </testsuites>
 </phpunit>

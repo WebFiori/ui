@@ -8,9 +8,9 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
-use webfiori\collections\LinkedList;
+use WebFiori\Collections\LinkedList;
 /**
  * A class that represents the tag &lt;head&lt; of a HTML document.
  *

@@ -8,7 +8,7 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui\exceptions;
+namespace WebFiori\UI\Exceptions;
 
 use Exception;
 /**

@@ -8,10 +8,10 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
-use webfiori\collections\LinkedList;
-use webfiori\ui\exceptions\InvalidNodeNameException;
+use WebFiori\Collections\LinkedList;
+use WebFiori\UI\exceptions\InvalidNodeNameException;
 /**
  * A class that represents HTML document. 
  * 

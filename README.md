@@ -57,7 +57,7 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 The basic use case is to have HTML document with some text in its body. The class `HTMLDoc` represent HTML document. Simply, create an instance of this class and use it to build the whole HTML document. The class can be used as follows:
 ``` php
-use webfiori\ui\HTMLDoc;
+use WebFiori\UI\HTMLDoc;
 
 //This code will create HTML5 Document, get the <body> node and, add text to it.
 $doc = new HTMLDoc();
@@ -85,7 +85,7 @@ The output of this code is HTML 5 document. The structure of the document will b
 All HTML elements are represented as an instance of the class `HTMLNode`. Developers can extend this class to create custom UI components as classes. The library has already pre-made components which are used in the next code sample. In addition to that, the class has methods which utilize theses components and fasten the process of adding them as children of any HTML element. The following code shows a code which is used to create a basic login form.
 
 ``` php
-use webfiori\ui\HTMLDoc;
+use WebFiori\UI\HTMLDoc;
 
 //Create new instance of "HTMLDoc".
 $doc = new HTMLDoc();

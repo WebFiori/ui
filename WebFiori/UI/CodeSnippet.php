@@ -8,7 +8,7 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
 /**
  * A class that can be used to display code snippets in good-looking way.

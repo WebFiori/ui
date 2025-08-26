@@ -1,8 +1,8 @@
 <?php
-namespace webfiori\test\ui;
+namespace WebFiori\Tests\UI;
 
-use webfiori\ui\HTMLDoc;
-use webfiori\ui\HTMLNode;
+use WebFiori\UI\HTMLDoc;
+use WebFiori\UI\HTMLNode;
 use PHPUnit\Framework\TestCase;
 use phpStructs\html\InvalidNodeNameException;
 /**

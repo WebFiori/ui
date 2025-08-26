@@ -1,11 +1,11 @@
 <?php
-namespace webfiori\test\ui;
+namespace WebFiori\Tests\UI;
 
 use PHPUnit\Framework\TestCase;
-use webfiori\ui\HeadNode;
-use webfiori\ui\HTMLDoc;
-use webfiori\ui\HTMLNode;
-use webfiori\ui\TemplateCompiler;
+use WebFiori\UI\HeadNode;
+use WebFiori\UI\HTMLDoc;
+use WebFiori\UI\HTMLNode;
+use WebFiori\UI\TemplateCompiler;
 /**
  * Description of TestLoadTemplate
  *

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage includeUncoveredFiles="true">
+    <report>
+      <clover outputFile="clover.xml"/>
+    </report>
+  </coverage>
+  <php>
+    </php>
+  <logging/>
+  <testsuites>
+    <testsuite name="HTML Elements Tests">
+      <directory>./WebFiori/Tests/UI</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <file>../WebFiori/UI/HTMLNode.php</file>
+      <file>../WebFiori/UI/HeadNode.php</file>
+      <file>../WebFiori/UI/HTMLDoc.php</file>
+      <file>../WebFiori/UI/Input.php</file>
+      <file>../WebFiori/UI/HTMLTable.php</file>
+      <file>../WebFiori/UI/TemplateCompiler.php</file>
+    </include>
+  </source>
+</phpunit>

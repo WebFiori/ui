@@ -8,9 +8,9 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace webfiori\ui;
+namespace WebFiori\UI;
 
-use webfiori\ui\exceptions\InvalidNodeNameException;
+use WebFiori\UI\exceptions\InvalidNodeNameException;
 
 /**
  * A class that represents List Item node.
