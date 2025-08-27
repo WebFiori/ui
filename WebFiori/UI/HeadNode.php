@@ -1083,7 +1083,7 @@ class HeadNode extends HTMLNode {
     /**
      *
      * @param HTMLNode $node
-     * @param $otherAttrs
+     * @param array $otherAttrs Additional attributes to set for the node.
      */
     private function cssJsInsertHelper(HTMLNode $node, $otherAttrs) {
         if ($node->getNodeName() == 'link') {

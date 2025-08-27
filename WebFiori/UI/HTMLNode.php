@@ -230,7 +230,7 @@ class HTMLNode implements Countable, Iterator {
      * [0-9], ':', '.' and '-'.</li>
      * <ul>
      * 
-     * @param $attrs array An optional array that contains node attributes.
+     * @param array $attrs An optional array that contains node attributes.
      * 
      * @throws InvalidNodeNameException The method will throw an exception if given node 
      * name is not valid.
@@ -380,7 +380,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $text The text that will be in the node.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -746,7 +746,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $nodeText The text that will be inserted in the body 
      * of the node.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text.
@@ -983,7 +983,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Returns a child node given its ID.
      * 
-     * @param string $val The ID of the child.
+     * @param string $val The value to search for. The ID of the child.
      * 
      * @return null|HTMLNode The method returns an object of type HTMLNode 
      * if found. If no node has the given ID, the method will return null.
@@ -1002,7 +1002,7 @@ class HTMLNode implements Countable, Iterator {
      * If the given tag name is empty string or the node has no children which has 
      * the given tag name, the returned list will be empty.
      * 
-     * @param string $val The name of the tag (such as 'div' or 'a').
+     * @param string $val The value to search for. The name of the tag (such as 'div' or 'a').
      * 
      * @return LinkedList A linked list that contains all child nodes which has the given 
      * tag name.
@@ -1229,7 +1229,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Checks if a given node is a direct child of the instance.
      * 
-     * @param HTMLNode $node The node that will be checked.
+     * @param HTMLNode $node The HTML node to process. The node that will be checked.
      * 
      * @return bool true is returned if the node is a child 
      * of the instance. false if not. Also, if the current instance is a
@@ -1632,7 +1632,7 @@ class HTMLNode implements Countable, Iterator {
      *
      * @param array $attributes An array that contains extra attributes for the paragraph.
      *
-     * @param bool $escEntities If set to true, the method will
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.Entities If set to true, the method will
      * replace the characters '&lt;', '&gt;' and
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;'
      * in the given text. Default is true.
@@ -1892,7 +1892,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'class' of the node.
      * 
-     * @param string $val The name of the class.
+     * @param string $val The value to search for. The name of the class.
      * 
      * @param bool $override If this parameter is set to false and the node 
      * has a class already set, the given class name will be appended to the 
@@ -1918,7 +1918,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * This only applies to text node.
      * 
-     * @param bool $esc
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.
      */
     public function setEscapeEntities(bool $esc) {
         if ($this->isTextNode()) {
@@ -1979,7 +1979,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'name' of the node.
      * 
-     * @param string $val The value to set.
+     * @param string $val The value to search for. The value to set.
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
@@ -2120,7 +2120,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true. Ignored in case the node type is comment.
@@ -2145,7 +2145,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'title' of the node.
      * 
-     * @param string $val The value to set. From MDN: Contains a 
+     * @param string $val The value to search for. The value to set. From MDN: Contains a 
      * text representing advisory information related to the element 
      * it belongs to. Such information can typically, but not necessarily, 
      * be presented to the user as a tooltip.
@@ -2174,7 +2174,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'dir' of the node.
      * 
-     * @param string $val The value to set. It can be 'ltr' or 'rtl'.
+     * @param string $val The value to search for. The value to set. It can be 'ltr' or 'rtl'.
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
@@ -2213,7 +2213,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $txt The text that will be in the node.
      * 
-     * @param bool $escEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.Entities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -2369,9 +2369,10 @@ class HTMLNode implements Countable, Iterator {
         $this->tabCount += 1;
     }
     /**
+     * Returns the closing tag of the node as formatted code.
      * 
      * @param array $FO Formatting options.
-     * @return string
+     * @return string The closing tag as formatted HTML code.
      *
      */
     private function closeAsCode(array $FO) : string {
@@ -2386,8 +2387,8 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param string $val
-     * @param LinkedList $chNodes
+     * @param string $val The value to search for.
+     * @param LinkedList $chNodes The list of child nodes.
      * @return null|HTMLNode Description
      */
     private function getChildByIDHelper(string $val, ?LinkedList $chNodes) {
@@ -2419,9 +2420,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param string $val
-     * @param LinkedList $chList
-     * @param LinkedList $list
+     * @param string $val The value to search for.
+     * @param LinkedList $chList The list of children to search.
+     * @param LinkedList $list The list to populate with results.
      * @return LinkedList
      */
     private function getChildrenByTagHelper(string $val,LinkedList $chList, LinkedList $list) : LinkedList {
@@ -2490,9 +2491,10 @@ class HTMLNode implements Countable, Iterator {
         return $node;
     }
     /**
+     * Returns the closing tag of the node as formatted code.
      * 
      * @param array $FO Formatting options.
-     * @return string
+     * @return string The closing tag as formatted HTML code.
      *
      */
     private function openAsCode(array $FO) : string {
@@ -2563,7 +2565,7 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param HTMLNode $node
+     * @param HTMLNode $node The HTML node to process.
      */
     private function pushNode(HTMLNode $node) {
         if ($node->isTextNode()) {
@@ -2619,7 +2621,7 @@ class HTMLNode implements Countable, Iterator {
         }
     }
     /**
-     * @param HTMLNode $node 
+     * @param HTMLNode $node The HTML node to process. 
      * 
      * @param array $FO Formatting options.
      * 
