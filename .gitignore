@@ -9,3 +9,6 @@ composer.lock
 php-cs-fixer-v2.phar
 .idea/*
 /release-please-config.json
+*.Identifier
+/tests/.phpunit.cache/code-coverage
+/tests/.phpunit.cache
