@@ -2,7 +2,7 @@
     "name": "webfiori/ui",
     "description": "A library that provides basic utilities for creating HTML documents.",
     "type": "library",
-    "version": "2.6.3",
+    "version": "2.6.4",
     "require": {
         "php": ">=8.1",
         "webfiori/collections": "2.0.x"
