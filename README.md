@@ -3,10 +3,10 @@ A set of classes that provide basic web pages creation utilities in addition to 
 
 <p align="center">
   <a href="https://github.com/WebFiori/ui/actions">
-    <img src="https://github.com/WebFiori/ui/actions/workflows/php83.yml/badge.svg?branch=master">
+    <img src="https://github.com/WebFiori/ui/actions/workflows/php84.yaml/badge.svg?branch=main">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
-    <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
+    <img src="https://codecov.io/gh/WebFiori/ui/branch/main/graph/badge.svg" />
   </a>
   <a href="https://sonarcloud.io/dashboard?id=WebFiori_ui">
       <img src="https://sonarcloud.io/api/project_badges/measure?project=WebFiori_ui&metric=alert_status" />
@@ -35,15 +35,15 @@ A set of classes that provide basic web pages creation utilities in addition to 
 ## Supported PHP Versions
 |                                                                                       Build Status                                                                                       |
 |:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php70.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php71.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php72.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php73.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php74.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php80.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php81.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php82.yml/badge.svg?branch=master"></a>  |
-| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php83.yml"><img src="https://github.com/WebFiori/ui/actions/workflows/php83.yml/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php81.yaml/badge.svg?branch=main"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php82.yaml/badge.svg?branch=main"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php83.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php83.yaml/badge.svg?branch=main"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php84.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php84.yaml/badge.svg?branch=main"></a>  |
+
+
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php81.yaml/badge.svg?branch=main"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php82.yaml/badge.svg?branch=main"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php83.yaml"><img src="https://github.com/WebFiori/ui/actions/workflows/php83.yaml/badge.svg?branch=main"></a>  |
 
 ## Features
 * Ability to create custom HTML UI Elements in OOP approach.

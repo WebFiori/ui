@@ -26,7 +26,11 @@ class HTMLNode implements Countable, Iterator {
     /**
      * A constant that indicates a node is of type comment.
      * 
+     * Used when creating comment nodes or checking node types.
+     * Comment nodes are rendered as <!-- content --> in HTML output.
+     * 
      * @var string
+     * @see isComment() To check if node is comment type
      */
     const COMMENT_NODE = '#COMMENT';
     /**
@@ -79,8 +83,12 @@ class HTMLNode implements Countable, Iterator {
     ];
     /**
      * A constant that indicates a node is of type text.
+     * 
+     * Used for nodes that contain only text content without HTML tags.
+     * Text nodes can have HTML entities escaped for security.
+     * 
      * @var string
-     *
+     * @see isTextNode() To check if node is text type
      */
     const TEXT_NODE = '#TEXT';
     /**
@@ -230,10 +238,9 @@ class HTMLNode implements Countable, Iterator {
      * [0-9], ':', '.' and '-'.</li>
      * <ul>
      * 
-     * @param $attrs array An optional array that contains node attributes.
+     * @param array $attrs An optional array that contains node attributes.
      * 
-     * @throws InvalidNodeNameException The method will throw an exception if given node 
-     * name is not valid.
+     * @throws InvalidNodeNameException When the provided node name is invalid, empty, or contains illegal characters
      */
     public function __construct(string $name = 'div', array $attrs = []) {
         $this->null = null;
@@ -380,7 +387,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $text The text that will be in the node.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -409,6 +416,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function anchor(string|HTMLNode $body, array $attributes = []) : HTMLNode {
@@ -516,6 +531,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function br() : HTMLNode {
@@ -672,6 +695,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function comment(string $txt) {
@@ -746,7 +777,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $nodeText The text that will be inserted in the body 
      * of the node.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text.
@@ -840,23 +871,30 @@ class HTMLNode implements Countable, Iterator {
 
     /**
      * Create HTML from template or HTML file.
+     * 
+     * This is a factory method that creates HTMLNode instances from external files.
+     * Supports both HTML templates with slots ({{variable}}) and PHP templates with variables.
      *
-     * @param string $absPath The absolute path to HTML document. This can
-     * also be the path to PHP template file.
+     * @param string $absPath Absolute path to template file (.html or .php extension)
+     * @param array $slotsOrVars For HTML templates: slot values. For PHP templates: variables to extract
      *
-     * @param array $slotsOrVars An associative array that have slots values of
-     * the template. This also can be the values that will be passed to PHP
-     * template.
+     * @return array|HeadNode|HTMLDoc|HTMLNode Return type depends on template structure:
+     * - HTMLDoc: Complete HTML document with DOCTYPE, html, head, body
+     * - HTMLNode: Single root element template
+     * - array: Multiple root elements (fragment)
+     * - HeadNode: If template contains only head section
      *
-     * @return array|HeadNode|HTMLDoc|HTMLNode If the given template represents HTML document,
-     * an object of type 'HTMLDoc' is returned. If the given code has multiple top level nodes
-     * (e.g. '&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;'),
-     * an array that contains an objects of type 'HTMLNode' is returned. If the
-     * given code has one top level node, an object of type 'HTMLNode' is returned.
-     * Note that it is possible that the method will return an instance which
-     * is a subclass of the class 'HTMLNode'.
-     *
-     * @throws TemplateNotFoundException
+     * @throws TemplateNotFoundException When template file does not exist
+     * @throws InvalidNodeNameException When template contains invalid HTML elements
+     * 
+     * @example
+     * ```php
+     * // HTML template with slots
+     * $node = HTMLNode::fromFile('page.html', ['title' => 'My Page']);
+     * 
+     * // PHP template with variables
+     * $node = HTMLNode::fromFile('list.php', ['items' => $dataArray]);
+     * ```
      */
     public static function fromFile(string $absPath, array $slotsOrVars = []) {
         $compiler = new TemplateCompiler($absPath, $slotsOrVars);
@@ -942,9 +980,9 @@ class HTMLNode implements Countable, Iterator {
      * @param int $index The position of the child node. This must be an integer 
      * value starting from 0.
      * 
-     * @return HTMLNode|null If the child does exist, the method will return 
-     * an object of type 'HTMLNode'. If no element was found, the method will 
-     * return null.
+     * @return HTMLNode|null Return value depends on index validity:
+     * - HTMLNode: When child exists at the specified index
+     * - null: When index is out of bounds (< 0 or >= childrenCount())
      * 
      *
      */
@@ -983,10 +1021,11 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Returns a child node given its ID.
      * 
-     * @param string $val The ID of the child.
+     * @param string $val The value to search for. The ID of the child.
      * 
-     * @return null|HTMLNode The method returns an object of type HTMLNode 
-     * if found. If no node has the given ID, the method will return null.
+     * @return HTMLNode|null Return value depends on search result:
+     * - HTMLNode: When a child with the specified ID is found
+     * - null: When no child has the given ID or ID is empty
      * 
      *
      */
@@ -1002,7 +1041,7 @@ class HTMLNode implements Countable, Iterator {
      * If the given tag name is empty string or the node has no children which has 
      * the given tag name, the returned list will be empty.
      * 
-     * @param string $val The name of the tag (such as 'div' or 'a').
+     * @param string $val The value to search for. The name of the tag (such as 'div' or 'a').
      * 
      * @return LinkedList A linked list that contains all child nodes which has the given 
      * tag name.
@@ -1229,7 +1268,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Checks if a given node is a direct child of the instance.
      * 
-     * @param HTMLNode $node The node that will be checked.
+     * @param HTMLNode $node The HTML node to process. The node that will be checked.
      * 
      * @return bool true is returned if the node is a child 
      * of the instance. false if not. Also, if the current instance is a
@@ -1249,6 +1288,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function hr() : HTMLNode {
@@ -1515,6 +1562,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function li($itemBody, array $attributes = []) : HTMLNode {
@@ -1632,7 +1687,7 @@ class HTMLNode implements Countable, Iterator {
      *
      * @param array $attributes An array that contains extra attributes for the paragraph.
      *
-     * @param bool $escEntities If set to true, the method will
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.Entities If set to true, the method will
      * replace the characters '&lt;', '&gt;' and
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;'
      * in the given text. Default is true.
@@ -1892,7 +1947,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'class' of the node.
      * 
-     * @param string $val The name of the class.
+     * @param string $val The value to search for. The name of the class.
      * 
      * @param bool $override If this parameter is set to false and the node 
      * has a class already set, the given class name will be appended to the 
@@ -1918,7 +1973,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * This only applies to text node.
      * 
-     * @param bool $esc
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.
      */
     public function setEscapeEntities(bool $esc) {
         if ($this->isTextNode()) {
@@ -1979,11 +2034,19 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'name' of the node.
      * 
-     * @param string $val The value to set.
+     * @param string $val The value to search for. The value to set.
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setName(string $val) : HTMLNode {
@@ -2045,7 +2108,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'style' of the node.
      * 
-     * @param array $cssStyles An associative array of CSS declarations. The keys of the array should 
+     * @param array $cssStyles Associative array of CSS declarations. Keys are CSS property names (e.g., "color", "background-color"), values are CSS values (e.g., "red", "#ffffff"). The keys of the array should 
      * be the names of CSS Properties and the values should be the values of 
      * the attributes (e.g. 'color'=>'white').
      * 
@@ -2056,6 +2119,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setStyle(array $cssStyles, bool $override = false) : HTMLNode {
@@ -2106,6 +2177,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setTabIndex(int $val) : HTMLNode {
@@ -2120,7 +2199,7 @@ class HTMLNode implements Countable, Iterator {
      * @param string $text The text to set. If the node is not a text node or 
      * a comment node, the value will never be set.
      * 
-     * @param bool $escHtmlEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.HtmlEntities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true. Ignored in case the node type is comment.
@@ -2128,6 +2207,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setText(string $text, bool $escHtmlEntities = true) : HTMLNode {
@@ -2145,7 +2232,7 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'title' of the node.
      * 
-     * @param string $val The value to set. From MDN: Contains a 
+     * @param string $val The value to search for. The value to set. From MDN: Contains a 
      * text representing advisory information related to the element 
      * it belongs to. Such information can typically, but not necessarily, 
      * be presented to the user as a tooltip.
@@ -2153,6 +2240,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setTitle(string $val) : HTMLNode {
@@ -2174,11 +2269,19 @@ class HTMLNode implements Countable, Iterator {
     /**
      * Sets the value of the attribute 'dir' of the node.
      * 
-     * @param string $val The value to set. It can be 'ltr' or 'rtl'.
+     * @param string $val The value to search for. The value to set. It can be 'ltr' or 'rtl'.
      * 
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function setWritingDir(string $val) : HTMLNode {
@@ -2213,7 +2316,7 @@ class HTMLNode implements Countable, Iterator {
      * 
      * @param string $txt The text that will be in the node.
      * 
-     * @param bool $escEntities If set to true, the method will 
+     * @param bool $esc If set to true, HTML entities will be escaped in text content.Entities If set to true, the method will 
      * replace the characters '&lt;', '&gt;' and 
      * '&amp' with the following HTML entities: '&amp;lt;', '&amp;gt;' and '&amp;amp;' 
      * in the given text. Default is true.
@@ -2221,6 +2324,14 @@ class HTMLNode implements Countable, Iterator {
      * @return HTMLNode The method will return the instance that this 
      * method is called on.
      * 
+     * @example
+     * ```php
+     * $node->setStyle([
+     *     "color" => "red",
+     *     "background-color" => "#ffffff",
+     *     "margin" => "10px 5px"
+     * ]);
+     * ```
      *
      */
     public function text(string $txt, bool $escEntities = true) : HTMLNode {
@@ -2369,9 +2480,10 @@ class HTMLNode implements Countable, Iterator {
         $this->tabCount += 1;
     }
     /**
+     * Returns the closing tag of the node as formatted code.
      * 
      * @param array $FO Formatting options.
-     * @return string
+     * @return string The closing tag as formatted HTML code.
      *
      */
     private function closeAsCode(array $FO) : string {
@@ -2386,8 +2498,8 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param string $val
-     * @param LinkedList $chNodes
+     * @param string $val The value to search for.
+     * @param LinkedList $chNodes The list of child nodes.
      * @return null|HTMLNode Description
      */
     private function getChildByIDHelper(string $val, ?LinkedList $chNodes) {
@@ -2419,9 +2531,9 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param string $val
-     * @param LinkedList $chList
-     * @param LinkedList $list
+     * @param string $val The value to search for.
+     * @param LinkedList $chList The list of children to search.
+     * @param LinkedList $list The list to populate with results.
      * @return LinkedList
      */
     private function getChildrenByTagHelper(string $val,LinkedList $chList, LinkedList $list) : LinkedList {
@@ -2490,9 +2602,10 @@ class HTMLNode implements Countable, Iterator {
         return $node;
     }
     /**
+     * Returns the closing tag of the node as formatted code.
      * 
      * @param array $FO Formatting options.
-     * @return string
+     * @return string The closing tag as formatted HTML code.
      *
      */
     private function openAsCode(array $FO) : string {
@@ -2563,7 +2676,7 @@ class HTMLNode implements Countable, Iterator {
     }
     /**
      * 
-     * @param HTMLNode $node
+     * @param HTMLNode $node The HTML node to process.
      */
     private function pushNode(HTMLNode $node) {
         if ($node->isTextNode()) {
@@ -2619,7 +2732,7 @@ class HTMLNode implements Countable, Iterator {
         }
     }
     /**
-     * @param HTMLNode $node 
+     * @param HTMLNode $node The HTML node to process. 
      * 
      * @param array $FO Formatting options.
      * 

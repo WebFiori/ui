@@ -47,8 +47,9 @@ class TemplateCompiler {
      * value of each key represents the value of the variable inside the template.
      * This parameter is applicable only if the template is a PHP file.
      *
-     * @throws TemplateNotFoundException If no file is found which has given path.
-     * @throws InvalidNodeNameException
+     * @throws InvalidArgumentException When template path is empty
+     * @throws TemplateNotFoundException When template file is not found
+     * @throws InvalidNodeNameException When template contains invalid HTML elements
      */
     public function __construct(string $templatePath, array $vars = []) {
         $trimmedPath = trim($templatePath);
