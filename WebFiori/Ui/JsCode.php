@@ -8,7 +8,7 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace WebFiori\UI;
+namespace WebFiori\Ui;
 
 /**
  * A node that represents in line JavaScript code that can be inserted on a 

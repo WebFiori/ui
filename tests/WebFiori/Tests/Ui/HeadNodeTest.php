@@ -1,8 +1,8 @@
 <?php
-namespace WebFiori\Tests\UI;
+namespace WebFiori\Tests\Ui;
 
-use WebFiori\UI\HTMLNode;
-use WebFiori\UI\HeadNode;
+use WebFiori\Ui\HTMLNode;
+use WebFiori\Ui\HeadNode;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of HeadNodeTest

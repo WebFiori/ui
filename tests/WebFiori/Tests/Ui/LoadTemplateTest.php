@@ -1,12 +1,12 @@
 <?php
-namespace WebFiori\Tests\UI;
+namespace WebFiori\Tests\Ui;
 
 use PHPUnit\Framework\TestCase;
-use WebFiori\UI\HeadNode;
-use WebFiori\UI\HTMLDoc;
-use WebFiori\UI\HTMLNode;
-use WebFiori\UI\TemplateCompiler;
-use WebFiori\UI\Exceptions\TemplateNotFoundException;
+use WebFiori\Ui\HeadNode;
+use WebFiori\Ui\HTMLDoc;
+use WebFiori\Ui\HTMLNode;
+use WebFiori\Ui\TemplateCompiler;
+use WebFiori\Ui\Exceptions\TemplateNotFoundException;
 /**
  * Description of TestLoadTemplate
  *

@@ -1,11 +1,11 @@
 <?php
 
-namespace WebFiori\Tests\UI;
+namespace WebFiori\Tests\Ui;
 
 use PHPUnit\Framework\TestCase;
-use WebFiori\UI\Anchor;
-use WebFiori\UI\HTMLNode;
-use WebFiori\UI\HTMLTable;
+use WebFiori\Ui\Anchor;
+use WebFiori\Ui\HTMLNode;
+use WebFiori\Ui\HTMLTable;
 
 /**
  * Description of TestHTMLTable
