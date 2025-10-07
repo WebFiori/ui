@@ -8,7 +8,7 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace WebFiori\UI;
+namespace WebFiori\Ui;
 
 /**
  * A class which can be used to represent a group of radio buttons inserted 

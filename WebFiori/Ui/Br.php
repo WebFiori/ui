@@ -8,7 +8,7 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace WebFiori\UI;
+namespace WebFiori\Ui;
 
 /**
  * A class that represents &lt;br&gt; tag.

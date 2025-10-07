@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "WebFiori\\UI\\": "WebFiori/UI/"
+            "WebFiori\\Ui\\": "WebFiori/Ui/"
         }
     },
     "require-dev": {

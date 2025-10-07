@@ -1,8 +1,8 @@
 <?php
-namespace WebFiori\Tests\UI;
+namespace WebFiori\Tests\Ui;
 
-use WebFiori\UI\Input;
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\Input;
+use WebFiori\Ui\HTMLNode;
 use PHPUnit\Framework\TestCase;
 /**
  * Description of InputTest

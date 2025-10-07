@@ -8,13 +8,14 @@
  * https://github.com/WebFiori/.github/blob/main/LICENSE
  *
  */
-namespace WebFiori\UI\Exceptions;
+namespace WebFiori\Ui\Exceptions;
 
 use Exception;
 /**
- * An exception which is thrown to indicate that a component file was not found.
+ * An exception which is thrown if HTML node has invalid name.
  *
  * @author Ibrahim
+ * @version 1.0
  */
-class TemplateNotFoundException extends Exception {
+class InvalidNodeNameException extends Exception {
 }

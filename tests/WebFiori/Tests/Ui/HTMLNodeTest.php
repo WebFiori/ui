@@ -22,15 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace WebFiori\Tests\UI;
+namespace WebFiori\Tests\Ui;
 
 use PHPUnit\Framework\TestCase;
-use WebFiori\UI\Anchor;
-use WebFiori\UI\HTMLDoc;
-use WebFiori\UI\HTMLNode;
-use WebFiori\UI\Label;
-use WebFiori\UI\ListItem;
-use WebFiori\UI\TemplateCompiler;
+use WebFiori\Ui\Anchor;
+use WebFiori\Ui\HTMLDoc;
+use WebFiori\Ui\HTMLNode;
+use WebFiori\Ui\Label;
+use WebFiori\Ui\ListItem;
+use WebFiori\Ui\TemplateCompiler;
 /**
  * Description of HTMLNodeTest
  *

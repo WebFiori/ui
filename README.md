@@ -51,7 +51,9 @@ A PHP library for creating HTML documents and DOM manipulation with an object-or
 
 ## 🚀 Installation
 
-Install via Composer:
+The basic use case is to have HTML document with some text in its body. The class `HTMLDoc` represent HTML document. Simply, create an instance of this class and use it to build the whole HTML document. The class can be used as follows:
+``` php
+use WebFiori\Ui\HTMLDoc;
 
 ```bash
 composer require webfiori/ui
@@ -59,10 +61,115 @@ composer require webfiori/ui
 
 Or add to your `composer.json`:
 
-```json
-{
-    "require": {
-        "webfiori/ui": "^3.0"
+All HTML elements are represented as an instance of the class `HTMLNode`. Developers can extend this class to create custom UI components as classes. The library has already pre-made components which are used in the next code sample. In addition to that, the class has methods which utilize theses components and fasten the process of adding them as children of any HTML element. The following code shows a code which is used to create a basic login form.
+
+``` php
+use WebFiori\Ui\HTMLDoc;
+
+//Create new instance of "HTMLDoc".
+$doc = new HTMLDoc();
+
+// Build a login form.
+$body = $doc->getBody();
+$body->text('Login to System')->hr();
+
+$form = $body->form(['method' => 'post', 'actiion' => 'https://example.com/login']);
+
+$form->label('Username:');
+$form->br();
+$form->input('text', ['placeholder'=>'You can use your email address.', 'style' => 'width:250px']);
+$form->br();
+$form->label('Password:');
+$form->br();
+$form->input('password', ['placeholder' => 'Type in your password here.', 'style' => 'width:250px']);
+$form->br();
+$form->input('submit', ['value' => 'Login']);
+
+echo $doc;
+```
+
+The output of the code would be similar to the following image.
+
+<img src="tests/images/login-form.png">
+
+### HTML/PHP Template Files
+Some developers don't like to have everything in PHP. For example, front-end developers like to work directly with HTML since it has femiliar syntax. For this reason, the library include basic support for using HTML or PHP files as templates. If the templates are pure HTML, then variables are set in the document using slots. If the template has a mix between PHP and HTML, then PHP variables can be passed to the template.
+
+#### HTML Templates
+
+Assume that we have HTML file with the following markup:
+``` html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{page-title}}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="{{page-desc}}">
+    </head>
+    <body>
+        <section>
+            <h1>{{page-title}}</h1>
+            <p>
+                Hello Mr.{{ mr-name }}. This is your visit number {{visit-number}} 
+                to our website.
+            </p>
+        </section>
+    </body>
+</html>
+```
+It is noted that there are strings which are enclosed between `{{}}`. Any string enclosed between `{{}}` is called a slot. To fill any slot, its value must be passed when rendered in PHP. The file will be rendered into an instance of the class `HTMLNode`. The file can be rendered using the static method `HTMLNode::fromFile(string $templatePath, array $values)`. First parameter of the method is the path to the template and the second parameter is an associative array that holds values of slots. The keys of the array are slots names and the value of each index is the value of the slot. The following code shows how this document is loaded into an instance of the class `HTMLNode` with slots values.
+``` php
+$document = HTMLNode::fromFile('my-html-file.html', [
+    'page-title' => 'Hello Page',
+    'page-desc' => 'A page that shows visits numbers.',
+    'mr-name' => 'Ibrahim Ali',
+    'visit-number' => 33,
+]);
+echo $document
+```
+The output of the above PHP code will be the following HTML code.
+``` html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello Page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A page that shows visits numbers.">
+    </head>
+    <body>
+        <section>
+            <h1>Hello Page</h1>
+            <p>
+                Hello Mr.Ibrahim Ali. This is your visit number 33
+                to our website.
+            </p>
+        </section>
+    </body>
+</html>
+```
+#### PHP Templates
+
+One draw back of using raw HTML template files with slots is that it can't have dynamic PHP code. To overcome this, it is possible to have the template written as a mix between HTML and PHP. This feature allow the use of all PHP features in HTML template. Also, this allow developers to pass PHP variables in addition to values for slots.
+
+Assuming that we have the following PHP template that shows a list of posts titles:
+
+``` php
+<div>
+    <?php 
+    if (count($posts) != 0) {?>
+    <ul>
+    <?php
+        foreach ($posts as $postTitle) {?>
+        <li><?= $postTitle;?></li>
+        <?php
+        }
+        ?>
+    </ul>
+    <?php
+    } else {
+        echo "No posts.\n";
     }
 }
 ```
@@ -80,7 +187,7 @@ Or add to your `composer.json`:
 <?php
 require_once 'vendor/autoload.php';
 
-use WebFiori\UI\HTMLDoc;
+use WebFiori\Ui\HTMLDoc;
 
 // Create a complete HTML5 document
 $doc = new HTMLDoc();
@@ -99,7 +206,7 @@ echo $doc;
 ### Build Elements Programmatically
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Create a navigation menu
 $nav = new HTMLNode('nav', ['class' => 'main-nav']);
@@ -165,7 +272,7 @@ $parent->childrenCount();         // 1
 ### Complete Document Structure
 
 ```php
-use WebFiori\UI\HTMLDoc;
+use WebFiori\Ui\HTMLDoc;
 
 $doc = new HTMLDoc();
 
@@ -227,7 +334,7 @@ $head->addChild('link', [
 ### Element Creation and Manipulation
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Create elements with attributes
 $container = new HTMLNode('div', [
@@ -323,7 +430,7 @@ echo "Total items: " . $list->childrenCount(); // Direct method
 ### Complete Form Creation
 
 ```php
-use WebFiori\UI\HTMLDoc;
+use WebFiori\Ui\HTMLDoc;
 
 $doc = new HTMLDoc();
 $body = $doc->getBody();
@@ -470,7 +577,7 @@ $form->input('hidden', ['name' => 'form_id', 'value' => 'registration']);
 ### Dynamic Data Tables
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Create responsive data table
 $tableContainer = new HTMLNode('div', ['class' => 'table-responsive']);
@@ -562,7 +669,7 @@ echo $tableContainer->toHTML(true);
 ### Navigation Menus
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Main navigation
 $nav = new HTMLNode('nav', ['class' => 'navbar navbar-expand-lg navbar-dark bg-dark']);
@@ -644,7 +751,7 @@ echo $nestedList->toHTML(true);
 ### Image Galleries and Media Components
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Hero section with background image
 $hero = new HTMLNode('section', ['class' => 'hero-section']);
@@ -754,7 +861,7 @@ Create reusable HTML templates with placeholder slots:
 
 **Using the template:**
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 $document = HTMLNode::fromFile('template.html', [
     'lang' => 'en',
@@ -845,7 +952,7 @@ echo $blogPost->toHTML(true);
 ### CSS Management
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 $element = new HTMLNode('div');
 
@@ -925,7 +1032,7 @@ echo $visibleOnMobile->toHTML(true);
 WebFiori UI implements PHP's Iterator and Countable interfaces for seamless traversal:
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 $menu = new HTMLNode('ul', ['class' => 'main-menu']);
 $menu->li('Home');
@@ -963,7 +1070,7 @@ while ($menu->valid()) {
 ### XML Document Generation
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // Create SAML assertion
 $assertion = new HTMLNode('saml:Assertion', [
@@ -1001,7 +1108,7 @@ echo $assertion->toXML(true);
 ### Optimizing HTML Output
 
 ```php
-use WebFiori\UI\HTMLNode;
+use WebFiori\Ui\HTMLNode;
 
 // For production: Use unformatted output
 $container = new HTMLNode('div');
@@ -1181,7 +1288,7 @@ WebFiori UI implements standard PHP interfaces:
 <?php
 require_once 'vendor/autoload.php';
 
-use WebFiori\UI\HTMLDoc;
+use WebFiori\Ui\HTMLDoc;
 
 // Create a complete responsive web page
 $doc = new HTMLDoc();
