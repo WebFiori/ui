@@ -17,7 +17,7 @@
     </logging>
     <testsuites>
         <testsuite name="HTML Elements Tests">
-            <directory>./WebFiori/Tests/UI</directory>
+            <directory>./WebFiori/Tests/Ui</directory>
         </testsuite>
     </testsuites>
 </phpunit>
