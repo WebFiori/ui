@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.0](https://github.com/WebFiori/ui/compare/v3.0.0...v4.0.0) (2025-10-07)
+
+
+### Miscellaneous Chores
+
+* Merge pull request [#49](https://github.com/WebFiori/ui/issues/49) from WebFiori/dev ([a833f98](https://github.com/WebFiori/ui/commit/a833f98e9d1e9c725282879de5f66e228993a765))
+
 ## [3.0.0](https://github.com/WebFiori/ui/compare/v2.6.4...v3.0.0) (2025-08-27)
 
 
