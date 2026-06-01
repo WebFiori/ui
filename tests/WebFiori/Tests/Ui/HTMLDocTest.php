@@ -24,11 +24,10 @@ class HTMLDocTest extends TestCase {
         $this->assertEquals('a', $list->get(0)->getNodeName());
     }
     /**
-     * 
-     * @param HTMLDoc $doc
-     * @depends testConstructor00
+     * @test
      */
-    public function testAsCode00(HTMLDoc $doc) {
+    public function testAsCode00() {
+        $doc = new HTMLDoc();
         $this->assertEquals(""
                 ."&lt;!DOCTYPE html&gt;\r\n"
                 ."&lt;html&gt;\r\n"
@@ -167,7 +166,6 @@ class HTMLDocTest extends TestCase {
                 ."</html>\r\n"
                 .""
                 ."",$doc->toHTML());
-        return $doc;
     }
     /**
      * @test

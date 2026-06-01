@@ -85,10 +85,11 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
-     * @depends testAddMeta02
-     * @param HeadNode $headNode D
      */
-    public function getMetaTest00($headNode) {
+    public function getMetaTest00() {
+        $headNode = new HeadNode();
+        $headNode->addMeta('description', 'Page Description.');
+        $headNode->addMeta('description', 'Hello', true);
         $metas = $headNode->getMetaNodes();
         $this->assertEquals(2,count($metas));
         $meta00 = $metas->get(0);
@@ -282,7 +283,6 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
-     * @depends testAddCss00
      */
     public function testAddCss01() {
         $node = new HeadNode();
@@ -304,12 +304,9 @@ class HeadNodeTest extends TestCase {
             'revision' => true
         ]);
         $this->assertEquals(3, $node->getCSSNodes()->size());
-
-        return $node;
     }
     /**
      * @test
-     * @depends testAddCss00
      */
     public function testAddCss02() {
         $node = new HeadNode();
@@ -404,7 +401,6 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
-     * @depends testAddJs00
      */
     public function testAddJs01() {
         $node = new HeadNode();
@@ -424,8 +420,6 @@ class HeadNodeTest extends TestCase {
             'revision' => true
         ]);
         $this->assertEquals(3, $node->getJSNodes()->size());
-
-        return $node;
     }
     public function testAddJs02() {
         $node = new HeadNode();
@@ -570,8 +564,6 @@ class HeadNodeTest extends TestCase {
         $node->addMeta('description', 'Hello',true);
         $meta = $node->getMeta('description');
         $this->assertEquals('Hello',$meta->getAttributeValue('content'));
-
-        return $node;
     }
     /**
      * @test
@@ -670,9 +662,18 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
-     * @depends testAddCss01
      */
-    public function testHasCss00($node) {
+    public function testHasCss00() {
+        $node = new HeadNode();
+        $node->addCSS('https://example.com/css1?hello=true', [
+            'revision' => true
+        ])
+             ->addCSS('https://example.com/css2 ? hello=true', [
+                 'revision' => true
+             ]);
+        $node->addCSS('https://example.com/css3?', [
+            'revision' => true
+        ]);
         $this->assertTrue($node->hasCss('https://example.com/css1'));
         $this->assertTrue($node->hasCss('https://example.com/css1?something=x'));
         $this->assertTrue($node->hasCss('https://example.com/css2'));
@@ -682,9 +683,18 @@ class HeadNodeTest extends TestCase {
     }
     /**
      * @test
-     * @depends testAddJs01
      */
-    public function testHasJs00($node) {
+    public function testHasJs00() {
+        $node = new HeadNode();
+        $node->addJs('https://example.com/js1?hello=true', [
+            'revision' => true
+        ]);
+        $node->addJs('https://example.com/js2 ? hello=true', [
+            'revision' => true
+        ]);
+        $node->addJs('https://example.com/js3?', [
+            'revision' => true
+        ]);
         $this->assertTrue($node->hasJs('https://example.com/js1'));
         $this->assertTrue($node->hasJs('https://example.com/js1?something=x'));
         $this->assertTrue($node->hasJs('https://example.com/js2'));
