@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="bootstrap.php">
-    <php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage includeUncoveredFiles="true">
+    <report>
+      <clover outputFile="clover.xml"/>
+    </report>
+  </coverage>
+  <php>
     </php>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <file>../WebFiori/Ui/HTMLNode.php</file>
-            <file>../WebFiori/Ui/HeadNode.php</file>
-            <file>../WebFiori/Ui/HTMLDoc.php</file>
-            <file>../WebFiori/Ui/Input.php</file>
-            <file>../WebFiori/Ui/HTMLTable.php</file>
-            <file>../WebFiori/Ui/TemplateCompiler.php</file>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="clover.xml"/>
-    </logging>
-    <testsuites>
-        <testsuite name="HTML Elements Tests">
-            <directory>./WebFiori/Tests/Ui</directory>
-        </testsuite>
-    </testsuites>
+  <logging/>
+  <testsuites>
+    <testsuite name="HTML Elements Tests">
+      <directory>./WebFiori/Tests/Ui</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <file>../WebFiori/Ui/HTMLNode.php</file>
+      <file>../WebFiori/Ui/HeadNode.php</file>
+      <file>../WebFiori/Ui/HTMLDoc.php</file>
+      <file>../WebFiori/Ui/Input.php</file>
+      <file>../WebFiori/Ui/HTMLTable.php</file>
+      <file>../WebFiori/Ui/TemplateCompiler.php</file>
+    </include>
+  </source>
 </phpunit>
