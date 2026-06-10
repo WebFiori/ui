@@ -813,6 +813,19 @@ class TemplateCompiler {
             $htmlStr = str_replace($scriptTxt, $key, $htmlStr);
         }
 
+
+        $comments = [];
+        preg_match_all("/<!--(.*?)-->/s", $htmlStr, $comments);
+        $tempCommentsArr = [];
+
+        foreach ($comments[1] as $idx => $commentBody) {
+            if (strpos($commentBody, '<') !== false) {
+                $now = date('H:i:s.').gettimeofday()["usec"];
+                $key = hash('sha256', $commentBody.$now).'-'.$now;
+                $tempCommentsArr[$key] = $commentBody;
+                $htmlStr = str_replace($comments[0][$idx], '<!--'.$key.'-->', $htmlStr);
+            }
+        }
         //For single quotes
         $attrsArr2 = [];
         preg_match_all("/'[^']*' |'[^']*'>|''/", $htmlStr, $attrsArr2);
@@ -828,7 +841,7 @@ class TemplateCompiler {
         }
 
         return [
-            'replacements' => array_merge($tempValuesArr, $tempScriptsArr),
+            'replacements' => array_merge($tempValuesArr, $tempScriptsArr, $tempCommentsArr),
             'html-string' => $htmlStr
         ];
     }
