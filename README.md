@@ -33,6 +33,8 @@ PHP's built-in `DOMDocument` works but has friction for HTML generation:
 
 This library's sweet spot is *generating* HTML from PHP — pages, emails, components — where a builder pattern and template system give better DX than the W3C DOM API.
 
+> **This is a DOM builder, not a text-based template engine.** If you need template inheritance, compiled templates, or a dedicated syntax (like Blade or Twig), use those instead. Use this library when you want to construct and manipulate HTML programmatically — server-rendered components, email generation, PDF markup, or any case where the structure is driven by logic rather than a layout file.
+
 ## Table of Contents
 
 - [Key Features](#key-features)
