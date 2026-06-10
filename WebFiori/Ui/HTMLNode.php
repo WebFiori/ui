@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -843,7 +844,7 @@ class HTMLNode implements Countable, Iterator {
             if ($char == "\n") {
                 if ($index != 0 && $str[$index - 1] != "\r") {
                     //Bare line feed found. Replace with \r\n
-                    $finalStr = trim($finalStr).HTMLDoc::NL;
+                    $finalStr = rtrim($finalStr, "\n").HTMLDoc::NL;
                 } else {
                     $finalStr .= $char;
                 }
@@ -1160,11 +1161,29 @@ class HTMLNode implements Countable, Iterator {
 
         if ($styleStr !== null) {
             $retVal = [];
-            $arr1 = explode(';', trim($styleStr,';'));
+            $styleStr = trim($styleStr, ';');
+            $depth = 0;
+            $current = '';
 
-            foreach ($arr1 as $val) {
-                $exp = explode(':', $val);
-                $retVal[$exp[0]] = $exp[1];
+            for ($i = 0; $i < strlen($styleStr); $i++) {
+                $ch = $styleStr[$i];
+
+                if ($ch === '(') {
+                    $depth++;
+                } else if ($ch === ')') {
+                    $depth--;
+                }
+
+                if ($ch === ';' && $depth === 0) {
+                    $this->parseStylePair($current, $retVal);
+                    $current = '';
+                } else {
+                    $current .= $ch;
+                }
+            }
+
+            if (trim($current) !== '') {
+                $this->parseStylePair($current, $retVal);
             }
 
             return $retVal;
@@ -1651,7 +1670,7 @@ class HTMLNode implements Countable, Iterator {
                     $valType = gettype($val);
                     $quoted = $this->isQuotedAttribute();
 
-                    if (!$quoted && $valType == "integer" || $valType == 'double') {
+                    if (!$quoted && ($valType == "integer" || $valType == 'double')) {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
                         if ($val != '' && !$quoted && strpos($val, '?') === false 
@@ -1661,7 +1680,7 @@ class HTMLNode implements Countable, Iterator {
                                 && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
-                            $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
                         }
                     }
                 }
@@ -1910,14 +1929,17 @@ class HTMLNode implements Countable, Iterator {
                 } else if ($val === null) {
                     $this->attributes[$trimmedName] = null;
                 } else if ($attrValType == 'string') {
-                        $this->attributes[$trimmedName] = $trimmedVal;
+                    $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
                     $this->attributes[$trimmedName] = $val;
                 } else if ($attrValType == 'boolean') {
                     $this->attributes[$trimmedName] = $val === true ? 'true' : 'false';
                 }
+            } else {
+                throw new \InvalidArgumentException("Invalid attribute name: '$trimmedName'.");
             }
         }
+
 
         return $this;
     }
@@ -2494,7 +2516,6 @@ class HTMLNode implements Countable, Iterator {
         } else {
             return '&lt;/'.$this->getNodeName().'&gt;';
         }
-
     }
     /**
      * 
@@ -2639,6 +2660,32 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $retVal;
+    }
+    /**
+     * Validates the name of the node.
+     * 
+     * @param string $name The name of the node in lower case.
+     * 
+     * @return bool If the name is valid, the method will return true. If 
+     * it is not valid, it will return false. Valid values must follow the 
+     * following rules:
+     * <ul>
+     * <li>Must not be an empty string.</li>
+     * <li>Must not start with a number.</li>
+     * <li>Must not start with '-'.</li>
+     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
+     * [0-9], ':', '@' and '-'.</li>
+     * <ul>
+     *
+     */
+    private function parseStylePair(string $pair, array &$result): void {
+        $colonPos = strpos($pair, ':');
+
+        if ($colonPos !== false) {
+            $key = trim(substr($pair, 0, $colonPos));
+            $val = trim(substr($pair, $colonPos + 1));
+            $result[$key] = $val;
+        }
     }
     private function popNode() {
         $node = $this->nodesStack->pop();
@@ -2800,23 +2847,6 @@ class HTMLNode implements Countable, Iterator {
     private function setParentHelper(?HTMLNode $node) {
         $this->parentNode = $node;
     }
-    /**
-     * Validates the name of the node.
-     * 
-     * @param string $name The name of the node in lower case.
-     * 
-     * @return bool If the name is valid, the method will return true. If 
-     * it is not valid, it will return false. Valid values must follow the 
-     * following rules:
-     * <ul>
-     * <li>Must not be an empty string.</li>
-     * <li>Must not start with a number.</li>
-     * <li>Must not start with '-'.</li>
-     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
-     * [0-9], ':', '@' and '-'.</li>
-     * <ul>
-     *
-     */
     private function validateAttrNameHelper(string $name) : bool {
         $nameLen = strlen($name);
 
@@ -2882,6 +2912,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
         }
+
         //initial tab validation
         if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
             $FO['initial-tab'] = 0;

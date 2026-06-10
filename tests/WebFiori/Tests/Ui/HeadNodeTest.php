@@ -347,7 +347,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href="https://example.com/css1?hello=world&cv=1.1.1" reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1?hello=world&amp;cv=1.1.1" reloaded async=false data-action>'
                 .'</head>',$node->toHTML());
     }
     /**
@@ -365,7 +365,7 @@ class HeadNodeTest extends TestCase {
                 .'<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<link rel=stylesheet href="https://example.com/css1?hello=world&cv=1.1.1" reloaded async=false data-action>'
+                .'<link rel=stylesheet href="https://example.com/css1?hello=world&amp;cv=1.1.1" reloaded async=false data-action>'
                 .'<link rel=stylesheet href="https://example.com/css1">'
                 .'</head>',$node->toHTML());
     }
@@ -472,14 +472,14 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok=yes></script>'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&amp;jv=1.1.1" async ok=yes></script>'
                 .'</head>',$node->toHTML());
         $node->setIsQuotedAttribute(true);
         $this->assertTrue($node->isQuotedAttribute());
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&amp;jv=1.1.1" async ok="yes"></script>'
                 .'</head>',$node->toHTML());
         $node->setIsQuotedAttribute(false);
     }
@@ -498,7 +498,7 @@ class HeadNodeTest extends TestCase {
         $this->assertEquals('<head>'
                 .'<title>Default</title>'
                 .'<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">'
-                .'<script type="text/javascript" src="https://example.com/js3?hello=world&jv=1.1.1" async ok="yes"></script>'
+                .'<script type="text/javascript" src="https://example.com/js3?hello=world&amp;jv=1.1.1" async ok="yes"></script>'
                 .'<script type="text/javascript" src="https://example.com/js2"></script>'
                 .'</head>',$node->toHTML());
         $node->setIsQuotedAttribute(false);
