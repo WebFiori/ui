@@ -8,6 +8,7 @@ This example demonstrates loading HTML templates with slot-based variable substi
 - Loading templates with `fromFileAsNode()`
 - Passing variables to fill slots
 - Reusing templates with different data
+- Passing `HTMLNode` objects as slot values (rendered as raw HTML)
 
 ## Files
 

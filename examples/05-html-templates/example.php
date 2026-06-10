@@ -31,3 +31,16 @@ $nav = HTMLNode::fromFileAsNode(__DIR__ . '/templates/nav.html', [
 
 echo "=== Navigation ===" . PHP_EOL;
 echo $nav->toHTML(true) . PHP_EOL;
+
+// Passing an HTMLNode as a slot value — rendered as raw HTML
+$icon = new HTMLNode('span', ['class' => 'icon']);
+$icon->text('★');
+
+$card = HTMLNode::fromFileAsNode(__DIR__ . '/templates/card.html', [
+    'title' => $icon,  // HTMLNode injected as raw HTML
+    'content' => 'This card has an HTMLNode in the title slot.',
+    'link' => '/docs/nodes-in-slots'
+]);
+
+echo "=== HTMLNode in Slot ===" . PHP_EOL;
+echo $card->toHTML(true) . PHP_EOL;
