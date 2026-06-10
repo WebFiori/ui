@@ -21,6 +21,7 @@
       <file>../WebFiori/Ui/Input.php</file>
       <file>../WebFiori/Ui/HTMLTable.php</file>
       <file>../WebFiori/Ui/TemplateCompiler.php</file>
+      <file>../WebFiori/Ui/HtmlRenderer.php</file>
     </include>
   </source>
 </phpunit>
