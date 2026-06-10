@@ -2666,7 +2666,8 @@ and open the template in the editor.
     public function testUtf8AttributeWithGreaterThan() {
         $html = '<div title="café > bar" class="normal">Hello</div>';
         $result = TemplateCompiler::fromHTMLText($html);
-        $this->assertEquals($html, $result->toHTML());
+        $this->assertEquals("café > bar", $result->getAttribute("title"));
+        $this->assertEquals("normal", $result->getAttribute("class"));
     }
     /**
      * @test

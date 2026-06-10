@@ -789,7 +789,7 @@ class TemplateCompiler {
         //For double quotation
         $attrsArr = [];
         //After every attribute value, there must be a space if more than one attribute.
-        preg_match_all('/"[\t-!#-~]+" |"[\t-!#-~]+">|""/', $htmlStr, $attrsArr);
+        preg_match_all('/"[^"]*" |"[^"]*">|""/' , $htmlStr, $attrsArr);
         $tempValuesArr = [];
 
         foreach ($attrsArr[0] as $value) {
@@ -815,7 +815,7 @@ class TemplateCompiler {
 
         //For single quotes
         $attrsArr2 = [];
-        preg_match_all('/\'[\t-&(-~]+\' |\'[\t-&(-~]+\'>|\'\'/', $htmlStr, $attrsArr2);
+        preg_match_all("/'[^']*' |'[^']*'>|''/", $htmlStr, $attrsArr2);
 
         foreach ($attrsArr2[0] as $value) {
             if ($value[strlen($value) - 1] == '>' || $value[strlen($value) - 1] == ' ') {
