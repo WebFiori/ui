@@ -100,9 +100,14 @@ class TemplateCompiler {
     public function compile(array $varsToPass = []) {
         if ($this->getType() == 'php') {
             ob_start();
-            extract($varsToPass, EXTR_SKIP);
-            require $this->getPath();
-            $this->rawOutput = ob_get_clean();
+            try {
+                extract($varsToPass, EXTR_SKIP);
+                require $this->getPath();
+                $this->rawOutput = ob_get_clean();
+            } catch (\Throwable $e) {
+                ob_end_clean();
+                throw $e;
+            }
         } else {
             $this->rawOutput = file_get_contents($this->getPath());
         }
