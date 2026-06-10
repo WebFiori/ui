@@ -2172,10 +2172,20 @@ and open the template in the editor.
      */
     public function testSetAttribute06() {
         $node = new HTMLNode();
-        $node->setAttribute('0-data','550');
-        $this->assertFalse($node->hasAttribute('0-data'));
-        $node->setAttribute('-data','550');
-        $this->assertFalse($node->hasAttribute('-data'));
+
+        try {
+            $node->setAttribute('0-data','550');
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertFalse($node->hasAttribute('0-data'));
+        }
+
+        try {
+            $node->setAttribute('-data','550');
+            $this->fail('Expected InvalidArgumentException');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertFalse($node->hasAttribute('-data'));
+        }
     }
     /**
      * @test

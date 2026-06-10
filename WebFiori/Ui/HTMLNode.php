@@ -1934,8 +1934,11 @@ class HTMLNode implements Countable, Iterator {
                 } else if ($attrValType == 'boolean') {
                     $this->attributes[$trimmedName] = $val === true ? 'true' : 'false';
                 }
+            } else {
+                throw new \InvalidArgumentException("Invalid attribute name: '$trimmedName'.");
             }
         }
+
 
         return $this;
     }

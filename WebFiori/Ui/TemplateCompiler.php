@@ -519,7 +519,7 @@ class TemplateCompiler {
                     }
 
                     foreach ($chNode['attributes'] as $attr => $val) {
-                        $htmlNode->getTitleNode()->setAttribute($attr, $val);
+                        self::safeSetAttribute($htmlNode->getTitleNode(), $attr, $val);
                     }
                 } else if ($chNode[$TN] == 'base') {
                     $isBaseSet = false;
@@ -533,7 +533,7 @@ class TemplateCompiler {
 
                     if ($isBaseSet) {
                         foreach ($chNode['attributes'] as $attr => $val) {
-                            $htmlNode->getBaseNode()->setAttribute($attr, $val);
+                            self::safeSetAttribute($htmlNode->getBaseNode(), $attr, $val);
                         }
                     }
                 } else if ($chNode[$TN] == 'link') {
@@ -541,14 +541,14 @@ class TemplateCompiler {
                     $tmpNode = new HTMLNode('link');
 
                     foreach ($chNode['attributes'] as $attr => $val) {
-                        $tmpNode->setAttribute($attr, $val);
+                        self::safeSetAttribute($tmpNode, $attr, $val);
                         $lower = strtolower($val);
 
                         if ($attr == 'rel' && $lower == 'canonical') {
                             $isCanonical = true;
-                            $tmpNode->setAttribute($attr, $lower);
+                            self::safeSetAttribute($tmpNode, $attr, $lower);
                         } else if ($attr == 'rel' && $lower == 'stylesheet') {
-                            $tmpNode->setAttribute($attr, $lower);
+                            self::safeSetAttribute($tmpNode, $attr, $lower);
                         }
                     }
 
@@ -557,7 +557,7 @@ class TemplateCompiler {
 
                         if ($isCanonicalSet) {
                             foreach ($tmpNode->getAttributes() as $attr => $val) {
-                                $htmlNode->getCanonicalNode()->setAttribute($attr, $val);
+                                self::safeSetAttribute($htmlNode->getCanonicalNode(), $attr, $val);
                             }
                         }
                     } else {
@@ -567,11 +567,11 @@ class TemplateCompiler {
                     $tmpNode = self::fromHTMLTextHelper00($chNode);
 
                     foreach ($tmpNode->getAttributes() as $attr => $val) {
-                        $tmpNode->setAttribute($attr, $val);
+                        self::safeSetAttribute($tmpNode, $attr, $val);
                         $lower = strtolower($val);
 
                         if ($attr == 'type' && $lower == 'text/javascript') {
-                            $tmpNode->setAttribute($attr, $lower);
+                            self::safeSetAttribute($tmpNode, $attr, $lower);
                         }
                     }
                     $htmlNode->addChild($tmpNode);
@@ -594,7 +594,7 @@ class TemplateCompiler {
 
         if (isset($nodeArr['attributes'])) {
             foreach ($nodeArr['attributes'] as $key => $value) {
-                $htmlNode->setAttribute($key, $value);
+                self::safeSetAttribute($htmlNode, $key, $value);
             }
         }
 
@@ -842,5 +842,11 @@ class TemplateCompiler {
         }
 
         return $component;
+    }
+    private static function safeSetAttribute(HTMLNode $node, string $attr, mixed $val): void {
+        try {
+            $node->setAttribute($attr, $val);
+        } catch (\InvalidArgumentException $e) {
+        }
     }
 }
