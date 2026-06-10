@@ -186,7 +186,7 @@ class HTMLTable extends HTMLNode {
 
         if ($colIndex < $this->cols() && $this->cols() > 1) {
             foreach ($this as $row) {
-                $colCells[] = $row->children()->remove($colIndex);
+                $colCells[] = $row->children()->removeAt($colIndex);
             }
             $this->cols--;
         }
