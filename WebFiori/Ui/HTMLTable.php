@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -108,7 +109,9 @@ class HTMLTable extends HTMLNode {
      * @return int Number of columns in the table.
      */
     public function cols() : int {
-        $firstRow = $this->getChild(0); return $firstRow !== null ? $firstRow->childrenCount() : 0;
+        $firstRow = $this->getChild(0);
+
+        return $firstRow !== null ? $firstRow->childrenCount() : 0;
     }
     /**
      * Returns a table cell given its indices.
@@ -204,11 +207,11 @@ class HTMLTable extends HTMLNode {
     public function removeRow(int $rowIndex) {
         if ($this->rows() > 1) {
             $row = $this->removeChild($rowIndex);
-            
+
             if ($row !== null) {
                 $this->rows--;
             }
-            
+
             return $row;
         }
     }

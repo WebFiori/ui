@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -1928,7 +1929,7 @@ class HTMLNode implements Countable, Iterator {
                 } else if ($val === null) {
                     $this->attributes[$trimmedName] = null;
                 } else if ($attrValType == 'string') {
-                        $this->attributes[$trimmedName] = $trimmedVal;
+                    $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
                     $this->attributes[$trimmedName] = $val;
                 } else if ($attrValType == 'boolean') {
@@ -2515,7 +2516,6 @@ class HTMLNode implements Countable, Iterator {
         } else {
             return '&lt;/'.$this->getNodeName().'&gt;';
         }
-
     }
     /**
      * 
@@ -2660,6 +2660,32 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $retVal;
+    }
+    /**
+     * Validates the name of the node.
+     * 
+     * @param string $name The name of the node in lower case.
+     * 
+     * @return bool If the name is valid, the method will return true. If 
+     * it is not valid, it will return false. Valid values must follow the 
+     * following rules:
+     * <ul>
+     * <li>Must not be an empty string.</li>
+     * <li>Must not start with a number.</li>
+     * <li>Must not start with '-'.</li>
+     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
+     * [0-9], ':', '@' and '-'.</li>
+     * <ul>
+     *
+     */
+    private function parseStylePair(string $pair, array &$result): void {
+        $colonPos = strpos($pair, ':');
+
+        if ($colonPos !== false) {
+            $key = trim(substr($pair, 0, $colonPos));
+            $val = trim(substr($pair, $colonPos + 1));
+            $result[$key] = $val;
+        }
     }
     private function popNode() {
         $node = $this->nodesStack->pop();
@@ -2821,32 +2847,6 @@ class HTMLNode implements Countable, Iterator {
     private function setParentHelper(?HTMLNode $node) {
         $this->parentNode = $node;
     }
-    /**
-     * Validates the name of the node.
-     * 
-     * @param string $name The name of the node in lower case.
-     * 
-     * @return bool If the name is valid, the method will return true. If 
-     * it is not valid, it will return false. Valid values must follow the 
-     * following rules:
-     * <ul>
-     * <li>Must not be an empty string.</li>
-     * <li>Must not start with a number.</li>
-     * <li>Must not start with '-'.</li>
-     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
-     * [0-9], ':', '@' and '-'.</li>
-     * <ul>
-     *
-     */
-    private function parseStylePair(string $pair, array &$result): void {
-        $colonPos = strpos($pair, ':');
-
-        if ($colonPos !== false) {
-            $key = trim(substr($pair, 0, $colonPos));
-            $val = trim(substr($pair, $colonPos + 1));
-            $result[$key] = $val;
-        }
-    }
     private function validateAttrNameHelper(string $name) : bool {
         $nameLen = strlen($name);
 
@@ -2912,6 +2912,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
         }
+
         //initial tab validation
         if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
             $FO['initial-tab'] = 0;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -99,11 +100,13 @@ class TemplateCompiler {
      */
     public function compile(array $varsToPass = []) {
         if ($this->getType() == 'php') {
-            $this->rawOutput = (static function(string $__path, array $__vars) {
+            $this->rawOutput = (static function(string $__path, array $__vars)
+            {
                 extract($__vars, EXTR_SKIP);
                 ob_start();
                 try {
                     require $__path;
+
                     return ob_get_clean();
                 } catch (\Throwable $e) {
                     ob_end_clean();
@@ -143,11 +146,11 @@ class TemplateCompiler {
      */
     public static function fromHTMLText(string $text, bool $asHTMLDocObj = true) {
         $nodesArr = self::htmlAsArray($text);
-        
+
         if (count($nodesArr) >= 1) {
             $TN = 'tag-name';
             $retVal = [];
-            
+
             if ($asHTMLDocObj && ($nodesArr[0][$TN] == 'html' || $nodesArr[0][$TN] == '!DOCTYPE')) {
                 $retVal = self::parseHTMLDoc($nodesArr);
             } else {
@@ -158,53 +161,6 @@ class TemplateCompiler {
         }
 
         return null;
-    }
-    private static function parseHTMLNode($nodesArr) {
-        if (count($nodesArr) != 1) {
-            $retVal = [];
-            foreach ($nodesArr as $node) {
-                $asHtmlNode = self::fromHTMLTextHelper00($node);
-                $retVal[] = $asHtmlNode;
-            }
-            return $retVal;
-        } else {
-            return self::fromHTMLTextHelper00($nodesArr[0]);
-        }
-    }
-    private static function parseHTMLDoc($children) : HTMLDoc {
-        $retVal = new HTMLDoc();
-        $retVal->getHeadNode()->removeAllChildNodes();
-        $retVal->getBody()->removeAttributes();
-        $TN = 'tag-name';
-        
-        for ($x = 0 ; $x < count($children) ; $x++) {
-            if ($children[$x][$TN] == 'html') {
-                $htmlNode = self::fromHTMLTextHelper00($children[$x]);
-
-
-                foreach ($htmlNode->getAttributes() as $attr => $val) {
-                    self::safeSetAttribute($retVal->getDocumentRoot(), $attr, $val);
-                }
-                for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
-                    $child = $htmlNode->children()->get($y);
-
-                    if ($child->getNodeName() == 'head') {
-                        $retVal->setHeadNode($child);
-                    } else if ($child->getNodeName() == 'body') {
-                        for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
-                            $node = $child->children()->get($z);
-                            $retVal->addChild($node);
-                        }
-
-                        foreach ($child->getAttributes() as $attr => $val) {
-                            self::safeSetAttribute($retVal->getBody(), $attr, $val);
-                        }
-                        
-                    }
-                }
-            }
-        }
-        return $retVal;
     }
     /**
      * Returns an array that contains directories names of the calling files.
@@ -766,6 +722,56 @@ class TemplateCompiler {
         $queue->enqueue($val);
         $val = '';
     }
+    private static function parseHTMLDoc($children) : HTMLDoc {
+        $retVal = new HTMLDoc();
+        $retVal->getHeadNode()->removeAllChildNodes();
+        $retVal->getBody()->removeAttributes();
+        $TN = 'tag-name';
+
+        for ($x = 0 ; $x < count($children) ; $x++) {
+            if ($children[$x][$TN] == 'html') {
+                $htmlNode = self::fromHTMLTextHelper00($children[$x]);
+
+
+                foreach ($htmlNode->getAttributes() as $attr => $val) {
+                    self::safeSetAttribute($retVal->getDocumentRoot(), $attr, $val);
+                }
+
+                for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
+                    $child = $htmlNode->children()->get($y);
+
+                    if ($child->getNodeName() == 'head') {
+                        $retVal->setHeadNode($child);
+                    } else if ($child->getNodeName() == 'body') {
+                        for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
+                            $node = $child->children()->get($z);
+                            $retVal->addChild($node);
+                        }
+
+                        foreach ($child->getAttributes() as $attr => $val) {
+                            self::safeSetAttribute($retVal->getBody(), $attr, $val);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $retVal;
+    }
+    private static function parseHTMLNode($nodesArr) {
+        if (count($nodesArr) != 1) {
+            $retVal = [];
+
+            foreach ($nodesArr as $node) {
+                $asHtmlNode = self::fromHTMLTextHelper00($node);
+                $retVal[] = $asHtmlNode;
+            }
+
+            return $retVal;
+        } else {
+            return self::fromHTMLTextHelper00($nodesArr[0]);
+        }
+    }
     /**
      * Replace all attributes values in HTML string with a hash.
      * 
@@ -845,6 +851,12 @@ class TemplateCompiler {
             'html-string' => $htmlStr
         ];
     }
+    private static function safeSetAttribute(HTMLNode $node, string $attr, mixed $val): void {
+        try {
+            $node->setAttribute($attr, $val);
+        } catch (InvalidArgumentException $e) {
+        }
+    }
     private static function setComponentVars($varsArr, $component) {
         if (gettype($varsArr) == 'array') {
             $variables = [];
@@ -870,11 +882,5 @@ class TemplateCompiler {
         }
 
         return $component;
-    }
-    private static function safeSetAttribute(HTMLNode $node, string $attr, mixed $val): void {
-        try {
-            $node->setAttribute($attr, $val);
-        } catch (\InvalidArgumentException $e) {
-        }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -451,43 +452,6 @@ class HeadNode extends HTMLNode {
 
         return $this;
     }
-    public function addMetaHttpEquiv(string $name, string $content, bool $override = false) : HeadNode {
-        $trimmedName = trim(strtolower($name));
-
-        if (strlen($trimmedName) != 0) {
-            $meta = $this->getMeta($trimmedName, true);
-
-            if ($meta !== null && $override === true) {
-                $meta->setAttribute('content', $content);
-
-                return $this;
-            } else if ($meta === null) {
-                $meta = new HTMLNode('meta');
-                $meta->setAttribute('http-equiv', $trimmedName);
-                $meta->setAttribute('content', $content);
-                $this->insertMetaInCorrectOrder($meta);
-            }
-        }
-
-        return $this;
-    }
-    private function insertMetaInCorrectOrder(HTMLNode $newMeta) {
-        $insertPosition = -1;
-
-        for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
-            $chNode = $this->getChild($x);
-
-            if ($chNode->getNodeName() == 'meta') {
-                $insertPosition = $x;
-            }
-        }
-
-        if ($insertPosition != -1) {
-            $this->insert($newMeta, $insertPosition + 1);
-        } else {
-            $this->addChild($newMeta);
-        }
-    }
     /**
      * Adds new meta tag.
      * 
@@ -518,6 +482,26 @@ class HeadNode extends HTMLNode {
             } else if ($meta === null) {
                 $meta = new HTMLNode('meta');
                 $meta->setAttribute('name', $trimmedName);
+                $meta->setAttribute('content', $content);
+                $this->insertMetaInCorrectOrder($meta);
+            }
+        }
+
+        return $this;
+    }
+    public function addMetaHttpEquiv(string $name, string $content, bool $override = false) : HeadNode {
+        $trimmedName = trim(strtolower($name));
+
+        if (strlen($trimmedName) != 0) {
+            $meta = $this->getMeta($trimmedName, true);
+
+            if ($meta !== null && $override === true) {
+                $meta->setAttribute('content', $content);
+
+                return $this;
+            } else if ($meta === null) {
+                $meta = new HTMLNode('meta');
+                $meta->setAttribute('http-equiv', $trimmedName);
                 $meta->setAttribute('content', $content);
                 $this->insertMetaInCorrectOrder($meta);
             }
@@ -708,7 +692,7 @@ class HeadNode extends HTMLNode {
     public function getMeta(string $name, bool $httpEquvi = false) {
         $lName = strtolower(trim($name));
         $attribute = $httpEquvi ? 'http-equiv' : 'name';
-        
+
         if ($lName == 'charset') {
             return $this->getCharsetNode();
         } else {
@@ -1113,6 +1097,23 @@ class HeadNode extends HTMLNode {
             $this->insert($node,$insertPosition + 1);
         } else {
             $this->addChild($node);
+        }
+    }
+    private function insertMetaInCorrectOrder(HTMLNode $newMeta) {
+        $insertPosition = -1;
+
+        for ($x = 0 ; $x < $this->childrenCount() ; $x++) {
+            $chNode = $this->getChild($x);
+
+            if ($chNode->getNodeName() == 'meta') {
+                $insertPosition = $x;
+            }
+        }
+
+        if ($insertPosition != -1) {
+            $this->insert($newMeta, $insertPosition + 1);
+        } else {
+            $this->addChild($newMeta);
         }
     }
 }
