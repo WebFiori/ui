@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -14,6 +15,7 @@ use Countable;
 use Iterator;
 use ReturnTypeWillChange;
 use WebFiori\Collections\LinkedList;
+use WebFiori\Collections\Vector;
 use WebFiori\Collections\Stack;
 use WebFiori\Ui\Exceptions\InvalidNodeNameException;
 use WebFiori\Ui\Exceptions\TemplateNotFoundException;
@@ -273,7 +275,7 @@ class HTMLNode implements Countable, Iterator {
                 $this->setIsVoidNode(true);
             } else {
                 $this->setIsVoidNode(false);
-                $this->childrenList = new LinkedList();
+                $this->childrenList = new Vector();
             }
         }
         $this->setAttributes($attrs);
@@ -843,7 +845,7 @@ class HTMLNode implements Countable, Iterator {
             if ($char == "\n") {
                 if ($index != 0 && $str[$index - 1] != "\r") {
                     //Bare line feed found. Replace with \r\n
-                    $finalStr = trim($finalStr).HTMLDoc::NL;
+                    $finalStr = rtrim($finalStr, "\n").HTMLDoc::NL;
                 } else {
                     $finalStr .= $char;
                 }
@@ -900,6 +902,92 @@ class HTMLNode implements Countable, Iterator {
         $compiler = new TemplateCompiler($absPath, $slotsOrVars);
 
         return $compiler->getCompiled();
+    }
+    /**
+     * Load template as a complete HTML document.
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return HTMLDoc The compiled document.
+     *
+     * @throws \InvalidArgumentException If template does not represent a full HTML document.
+     */
+    public static function fromFileAsDocument(string $path, array $vars = []): HTMLDoc {
+        $result = self::fromFile($path, $vars);
+
+        if (!$result instanceof HTMLDoc) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' does not represent a full HTML document."
+            );
+        }
+
+        return $result;
+    }
+    /**
+     * Load template as a single node.
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return HTMLNode The compiled node.
+     *
+     * @throws \InvalidArgumentException If template has multiple root nodes or is empty.
+     */
+    public static function fromFileAsNode(string $path, array $vars = []): HTMLNode {
+        $result = self::fromFile($path, $vars);
+
+        if ($result instanceof HTMLDoc) {
+            return $result->getBody();
+        }
+
+        if (is_array($result)) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' has multiple root nodes; use fromFileAsArray() instead."
+            );
+        }
+
+        if ($result === null) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' produced no output."
+            );
+        }
+
+        return $result;
+    }
+    /**
+     * Load template as an array of nodes.
+     *
+     * Always succeeds - normalizes any template structure. Single nodes are
+     * wrapped in array, documents return body children, empty returns [].
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return array An array of HTMLNode instances.
+     */
+    public static function fromFileAsArray(string $path, array $vars = []): array {
+        $result = self::fromFile($path, $vars);
+
+        if ($result === null) {
+            return [];
+        }
+
+        if ($result instanceof HTMLDoc) {
+            $nodes = [];
+
+            for ($i = 0; $i < $result->getBody()->childrenCount(); $i++) {
+                $nodes[] = $result->getBody()->getChild($i);
+            }
+
+            return $nodes;
+        }
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        return [$result];
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
@@ -988,7 +1076,10 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getChild(int $index) {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
-            return $this->children()->get($index);
+            if ($index >= 0 && $index < $this->children()->size()) {
+                return $this->children()->get($index);
+            }
+            return null;
         }
     }
     /**
@@ -1160,11 +1251,29 @@ class HTMLNode implements Countable, Iterator {
 
         if ($styleStr !== null) {
             $retVal = [];
-            $arr1 = explode(';', trim($styleStr,';'));
+            $styleStr = trim($styleStr, ';');
+            $depth = 0;
+            $current = '';
 
-            foreach ($arr1 as $val) {
-                $exp = explode(':', $val);
-                $retVal[$exp[0]] = $exp[1];
+            for ($i = 0; $i < strlen($styleStr); $i++) {
+                $ch = $styleStr[$i];
+
+                if ($ch === '(') {
+                    $depth++;
+                } else if ($ch === ')') {
+                    $depth--;
+                }
+
+                if ($ch === ';' && $depth === 0) {
+                    $this->parseStylePair($current, $retVal);
+                    $current = '';
+                } else {
+                    $current .= $ch;
+                }
+            }
+
+            if (trim($current) !== '') {
+                $this->parseStylePair($current, $retVal);
             }
 
             return $retVal;
@@ -1651,7 +1760,7 @@ class HTMLNode implements Countable, Iterator {
                     $valType = gettype($val);
                     $quoted = $this->isQuotedAttribute();
 
-                    if (!$quoted && $valType == "integer" || $valType == 'double') {
+                    if (!$quoted && ($valType == "integer" || $valType == 'double')) {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
                         if ($val != '' && !$quoted && strpos($val, '?') === false 
@@ -1661,7 +1770,7 @@ class HTMLNode implements Countable, Iterator {
                                 && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
-                            $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
                         }
                     }
                 }
@@ -1777,16 +1886,19 @@ class HTMLNode implements Countable, Iterator {
     public function removeChild($nodeInstOrId) {
         if (!$this->isVoidNode()) {
             if ($nodeInstOrId instanceof HTMLNode) {
-                $child = $this->children()->removeElement($nodeInstOrId);
+                $child = $this->children()->remove($nodeInstOrId);
 
                 return $this->removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'string') {
                 $toRemove = $this->getChildByID($nodeInstOrId);
-                $child = $this->children()->removeElement($toRemove);
+                $child = $this->children()->remove($toRemove);
 
                 return $this->removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'integer') {
-                return $this->children()->remove($nodeInstOrId);
+                if ($nodeInstOrId >= 0 && $nodeInstOrId < $this->children()->size()) {
+                    return $this->children()->removeAt($nodeInstOrId);
+                }
+                return null;
             }
         }
     }
@@ -1910,14 +2022,17 @@ class HTMLNode implements Countable, Iterator {
                 } else if ($val === null) {
                     $this->attributes[$trimmedName] = null;
                 } else if ($attrValType == 'string') {
-                        $this->attributes[$trimmedName] = $trimmedVal;
+                    $this->attributes[$trimmedName] = $trimmedVal;
                 } else if (in_array($attrValType, ['double', 'integer'])) {
                     $this->attributes[$trimmedName] = $val;
                 } else if ($attrValType == 'boolean') {
                     $this->attributes[$trimmedName] = $val === true ? 'true' : 'false';
                 }
+            } else {
+                throw new \InvalidArgumentException("Invalid attribute name: '$trimmedName'.");
             }
         }
+
 
         return $this;
     }
@@ -2494,7 +2609,6 @@ class HTMLNode implements Countable, Iterator {
         } else {
             return '&lt;/'.$this->getNodeName().'&gt;';
         }
-
     }
     /**
      * 
@@ -2502,7 +2616,7 @@ class HTMLNode implements Countable, Iterator {
      * @param LinkedList $chNodes The list of child nodes.
      * @return null|HTMLNode Description
      */
-    private function getChildByIDHelper(string $val, ?LinkedList $chNodes) {
+    private function getChildByIDHelper(string $val, ?Vector $chNodes) {
         $chCount = $chNodes !== null ? $chNodes->size() : 0;
 
         for ($x = 0 ; $x < $chCount ; $x++) {
@@ -2536,7 +2650,7 @@ class HTMLNode implements Countable, Iterator {
      * @param LinkedList $list The list to populate with results.
      * @return LinkedList
      */
-    private function getChildrenByTagHelper(string $val,LinkedList $chList, LinkedList $list) : LinkedList {
+    private function getChildrenByTagHelper(string $val,Vector $chList, LinkedList $list) : LinkedList {
         $chCount = $chList->size();
 
         for ($x = 0 ; $x < $chCount ; $x++) {
@@ -2639,6 +2753,32 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $retVal;
+    }
+    /**
+     * Validates the name of the node.
+     * 
+     * @param string $name The name of the node in lower case.
+     * 
+     * @return bool If the name is valid, the method will return true. If 
+     * it is not valid, it will return false. Valid values must follow the 
+     * following rules:
+     * <ul>
+     * <li>Must not be an empty string.</li>
+     * <li>Must not start with a number.</li>
+     * <li>Must not start with '-'.</li>
+     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
+     * [0-9], ':', '@' and '-'.</li>
+     * <ul>
+     *
+     */
+    private function parseStylePair(string $pair, array &$result): void {
+        $colonPos = strpos($pair, ':');
+
+        if ($colonPos !== false) {
+            $key = trim(substr($pair, 0, $colonPos));
+            $val = trim(substr($pair, $colonPos + 1));
+            $result[$key] = $val;
+        }
     }
     private function popNode() {
         $node = $this->nodesStack->pop();
@@ -2800,23 +2940,6 @@ class HTMLNode implements Countable, Iterator {
     private function setParentHelper(?HTMLNode $node) {
         $this->parentNode = $node;
     }
-    /**
-     * Validates the name of the node.
-     * 
-     * @param string $name The name of the node in lower case.
-     * 
-     * @return bool If the name is valid, the method will return true. If 
-     * it is not valid, it will return false. Valid values must follow the 
-     * following rules:
-     * <ul>
-     * <li>Must not be an empty string.</li>
-     * <li>Must not start with a number.</li>
-     * <li>Must not start with '-'.</li>
-     * <li>Can only have the following characters in its name: [A-Z], [a-z], 
-     * [0-9], ':', '@' and '-'.</li>
-     * <ul>
-     *
-     */
     private function validateAttrNameHelper(string $name) : bool {
         $nameLen = strlen($name);
 
@@ -2882,6 +3005,7 @@ class HTMLNode implements Countable, Iterator {
         } else {
             $FO['tab-spaces'] = self::DEFAULT_CODE_FORMAT['tab-spaces'];
         }
+
         //initial tab validation
         if (gettype($FO['initial-tab']) == 'integer' && $FO['initial-tab'] < 0) {
             $FO['initial-tab'] = 0;

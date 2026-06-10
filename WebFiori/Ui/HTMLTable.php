@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is licensed under MIT License.
  *
@@ -51,10 +52,10 @@ class HTMLTable extends HTMLNode {
             'border-collapse' => 'collapse'
         ]);
 
-        for ($x = 0 ; $x < $this->rows() ; $x++) {
+        for ($x = 0 ; $x < $this->rows ; $x++) {
             $row = new TableRow();
 
-            for ($y = 0 ; $y < $this->cols() ; $y++) {
+            for ($y = 0 ; $y < $this->cols ; $y++) {
                 $row->addCell('');
             }
             $this->addRow($row);
@@ -108,7 +109,9 @@ class HTMLTable extends HTMLNode {
      * @return int Number of columns in the table.
      */
     public function cols() : int {
-        return $this->cols;
+        $firstRow = $this->getChild(0);
+
+        return $firstRow !== null ? $firstRow->childrenCount() : 0;
     }
     /**
      * Returns a table cell given its indices.
@@ -183,7 +186,7 @@ class HTMLTable extends HTMLNode {
 
         if ($colIndex < $this->cols() && $this->cols() > 1) {
             foreach ($this as $row) {
-                $colCells[] = $row->children()->remove($colIndex);
+                $colCells[] = $row->children()->removeAt($colIndex);
             }
             $this->cols--;
         }
@@ -204,11 +207,11 @@ class HTMLTable extends HTMLNode {
     public function removeRow(int $rowIndex) {
         if ($this->rows() > 1) {
             $row = $this->removeChild($rowIndex);
-            
+
             if ($row !== null) {
                 $this->rows--;
             }
-            
+
             return $row;
         }
     }
@@ -218,7 +221,7 @@ class HTMLTable extends HTMLNode {
      * @return int Number of rows in the table.
      */
     public function rows() : int {
-        return $this->rows;
+        return $this->childrenCount();
     }
     /**
      * Sets the attributes of cells in one specific column.
