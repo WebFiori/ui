@@ -843,7 +843,7 @@ class HTMLNode implements Countable, Iterator {
             if ($char == "\n") {
                 if ($index != 0 && $str[$index - 1] != "\r") {
                     //Bare line feed found. Replace with \r\n
-                    $finalStr = trim($finalStr).HTMLDoc::NL;
+                    $finalStr = rtrim($finalStr, "\n").HTMLDoc::NL;
                 } else {
                     $finalStr .= $char;
                 }
@@ -1160,11 +1160,29 @@ class HTMLNode implements Countable, Iterator {
 
         if ($styleStr !== null) {
             $retVal = [];
-            $arr1 = explode(';', trim($styleStr,';'));
+            $styleStr = trim($styleStr, ';');
+            $depth = 0;
+            $current = '';
 
-            foreach ($arr1 as $val) {
-                $exp = explode(':', $val);
-                $retVal[$exp[0]] = $exp[1];
+            for ($i = 0; $i < strlen($styleStr); $i++) {
+                $ch = $styleStr[$i];
+
+                if ($ch === '(') {
+                    $depth++;
+                } else if ($ch === ')') {
+                    $depth--;
+                }
+
+                if ($ch === ';' && $depth === 0) {
+                    $this->parseStylePair($current, $retVal);
+                    $current = '';
+                } else {
+                    $current .= $ch;
+                }
+            }
+
+            if (trim($current) !== '') {
+                $this->parseStylePair($current, $retVal);
             }
 
             return $retVal;
@@ -1651,7 +1669,7 @@ class HTMLNode implements Countable, Iterator {
                     $valType = gettype($val);
                     $quoted = $this->isQuotedAttribute();
 
-                    if (!$quoted && $valType == "integer" || $valType == 'double') {
+                    if (!$quoted && ($valType == "integer" || $valType == 'double')) {
                         $retVal .= ' '.$attr.'='.$val;
                     } else {
                         if ($val != '' && !$quoted && strpos($val, '?') === false 
@@ -2817,6 +2835,15 @@ class HTMLNode implements Countable, Iterator {
      * <ul>
      *
      */
+    private function parseStylePair(string $pair, array &$result): void {
+        $colonPos = strpos($pair, ':');
+
+        if ($colonPos !== false) {
+            $key = trim(substr($pair, 0, $colonPos));
+            $val = trim(substr($pair, $colonPos + 1));
+            $result[$key] = $val;
+        }
+    }
     private function validateAttrNameHelper(string $name) : bool {
         $nameLen = strlen($name);
 

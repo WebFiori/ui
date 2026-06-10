@@ -2562,4 +2562,131 @@ and open the template in the editor.
         ])->setIsVoidNode(true);
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?><root><CustomEl><saml:AuthNReqest Good="Bad"/></CustomEl></root>', $node->toXML());
     }
+    /**
+     * @test
+     * Issue #57: double attribute values should be quoted when setIsQuotedAttribute(true)
+     */
+    public function testDoubleAttributeQuoted() {
+        $node = new HTMLNode('div');
+        $node->setIsQuotedAttribute(true);
+        $node->setAttribute('data-val', 3.14);
+        $this->assertEquals('<div data-val="3.14">', $node->open());
+    }
+    /**
+     * @test
+     * Issue #75: getStyle() breaks on CSS values containing colons or semicolons
+     */
+    public function testGetStyleWithComplexValues() {
+        $node = new HTMLNode('div');
+        $node->setStyle(['background' => 'url(data:image/png;base64,abc)', 'color' => 'red']);
+        $styles = $node->getStyle();
+        $this->assertEquals('url(data:image/png;base64,abc)', $styles['background']);
+        $this->assertEquals('red', $styles['color']);
+    }
+    /**
+     * @test
+     * Issue #74: fixBareLineFeed() should not trim trailing whitespace
+     */
+    public function testFixBareLineFeedPreservesSpaces() {
+        $result = HTMLNode::fixBareLineFeed("Hello   \nWorld");
+        $this->assertEquals("Hello   \r\nWorld", $result);
+    }
+    /**
+     * @test
+     * Issue #77: Attribute values should have & encoded as &amp; in output
+     */
+    public function testAttributeValueHtmlEncoded() {
+        $node = new HTMLNode('a');
+        $node->setAttribute('href', '/search?a=1&b=2');
+        $this->assertEquals('<a href="/search?a=1&amp;b=2">', $node->open());
+    }
+    /**
+     * @test
+     * Issue #76: setAttribute() should throw on invalid attribute names
+     */
+    public function testSetAttributeInvalidNameThrows() {
+        $this->expectException(\InvalidArgumentException::class);
+        $node = new HTMLNode('div');
+        $node->setAttribute('onclick="alert(1)" x', 'val');
+    }
+    /**
+     * @test
+     * Issue #59: Output buffer leak when PHP template throws an exception
+     */
+    public function testTemplateCompilerBufferLeakOnException() {
+        $tmpFile = sys_get_temp_dir() . '/throw_test.php';
+        file_put_contents($tmpFile, '<?php throw new \RuntimeException("boom");');
+        $levelBefore = ob_get_level();
+
+        try {
+            $compiler = new TemplateCompiler($tmpFile);
+            $compiler->compile();
+        } catch (\RuntimeException $e) {
+            // expected
+        }
+
+        $levelAfter = ob_get_level();
+        unlink($tmpFile);
+        $this->assertEquals($levelBefore, $levelAfter, 'Output buffer leaked after exception');
+    }
+    /**
+     * @test
+     * Issue #55: Script content corrupted when script tag has attributes
+     */
+    public function testScriptWithAttributesPreservesContent() {
+        $html = '<div><script type="text/javascript">var x = 1 < 2;</script></div>';
+        $result = TemplateCompiler::fromHTMLText($html);
+        $this->assertEquals($html, $result->toHTML());
+    }
+    /**
+     * @test
+     * Issue #56: Body and HTML attributes lost when parsing full documents
+     */
+    public function testDocumentAttributesPreserved() {
+        $html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><title>Test</title></head><body class="dark-theme" id="main-body"><p>Hello</p></body></html>';
+        $doc = TemplateCompiler::fromHTMLText($html);
+        $this->assertEquals('ar', $doc->getLanguage());
+        $this->assertEquals('dark-theme', $doc->getBody()->getAttribute('class'));
+        $this->assertEquals('main-body', $doc->getBody()->getAttribute('id'));
+    }
+    /**
+     * @test
+     * Issue #58: UTF-8 attribute values containing > break the parser
+     */
+    public function testUtf8AttributeWithGreaterThan() {
+        $html = '<div title="café > bar" class="normal">Hello</div>';
+        $result = TemplateCompiler::fromHTMLText($html);
+        $this->assertEquals($html, $result->toHTML());
+    }
+    /**
+     * @test
+     * Issue #60: <?= in HTML text causes InvalidNodeNameException
+     */
+    public function testShortEchoTagInTextDoesNotThrow() {
+        $html = '<div><?= $var ?></div>';
+        $result = TemplateCompiler::fromHTMLText($html);
+        $this->assertNotNull($result);
+    }
+    /**
+     * @test
+     * Issue #62: $this exposed to PHP templates
+     */
+    public function testTemplateCannotAccessThis() {
+        $tmpFile = sys_get_temp_dir() . '/this_test.php';
+        file_put_contents($tmpFile, '<?php echo isset($this) ? "exposed" : "isolated";');
+        $compiler = new TemplateCompiler($tmpFile);
+        $compiler->compile();
+        $raw = $compiler->getRaw();
+        unlink($tmpFile);
+        $this->assertEquals('isolated', $raw);
+    }
+    /**
+     * @test
+     * Issue #63: HTML comments containing < are parsed incorrectly
+     */
+    public function testCommentWithAngleBrackets() {
+        $html = '<div><!-- This is a <comment> with tags inside --><p>After</p></div>';
+        $result = TemplateCompiler::fromHTMLText($html);
+        $this->assertEquals($html, $result->toHTML());
+    }
 }

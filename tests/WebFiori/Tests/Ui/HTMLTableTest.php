@@ -264,4 +264,13 @@ class HTMLTableTest extends TestCase {
             $this->assertEquals('last-row', $table->getCell(4, $x)->getAttribute('class'));
         }
     }
+    /**
+     * @test
+     * Issue #71: rows() counter desyncs after addRow()
+     */
+    public function testRowCounterAfterAddRow() {
+        $table = new HTMLTable(2, 3);
+        $table->addRow(['a', 'b', 'c']);
+        $this->assertEquals(3, $table->rows());
+    }
 }
