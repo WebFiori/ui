@@ -875,7 +875,11 @@ class TemplateCompiler {
                     $trimmed = trim($slotNameFromComponent, '{{ }}');
 
                     if ($trimmed == $slotName) {
-                        $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
+                        if ($slotVal instanceof \WebFiori\Ui\HTMLNode) {
+                            $component = str_replace($slotNameFromComponent, $slotVal->toHTML(), $component);
+                        } else {
+                            $component = str_replace($slotNameFromComponent, htmlspecialchars($slotVal), $component);
+                        }
                     }
                 }
             }
