@@ -14,6 +14,7 @@ use Countable;
 use Iterator;
 use ReturnTypeWillChange;
 use WebFiori\Collections\LinkedList;
+use WebFiori\Collections\Vector;
 use WebFiori\Collections\Stack;
 use WebFiori\Ui\Exceptions\InvalidNodeNameException;
 use WebFiori\Ui\Exceptions\TemplateNotFoundException;
@@ -273,7 +274,7 @@ class HTMLNode implements Countable, Iterator {
                 $this->setIsVoidNode(true);
             } else {
                 $this->setIsVoidNode(false);
-                $this->childrenList = new LinkedList();
+                $this->childrenList = new Vector();
             }
         }
         $this->setAttributes($attrs);
@@ -988,7 +989,10 @@ class HTMLNode implements Countable, Iterator {
      */
     public function getChild(int $index) {
         if (!$this->isTextNode() && !$this->isComment() && !$this->isVoidNode()) {
-            return $this->children()->get($index);
+            if ($index >= 0 && $index < $this->children()->size()) {
+                return $this->children()->get($index);
+            }
+            return null;
         }
     }
     /**
@@ -1777,16 +1781,19 @@ class HTMLNode implements Countable, Iterator {
     public function removeChild($nodeInstOrId) {
         if (!$this->isVoidNode()) {
             if ($nodeInstOrId instanceof HTMLNode) {
-                $child = $this->children()->removeElement($nodeInstOrId);
+                $child = $this->children()->remove($nodeInstOrId);
 
                 return $this->removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'string') {
                 $toRemove = $this->getChildByID($nodeInstOrId);
-                $child = $this->children()->removeElement($toRemove);
+                $child = $this->children()->remove($toRemove);
 
                 return $this->removeChHelper($child);
             } else if (gettype($nodeInstOrId) == 'integer') {
-                return $this->children()->remove($nodeInstOrId);
+                if ($nodeInstOrId >= 0 && $nodeInstOrId < $this->children()->size()) {
+                    return $this->children()->removeAt($nodeInstOrId);
+                }
+                return null;
             }
         }
     }
@@ -2502,7 +2509,7 @@ class HTMLNode implements Countable, Iterator {
      * @param LinkedList $chNodes The list of child nodes.
      * @return null|HTMLNode Description
      */
-    private function getChildByIDHelper(string $val, ?LinkedList $chNodes) {
+    private function getChildByIDHelper(string $val, ?Vector $chNodes) {
         $chCount = $chNodes !== null ? $chNodes->size() : 0;
 
         for ($x = 0 ; $x < $chCount ; $x++) {
@@ -2536,7 +2543,7 @@ class HTMLNode implements Countable, Iterator {
      * @param LinkedList $list The list to populate with results.
      * @return LinkedList
      */
-    private function getChildrenByTagHelper(string $val,LinkedList $chList, LinkedList $list) : LinkedList {
+    private function getChildrenByTagHelper(string $val,Vector $chList, LinkedList $list) : LinkedList {
         $chCount = $chList->size();
 
         for ($x = 0 ; $x < $chCount ; $x++) {
