@@ -1679,7 +1679,7 @@ class HTMLNode implements Countable, Iterator {
                                 && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
-                            $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
                         }
                     }
                 }

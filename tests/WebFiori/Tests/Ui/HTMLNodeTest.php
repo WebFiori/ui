@@ -2205,7 +2205,7 @@ and open the template in the editor.
         $node = new HTMLNode();
         $node->setAttribute('placeholder','This is "NOT" funny.');
         $this->assertEquals('This is "NOT" funny.',$node->getAttribute('placeholder'));
-        $this->assertEquals('<div placeholder="This is \"NOT\" funny."></div>',$node->toHTML());
+        $this->assertEquals('<div placeholder="This is &quot;NOT&quot; funny."></div>',$node->toHTML());
     }
     /**
      * @test
