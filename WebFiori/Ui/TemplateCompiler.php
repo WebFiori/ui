@@ -324,7 +324,7 @@ class TemplateCompiler {
      */
     public static function htmlAsArray(string $text) : array {
         $cleanedHtmlArr = self::replaceAttrsValues($text);
-        $trimmed = str_replace('<?php', '&lt;php', $cleanedHtmlArr['html-string']);
+        $trimmed = str_replace(['<?php', '<?=', '<?'], ['&lt;?php', '&lt;?=', '&lt;?'], $cleanedHtmlArr['html-string']);
         $BT = 'body-text';
         $TN = 'tag-name';
 
