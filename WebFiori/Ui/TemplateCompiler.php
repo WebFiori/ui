@@ -181,6 +181,10 @@ class TemplateCompiler {
             if ($children[$x][$TN] == 'html') {
                 $htmlNode = self::fromHTMLTextHelper00($children[$x]);
 
+
+                foreach ($htmlNode->getAttributes() as $attr => $val) {
+                    self::safeSetAttribute($retVal->getDocumentRoot(), $attr, $val);
+                }
                 for ($y = 0 ; $y < $htmlNode->childrenCount() ; $y++) {
                     $child = $htmlNode->children()->get($y);
 
@@ -190,6 +194,10 @@ class TemplateCompiler {
                         for ($z = 0 ; $z < $child->childrenCount() ; $z++) {
                             $node = $child->children()->get($z);
                             $retVal->addChild($node);
+                        }
+
+                        foreach ($child->getAttributes() as $attr => $val) {
+                            self::safeSetAttribute($retVal->getBody(), $attr, $val);
                         }
                         
                     }
