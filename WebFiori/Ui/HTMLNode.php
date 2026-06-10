@@ -904,6 +904,92 @@ class HTMLNode implements Countable, Iterator {
         return $compiler->getCompiled();
     }
     /**
+     * Load template as a complete HTML document.
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return HTMLDoc The compiled document.
+     *
+     * @throws \InvalidArgumentException If template does not represent a full HTML document.
+     */
+    public static function fromFileAsDocument(string $path, array $vars = []): HTMLDoc {
+        $result = self::fromFile($path, $vars);
+
+        if (!$result instanceof HTMLDoc) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' does not represent a full HTML document."
+            );
+        }
+
+        return $result;
+    }
+    /**
+     * Load template as a single node.
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return HTMLNode The compiled node.
+     *
+     * @throws \InvalidArgumentException If template has multiple root nodes or is empty.
+     */
+    public static function fromFileAsNode(string $path, array $vars = []): HTMLNode {
+        $result = self::fromFile($path, $vars);
+
+        if ($result instanceof HTMLDoc) {
+            return $result->getBody();
+        }
+
+        if (is_array($result)) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' has multiple root nodes; use fromFileAsArray() instead."
+            );
+        }
+
+        if ($result === null) {
+            throw new \InvalidArgumentException(
+                "Template at '$path' produced no output."
+            );
+        }
+
+        return $result;
+    }
+    /**
+     * Load template as an array of nodes.
+     *
+     * Always succeeds - normalizes any template structure. Single nodes are
+     * wrapped in array, documents return body children, empty returns [].
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return array An array of HTMLNode instances.
+     */
+    public static function fromFileAsArray(string $path, array $vars = []): array {
+        $result = self::fromFile($path, $vars);
+
+        if ($result === null) {
+            return [];
+        }
+
+        if ($result instanceof HTMLDoc) {
+            $nodes = [];
+
+            for ($i = 0; $i < $result->getBody()->childrenCount(); $i++) {
+                $nodes[] = $result->getBody()->getChild($i);
+            }
+
+            return $nodes;
+        }
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        return [$result];
+    }
+    /**
      * Creates HTMLNode object given a string of HTML code.
      *
      * Note that this method is still under implementation.
