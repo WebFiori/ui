@@ -51,10 +51,10 @@ class HTMLTable extends HTMLNode {
             'border-collapse' => 'collapse'
         ]);
 
-        for ($x = 0 ; $x < $this->rows() ; $x++) {
+        for ($x = 0 ; $x < $this->rows ; $x++) {
             $row = new TableRow();
 
-            for ($y = 0 ; $y < $this->cols() ; $y++) {
+            for ($y = 0 ; $y < $this->cols ; $y++) {
                 $row->addCell('');
             }
             $this->addRow($row);
@@ -108,7 +108,7 @@ class HTMLTable extends HTMLNode {
      * @return int Number of columns in the table.
      */
     public function cols() : int {
-        return $this->cols;
+        $firstRow = $this->getChild(0); return $firstRow !== null ? $firstRow->childrenCount() : 0;
     }
     /**
      * Returns a table cell given its indices.
@@ -218,7 +218,7 @@ class HTMLTable extends HTMLNode {
      * @return int Number of rows in the table.
      */
     public function rows() : int {
-        return $this->rows;
+        return $this->childrenCount();
     }
     /**
      * Sets the attributes of cells in one specific column.
