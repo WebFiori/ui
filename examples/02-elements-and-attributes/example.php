@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__.'/../../vendor/autoload.php';
 
 use WebFiori\Ui\HTMLNode;
 
@@ -28,15 +28,15 @@ $list->li('Feature One');
 $list->li('Feature Two');
 $list->li('Feature Three');
 
-echo "=== Compact Output ===" . PHP_EOL;
-echo $div->toHTML(false) . PHP_EOL . PHP_EOL;
+echo "=== Compact Output ===".PHP_EOL;
+echo $div->toHTML(false).PHP_EOL.PHP_EOL;
 
-echo "=== Formatted Output ===" . PHP_EOL;
-echo $div->toHTML(true) . PHP_EOL;
+echo "=== Formatted Output ===".PHP_EOL;
+echo $div->toHTML(true).PHP_EOL;
 
 // Iterating children
-echo "=== Child Nodes ===" . PHP_EOL;
+echo "=== Child Nodes ===".PHP_EOL;
 
 foreach ($div as $child) {
-    echo '- ' . $child->getNodeName() . PHP_EOL;
+    echo '- '.$child->getNodeName().PHP_EOL;
 }
