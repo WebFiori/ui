@@ -1,5 +1,4 @@
 <?php
-
 namespace WebFiori\Ui;
 
 use WebFiori\Collections\Stack;
@@ -12,13 +11,13 @@ use WebFiori\Collections\Stack;
  */
 class HtmlRenderer {
     private bool $formatted;
-    private bool $quoted;
-    private bool $useForwardSlash;
     private string $nl;
-    private string $tabSpace;
-    private int $tabCount;
-    private string $output;
     private Stack $nodesStack;
+    private string $output;
+    private bool $quoted;
+    private int $tabCount;
+    private string $tabSpace;
+    private bool $useForwardSlash;
     /**
      * Create a new renderer instance.
      *
@@ -113,6 +112,24 @@ class HtmlRenderer {
         return $xml;
     }
     /**
+     * Generate the closing tag for a node.
+     *
+     * @param HTMLNode $node The node to close.
+     *
+     * @return string The closing tag string.
+     */
+    private function closeTag(HTMLNode $node): string {
+        return '</'.$node->getNodeName().'>';
+    }
+
+    private function getTab(): string {
+        if ($this->tabCount == 0) {
+            return '';
+        }
+
+        return str_repeat($this->tabSpace, $this->tabCount);
+    }
+    /**
      * Generate the opening tag for a node.
      *
      * @param HTMLNode $node The node to generate opening tag for.
@@ -120,25 +137,31 @@ class HtmlRenderer {
      * @return string The opening tag string.
      */
     private function openTag(HTMLNode $node): string {
-        $retVal = '<' . $node->getNodeName();
+        $retVal = '<'.$node->getNodeName();
 
         foreach ($node->getAttributes() as $attr => $val) {
             if ($val === null) {
-                $retVal .= ' ' . $attr;
+                $retVal .= ' '.$attr;
             } else {
                 $valType = gettype($val);
 
                 if (!$this->quoted && ($valType == "integer" || $valType == 'double')) {
-                    $retVal .= ' ' . $attr . '=' . $val;
+                    $retVal .= ' '.$attr.'='.$val;
                 } else {
                     if ($val != '' && !$this->quoted && strpos($val, '?') === false
                             && strpos($val, '"') === false
                             && strpos($val, ' ') === false
                             && strpos($val, '/') === false
                             && strpos($val, '-') === false) {
-                        $retVal .= ' ' . $attr . '=' . $val;
+                        $retVal .= ' '.$attr.'='.$val;
                     } else {
-                        $retVal .= ' ' . $attr . '="' . str_replace(['&', '"'], ['&amp;', '&quot;'], $val) . '"';
+                        if (strpos($val, '"') !== false && strpos($val, "'") === false) {
+                            // Value has double quotes but no single quotes: use single-quote wrapper
+                            $retVal .= ' '.$attr."='".str_replace('&', '&amp;', $val)."'";
+                        } else {
+                            // Default: double-quote wrapper with entity escaping
+                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
+                        }
                     }
                 }
             }
@@ -151,15 +174,21 @@ class HtmlRenderer {
 
         return $retVal;
     }
-    /**
-     * Generate the closing tag for a node.
-     *
-     * @param HTMLNode $node The node to close.
-     *
-     * @return string The closing tag string.
-     */
-    private function closeTag(HTMLNode $node): string {
-        return '</' . $node->getNodeName() . '>';
+
+    private function popNode(): void {
+        $node = $this->nodesStack->pop();
+
+        if ($node != null && !$this->formatted) {
+            $this->output .= $this->closeTag($node);
+        } else if ($node != null) {
+            $nodeType = $node->getNodeName();
+
+            if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
+                $this->output .= $this->closeTag($node).$this->nl;
+            } else {
+                $this->output .= $this->getTab().$this->closeTag($node).$this->nl;
+            }
+        }
     }
 
     private function pushNode(HTMLNode $node): void {
@@ -175,17 +204,17 @@ class HtmlRenderer {
                     if ($parentName == 'code' || $parentName == 'pre' || $parentName == 'textarea') {
                         $this->output .= $node->getText();
                     } else {
-                        $this->output .= $this->getTab() . $node->getText() . $this->nl;
+                        $this->output .= $this->getTab().$node->getText().$this->nl;
                     }
                 } else {
-                    $this->output .= $this->getTab() . $node->getText() . $this->nl;
+                    $this->output .= $this->getTab().$node->getText().$this->nl;
                 }
             }
         } else if ($node->isComment()) {
             if (!$this->formatted) {
                 $this->output .= $node->getComment();
             } else {
-                $this->output .= $this->getTab() . $node->getComment() . $this->nl;
+                $this->output .= $this->getTab().$node->getComment().$this->nl;
             }
         } else if (!$node->isVoidNode()) {
             $chCount = $node->children() !== null ? $node->children()->size() : 0;
@@ -197,9 +226,9 @@ class HtmlRenderer {
                 $nodeType = $node->getNodeName();
 
                 if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
-                    $this->output .= $this->getTab() . $this->openTag($node);
+                    $this->output .= $this->getTab().$this->openTag($node);
                 } else {
-                    $this->output .= $this->getTab() . $this->openTag($node) . $this->nl;
+                    $this->output .= $this->getTab().$this->openTag($node).$this->nl;
                 }
             }
             $this->tabCount++;
@@ -213,32 +242,8 @@ class HtmlRenderer {
             if (!$this->formatted) {
                 $this->output .= $this->openTag($node);
             } else {
-                $this->output .= $this->getTab() . $this->openTag($node) . $this->nl;
+                $this->output .= $this->getTab().$this->openTag($node).$this->nl;
             }
         }
-    }
-
-    private function popNode(): void {
-        $node = $this->nodesStack->pop();
-
-        if ($node != null && !$this->formatted) {
-            $this->output .= $this->closeTag($node);
-        } else if ($node != null) {
-            $nodeType = $node->getNodeName();
-
-            if ($nodeType == 'pre' || $nodeType == 'textarea' || $nodeType == 'code') {
-                $this->output .= $this->closeTag($node) . $this->nl;
-            } else {
-                $this->output .= $this->getTab() . $this->closeTag($node) . $this->nl;
-            }
-        }
-    }
-
-    private function getTab(): string {
-        if ($this->tabCount == 0) {
-            return '';
-        }
-
-        return str_repeat($this->tabSpace, $this->tabCount);
     }
 }

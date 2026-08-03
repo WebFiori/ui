@@ -15,8 +15,8 @@ use Countable;
 use Iterator;
 use ReturnTypeWillChange;
 use WebFiori\Collections\LinkedList;
-use WebFiori\Collections\Vector;
 use WebFiori\Collections\Stack;
+use WebFiori\Collections\Vector;
 use WebFiori\Ui\Exceptions\InvalidNodeNameException;
 use WebFiori\Ui\Exceptions\TemplateNotFoundException;
 /**
@@ -904,6 +904,40 @@ class HTMLNode implements Countable, Iterator {
         return $compiler->getCompiled();
     }
     /**
+     * Load template as an array of nodes.
+     *
+     * Always succeeds - normalizes any template structure. Single nodes are
+     * wrapped in array, documents return body children, empty returns [].
+     *
+     * @param string $path Path to the template file.
+     * @param array $vars Slots or variables to pass to the template.
+     *
+     * @return array An array of HTMLNode instances.
+     */
+    public static function fromFileAsArray(string $path, array $vars = []): array {
+        $result = self::fromFile($path, $vars);
+
+        if ($result === null) {
+            return [];
+        }
+
+        if ($result instanceof HTMLDoc) {
+            $nodes = [];
+
+            for ($i = 0; $i < $result->getBody()->childrenCount(); $i++) {
+                $nodes[] = $result->getBody()->getChild($i);
+            }
+
+            return $nodes;
+        }
+
+        if (is_array($result)) {
+            return $result;
+        }
+
+        return [$result];
+    }
+    /**
      * Load template as a complete HTML document.
      *
      * @param string $path Path to the template file.
@@ -954,40 +988,6 @@ class HTMLNode implements Countable, Iterator {
         }
 
         return $result;
-    }
-    /**
-     * Load template as an array of nodes.
-     *
-     * Always succeeds - normalizes any template structure. Single nodes are
-     * wrapped in array, documents return body children, empty returns [].
-     *
-     * @param string $path Path to the template file.
-     * @param array $vars Slots or variables to pass to the template.
-     *
-     * @return array An array of HTMLNode instances.
-     */
-    public static function fromFileAsArray(string $path, array $vars = []): array {
-        $result = self::fromFile($path, $vars);
-
-        if ($result === null) {
-            return [];
-        }
-
-        if ($result instanceof HTMLDoc) {
-            $nodes = [];
-
-            for ($i = 0; $i < $result->getBody()->childrenCount(); $i++) {
-                $nodes[] = $result->getBody()->getChild($i);
-            }
-
-            return $nodes;
-        }
-
-        if (is_array($result)) {
-            return $result;
-        }
-
-        return [$result];
     }
     /**
      * Creates HTMLNode object given a string of HTML code.
@@ -1079,6 +1079,7 @@ class HTMLNode implements Countable, Iterator {
             if ($index >= 0 && $index < $this->children()->size()) {
                 return $this->children()->get($index);
             }
+
             return null;
         }
     }
@@ -1770,7 +1771,13 @@ class HTMLNode implements Countable, Iterator {
                                 && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
-                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
+                            if (strpos($val, '"') !== false && strpos($val, "'") === false) {
+                                // Value has double quotes but no single quotes: use single-quote wrapper
+                                $retVal .= ' '.$attr."='".str_replace('&', '&amp;', $val)."'";
+                            } else {
+                                // Default: double-quote wrapper with entity escaping
+                                $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
+                            }
                         }
                     }
                 }
@@ -1898,6 +1905,7 @@ class HTMLNode implements Countable, Iterator {
                 if ($nodeInstOrId >= 0 && $nodeInstOrId < $this->children()->size()) {
                     return $this->children()->removeAt($nodeInstOrId);
                 }
+
                 return null;
             }
         }

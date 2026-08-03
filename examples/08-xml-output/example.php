@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__.'/../../vendor/autoload.php';
 
 use WebFiori\Ui\HTMLNode;
 use WebFiori\Ui\HtmlRenderer;
@@ -19,21 +19,21 @@ $book2->addChild('author')->text('Bob Jones');
 $book2->addChild('price')->text('34.99');
 
 // Using toXML() method
-echo "=== toXML() Compact ===" . PHP_EOL;
-echo $root->toXML(false) . PHP_EOL . PHP_EOL;
+echo "=== toXML() Compact ===".PHP_EOL;
+echo $root->toXML(false).PHP_EOL.PHP_EOL;
 
-echo "=== toXML() Formatted ===" . PHP_EOL;
-echo $root->toXML(true) . PHP_EOL;
+echo "=== toXML() Formatted ===".PHP_EOL;
+echo $root->toXML(true).PHP_EOL;
 
 // Using HtmlRenderer for XML
 $renderer = new HtmlRenderer();
-echo "=== HtmlRenderer::renderXML() ===" . PHP_EOL;
-echo $renderer->renderXML($root, true) . PHP_EOL;
+echo "=== HtmlRenderer::renderXML() ===".PHP_EOL;
+echo $renderer->renderXML($root, true).PHP_EOL;
 
 // Void elements get self-closing tags in XML
 $config = new HTMLNode('config');
 $config->addChild('setting', ['name' => 'debug', 'value' => 'true'])->setIsVoidNode(true);
 $config->addChild('setting', ['name' => 'cache', 'value' => 'false'])->setIsVoidNode(true);
 
-echo "=== Self-Closing Elements ===" . PHP_EOL;
-echo $config->toXML(true) . PHP_EOL;
+echo "=== Self-Closing Elements ===".PHP_EOL;
+echo $config->toXML(true).PHP_EOL;
