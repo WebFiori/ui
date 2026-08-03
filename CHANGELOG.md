@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.3](https://github.com/WebFiori/ui/compare/v4.0.2...v4.0.3) (2026-08-03)
+
+
+### Bug Fixes
+
+* **HTMLNode:** use single-quote wrapper for attribute values containing double quotes ([cb3e15a](https://github.com/WebFiori/ui/commit/cb3e15abffbe7f5993f3481310a59831ff81efe4))
+* **HTMLNode:** use single-quote wrapper for attribute values containing double quotes ([a9f554f](https://github.com/WebFiori/ui/commit/a9f554f49578d9c3b90e143479de2b045e52dd6a)), closes [#85](https://github.com/WebFiori/ui/issues/85)
+
+
+### Miscellaneous Chores
+
+* normalize line endings to LF ([32649eb](https://github.com/WebFiori/ui/commit/32649eb1c3fe4b03223ba2df26b5493e421f21d2))
+
 ## [4.0.2](https://github.com/WebFiori/ui/compare/v4.0.1...v4.0.2) (2026-06-10)
 
 
