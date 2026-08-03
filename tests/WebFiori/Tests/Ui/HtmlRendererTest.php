@@ -215,7 +215,7 @@ class HtmlRendererTest extends TestCase {
     public function testRenderAttributeWithQuotes() {
         $renderer = new HtmlRenderer(quoted: true);
         $node = new HTMLNode('div', ['title' => 'He said "hi"']);
-        $this->assertEquals('<div title="He said &quot;hi&quot;"></div>', $renderer->render($node));
+        $this->assertEquals('<div title=\'He said "hi"\'></div>', $renderer->render($node));
     }
     /**
      * @test

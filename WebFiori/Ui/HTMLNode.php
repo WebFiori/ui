@@ -1770,7 +1770,13 @@ class HTMLNode implements Countable, Iterator {
                                 && strpos($val, '-') === false) {
                             $retVal .= ' '.$attr.'='.$val;
                         } else {
-                            $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
+                            if (strpos($val, '"') !== false && strpos($val, "'") === false) {
+                                // Value has double quotes but no single quotes: use single-quote wrapper
+                                $retVal .= ' '.$attr."='".str_replace('&', '&amp;', $val)."'";
+                            } else {
+                                // Default: double-quote wrapper with entity escaping
+                                $retVal .= ' '.$attr.'="'.str_replace(['&', '"'], ['&amp;', '&quot;'], $val).'"';
+                            }
                         }
                     }
                 }
