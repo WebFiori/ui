@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.4](https://github.com/WebFiori/ui/compare/v4.0.3...v4.0.4) (2026-09-20)
+
+
+### Bug Fixes
+
+* **ui:** throw on invalid children in Paragraph and HeadNode addChild() ([027f940](https://github.com/WebFiori/ui/commit/027f940f035dc7304abd7745d4cf385783494e04))
+* **ui:** throw on invalid children in Paragraph and HeadNode addChild() ([62971f4](https://github.com/WebFiori/ui/commit/62971f4c48569fef97a875d7de1948c4f6c503a6))
+
 ## [4.0.3](https://github.com/WebFiori/ui/compare/v4.0.2...v4.0.3) (2026-08-03)
 
 
