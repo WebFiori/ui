@@ -554,7 +554,13 @@ class TemplateCompiler {
                     }
                 } else {
                     $newCh = self::fromHTMLTextHelper00($chNode);
-                    $htmlNode->addChild($newCh);
+
+                    // Text nodes (e.g. whitespace between head elements) are not
+                    // valid <head> children; the head node rejects them. Skip
+                    // them here to preserve lenient parsing behavior.
+                    if (!$newCh->isTextNode()) {
+                        $htmlNode->addChild($newCh);
+                    }
                 }
             }
         } else if ($nodeArr[$TN] == '!DOCTYPE') {

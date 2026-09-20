@@ -157,8 +157,9 @@ class HeadNodeTest extends TestCase {
     public function testAddChild00() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode();
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Element 'div' is not allowed in <head>");
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -167,8 +168,9 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('meta');
         $notAllowed->setAttribute('charset', 'utf-8');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Use setCharSet() to set the document charset.');
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -176,8 +178,9 @@ class HeadNodeTest extends TestCase {
     public function testAddChild02() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('title');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Use setPageTitle() to set the document title.');
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -185,8 +188,9 @@ class HeadNodeTest extends TestCase {
     public function testAddChild03() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('base');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Use setBase() to set the base URL.');
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -195,8 +199,9 @@ class HeadNodeTest extends TestCase {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('link');
         $notAllowed->setAttribute('rel', 'canonical');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Use setCanonical() to set the canonical URL.');
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
     }
     /**
      * @test
@@ -204,11 +209,9 @@ class HeadNodeTest extends TestCase {
     public function testAddChild05() {
         $node = new HeadNode();
         $notAllowed = new HTMLNode('#text');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Element '#TEXT' is not allowed in <head>");
         $node->addChild($notAllowed);
-        $this->assertFalse($node->hasChild($notAllowed));
-        $node->addTextNode('Hello');
-        $this->assertEquals(2,$node->childrenCount());
-        $this->assertNull($node->getChild(4));
     }
     /**
      * @test
@@ -236,20 +239,40 @@ class HeadNodeTest extends TestCase {
      */
     public function testAddChild07() {
         $node = new HeadNode();
-        $allowed = new HTMLNode('meta');
-        $allowed->setAttribute('name', 'viewport');
-        $allowed->setAttribute('content', '....');
-        $node->addChild($allowed);
-        $this->assertFalse($node->hasChild($allowed));
+
+        // A brand-new meta name is added successfully.
+        $fresh = new HTMLNode('meta');
+        $fresh->setAttribute('name', 'author');
+        $fresh->setAttribute('content', 'WebFiori');
+        $node->addChild($fresh);
+        $this->assertTrue($node->hasChild($fresh));
+
+        // The head already carries a default 'viewport' meta, so adding another
+        // one throws with guidance.
+        $dup = new HTMLNode('meta');
+        $dup->setAttribute('name', 'viewport');
+        $dup->setAttribute('content', 'other');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Meta 'viewport' already exists");
+        $node->addChild($dup);
     }
     /**
      * @test
      */
     public function testAddChild08() {
         $node = new HeadNode();
-        $this->assertNotNull($node->addChild('div', [], false));
-        $this->assertTrue($node === $node->addChild('div'));
-        $this->assertEquals('script', $node->addChild('script', [], false)->getNodeName());
+
+        // $chainOnParent defaults to false: returns the added child.
+        $script = $node->addChild('script');
+        $this->assertEquals('script', $script->getNodeName());
+
+        // Explicit chaining returns the head node itself.
+        $this->assertTrue($node === $node->addChild('script', [], true));
+
+        // Invalid element throws.
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Element 'div' is not allowed in <head>");
+        $node->addChild('div');
     }
     /**
      * @test
