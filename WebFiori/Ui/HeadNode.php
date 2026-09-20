@@ -11,6 +11,7 @@
  */
 namespace WebFiori\Ui;
 
+use InvalidArgumentException;
 use WebFiori\Collections\LinkedList;
 /**
  * A class that represents the tag &lt;head&lt; of a HTML document.
@@ -154,7 +155,7 @@ class HeadNode extends HTMLNode {
             if ($insertPosition != -1) {
                 $this->insert($node,$insertPosition + 1);
             } else {
-                $this->addChild($node);
+                parent::addChild($node);
             }
         }
 
@@ -191,32 +192,28 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = true) : HTMLNode {
-        $retVal = $this;
-
-
+    public function addChild($node, $attrsOrChain = [], bool $chainOnParent = false) : HTMLNode {
         if ($node instanceof HTMLNode) {
-            $nodeName = $node->getNodeName();
-
-            if (in_array($nodeName, self::ALLOWED_CHILDREN)) {
-                $retVal = $this->addChildHelper($node);
-            }
+            $child = $node;
         } else if (gettype($node) == 'string') {
-            $temp = new HTMLNode($node);
-
-            if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
-                $retVal = $this->addChildHelper($temp);
-            }
-        }
-        $cOnParent = gettype($attrsOrChain) == 'boolean' && $attrsOrChain === true || $chainOnParent === true;
-
-
-        if (!$cOnParent) {
-            return $retVal;
+            $child = new HTMLNode($node);
+        } else {
+            throw new InvalidArgumentException('Invalid child: expected an HTMLNode instance or a node name string.');
         }
 
+        $nodeName = $child->getNodeName();
 
-        return $this;
+        $this->validateHeadChild($child, $nodeName);
+
+        parent::addChild($child);
+
+        $cOnParent = (gettype($attrsOrChain) == 'boolean' && $attrsOrChain === true) || $chainOnParent === true;
+
+        if ($cOnParent) {
+            return $this;
+        }
+
+        return $child;
     }
     /**
      * Adds new CSS source file.
@@ -445,7 +442,7 @@ class HeadNode extends HTMLNode {
                 if ($insertPosition != -1) {
                     $this->insert($node,$insertPosition + 1);
                 } else {
-                    $this->addChild($node);
+                    parent::addChild($node);
                 }
             }
         }
@@ -1030,40 +1027,6 @@ class HeadNode extends HTMLNode {
             }
         }
     }
-    private function addChildHelper(HTMLNode $node) {
-        $nodeName = $node->getNodeName();
-
-        if ($nodeName == 'meta') {
-            $nodeAttrs = $node->getAttributes();
-
-            foreach ($nodeAttrs as $attr => $val) {
-                if (strtolower($attr) == 'charset') {
-                    return $this;
-                }
-            }
-
-            if (!$this->hasMeta($node->getAttribute('name'))) {
-                parent::addChild($node);
-            }
-        } else {
-            if ($nodeName == 'base' || $nodeName == 'title') {
-                return $this;
-            } else {
-                if ($nodeName == 'link') {
-                    $relVal = $node->getAttribute('rel');
-
-                    if ($relVal != 'canonical') {
-                        parent::addChild($node);
-                    }
-                } else {
-                    parent::addChild($node);
-                }
-            }
-        }
-
-        return $node;
-    }
-
     /**
      *
      * @param HTMLNode $node
@@ -1096,7 +1059,7 @@ class HeadNode extends HTMLNode {
         if ($insertPosition != -1) {
             $this->insert($node,$insertPosition + 1);
         } else {
-            $this->addChild($node);
+            parent::addChild($node);
         }
     }
     private function insertMetaInCorrectOrder(HTMLNode $newMeta) {
@@ -1113,7 +1076,51 @@ class HeadNode extends HTMLNode {
         if ($insertPosition != -1) {
             $this->insert($newMeta, $insertPosition + 1);
         } else {
-            $this->addChild($newMeta);
+            parent::addChild($newMeta);
+        }
+    }
+    /**
+     * Validates that a node is allowed as a direct child of the head node,
+     * throwing an InvalidArgumentException with guidance otherwise.
+     *
+     * @param HTMLNode $node The node being added.
+     * @param string $nodeName The node's tag name.
+     *
+     * @throws InvalidArgumentException If the node is not a valid head child.
+     */
+    private function validateHeadChild(HTMLNode $node, string $nodeName) : void {
+        if (!in_array($nodeName, self::ALLOWED_CHILDREN)) {
+            throw new InvalidArgumentException(
+                "Element '$nodeName' is not allowed in <head>. Allowed: "
+                .implode(', ', self::ALLOWED_CHILDREN)
+            );
+        }
+
+        if ($nodeName == 'title') {
+            throw new InvalidArgumentException('Use setPageTitle() to set the document title.');
+        }
+
+        if ($nodeName == 'base') {
+            throw new InvalidArgumentException('Use setBase() to set the base URL.');
+        }
+
+        if ($nodeName == 'meta') {
+            foreach ($node->getAttributes() as $attr => $val) {
+                if (strtolower($attr) == 'charset') {
+                    throw new InvalidArgumentException('Use setCharSet() to set the document charset.');
+                }
+            }
+            $metaName = $node->getAttribute('name');
+
+            if ($metaName !== null && $this->hasMeta($metaName)) {
+                throw new InvalidArgumentException(
+                    "Meta '$metaName' already exists. Use addMeta() with \$override = true."
+                );
+            }
+        }
+
+        if ($nodeName == 'link' && $node->getAttribute('rel') == 'canonical') {
+            throw new InvalidArgumentException('Use setCanonical() to set the canonical URL.');
         }
     }
 }

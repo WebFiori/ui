@@ -11,6 +11,8 @@
  */
 namespace WebFiori\Ui;
 
+use InvalidArgumentException;
+
 /**
  * A class that represents a paragraph element.
  *
@@ -48,13 +50,20 @@ class Paragraph extends HTMLNode {
      * @since 1.0
      */
     public function addChild($node, $attrsOrChain = [], bool $chainOnParent = true) {
+        $nodeName = $node instanceof HTMLNode ? $node->getNodeName() : $node;
+        $isText = $node instanceof HTMLNode && $node->isTextNode();
+
+        if (!$isText && !in_array($nodeName, Paragraph::ALLOWED_CHILDREN)) {
+            throw new InvalidArgumentException(
+                "Element '$nodeName' is not allowed as a child of <p>. Allowed: "
+                .implode(', ', Paragraph::ALLOWED_CHILDREN)
+            );
+        }
+
         if ($node instanceof HTMLNode) {
-            if (in_array($node->getNodeName(), Paragraph::ALLOWED_CHILDREN) || $node->isTextNode()) {
-                parent::addChild($node, $attrsOrChain);
-            }
-        } else if (in_array($node, Paragraph::ALLOWED_CHILDREN)) {
-            $newNode = new HTMLNode($node);
-            parent::addChild($newNode);
+            parent::addChild($node, $attrsOrChain);
+        } else {
+            parent::addChild(new HTMLNode($node));
         }
 
         return $this;
